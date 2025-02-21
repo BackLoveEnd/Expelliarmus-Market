@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProduct;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProductFactoryAction;
+use Modules\Product\Http\Management\Actions\Product\Edit\DeleteVariationsWhenNeedAction;
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProduct;
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProductFactoryAction;
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
@@ -47,7 +48,7 @@ class ManipulationProductController extends Controller
     public function edit(ProductEditRequest $request, Product $product, EditProductFactoryAction $factory): JsonResponse
     {
         $factory->createAction($request)->handle(
-            new EditProduct($product),
+            new EditProduct($product, new DeleteVariationsWhenNeedAction()),
             new EditProductInWarehouse($product)
         );
 

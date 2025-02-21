@@ -11,11 +11,13 @@ use Modules\Product\Models\ProductSpec;
 
 class EditProduct
 {
-    public function __construct(private Product $product)
-    {
+    public function __construct(
+        private Product $product,
+        private DeleteVariationsWhenNeedAction $deleteVariationAction
+    ) {
     }
 
-    public function handle(CreateProductDto $productDto)
+    public function handle(CreateProductDto $productDto): Product
     {
         $this->product->fill([
             'title' => $productDto->title,
@@ -32,6 +34,8 @@ class EditProduct
             } else {
                 $changes = $this->product->getDirty();
             }
+
+            $this->deleteVariationAction->handle($this->product, $changes['with_attribute_combinations']);
 
             $this->product->update($changes);
         }

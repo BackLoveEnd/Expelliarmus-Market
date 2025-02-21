@@ -28,7 +28,7 @@ class GetProductStaffInfoAction
                     $query->withPivot('value');
                 }
             ])
-            ->first([
+            ->firstOrFail([
                 'id',
                 'title',
                 'category_id',

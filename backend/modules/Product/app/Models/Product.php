@@ -122,8 +122,12 @@ class Product extends Model
         });
     }
 
-    public function hasCombinedAttributes(): ?bool
+    public function hasCombinedAttributes(bool $original = false): ?bool
     {
+        if ($original) {
+            return $this->getOriginal('with_attribute_combinations');
+        }
+
         return $this->with_attribute_combinations;
     }
 

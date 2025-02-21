@@ -6,10 +6,15 @@ namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
 use Illuminate\Support\Facades\DB;
 use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\Exceptions\FailedToUpdateProductException;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\DTO\AttributesForSingleValueDto;
 use Modules\Warehouse\DTO\CreateProductAttributeSingleVariationDto;
 use Modules\Warehouse\DTO\CreateWarehouseDto;
 use Modules\Warehouse\Http\Actions\EditProductInWarehouse;
+use Modules\Warehouse\Models\ProductAttributeValue;
+use Modules\Warehouse\Models\Warehouse;
+use Throwable;
 
 class EditProductWithSingleOption implements EditProductActionInterface
 {
@@ -22,12 +27,16 @@ class EditProductWithSingleOption implements EditProductActionInterface
 
     public function handle(EditProduct $editProduct, EditProductInWarehouse $editProductInWarehouse): Product
     {
-        DB::transaction(function () use ($editProduct, $editProductInWarehouse) {
+        return DB::transaction(function () use ($editProduct, $editProductInWarehouse) {
             $product = $editProduct->handle($this->productDto);
-
+            dd($product);
             $this->prepareWarehouseData();
 
             $warehouse = $editProductInWarehouse->handle($this->warehouseDto);
+
+            $this->updateSingleVariation($product, $warehouse);
+
+            return $product;
         });
     }
 
@@ -40,5 +49,28 @@ class EditProductWithSingleOption implements EditProductActionInterface
         $this->warehouseDto->setVariationPrices(
             $this->singleVariationDto->attributes->pluck('price')
         );
+    }
+
+    private function updateSingleVariation(Product $product, Warehouse $warehouse): void
+    {
+        try {
+            $product->singleAttributes()->delete();
+
+            $attributes = $this->singleVariationDto->attributes->map(
+                function (AttributesForSingleValueDto $dto) use ($product, $warehouse) {
+                    return [
+                        'product_id' => $product->id,
+                        'attribute_id' => $this->singleVariationDto->attributeId,
+                        'value' => $dto->value,
+                        'quantity' => $dto->quantity,
+                        'price' => $dto->price ? round($dto->price, 2) : $warehouse->defaultPrice(),
+                    ];
+                }
+            );
+
+            ProductAttributeValue::query()->insert($attributes->toArray());
+        } catch (Throwable $e) {
+            throw new FailedToUpdateProductException($e->getMessage());
+        }
     }
 }
