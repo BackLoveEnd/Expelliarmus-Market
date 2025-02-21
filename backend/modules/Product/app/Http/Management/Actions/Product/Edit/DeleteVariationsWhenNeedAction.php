@@ -20,6 +20,7 @@ class DeleteVariationsWhenNeedAction
             $oldVariationType && ! $newVariationType => $this->deleteCombinedVariations($product),
             ! $oldVariationType && $newVariationType => $this->deleteSingleVariation($product),
             $newVariationType === null => $this->deleteAllVariations($product),
+            default => null
         };
     }
 

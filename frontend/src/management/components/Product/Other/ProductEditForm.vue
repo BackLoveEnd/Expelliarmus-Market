@@ -41,6 +41,12 @@ const getOptions = (values) => {
   comboAttributesData.value = [];
   singleAttributesData.value = [];
   options.value = values;
+
+  if (options.value?.combined && Object.keys(options.value.combined).length > 0) {
+    props.product.is_combined_attributes = true;
+  } else if (options.value?.single && Object.keys(options.value.single).length > 0) {
+    props.product.is_combined_attributes = false;
+  }
 };
 
 const optionsDeleted = () => {
@@ -72,12 +78,6 @@ async function submitForm() {
       id: changedBrand.value?.id,
     },
   };
-
-  if (options?.combined && Object.keys(options.combined).length > 0) {
-    props.product.is_combined_attributes = true;
-  } else if (options?.single && Object.keys(options.single).length > 0) {
-    props.product.is_combined_attributes = false;
-  }
 
   relationships = addOptionalRelationships(relationships);
 

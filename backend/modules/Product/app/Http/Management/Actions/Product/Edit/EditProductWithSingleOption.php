@@ -29,7 +29,7 @@ class EditProductWithSingleOption implements EditProductActionInterface
     {
         return DB::transaction(function () use ($editProduct, $editProductInWarehouse) {
             $product = $editProduct->handle($this->productDto);
-            dd($product);
+
             $this->prepareWarehouseData();
 
             $warehouse = $editProductInWarehouse->handle($this->warehouseDto);

@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->foreignId('variation_id')->constrained('product_variations')->cascadeOnDelete();
             $table->foreignId('attribute_id')->nullable()->constrained('product_attributes')->nullOnDelete();
             $table->string('value');
+            $table->unique(['variation_id', 'attribute_id']);
         });
     }
 

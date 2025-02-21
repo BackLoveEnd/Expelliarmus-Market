@@ -91,7 +91,7 @@ let attributesData = reactive(
     : {
         attribute_id: props.options?.single?.attribute_id || null,
         attribute_name: props.options?.single?.attribute_name || "",
-        attribute_type: props.options?.single?.attribute_type?.id || "",
+        attribute_type: props.options?.single?.attribute_type?.id,
         attribute_view_type: props.options?.single?.attribute_view_type || 0,
         attributes: Array.from(
           { length: props.options?.single?.numberOfAttributes || 0 },

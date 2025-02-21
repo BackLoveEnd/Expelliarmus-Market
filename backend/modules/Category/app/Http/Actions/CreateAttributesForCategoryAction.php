@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Category\Http\Actions;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Modules\Category\Models\Category;
 use Modules\Warehouse\Models\ProductAttribute;
 
@@ -31,8 +32,8 @@ class CreateAttributesForCategoryAction
             ->get(['id', 'name']);
 
         $newAttributes = $attributes->reject(fn($attr) => in_array(
-            needle: strtolower($attr[$searchKey]),
-            haystack: $existingAttributes->pluck('name')->map(fn($value) => mb_strtolower($value))
+            needle: mb_strtolower($attr[$searchKey]),
+            haystack: $existingAttributes->pluck('name')->map(fn($value) => $value)
                 ->toArray(),
             strict: true
         ));
