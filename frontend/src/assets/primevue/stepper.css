@@ -1,0 +1,52 @@
+.p-steplist {
+    @apply relative flex justify-between items-center m-0 p-0 list-none overflow-x-auto;
+}
+
+.p-step {
+    @apply relative flex flex-auto items-center gap-3 p-1.5 last-of-type:flex-initial;
+}
+
+.p-step-header {
+    @apply border-none inline-flex items-center no-underline cursor-pointer
+    transition-all duration-300 ease-in-out rounded-md bg-gray-100 dark:bg-gray-400 p-2 gap-1.5
+    hover:bg-gray-200 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary;
+}
+
+.p-step.p-disabled .p-step-header {
+    @apply cursor-not-allowed opacity-50;
+}
+
+.p-step-number {
+    @apply flex items-center justify-center text-gray-500 dark:text-gray-400
+    bg-gray-200 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600
+    min-w-8 h-8 leading-8 text-lg font-semibold rounded-full z-10 relative;
+}
+
+.p-step-active .p-step-number {
+    @apply bg-yellow-500 text-white border-primary shadow-md;
+}
+
+.p-step-title {
+    @apply block whitespace-nowrap overflow-hidden text-ellipsis max-w-full
+    text-gray-600 dark:text-gray-300 font-medium text-sm transition-colors duration-300;
+}
+
+.p-step-active .p-step-title {
+    @apply text-primary dark:text-white;
+}
+
+.p-stepper-separator {
+    @apply flex-1 bg-gray-300 dark:bg-gray-600 h-0.5 transition-colors duration-300;
+}
+
+.p-step:has(~ .p-step-active) .p-stepper-separator {
+    @apply bg-yellow-400;
+}
+
+.p-steppanels {
+    @apply pt-3 pb-4 px-3;
+}
+
+.p-steppanel {
+    @apply bg-white dark:bg-gray-400 text-gray-800 dark:text-white shadow-md rounded-lg p-4;
+}

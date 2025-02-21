@@ -1,0 +1,23 @@
+@import "vue-toastification/dist/index.css";
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "./primevue/tailwind.css";
+@import "tailwindcss/utilities";
+
+html.dark {
+    background-color: #121212;
+    color: #fafafa;
+}
+
+.logo {
+    --angle: 45deg;
+    background-image: linear-gradient(var(--angle), oklab(77.6% 0.038 0.137), oklab(70.9% 0.042 0.135), oklab(63% 0.053 0.128));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.default-light {
+    background-color: #f5f5f5;
+}

@@ -1,0 +1,101 @@
+services:
+  php:
+    build:
+      context: .docker/php
+      dockerfile: php.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
+      - .docker/php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - expelliarmus
+    depends_on:
+      - postgres
+      - redis
+
+  npm:
+    build:
+      context: .docker/node
+      dockerfile: node.Dockerfile
+    container_name: npm
+    volumes:
+      - ./frontend:/var/www/expelliarmus/frontend
+    ports:
+      - "3000:3000"
+    command: [ "tail", "-f", "/dev/null" ]
+
+  nginx:
+    build:
+      context: .docker/nginx
+      dockerfile: nginx.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    container_name: nginx
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
+      - ./frontend:/var/www/expelliarmus/frontend
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+    depends_on:
+      - php
+      - npm
+    networks:
+      - expelliarmus
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - .docker/db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "is_ready" ]
+      timeout: 5s
+      retries: 10
+    networks:
+      - expelliarmus
+
+  supervisor:
+    build:
+      context: .docker/php
+      dockerfile: supervisor.Dockerfile
+    container_name: supervisor
+    volumes:
+      - .:/var/www/expelliarmus
+    networks:
+      - expelliarmus
+
+  redis:
+    container_name: redis
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    networks:
+      - expelliarmus
+
+networks:
+  expelliarmus:
+    driver: bridge
+
+volumes:
+  postgres:

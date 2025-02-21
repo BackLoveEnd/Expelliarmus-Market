@@ -1,0 +1,65 @@
+@import './inputtext.css';
+@import './chip.css';
+
+.p-autocomplete {
+    @apply inline-flex relative cursor-default rounded-lg bg-gray-100 text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm;
+}
+
+.p-autocomplete .p-autocomplete-input,
+.p-autocomplete-overlay {
+    @apply border-none outline-none;
+}
+
+.p-autocomplete .p-autocomplete-input {
+    @apply flex-auto bg-white text-gray-700 placeholder-gray-500 text-base p-4 dark:bg-gray-200 rounded-lg;
+}
+
+.p-autocomplete-overlay {
+    @apply bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md rounded-lg mt-2;
+}
+
+.p-autocomplete-option {
+    @apply cursor-pointer px-3 py-3 m-1 rounded-md text-gray-700 dark:text-gray-200 transition-colors duration-200;
+}
+
+.p-autocomplete-option:hover,
+.p-autocomplete-option.p-focus {
+    @apply bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-white;
+}
+
+.p-autocomplete-option-selected {
+    @apply bg-teal-500 text-white dark:bg-teal-700;
+}
+
+.p-autocomplete-list-container {
+    @apply overflow-auto max-h-60;
+}
+
+.p-autocomplete-empty-message {
+    @apply px-2 py-2 text-gray-500 dark:text-gray-400 max-w-xs;
+}
+
+.p-autocomplete-dropdown {
+    @apply cursor-pointer inline-flex items-center justify-center px-4 py-2 rounded-lg text-gray-600 dark:text-gray-300 transition-colors duration-200;
+}
+
+.p-autocomplete-dropdown:hover {
+    @apply text-gray-900 dark:text-white;
+}
+
+.p-autocomplete:has(.p-autocomplete-dropdown) .p-autocomplete-input {
+    @apply rounded-e-none;
+}
+
+.p-autocomplete:has(.p-autocomplete-dropdown) .p-autocomplete-overlay {
+    @apply mt-0;
+}
+
+.p-autocomplete:has(.p-autocomplete-dropdown) .p-autocomplete-loader {
+    @apply absolute right-12 top-1/2 transform -translate-y-1/2;
+}
+
+.p-autocomplete-loader {
+    @apply absolute right-4 top-1/2 transform -translate-y-1/2;
+}
+

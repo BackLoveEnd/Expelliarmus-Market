@@ -1,0 +1,15 @@
+export default {
+  type: "success",
+  position: "bottom-center",
+  timeout: 3048,
+  closeOnClick: false,
+  pauseOnFocusLoss: false,
+  pauseOnHover: false,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: true,
+  closeButton: "button",
+  icon: "fas fa-check",
+  rtl: false,
+};

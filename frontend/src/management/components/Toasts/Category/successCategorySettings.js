@@ -1,0 +1,15 @@
+export default {
+  type: "success",
+  position: "top-right",
+  timeout: 2038,
+  closeOnClick: false,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: false,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: true,
+  hideProgressBar: true,
+  closeButton: "button",
+  icon: true,
+  rtl: false,
+};

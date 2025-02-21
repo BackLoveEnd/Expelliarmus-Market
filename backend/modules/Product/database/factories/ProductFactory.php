@@ -1,0 +1,151 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Product\Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Brand\Models\Brand;
+use Modules\Category\Models\Category;
+use Modules\Product\Models\Product;
+use Modules\Product\Models\ProductSpecAttributes;
+use Modules\Warehouse\Enums\ProductStatusEnum;
+use Modules\Warehouse\Models\ProductAttribute;
+use Modules\Warehouse\Models\ProductAttributeValue;
+use Modules\Warehouse\Models\ProductVariation;
+use Modules\Warehouse\Models\Warehouse;
+
+class ProductFactory extends Factory
+{
+
+    protected $model = Product::class;
+
+    public function definition(): array
+    {
+        return [
+            'title' => fake()->title,
+            'title_description' => fake()->paragraph(4),
+            'main_description_markdown' => fake()->paragraph(20),
+            'product_article' => fake()->ean13(),
+            'preview_image' => null,
+            'images' => null,
+        ];
+    }
+
+    public function withSingleAttributes(): Product
+    {
+        $category = $this->fakeCategory();
+
+        $productAttribute = ProductAttribute::factory()
+            ->for($category)
+            ->create();
+
+        $product = $this->state(['with_attribute_combinations' => false])
+            ->for($category)
+            ->for($this->fakeBrand())
+            ->has(
+                factory: ProductAttributeValue::factory()
+                    ->count(2)
+                    ->for($productAttribute, 'attribute'),
+                relationship: 'singleAttributes'
+            )
+            ->hasAttached(
+                factory: ProductSpecAttributes::factory()->count(2),
+                pivot: ['value' => ['fake specification value']],
+                relationship: 'productSpecs'
+            )
+            ->create();
+
+        $this->addToWarehouse($product);
+
+        return $product;
+    }
+
+    public function withCombinedAttributes(): Product
+    {
+        $category = $this->fakeCategory();
+
+        $attributes = ProductAttribute::factory()
+            ->count(2)
+            ->for($category)
+            ->create();
+
+        $product = $this->state(['with_attribute_combinations' => true])
+            ->for($category)
+            ->for($this->fakeBrand())
+            ->has(
+                factory: ProductVariation::factory()
+                    ->count(2)
+                    ->hasAttached(
+                        factory: $attributes,
+                        pivot: ['value' => 'test value'],
+                    ),
+                relationship: 'combinedAttributes'
+            )
+            ->hasAttached(
+                factory: ProductSpecAttributes::factory()->count(2),
+                pivot: ['value' => ['fake specification value']],
+                relationship: 'productSpecs'
+            )
+            ->create();
+
+        $this->addToWarehouse($product);
+
+        return $product;
+    }
+
+    public function withoutAttributes(): Product
+    {
+        $product = $this->for($this->fakeBrand())
+            ->for($this->fakeCategory())
+            ->hasAttached(
+                factory: ProductSpecAttributes::factory()->count(2),
+                pivot: ['value' => ['fake specification value']],
+                relationship: 'productSpecs'
+            )
+            ->create();
+
+        $this->addToWarehouse($product);
+
+        return $product;
+    }
+
+    public function published(): ProductFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => ProductStatusEnum::PUBLISHED->value
+            ];
+        });
+    }
+
+    public function unPublished(): ProductFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => ProductStatusEnum::NOT_PUBLISHED->value
+            ];
+        });
+    }
+
+    private function fakeCategory(): Category
+    {
+        return Category::query()->firstOrCreate([
+            'name' => 'Seed Test Category'
+        ]);
+    }
+
+    private function fakeBrand(): Brand
+    {
+        return Brand::query()->firstOrCreate([
+            'name' => 'Seed Test Brand'
+        ]);
+    }
+
+    private function addToWarehouse(Product $product): void
+    {
+        Warehouse::factory()->state(
+            ['product_id' => $product->id]
+        )->create();
+    }
+}

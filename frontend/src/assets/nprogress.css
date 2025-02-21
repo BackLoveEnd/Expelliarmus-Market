@@ -1,0 +1,8 @@
+#nprogress .bar {
+    background: #e8a439 !important;
+    height: 4px;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px #e8a439, 0 0 5px #FFBB00;
+}
