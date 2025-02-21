@@ -120,7 +120,7 @@ function addOptionalRelationships(relations) {
       props.product.is_combined_attributes === false &&
       existsVariations.value.length > 0
     ) {
-      relations.product_variation = reMappedExistsSingleVariations.value;
+      relations.product_variation = [reMappedExistsSingleVariations.value];
     } else {
       props.product.is_combined_attributes = null;
     }
@@ -133,7 +133,7 @@ const reMappedExistsSingleVariations = computed(() => {
   return {
     attribute_id: existsVariations.value[0]?.attributes.attribute_id || null,
     attribute_name: existsVariations.value[0]?.attributes.attribute_name || "",
-    attribute_type: existsVariations.value[0]?.attributes.attribute_type || 0,
+    attribute_type: existsVariations.value[0]?.attributes.attribute_type_id || 0,
     attribute_view_type:
       existsVariations.value[0]?.attributes.attribute_type_id || 0,
     attributes: existsVariations.value.map((item) => ({
@@ -214,14 +214,14 @@ const reMappedExistsCombinedVariations = computed(() => {
             <warehouse-inputs
               v-model:product-article="product.article"
               v-model:total-quantity="warehouse.total_quantity"
-              v-model:default-price="warehouse.default_price"
+              v-model:default-price="warehouse.price"
             />
           </div>
           <div class="flex flex-col space-y-4" v-if="changedCategory">
             <span class="text-xl font-semibold">Product Attributes</span>
             <product-attributes-modal
               @update-options="getOptions"
-              :manually-generated="true"
+              :manually-generated="product.is_combined_attributes === null ? false : true"
               :category="changedCategory"
               @deleted-options="optionsDeleted"
             />

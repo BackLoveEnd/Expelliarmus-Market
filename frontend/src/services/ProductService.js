@@ -120,7 +120,7 @@ export const ProductService = {
         return {
           product: product,
           variations: includedParsed.variations,
-          warehouse: includedParsed.warehouse[0],
+          warehouse: includedParsed.warehouse[0].attributes,
         };
       })
       .catch((e) => {
@@ -135,7 +135,7 @@ export const ProductService = {
       {
         title: productData.title,
         product_article: productData.article,
-        default_price: warehouse.default_price,
+        price: warehouse.price,
         title_description: productData.title_description,
         main_description: productData.main_description_markdown,
         is_combined_attributes: productData.is_combined_attributes,
@@ -145,9 +145,7 @@ export const ProductService = {
       relationships,
     );
 
-    console.log(data);
-
-    //return api().put(`/management/products/${productData.id}`, data);
+    return api().put(`/management/products/${productData.id}`, data);
   },
 
   async editProductImages(productId, images, previewImage) {},

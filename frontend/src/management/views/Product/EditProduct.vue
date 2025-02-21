@@ -28,9 +28,9 @@ const product = reactive({
 
 const variations = ref([]);
 
-const warehouse = ref({
+let warehouse = reactive({
   total_quantity: null,
-  default_price: null,
+  price: null,
 });
 
 const isLoading = ref(true);
@@ -44,7 +44,10 @@ async function getProductStaff() {
 
       variations.value = response.variations;
 
-      Object.assign(warehouse.value, response.warehouse.attributes);
+      warehouse = {
+        total_quantity: response.warehouse.total_quantity,
+        price: response.warehouse.default_price
+      }
     })
     .catch((e) => {})
     .finally(() => {
