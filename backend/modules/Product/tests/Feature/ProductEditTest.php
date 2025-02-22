@@ -66,6 +66,7 @@ class ProductEditTest extends TestCase
                 new EditProductInWarehouse($product)
             );
 
+        // Add new specification attribute
         $this->assertTrue(
             ProductSpec::query()
                 ->where('product_id', $product->id)
@@ -78,6 +79,7 @@ class ProductEditTest extends TestCase
             ->where('spec_name', $specs[1]['specifications'][0]['spec_name'])
             ->first(['id']);
 
+        // Change exist specifications
         $this->assertTrue(
             ProductSpec::query()
                 ->where('product_id', $product->id)
@@ -293,6 +295,7 @@ class ProductEditTest extends TestCase
             ->whereIn('name', $attributeNames)
             ->get(['id']);
 
+        // Check for new variations and relation between them and attributes
         foreach ($variations as $varKey => $variation) {
             $this->assertDatabaseHas('product_variations', [
                 'product_id' => $product->id,
@@ -339,6 +342,7 @@ class ProductEditTest extends TestCase
             ->get(['id'])
             ->pluck('id');
 
+        // Check for new variations
         foreach ($options as $option) {
             $this->assertDatabaseHas('product_variations', [
                 'sku' => $option['sku'],
@@ -352,6 +356,7 @@ class ProductEditTest extends TestCase
             ->whereIn('name', $attributeNames)
             ->get(['id']);
 
+        // Check for relations between newly created and exists variation and attributes
         foreach ($variations as $varKey => $variation) {
             foreach ($attributes as $attrKey => $attribute) {
                 $this->assertTrue(
