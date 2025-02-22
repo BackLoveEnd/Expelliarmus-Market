@@ -14,11 +14,13 @@ class CreateProductFactoryAction
 {
     public function createAction(ProductCreateRequest $request): CreateProductActionInterface
     {
-        if (is_null($request->is_combined_attributes)) {
+        if ($request->relation('product_variation')->isEmpty()
+            && $request->relation('product_variations_combinations')->isEmpty()
+        ) {
             return $this->createProductWithoutAttributes($request);
         }
 
-        if ($request->is_combined_attributes === true) {
+        if ($request->relation('product_variations_combinations')->isNotEmpty()) {
             return $this->createCombinedAttributeProduct($request);
         }
 
@@ -27,8 +29,12 @@ class CreateProductFactoryAction
 
     private function createSingleAttributeProduct(ProductCreateRequest $request): CreateProductActionInterface
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(false);
+
         return new CreateProductWithSingleAttributesAction(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
             singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request)
         );
@@ -36,8 +42,12 @@ class CreateProductFactoryAction
 
     private function createCombinedAttributeProduct(ProductCreateRequest $request): CreateProductActionInterface
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(true);
+
         return new CreateProductWithCombinedAttributesAction(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
             combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request)
         );
@@ -45,8 +55,12 @@ class CreateProductFactoryAction
 
     private function createProductWithoutAttributes(ProductCreateRequest $request): CreateProductActionInterface
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(null);
+
         return new CreateProductWithoutAttributes(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request)
         );
     }

@@ -13,7 +13,7 @@ class ProductSeeder extends Seeder
     {
         $chunks = 1000;
 
-        collect(range(1, 10))->chunk(100)->each(function ($chunk) {
+        collect(1)->chunk(100)->each(function ($chunk) {
             $chunk->each(fn() => Product::factory()->withCombinedAttributes());
             $chunk->each(fn() => Product::factory()->withSingleAttributes());
             $chunk->each(fn() => Product::factory()->withoutAttributes());

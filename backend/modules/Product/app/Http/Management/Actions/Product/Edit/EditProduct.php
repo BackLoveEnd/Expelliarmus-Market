@@ -25,7 +25,7 @@ class EditProduct
             'main_description_markdown' => $productDto->mainDesc,
             'category_id' => $productDto->categoryId,
             'brand_id' => $productDto->brandId,
-            'with_attribute_combinations' => $productDto->withCombinations
+            'with_attribute_combinations' => $productDto->withCombinations()
         ]);
 
         if ($this->product->isDirty()) {

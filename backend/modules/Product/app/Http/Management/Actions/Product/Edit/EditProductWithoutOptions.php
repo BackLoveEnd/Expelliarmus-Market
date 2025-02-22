@@ -23,7 +23,7 @@ class EditProductWithoutOptions implements EditProductActionInterface
         return DB::transaction(function () use ($editProduct, $editProductInWarehouse) {
             $product = $editProduct->handle($this->productDto);
 
-            $warehouse = $editProductInWarehouse->handle($this->warehouseDto);
+            $editProductInWarehouse->handle($this->warehouseDto);
 
             return $product;
         });
