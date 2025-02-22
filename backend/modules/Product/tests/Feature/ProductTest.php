@@ -29,6 +29,7 @@ use Modules\Warehouse\Database\Seeders\WarehouseDatabaseSeeder;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
 use Modules\Warehouse\Http\Actions\CreateProductInWarehouse;
+use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
 
 class ProductTest extends TestCase
@@ -420,13 +421,32 @@ class ProductTest extends TestCase
 
         $request = Mockery::mock(ProductCreateRequest::class);
 
-        $request->shouldReceive('relation')
-            ->with('product_variations_combinations')
-            ->andReturn(collect($combinedVariations));
+        if ($isCombinedAttributes === true) {
+            $request->shouldReceive('relation')
+                ->with('product_variations_combinations')
+                ->andReturn(collect($combinedVariations));
 
-        $request->shouldReceive('relation')
-            ->with('product_variation')
-            ->andReturn(collect($singleVariation));
+            $request->shouldReceive('relation')
+                ->with('product_variation')
+                ->andReturn(collect());
+        } else if ($isCombinedAttributes === false){
+            $request->shouldReceive('relation')
+                ->with('product_variations_combinations')
+                ->andReturn(collect());
+
+            $request->shouldReceive('relation')
+                ->with('product_variation')
+                ->andReturn(collect($singleVariation));
+        } else {
+            $request->shouldReceive('relation')
+                ->with('product_variations_combinations')
+                ->andReturn(collect());
+
+            $request->shouldReceive('relation')
+                ->with('product_variation')
+                ->andReturn(collect());
+        }
+
 
         $request->shouldReceive('relation')
             ->with('category')
