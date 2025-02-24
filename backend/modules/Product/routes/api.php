@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Product\Http\Management\Controllers\ManipulationProductController;
-use Modules\Product\Http\Management\Controllers\ProductImagesController;
-use Modules\Product\Http\Management\Controllers\ProductSpecificationsController;
-use Modules\Product\Http\Management\Controllers\RetrieveProductController;
+use Modules\Product\Http\Management\Controllers\Product\ManipulationProductController;
+use Modules\Product\Http\Management\Controllers\Product\ProductSpecificationsController;
+use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
+use Modules\Product\Http\Management\Controllers\Images\ProductImagesController;
 
 //TODO: guards
 
@@ -29,4 +29,6 @@ Route::prefix('management')->group(function () {
         ->whereNumber('category');
 
     Route::post('/product/{product}/images', [ProductImagesController::class, 'store']);
+
+    Route::post('/product/{product}/images/edit', [ProductImagesController::class, 'edit']);
 });

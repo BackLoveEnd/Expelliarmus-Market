@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Category\Http\Controllers\CategoryController;
 use Modules\Category\Http\Controllers\CategoryIconController;
-use Modules\Product\Http\Management\Controllers\RetrieveProductController;
+use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
 
 Route::prefix('management')->group(function () {
     Route::prefix('categories')->group(function () {

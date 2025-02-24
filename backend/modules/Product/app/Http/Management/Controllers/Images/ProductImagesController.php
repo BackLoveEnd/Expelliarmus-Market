@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\Controllers;
+namespace Modules\Product\Http\Management\Controllers\Images;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Modules\Product\Http\Management\DTO\ProductImageDto;
+use Modules\Product\Http\Management\DTO\Images\ProductImageDto;
+use Modules\Product\Http\Management\Requests\ProductEditImageRequest;
 use Modules\Product\Http\Management\Requests\ProductImageRequest;
 use Modules\Product\Http\Management\Service\Images\ProductImagesService;
 use Modules\Product\Models\Product;
@@ -40,6 +41,20 @@ class ProductImagesController extends Controller
         $this->imagesService->upload($imagesDto, $product, $size);
 
         return $this->guessResponseMessage($imagesDto);
+    }
+
+    public function edit(ProductEditImageRequest $request, Product $product): JsonResponse
+    {
+        $imageDto = ProductImageDto::fromRequest($request);
+
+        $size = new Size(
+            width: config('product.image.preview.size.width'),
+            height: config('product.image.preview.size.height')
+        );
+
+        $this->imagesService->uploadEdit($imageDto, $product, $size);
+
+        return $this->guessResponseMessage($imageDto);
     }
 
     private function guessResponseMessage(ProductImageDto $dto): JsonResponse

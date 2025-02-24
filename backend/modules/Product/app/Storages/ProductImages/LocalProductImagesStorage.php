@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Modules\Product\Storages\ProductImages;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Image;
 use Modules\Product\Http\Management\Contracts\Storage\LocalProductImagesStorageInterface;
+use Modules\Product\Http\Management\DTO\Images\MainImageDto;
+use Modules\Product\Http\Management\Exceptions\FailedToRetrieveImagesException;
 use Modules\Product\Http\Management\Exceptions\FailedToUploadImagesException;
 use Modules\Product\Models\Product;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -15,6 +18,8 @@ use Throwable;
 
 class LocalProductImagesStorage extends BaseProductImagesStorage implements LocalProductImagesStorageInterface
 {
+    private array $images = [];
+
     public function upload(UploadedFile $file, Product $product, ?string $hashName = null): string
     {
         try {
@@ -33,11 +38,9 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
     /**
      * @throws FailedToUploadImagesException
      */
-    public function uploadMany(array $files, Product $product): array
+    public function uploadMany(Collection $files, Product $product): array
     {
-        $images = [];
-
-        if (! $files) {
+        if ($files->isEmpty()) {
             $this->storage->copy(
                 $this->defaultImageId(),
                 $this->getImageFullPath($product, $this->defaultImageId())
@@ -47,23 +50,26 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
         }
 
         try {
-            foreach ($files as $file) {
-                $this->upload($file, $product);
+            $this->images = $files->map(function (MainImageDto $image) use ($product) {
+                $this->upload($image->image, $product);
 
-                $images[] = $file->hashName();
-            }
+                return [
+                    'order' => $image->order,
+                    'source' => $image->image->hashName()
+                ];
+            })->toArray();
         } catch (Throwable $e) {
-            foreach ($images as $image) {
+            foreach ($this->images as $image) {
                 $this->delete($product, $this->getImageFullPath($product, $image));
             }
 
             throw new FailedToUploadImagesException($e->getMessage(), $e);
         }
 
-        return $images;
+        return $this->images;
     }
 
-    public function getOne(Product $product, string $imageId): string
+    public function getOne(Product $product, ?string $imageId): string
     {
         if ($this->isExists($product, $imageId)) {
             return $this->storage->url($this->getImageFullPath($product, $imageId));
@@ -85,18 +91,30 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
 
     public function getAllFromSources(Product $product, array $imagesSources): array
     {
-        $images = [];
-
-        foreach ($imagesSources as $imagesSource) {
-            $images[] = $this->storage->url($this->getImageFullPath($product, $imagesSource));
+        try {
+            return collect($imagesSources)->map(function (array $images) use($product) {
+                return [
+                    ...$images,
+                    'image_url' => $this->storage->url($this->getImageFullPath($product, $images['source']))
+                ];
+            })->toArray();
+        } catch (Throwable $e) {
+            throw new FailedToRetrieveImagesException($e->getMessage(), $e);
         }
-
-        return $images;
     }
 
     public function delete(Product $product, string $imageId): bool
     {
         return $this->storage->delete($this->getImageFullPath($product, $imageId));
+    }
+
+    public function deleteMany(Product $product, array $imagesIdToDelete): void
+    {
+        $imagesSource = collect($product->images)->whereIn('id', $imagesIdToDelete)->pluck('source');
+
+        $imagesSource->each(function (string $source) use($product) {
+            $this->delete($product, $source);
+        });
     }
 
     protected function getImageFullPath(Product $product, string $imageId): string
