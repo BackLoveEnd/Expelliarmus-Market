@@ -7,10 +7,10 @@ namespace Modules\Product\Http\Management\Exceptions;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class CannotMovePublishedProductToTrashException extends Exception
+class ProductHasAlreadyUnpublishedException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => "Can't move published product to trash."], 403);
+        return response()->json(['message' => 'Product is already unpublished']);
     }
 }
