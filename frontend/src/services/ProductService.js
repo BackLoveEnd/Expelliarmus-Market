@@ -92,7 +92,7 @@ export const ProductService = {
     },
 
     async getProductStaffInfo(productId) {
-        return api()
+        return await api()
             .get(
                 `/management/products/${productId}/staff?include=warehouse,variations`,
             )
@@ -109,6 +109,7 @@ export const ProductService = {
                     previewImage: productAttr.preview_image,
                     createdAt: productAttr.created_at,
                     updatedAt: productAttr.updated_at,
+                    published: productAttr.published,
                     is_combined_attributes: productAttr.has_combinations,
                     specifications: productAttr.specifications,
                     categoryId: productAttr.category,
@@ -145,7 +146,7 @@ export const ProductService = {
             relationships,
         );
 
-        return api().put(`/management/products/${productData.id}`, data);
+        return await api().put(`/management/products/${productData.id}`, data);
     },
 
     async editProductImages(product, images, previewImage) {
@@ -173,6 +174,14 @@ export const ProductService = {
     },
 
     async moveToTrash(productId) {
-        return api().delete(`/management/products/${productId}/trash`);
+        return await api().delete(`/management/products/${productId}/trash`);
+    },
+
+    async publishProduct(productId) {
+        return await api().post(`/management/products/${productId}/publish`);
+    },
+
+    async unPublishProduct(productId) {
+        return await api().post(`/management/products/${productId}/unpublish`);
     }
 };

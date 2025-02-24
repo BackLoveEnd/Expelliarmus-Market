@@ -25,6 +25,7 @@ const product = reactive({
   previewImage: null,
   createdAt: null,
   updatedAt: null,
+  published: null,
   is_combined_attributes: null,
   specifications: null,
   categoryId: null,
@@ -57,6 +58,26 @@ async function getProductStaff() {
         };
       })
       .catch((e) => {
+        if (e.response?.status === 404) {
+          router.push({name: "product-list"});
+        }
+      });
+}
+
+async function publish() {
+  await ProductService.publishProduct(product.id)
+      .then((response) => {
+        if (response?.status === 200) {
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+          router.push({name: "product-list"});
+        }
+      })
+      .catch((e) => {
+        if (e.response?.status === 403) {
+          toast.showToast(e.response?.data?.message, defaultWarningSettings);
+        } else {
+          toast.showToast("Unknown error. Please try again or contact us", defaultErrorSettings);
+        }
       });
 }
 
@@ -74,6 +95,7 @@ async function moveToTrash() {
         } else {
           toast.showToast("Unknown error. Please try again or contact us.", defaultErrorSettings);
         }
+        isDeleteModalOpen.value = false;
       });
 }
 
@@ -96,7 +118,12 @@ await getProductStaff();
               @click="isDeleteModalOpen = true"
               class="p-2 bg-red-400 hover:bg-red-600 rounded-md text-white text-sm">Move to Trash
           </button>
-          <button class="p-2 bg-green-400 hover:bg-green-600 rounded-md text-white text-sm">Publish</button>
+          <button
+              v-if="! product.published"
+              @click="publish"
+              class="p-2 bg-green-400 hover:bg-green-600 rounded-md text-white text-sm">
+            Publish
+          </button>
         </div>
       </div>
       <main class="space-y-32">
@@ -122,7 +149,11 @@ await getProductStaff();
     </template>
     <template #modalFooter>
       <div class="space-x-4">
-        <button type="button" class="p-2 bg-gray-500 text-white rounded-md hover:bg-gray-700">Cancel</button>
+        <button
+            @click="isDeleteModalOpen = false"
+            type="button"
+            class="p-2 bg-gray-500 text-white rounded-md hover:bg-gray-700">Cancel
+        </button>
         <button @click="moveToTrash" type="button" class="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
           Confirm
         </button>
