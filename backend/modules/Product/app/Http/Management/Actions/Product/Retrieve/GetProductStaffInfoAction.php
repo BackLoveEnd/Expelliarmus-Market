@@ -13,20 +13,19 @@ class GetProductStaffInfoAction
 {
     public function __construct(
         private WarehouseProductInfoService $warehouseService,
-        private ProductSpecificationsService $specificationsService
-    ) {
-    }
+        private ProductSpecificationsService $specificationsService,
+    ) {}
 
     public function handle(int $productId): Product
     {
-        $product = Product::query()->where('id', $productId)
+        $product = Product::withoutTrashed()->where('id', $productId)
             ->with([
                 'category:id',
                 'brand:id',
                 'warehouse',
                 'productSpecs' => function ($query) {
                     $query->withPivot('value');
-                }
+                },
             ])
             ->firstOrFail([
                 'id',
@@ -44,12 +43,12 @@ class GetProductStaffInfoAction
             ]);
 
         $product->productSpecs = $this->specificationsService->prepareProductSpecifications(
-            $product->productSpecs
+            $product->productSpecs,
         );
 
         $product->productAttributes = $this->warehouseService->getProductAttributes(
             product: $product,
-            dto: new FetchAttributesColumnsDto()
+            dto: new FetchAttributesColumnsDto(),
         );
 
         return $product;

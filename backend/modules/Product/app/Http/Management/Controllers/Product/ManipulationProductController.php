@@ -12,7 +12,7 @@ use Modules\Product\Http\Management\Actions\Product\Edit\DeleteVariationsWhenNee
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProduct;
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProductFactoryAction;
 use Modules\Product\Http\Management\Actions\Product\Edit\MoveProductToTrashAction;
-use Modules\Product\Http\Management\Exceptions\CannotMovePublishedProductToTrashException;
+use Modules\Product\Http\Management\Exceptions\CannotTrashPublishedProductException;
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
 use Modules\Product\Models\Product;
@@ -70,12 +70,12 @@ class ManipulationProductController extends Controller
     /**
      * Move product to trash.
      *
-     * Usage - Admin section.
+     * Usage place - Admin section.
      *
      * @param  Product  $product
      * @param  MoveProductToTrashAction  $action
      * @return JsonResponse
-     * @throws CannotMovePublishedProductToTrashException
+     * @throws CannotTrashPublishedProductException
      */
     public function moveToTrash(Product $product, MoveProductToTrashAction $action): JsonResponse
     {

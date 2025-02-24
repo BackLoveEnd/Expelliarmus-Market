@@ -16,9 +16,8 @@ use Modules\Product\Storages\ProductImages\Size;
 class ProductImagesController extends Controller
 {
     public function __construct(
-        private ProductImagesService $imagesService
-    ) {
-    }
+        private ProductImagesService $imagesService,
+    ) {}
 
     /**
      * Store product images (preview and main).
@@ -35,7 +34,7 @@ class ProductImagesController extends Controller
 
         $size = new Size(
             width: config('product.image.preview.size.width'),
-            height: config('product.image.preview.size.height')
+            height: config('product.image.preview.size.height'),
         );
 
         $this->imagesService->upload($imagesDto, $product, $size);
@@ -46,7 +45,7 @@ class ProductImagesController extends Controller
     /**
      * Edit product images.
      *
-     * Usage - Admin section.
+     * Usage place - Admin section.
      *
      * @param  ProductEditImageRequest  $request
      * @param  Product  $product
@@ -58,7 +57,7 @@ class ProductImagesController extends Controller
 
         $size = new Size(
             width: config('product.image.preview.size.width'),
-            height: config('product.image.preview.size.height')
+            height: config('product.image.preview.size.height'),
         );
 
         $this->imagesService->uploadEdit($imageDto, $product, $size);
@@ -71,7 +70,7 @@ class ProductImagesController extends Controller
         if (! $dto->mainImages && $dto->previewImage) {
             return response()->json(
                 ['message' => 'Preview image was uploaded. All another images you can upload later.'],
-                206
+                206,
             );
         }
 
@@ -83,7 +82,7 @@ class ProductImagesController extends Controller
         if (! $dto->previewImage && ! $dto->mainImages) {
             return response()->json(
                 ['message' => 'Product images was not specified. You can upload it later.'],
-                206
+                206,
             );
         }
 

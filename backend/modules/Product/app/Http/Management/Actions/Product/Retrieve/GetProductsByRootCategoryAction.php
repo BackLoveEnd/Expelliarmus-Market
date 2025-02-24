@@ -16,9 +16,8 @@ class GetProductsByRootCategoryAction
 {
     public function __construct(
         private ProductImagesService $imagesService,
-        private CacheService $cacheService
-    ) {
-    }
+        private CacheService $cacheService,
+    ) {}
 
     public function handle(): Collection
     {
@@ -36,7 +35,7 @@ class GetProductsByRootCategoryAction
                 'products' => $products->getCollection(),
                 'pagination' => (object)[
                     'next' => $products->nextPageUrl(),
-                    'total' => $products->total()
+                    'total' => $products->total(),
                 ],
             ];
         });
@@ -54,8 +53,8 @@ class GetProductsByRootCategoryAction
                     $product,
                     new Size(
                         width: config('product.image.preview.size.width'),
-                        height: config('product.image.preview.size.height')
-                    )
+                        height: config('product.image.preview.size.height'),
+                    ),
                 );
             }
 
@@ -72,13 +71,13 @@ class GetProductsByRootCategoryAction
             ttl: now()->addWeek(),
             callback: function () use ($category) {
                 return $category->descendantsAndSelf($category)->pluck('id');
-            }
+            },
         );
     }
 
     private function getProductsByCategories(Collection $categories): LengthAwarePaginator
     {
-        return Product::query()
+        return Product::withoutTrashed()
             ->whereIn('category_id', $categories->toArray())
             ->orderBy('id')
             ->paginate(config('product.retrieve.by_category'), [
