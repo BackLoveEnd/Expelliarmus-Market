@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useScrolling } from "@/composables/useScrolling.js";
 import { ProductService } from "@/services/ProductService.js";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
+import Tag from "primevue/tag";
 
 const props = defineProps({
   productsCategories: {
@@ -48,6 +49,17 @@ async function fetchProducts(url) {
       return null;
     });
 }
+
+const getSeverity = (status) => {
+  switch (status) {
+    case "Not Published":
+      return "warn";
+    case "Published":
+      return "success";
+    case "Trashed":
+      return "danger";
+  }
+};
 </script>
 
 <template>
@@ -90,11 +102,16 @@ async function fetchProducts(url) {
                     >Created: {{ product.created_at }}</span
                   >
                   <span class="text-xs text-gray-500"
-                    >Status: {{ product.status }}</span
-                  >
-                  <span class="text-xs text-gray-500"
                     >Article: {{ product.article }}</span
                   >
+                  <span class="text-xs text-gray-500">
+                    Status:
+                    <Tag
+                        class="text-xs"
+                        :value="product.status.name"
+                        :severity="getSeverity(product.status.name)"
+                    />
+                  </span>
                 </div>
                 <div class="flex gap-x-2 justify-between">
                   <RouterLink
@@ -117,6 +134,12 @@ async function fetchProducts(url) {
                   >
                     Edit
                   </RouterLink>
+                  <button
+                      type="button"
+                      class="bg-green-200 text-xs rounded-md p-1 hover:bg-green-400"
+                  >
+                    Publish
+                  </button>
                 </div>
               </div>
             </div>

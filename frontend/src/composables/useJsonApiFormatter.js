@@ -99,6 +99,8 @@ export function useJsonApiFormatter() {
       });
     }
 
+    queryParams.push('filter[trashed]=with');
+
     return url + (queryParams.length ? `?${queryParams.join("&")}` : "");
   }
 
