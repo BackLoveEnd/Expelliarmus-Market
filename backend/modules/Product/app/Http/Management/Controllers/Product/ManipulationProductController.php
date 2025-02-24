@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\Controllers;
+namespace Modules\Product\Http\Management\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -45,6 +45,16 @@ class ManipulationProductController extends Controller
         ], 201);
     }
 
+    /**
+     * Update product information.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  ProductEditRequest  $request
+     * @param  Product  $product
+     * @param  EditProductFactoryAction  $factory
+     * @return JsonResponse
+     */
     public function edit(ProductEditRequest $request, Product $product, EditProductFactoryAction $factory): JsonResponse
     {
         $factory->createAction($request)->handle(

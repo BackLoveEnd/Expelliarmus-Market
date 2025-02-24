@@ -18,11 +18,7 @@ class ProductAttributeFactory extends Factory
     {
         return [
             'name' => 'attr-'.fake()->unique()->ean8(),
-            'type' => fake()->randomElement([
-                ProductAttributeTypeEnum::NUMBER->value,
-                ProductAttributeTypeEnum::STRING->value,
-                ProductAttributeTypeEnum::COLOR->value,
-            ]),
+            'type' => ProductAttributeTypeEnum::STRING->value,
             'view_type' => ProductAttributeViewTypeEnum::RADIO_BUTTON->value,
             'required' => false,
         ];

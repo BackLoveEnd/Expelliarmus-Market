@@ -157,7 +157,7 @@ class NewArrivalsContentService
     protected function getArrivalsThatWannaBeChanged(Collection $arrivals): Collection
     {
         return $arrivals->filter(function (ArrivalContentDto $dto) {
-            return ($dto->file !== null || $dto->existsImageUrl !== null) && $dto->arrivalId !== null;
+            return $dto->file !== null && $dto->arrivalId !== null;
         });
     }
 }

@@ -17,7 +17,7 @@ use Modules\Category\Models\Category;
 use Modules\Product\Database\Seeders\ProductDatabaseSeeder;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProduct;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProductFactoryAction;
-use Modules\Product\Http\Management\DTO\ProductImageDto;
+use Modules\Product\Http\Management\DTO\Images\ProductImageDto;
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
 use Modules\Product\Http\Management\Service\Images\ProductImagesService;
 use Modules\Product\Models\Product;
@@ -29,7 +29,6 @@ use Modules\Warehouse\Database\Seeders\WarehouseDatabaseSeeder;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
 use Modules\Warehouse\Http\Actions\CreateProductInWarehouse;
-use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
 
 class ProductTest extends TestCase

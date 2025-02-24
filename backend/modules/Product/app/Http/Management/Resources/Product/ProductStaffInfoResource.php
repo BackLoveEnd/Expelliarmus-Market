@@ -20,7 +20,7 @@ class ProductStaffInfoResource extends JsonApiResource
             'article' => $this->product_article,
             'title_description' => $this->title_description,
             'main_description_markdown' => $this->main_description_markdown,
-            'images' => $this->images,
+            'images' => collect($this->images)->select(['id', 'image_url', 'order']),
             'preview_image' => $this->preview_image,
             'has_combinations' => $this->with_attribute_combinations,
             'category' => $this->category->id,

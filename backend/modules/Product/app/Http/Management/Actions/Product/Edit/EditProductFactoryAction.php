@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
 use Modules\Warehouse\DTO\CreateProductAttributeCombinedVariationsDto;
 use Modules\Warehouse\DTO\CreateProductAttributeSingleVariationDto;

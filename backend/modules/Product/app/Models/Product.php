@@ -155,9 +155,13 @@ class Product extends Model
 
     public function saveImages(array $images): void
     {
-        $this->saveMainImages($images['images'] ?? null);
+        if (array_key_exists('images', $images)) {
+            $this->saveMainImages($images['images']);
+        }
 
-        $this->savePreviewImage($images['preview_image'], $images['preview_image_source']);
+        if (array_key_exists('preview_image', $images) && array_key_exists('preview_image_source', $images)) {
+            $this->savePreviewImage($images['preview_image'], $images['preview_image_source']);
+        }
 
         $this->save();
     }
@@ -166,9 +170,7 @@ class Product extends Model
     {
         $this->preview_image = $url;
 
-        if ($source) {
-            $this->preview_image_source = $source;
-        }
+        $this->preview_image_source = $source;
 
         $this->save();
     }
