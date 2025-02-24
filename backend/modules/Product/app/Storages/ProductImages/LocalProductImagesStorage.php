@@ -54,6 +54,7 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
                 $this->upload($image->image, $product);
 
                 return [
+                    'id' => $image->id,
                     'order' => $image->order,
                     'source' => $image->image->hashName()
                 ];
@@ -108,11 +109,9 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
         return $this->storage->delete($this->getImageFullPath($product, $imageId));
     }
 
-    public function deleteMany(Product $product, array $imagesIdToDelete): void
+    public function deleteMany(Product $product, Collection $sources): void
     {
-        $imagesSource = collect($product->images)->whereIn('id', $imagesIdToDelete)->pluck('source');
-
-        $imagesSource->each(function (string $source) use($product) {
+        $sources->each(function (string $source) use($product) {
             $this->delete($product, $source);
         });
     }

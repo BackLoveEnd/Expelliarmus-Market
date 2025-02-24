@@ -150,14 +150,11 @@ export const ProductService = {
 
   async editProductImages(product, images, previewImage) {
     const formData = new FormData();
-
     images.forEach((image, index) => {
-      formData.append(`images[]`, {
-        image: image.file,
-        order: image.order,
-        image_url: image.image_url ?? null,
-        id: image.id ?? null
-      });
+      formData.append(`images[${index}][image]`, image.file ?? "");
+      formData.append(`images[${index}][id]`, image.id ?? "");
+      formData.append(`images[${index}][image_url]`, image.file ? "" : image.image_url);
+      formData.append(`images[${index}][order]`, image.order);
     });
 
     if (previewImage?.file) {

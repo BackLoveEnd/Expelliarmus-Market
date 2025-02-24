@@ -119,13 +119,20 @@ async function submitForm() {
               });
             })
             .catch(e => {
-              toast.showToast(
-                  "Product image was not successfully uploads. Try again or contact us.",
-                  defaultErrorSetting,
-              );
-              router.push({
-                name: "product-list",
-              });
+              if (e.response?.status === 422) {
+                toast.showToast(
+                    e.response?.data?.message,
+                    defaultErrorSetting,
+                );
+              } else {
+                toast.showToast(
+                    "Product image was not successfully uploads. Try again or contact us.",
+                    defaultErrorSetting,
+                );
+                router.push({
+                  name: "product-list",
+                });
+              }
             });
       })
       .catch((e) => {

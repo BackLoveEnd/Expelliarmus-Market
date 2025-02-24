@@ -102,10 +102,10 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
         return $this->storage->delete("products/".$this->getImageFullPath($product, $imageId));
     }
 
-    public function deleteMany(Product $product): void
+    public function deleteMany(Product $product, Collection $sources): void
     {
-        collect($product->images)->each(function (array $images) use($product) {
-            $this->delete($product, $images['source']);
+        $sources->each(function (string $source) use($product) {
+            $this->delete($product, $source);
         });
     }
 

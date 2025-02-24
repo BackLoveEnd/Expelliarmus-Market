@@ -6,6 +6,7 @@ namespace Modules\Product\Http\Management\Service\Images;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Modules\Product\Http\Management\Contracts\Storage\ProductImagesStorageInterface;
 use Modules\Product\Http\Management\DTO\Images\MainImageDto;
@@ -58,7 +59,8 @@ class ProductImagesService
 
             $this->imagesStorage->delete($product, $this->formatToResizedImage($product, $size));
 
-            $images['preview_image'] = $this->imagesStorage->getResized($product, $images['preview_image_source'], $size);
+            $images['preview_image'] = $this->imagesStorage->getResized($product, $images['preview_image_source'],
+                $size);
         }
 
         $product->saveImages($images);
@@ -103,8 +105,9 @@ class ProductImagesService
         $unTouchedImages = $this->getUntouchedImages($imageDto->mainImages);
 
         $imagesToDelete = collect($product->images)
-            ->keys()
-            ->diff($unTouchedImages->pluck('id'));
+            ->filter(fn($image) => ! $imageDto->mainImages->pluck('id')->contains($image['id'])
+                || $changedImages->pluck('id')->contains($image['id'])
+            );
 
         $newImages = $newImages->map(fn($image) => new MainImageDto(
             order: $image->order,
@@ -117,10 +120,15 @@ class ProductImagesService
         }
 
         if ($imagesToDelete->isNotEmpty()) {
-            $this->imagesStorage->deleteMany($product, $imagesToDelete->toArray());
+            $this->imagesStorage->deleteMany(
+                $product,
+                $imagesToDelete->whereNotNull('source')->pluck('source')
+            );
         }
 
-        return $newImages->merge($changedImages)->merge($unTouchedImages);
+        return $newImages->merge($changedImages)->merge($unTouchedImages)
+            ->sortBy('order')
+            ->values();
     }
 
     protected function prepareUpdatedImageForDb(Collection $updatedImages, Product $product): array

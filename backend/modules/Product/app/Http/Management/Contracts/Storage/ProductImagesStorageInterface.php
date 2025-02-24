@@ -21,7 +21,7 @@ interface ProductImagesStorageInterface extends ImageManipulationInterface
 
     public function delete(Product $product, string $imageId): bool;
 
-    public function deleteMany(Product $product, array $imagesIdToDelete): void;
+    public function deleteMany(Product $product, Collection $sources): void;
 
     public function isExists(Product $product, string $imageId): bool;
 }

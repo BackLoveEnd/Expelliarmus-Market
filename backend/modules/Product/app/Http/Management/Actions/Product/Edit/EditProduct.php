@@ -35,7 +35,7 @@ class EditProduct
                 $changes = $this->product->getDirty();
             }
 
-            $this->deleteVariationAction->handle($this->product, $changes['with_attribute_combinations']);
+            $this->deleteVariationAction->handle($this->product, $productDto->withCombinations());
 
             $this->product->update($changes);
         }
