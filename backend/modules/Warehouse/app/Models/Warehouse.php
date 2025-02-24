@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Database\Factories\WarehouseFactory;
 
@@ -20,6 +21,7 @@ use Modules\Warehouse\Database\Factories\WarehouseFactory;
 class Warehouse extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     public $timestamps = false;
 
