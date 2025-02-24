@@ -19,6 +19,10 @@ class ProductCartResource extends JsonApiResource
             'category_id' => $this->category_id,
             'created_at' => $this->created_at->format('Y-m-d H:i'),
             'preview_image' => $this->preview_image,
+            'status' => [
+                'name' => $this->status->toString(),
+                'colorType' => $this->status->toColorType()
+            ],
         ];
     }
 

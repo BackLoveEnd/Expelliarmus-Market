@@ -43,6 +43,15 @@ class ProductImagesController extends Controller
         return $this->guessResponseMessage($imagesDto);
     }
 
+    /**
+     * Edit product images.
+     *
+     * Usage - Admin section.
+     *
+     * @param  ProductEditImageRequest  $request
+     * @param  Product  $product
+     * @return JsonResponse
+     */
     public function edit(ProductEditImageRequest $request, Product $product): JsonResponse
     {
         $imageDto = ProductImageDto::fromRequest($request);

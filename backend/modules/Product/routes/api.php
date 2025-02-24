@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Product\Http\Management\Controllers\Images\ProductImagesController;
 use Modules\Product\Http\Management\Controllers\Product\ManipulationProductController;
 use Modules\Product\Http\Management\Controllers\Product\ProductSpecificationsController;
 use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
-use Modules\Product\Http\Management\Controllers\Images\ProductImagesController;
 
 //TODO: guards
 
@@ -20,11 +20,14 @@ Route::prefix('management')->group(function () {
 
         Route::put('/{product}', [ManipulationProductController::class, 'edit'])
             ->whereNumber('productBind');
+
+        Route::delete('/{product}/trash', [ManipulationProductController::class, 'moveToTrash'])
+            ->whereNumber('product');
     });
 
     Route::get(
         uri: '/product-specifications/category/{category}',
-        action: [ProductSpecificationsController::class, 'getSpecsByCategory']
+        action: [ProductSpecificationsController::class, 'getSpecsByCategory'],
     )
         ->whereNumber('category');
 

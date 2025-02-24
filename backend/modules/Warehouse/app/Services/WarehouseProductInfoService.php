@@ -28,7 +28,7 @@ class WarehouseProductInfoService
 
     public function searchProducts(mixed $searchable): Collection
     {
-        return Product::query()
+        return Product::withTrashed()
             ->whereRaw('document_search @@ plainto_tsquery(?)', [$searchable])
             ->orderByRaw('ts_rank(document_search, plainto_tsquery(?))', [$searchable])
             ->get(['id', 'title', 'product_article']);
@@ -40,7 +40,8 @@ class WarehouseProductInfoService
             $products = QueryBuilder::for(Product::class)
                 ->defaultSort('title')
                 ->allowedFilters([
-                    AllowedFilter::custom('status', new StatusFilter())
+                    AllowedFilter::custom('status', new StatusFilter()),
+                    AllowedFilter::trashed()
                 ])
                 ->allowedSorts([
                     'title',
@@ -98,7 +99,7 @@ class WarehouseProductInfoService
 
     private function loadProduct(int $productId): Product
     {
-        return Product::query()->where('id', $productId)
+        return Product::withTrashed()->where('id', $productId)
             ->with([
                 'category:id,name',
                 'brand:id,name',

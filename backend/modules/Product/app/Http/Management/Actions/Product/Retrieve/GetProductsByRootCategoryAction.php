@@ -88,6 +88,7 @@ class GetProductsByRootCategoryAction
                 'title',
                 'preview_image',
                 'category_id',
+                'status',
                 'created_at',
             ]);
     }
