@@ -148,5 +148,30 @@ export const ProductService = {
     return api().put(`/management/products/${productData.id}`, data);
   },
 
-  async editProductImages(productId, images, previewImage) {},
+  async editProductImages(product, images, previewImage) {
+    const formData = new FormData();
+
+    images.forEach((image, index) => {
+      formData.append(`images[]`, {
+        image: image.file,
+        order: image.order,
+        image_url: image.image_url ?? null,
+        id: image.id ?? null
+      });
+    });
+
+    if (previewImage?.file) {
+      formData.append("preview_image", previewImage.file);
+    }
+
+    return await api().post(
+        "/management/product/" + product.id + "/images/edit",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+    );
+  },
 };

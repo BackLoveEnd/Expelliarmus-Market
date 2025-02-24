@@ -49,6 +49,10 @@ const priceDependOnQuantity = computed(() =>
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
 
+const imagesUrls = computed(() => {
+  return product.images.map((image) => image.image_url);
+})
+
 function updatePrice(variation) {
   console.log(variation);
   price.value = parseFloat(variation.price);
@@ -90,7 +94,7 @@ await getProduct();
     </section>
     <section class="container mx-auto">
       <div class="flex justify-between">
-        <product-photo-tabs :images="product.images" />
+        <product-photo-tabs :images="imagesUrls" />
         <div class="flex flex-col gap-y-8 items-start min-w-[35%]">
           <div class="flex flex-col gap-y-4 w-full">
             <description
