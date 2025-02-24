@@ -17,6 +17,7 @@ use Modules\Category\Models\Category;
 use Modules\Product\Database\Seeders\ProductDatabaseSeeder;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProduct;
 use Modules\Product\Http\Management\Actions\Product\Create\CreateProductFactoryAction;
+use Modules\Product\Http\Management\DTO\Images\MainImageDto;
 use Modules\Product\Http\Management\DTO\Images\ProductImageDto;
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
 use Modules\Product\Http\Management\Service\Images\ProductImagesService;
@@ -50,10 +51,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 2', false);
 
-        (new CreateProductFactoryAction())->createAction($request)
+        (new CreateProductFactoryAction())
+            ->createAction($request)
             ->handle(
                 new CreateProduct(),
-                new CreateProductInWarehouse()
+                new CreateProductInWarehouse(),
             );
 
         $product = Product::query()->where('slug', 'title-2')->first();
@@ -72,21 +74,27 @@ class ProductTest extends TestCase
             'title_description' => 'example',
             'main_description_markdown' => 'example',
             'category_id' => Category::query()->first(['id'])->id,
-            'brand_id' => Brand::query()->first(['id'])->id
+            'brand_id' => Brand::query()->first(['id'])->id,
         ]);
 
         Storage::fake('public_products_images');
 
-        $images = [
-            UploadedFile::fake()->image('product_image1.png'),
-            UploadedFile::fake()->image('product_image2.png'),
-        ];
+        $images = collect([
+            new MainImageDto(
+                order: 1,
+                image: UploadedFile::fake()->image('product_image1.png'),
+            ),
+            new MainImageDto(
+                order: 2,
+                image: UploadedFile::fake()->image('product_image2.png'),
+            ),
+        ]);
 
-        $dto = new ProductImageDto($images, $images[1]);
+        $dto = new ProductImageDto($images, UploadedFile::fake()->image('product_preview_image.png'));
 
         $storage = Mockery::mock(
             LocalProductImagesStorage::class,
-            [new ImageManager(Driver::class), Storage::disk('public_products_images')]
+            [new ImageManager(Driver::class), Storage::disk('public_products_images')],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -95,13 +103,10 @@ class ProductTest extends TestCase
 
         (new ProductImagesService($storage))->upload($dto, $product, new Size(100, 100));
 
-        $storedFilesNames = [];
 
         foreach ($images as $image) {
-            $storedFilesNames[] = $image->hashName();
-
             Storage::disk('public_products_images')
-                ->assertExists("product-id-$product->id-images/".$image->hashName());
+                ->assertExists("product-id-$product->id-images/".$image->image->hashName());
         }
     }
 
@@ -109,10 +114,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 1', true);
 
-        (new CreateProductFactoryAction())->createAction($request)
+        (new CreateProductFactoryAction())
+            ->createAction($request)
             ->handle(
                 new CreateProduct(),
-                new CreateProductInWarehouse()
+                new CreateProductInWarehouse(),
             );
 
         $product = Product::query()->where('slug', 'title-1')->first();
@@ -132,10 +138,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 3', null);
 
-        (new CreateProductFactoryAction())->createAction($request)
+        (new CreateProductFactoryAction())
+            ->createAction($request)
             ->handle(
                 new CreateProduct(),
-                new CreateProductInWarehouse()
+                new CreateProductInWarehouse(),
             );
 
         $this->assertDatabaseHas('products', ['slug' => 'title-3']);
@@ -164,15 +171,15 @@ class ProductTest extends TestCase
                         'name' => 'color',
                         'type' => ProductAttributeTypeEnum::COLOR->value,
                         'value' => 'test',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
 
         foreach ($combinedVariation as $attributes) {
             $validator = Validator::make($attributes, [
-                'attributes' => new AttributeInCombinationUniqueRule()
+                'attributes' => new AttributeInCombinationUniqueRule(),
             ]);
 
             $this->assertFalse($validator->passes());
@@ -191,7 +198,7 @@ class ProductTest extends TestCase
                         'id' => 1,
                         'name' => 'Color',
                         'type' => [
-                            'id' => ProductAttributeTypeEnum::COLOR->value
+                            'id' => ProductAttributeTypeEnum::COLOR->value,
                         ],
                         'value' => 'test',
                         'attribute_view_type' => 0,
@@ -200,19 +207,19 @@ class ProductTest extends TestCase
                         'id' => 1,
                         'name' => 'color',
                         'type' => [
-                            'id' => ProductAttributeTypeEnum::COLOR->value
+                            'id' => ProductAttributeTypeEnum::COLOR->value,
                         ],
                         'value' => 'test',
                         'attribute_view_type' => 0,
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
 
         foreach ($combinedVariation as $attributes) {
             $validator = Validator::make($attributes, [
-                'attributes' => new AttributeInCombinationUniqueRule()
+                'attributes' => new AttributeInCombinationUniqueRule(),
             ]);
 
             $this->assertFalse($validator->passes());
@@ -226,7 +233,7 @@ class ProductTest extends TestCase
         $category->productAttributes()->create([
             'name' => 'Attr1',
             'type' => ProductAttributeTypeEnum::STRING->value,
-            'required' => true
+            'required' => true,
         ]);
 
         $singleVariation = [
@@ -238,34 +245,35 @@ class ProductTest extends TestCase
                     [
                         'quantity' => 50,
                         'price' => 100,
-                        'value' => 'M'
+                        'value' => 'M',
                     ],
                     [
                         'quantity' => 50,
                         'price' => 200,
                         'value' => 'L',
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
 
         $request = $this->createRequest(
             title: 'Title 241',
             isCombinedAttributes: false,
             singleVariation: $singleVariation,
-            category: $category
+            category: $category,
         );
 
         $this->assertThrows(
             test: function () use ($request) {
-                (new CreateProductFactoryAction())->createAction($request)
+                (new CreateProductFactoryAction())
+                    ->createAction($request)
                     ->handle(
                         new CreateProduct(),
-                        new CreateProductInWarehouse()
+                        new CreateProductInWarehouse(),
                     );
             },
             expectedClass: ValidationException::class,
-            expectedMessage: 'Combination must have all required attributes. See more in category section.'
+            expectedMessage: 'Combination must have all required attributes. See more in category section.',
         );
     }
 
@@ -277,18 +285,18 @@ class ProductTest extends TestCase
             [
                 'name' => 'Attr1',
                 'type' => ProductAttributeTypeEnum::STRING->value,
-                'required' => true
+                'required' => true,
             ],
             [
                 'name' => 'Attr2',
                 'type' => ProductAttributeTypeEnum::STRING->value,
-                'required' => false
+                'required' => false,
             ],
             [
                 'name' => 'Attr3',
                 'type' => ProductAttributeTypeEnum::STRING->value,
-                'required' => true
-            ]
+                'required' => true,
+            ],
         ]);
 
         $combinedVariations = [
@@ -300,7 +308,7 @@ class ProductTest extends TestCase
                     [
                         'name' => 'Attr1',
                         'type' => [
-                            'id' => ProductAttributeTypeEnum::COLOR->value
+                            'id' => ProductAttributeTypeEnum::COLOR->value,
                         ],
                         'value' => 'test',
                         'attribute_view_type' => 0,
@@ -308,12 +316,12 @@ class ProductTest extends TestCase
                     [
                         'name' => 'attr3',
                         'type' => [
-                            'id' => ProductAttributeTypeEnum::COLOR->value
+                            'id' => ProductAttributeTypeEnum::COLOR->value,
                         ],
                         'value' => 'test',
                         'attribute_view_type' => 0,
-                    ]
-                ]
+                    ],
+                ],
             ],
             [
                 'sku' => 'ADA5D',
@@ -323,12 +331,12 @@ class ProductTest extends TestCase
                     [
                         'name' => 'attr2',
                         'type' => [
-                            'id' => ProductAttributeTypeEnum::COLOR->value
+                            'id' => ProductAttributeTypeEnum::COLOR->value,
                         ],
                         'value' => 'test',
                         'attribute_view_type' => 0,
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -336,19 +344,20 @@ class ProductTest extends TestCase
             title: 'Title 2412',
             isCombinedAttributes: true,
             combinedVariations: $combinedVariations,
-            category: $category
+            category: $category,
         );
 
         $this->assertThrows(
             test: function () use ($request) {
-                (new CreateProductFactoryAction())->createAction($request)
+                (new CreateProductFactoryAction())
+                    ->createAction($request)
                     ->handle(
                         new CreateProduct(),
-                        new CreateProductInWarehouse()
+                        new CreateProductInWarehouse(),
                     );
             },
             expectedClass: ValidationException::class,
-            expectedMessage: 'Combination must have all required attributes. See more in category section.'
+            expectedMessage: 'Combination must have all required attributes. See more in category section.',
         );
     }
 
@@ -357,7 +366,7 @@ class ProductTest extends TestCase
         ?bool $isCombinedAttributes,
         array $combinedVariations = [],
         array $singleVariation = [],
-        ?Category $category = null
+        ?Category $category = null,
     ) {
         if (! $combinedVariations) {
             $combinedVariations = [
@@ -370,12 +379,12 @@ class ProductTest extends TestCase
                             'name' => 'Color',
                             'type' => [
                                 'id' => ProductAttributeTypeEnum::COLOR->value,
-                                'name' => ProductAttributeTypeEnum::COLOR->name
+                                'name' => ProductAttributeTypeEnum::COLOR->name,
                             ],
                             'value' => 'test',
-                            'attribute_view_type' => ProductAttributeViewTypeEnum::RADIO_BUTTON->value
-                        ]
-                    ]
+                            'attribute_view_type' => ProductAttributeViewTypeEnum::RADIO_BUTTON->value,
+                        ],
+                    ],
                 ],
                 [
                     'sku' => 'ADAD',
@@ -386,12 +395,12 @@ class ProductTest extends TestCase
                             'name' => 'Color',
                             'type' => [
                                 'id' => ProductAttributeTypeEnum::COLOR->value,
-                                'name' => ProductAttributeTypeEnum::COLOR->name
+                                'name' => ProductAttributeTypeEnum::COLOR->name,
                             ],
                             'value' => 'test',
-                            'attribute_view_type' => ProductAttributeViewTypeEnum::RADIO_BUTTON->value
-                        ]
-                    ]
+                            'attribute_view_type' => ProductAttributeViewTypeEnum::RADIO_BUTTON->value,
+                        ],
+                    ],
                 ],
             ];
         }
@@ -406,56 +415,67 @@ class ProductTest extends TestCase
                         [
                             'quantity' => 50,
                             'price' => 100,
-                            'value' => 'M'
+                            'value' => 'M',
                         ],
                         [
                             'quantity' => 50,
                             'price' => 200,
                             'value' => 'L',
-                        ]
+                        ],
                     ],
-                ]
+                ],
             ];
         }
 
         $request = Mockery::mock(ProductCreateRequest::class);
 
         if ($isCombinedAttributes === true) {
-            $request->shouldReceive('relation')
+            $request
+                ->shouldReceive('relation')
                 ->with('product_variations_combinations')
                 ->andReturn(collect($combinedVariations));
 
-            $request->shouldReceive('relation')
+            $request
+                ->shouldReceive('relation')
                 ->with('product_variation')
                 ->andReturn(collect());
-        } else if ($isCombinedAttributes === false){
-            $request->shouldReceive('relation')
-                ->with('product_variations_combinations')
-                ->andReturn(collect());
-
-            $request->shouldReceive('relation')
-                ->with('product_variation')
-                ->andReturn(collect($singleVariation));
         } else {
-            $request->shouldReceive('relation')
-                ->with('product_variations_combinations')
-                ->andReturn(collect());
+            if ($isCombinedAttributes === false) {
+                $request
+                    ->shouldReceive('relation')
+                    ->with('product_variations_combinations')
+                    ->andReturn(collect());
 
-            $request->shouldReceive('relation')
-                ->with('product_variation')
-                ->andReturn(collect());
+                $request
+                    ->shouldReceive('relation')
+                    ->with('product_variation')
+                    ->andReturn(collect($singleVariation));
+            } else {
+                $request
+                    ->shouldReceive('relation')
+                    ->with('product_variations_combinations')
+                    ->andReturn(collect());
+
+                $request
+                    ->shouldReceive('relation')
+                    ->with('product_variation')
+                    ->andReturn(collect());
+            }
         }
 
 
-        $request->shouldReceive('relation')
+        $request
+            ->shouldReceive('relation')
             ->with('category')
             ->andReturn(['id' => $category->id ?? Category::query()->create(['name' => 'Test Category'])->id]);
 
-        $request->shouldReceive('relation')
+        $request
+            ->shouldReceive('relation')
             ->with('brand')
             ->andReturn(['id' => Brand::query()->first(['id'])->id]);
 
-        $request->shouldReceive('relation')
+        $request
+            ->shouldReceive('relation')
             ->with('product_specs')
             ->andReturn(
                 collect([
@@ -465,11 +485,11 @@ class ProductTest extends TestCase
                             [
                                 'id' => ProductSpecAttributes::query()->create(['spec_name' => 'Example spec'])->id,
                                 'spec_name' => 'Example spec',
-                                'value' => ['test value']
-                            ]
-                        ]
-                    ]
-                ])
+                                'value' => ['test value'],
+                            ],
+                        ],
+                    ],
+                ]),
             );
 
         $request->is_combined_attributes = $isCombinedAttributes;

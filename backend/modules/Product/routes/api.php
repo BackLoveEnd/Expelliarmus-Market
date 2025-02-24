@@ -32,7 +32,7 @@ Route::prefix('management')->group(function () {
         Route::controller(ProductStatusController::class)->group(function () {
             Route::post('/{product}/publish', 'publish')->whereNumber('product');
 
-            Route::post('/{product}/unpublish', 'uPublish')->whereNumber('product');
+            Route::post('/{product}/unpublish', 'unPublish')->whereNumber('product');
         });
     });
 

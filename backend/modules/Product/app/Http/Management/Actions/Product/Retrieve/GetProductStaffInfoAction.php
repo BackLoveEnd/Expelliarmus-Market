@@ -39,6 +39,7 @@ class GetProductStaffInfoAction
                 'preview_image',
                 'with_attribute_combinations',
                 'created_at',
+                'status',
                 'updated_at',
             ]);
 

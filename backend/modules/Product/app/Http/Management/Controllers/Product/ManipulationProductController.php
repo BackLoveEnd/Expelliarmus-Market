@@ -16,6 +16,7 @@ use Modules\Product\Http\Management\Exceptions\CannotTrashPublishedProductExcept
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Enums\ProductStatusEnum as Status;
 use Modules\Warehouse\Http\Actions\CreateProductInWarehouse;
 use Modules\Warehouse\Http\Actions\EditProductInWarehouse;
 
@@ -59,6 +60,12 @@ class ManipulationProductController extends Controller
      */
     public function edit(ProductEditRequest $request, Product $product, EditProductFactoryAction $factory): JsonResponse
     {
+        if ($product->status->is(Status::PUBLISHED) || $product->status->is(Status::TRASHED)) {
+            return response()->json([
+                'message' => 'Editing published or trashed product is not allowed.',
+            ], 403);
+        }
+
         $factory->createAction($request)->handle(
             new EditProduct($product, new DeleteVariationsWhenNeedAction()),
             new EditProductInWarehouse($product),
@@ -79,7 +86,7 @@ class ManipulationProductController extends Controller
      */
     public function moveToTrash(Product $product, MoveProductToTrashAction $action): JsonResponse
     {
-        if ($product->trashed()) {
+        if ($product->trashed() || $product->status->is(Status::TRASHED)) {
             return response()->json(['message' => 'Product is already in trash.'], 409);
         }
 

@@ -11,6 +11,6 @@ class ProductHasAlreadyUnpublishedException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => 'Product is already unpublished']);
+        return response()->json(['message' => 'Product is already unpublished.']);
     }
 }
