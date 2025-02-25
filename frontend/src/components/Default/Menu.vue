@@ -6,15 +6,15 @@
       </MenuButton>
     </div>
     <transition
-      enter-active-class="transition duration-100 ease-out"
-      enter-from-class="transform scale-95 opacity-0"
-      enter-to-class="transform scale-100 opacity-100"
-      leave-active-class="transition duration-75 ease-in"
-      leave-from-class="transform scale-100 opacity-100"
-      leave-to-class="transform scale-95 opacity-0"
+        enter-active-class="transition duration-100 ease-out"
+        enter-from-class="transform scale-95 opacity-0"
+        enter-to-class="transform scale-100 opacity-100"
+        leave-active-class="transition duration-75 ease-in"
+        leave-from-class="transform scale-100 opacity-100"
+        leave-to-class="transform scale-95 opacity-0"
     >
       <MenuItems
-        :class="[
+          :class="[
           'absolute',
           dropToUp ? 'bottom-full' : 'top-full',
           dropToUp ? 'mb-2' : 'mt-2',
@@ -23,25 +23,20 @@
       >
         <div class="px-1 py-1">
           <MenuItem
-            v-slot="{ active, close }"
-            v-for="(link, index) in links"
-            :key="index"
-            class="menu-item"
+              v-slot="{ active, close }"
+              v-for="(link, index) in links"
+              :key="index"
+              class="menu-item"
           >
             <router-link
-              :to="link.url"
-              @click.capture="menuItemClick(close)"
-              :class="[
+                :to="link.url"
+                @click.capture="menuItemClick(close)"
+                :class="[
                 active ? 'bg-[#db4444] text-white' : 'text-gray-900',
-                'group flex justify-between w-full items-center rounded-md px-2 py-2 text-sm',
+                'group flex gap-x-4 w-full items-center rounded-md px-2 py-2 text-sm',
               ]"
             >
-              <img
-                v-if="link.svg"
-                :src="link.svg"
-                :alt="link.name"
-                class="size-6"
-              />
+              <i :class="link.svg"></i>
               {{ link.name }}
             </router-link>
           </MenuItem>
@@ -59,9 +54,9 @@
 </template>
 
 <script setup>
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { defineProps, ref } from "vue";
-import { useScrolling } from "@/composables/useScrolling.js";
+import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
+import {defineProps, ref} from "vue";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const isOpen = ref(false);
 
@@ -89,8 +84,7 @@ function dropDownClose(event) {
 <style scoped>
 .menu-item:hover {
   img {
-    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%)
-      hue-rotate(118deg) brightness(111%) contrast(106%);
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(118deg) brightness(111%) contrast(106%);
   }
 }
 </style>
