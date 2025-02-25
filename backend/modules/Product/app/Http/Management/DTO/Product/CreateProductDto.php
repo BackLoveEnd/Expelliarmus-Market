@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\DTO;
+namespace Modules\Product\Http\Management\DTO\Product;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
@@ -10,6 +10,8 @@ use Spatie\LaravelData\Data;
 
 class CreateProductDto extends Data
 {
+    private ?bool $withCombinations = null;
+
     public function __construct(
         public readonly string $title,
         public readonly string $titleDesc,
@@ -19,8 +21,17 @@ class CreateProductDto extends Data
         public readonly string $productArticle,
         /**@var Collection <int, ProductSpecsDto> $productSpecs */
         public readonly Collection $productSpecs,
-        public readonly ?bool $withCombinations = null,
     ) {
+    }
+
+    public function setAndGetVariationType(?bool $type): void
+    {
+        $this->withCombinations = $type;
+    }
+
+    public function withCombinations(): ?bool
+    {
+        return $this->withCombinations;
     }
 
     public static function fromRequest(JsonApiRelationsFormRequest $request): CreateProductDto
@@ -38,7 +49,6 @@ class CreateProductDto extends Data
                 items: $request->relation('product_specs'),
                 categoryId: $categoryId
             ),
-            withCombinations: $request->is_combined_attributes
         );
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->decimal('default_price')->nullable();
             $table->timestamp('arrived_at')->nullable();
             $table->primary('id');
+            $table->softDeletes();
         });
     }
 

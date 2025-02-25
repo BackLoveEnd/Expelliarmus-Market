@@ -6,6 +6,7 @@ namespace Modules\Warehouse\DTO;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Modules\Category\Http\Actions\CreateAttributesForCategoryAction;
 use Modules\Category\Models\Category;
 use Spatie\LaravelData\Data;
@@ -30,23 +31,24 @@ class CreateProductAttributeCombinedVariationsDto extends Data
         $category = Category::findOrFail($request->relation('category')['id']);
 
         $productVariations = $request->relation('product_variations_combinations');
+        return DB::transaction(function () use ($category, $productVariations) {
+            $createdAttributes = self::prepareAttributeBeforeCollection($category, $productVariations);
 
-        $createdAttributes = self::prepareAttributeBeforeCollection($category, $productVariations);
-
-        return $productVariations->map(
-            function (array $variation) use ($createdAttributes, $category) {
-                return self::from([
-                    'skuName' => $variation['sku'],
-                    'quantity' => $variation['quantity'],
-                    'price' => $variation['price'] ? round($variation['price'], 2) : null,
-                    'attributes' => AttributesForCombinedValueDto::collectWithCategory(
-                        items: $variation['attributes'],
-                        category: $category,
-                        createdAttributes: $createdAttributes
-                    )
-                ]);
-            }
-        );
+            return $productVariations->map(
+                function (array $variation) use ($createdAttributes, $category) {
+                    return self::from([
+                        'skuName' => $variation['sku'],
+                        'quantity' => $variation['quantity'],
+                        'price' => $variation['price'] ? round($variation['price'], 2) : null,
+                        'attributes' => AttributesForCombinedValueDto::collectWithCategory(
+                            items: $variation['attributes'],
+                            category: $category,
+                            createdAttributes: $createdAttributes
+                        )
+                    ]);
+                }
+            );
+        });
     }
 
     private static function prepareAttributeBeforeCollection(

@@ -11,7 +11,7 @@
   >
     <div class="flex gap-x-4 items-center">
       <focused-text-input
-        v-if="attributesData.attribute_type === 'float'"
+        v-if="attributeTypeName === 'float'"
         id="value"
         name="value[]"
         type="number"
@@ -26,7 +26,7 @@
         v-else
         id="value"
         name="value[]"
-        :type="attributesData.attribute_type"
+        :type="attributeTypeName"
         placeholder="Your value"
         inputClass="h-14"
         :label="`Value ${index + 1}`"
@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { reactive, watch } from "vue";
+import {reactive, ref, watch} from "vue";
 import FocusedTextInput from "@/components/Default/Inputs/FocusedTextInput.vue";
 
 const props = defineProps({
@@ -76,11 +76,12 @@ const props = defineProps({
 const emit = defineEmits(["update:attributesData"]);
 
 let attributesData = reactive(
-  props.existingAttributes.length
+  props.existingAttributes?.length
     ? {
         attribute_id: props.existingAttributes[0].attributes.attribute_id,
         attribute_name: props.existingAttributes[0].attributes.attribute_name,
-        attribute_type: props.existingAttributes[0].attributes.attribute_type,
+        attribute_type: props.existingAttributes[0].attributes.attribute_type_id,
+        attribute_view_type: props.existingAttributes[0].attributes.attribute_view_type,
         attributes: props.existingAttributes.map((attr) => ({
           value: attr.attributes.value,
           quantity: attr.attributes.quantity,
@@ -90,7 +91,8 @@ let attributesData = reactive(
     : {
         attribute_id: props.options?.single?.attribute_id || null,
         attribute_name: props.options?.single?.attribute_name || "",
-        attribute_type: props.options?.single?.attribute_type?.name || "",
+        attribute_type: props.options?.single?.attribute_type?.id,
+        attribute_view_type: props.options?.single?.attribute_view_type || 0,
         attributes: Array.from(
           { length: props.options?.single?.numberOfAttributes || 0 },
           () => ({
@@ -102,6 +104,11 @@ let attributesData = reactive(
       },
 );
 
+let attributeTypeName = ref(
+    props.existingAttributes?.length
+    ? props.existingAttributes[0].attributes.attribute_type : props.options?.single?.attribute_type?.name
+);
+
 const emitUpdate = () => {
   emit("update:attributesData", attributesData);
 };
@@ -110,7 +117,8 @@ function clearAttributesData() {
   attributesData = {
     attribute_id: props.options?.single?.attribute_id || null,
     attribute_name: props.options?.single?.attribute_name || "",
-    attribute_type: props.options?.single?.attribute_type?.name || "",
+    attribute_type: props.options?.single?.attribute_type?.id,
+    attribute_view_type: props.options?.single?.attribute_view_type || 0,
     attributes: Array.from(
       { length: props.options?.single?.numberOfAttributes || 0 },
       () => ({
@@ -120,6 +128,8 @@ function clearAttributesData() {
       }),
     ),
   };
+
+  attributeTypeName.value = props.options?.single?.attribute_type?.name;
 }
 
 watch(

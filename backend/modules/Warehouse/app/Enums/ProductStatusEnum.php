@@ -2,6 +2,13 @@
 
 namespace Modules\Warehouse\Enums;
 
+use Exception;
+use Modules\Product\Http\Management\Exceptions\CannotPublishTrashedProductException;
+use Modules\Product\Http\Management\Exceptions\CannotUnpublishTrashedProductException;
+use Modules\Product\Http\Management\Exceptions\ProductHasAlreadyPublishedException;
+use Modules\Product\Http\Management\Exceptions\ProductHasAlreadyUnpublishedException;
+use Modules\Product\Http\Management\Exceptions\ProductIsAlreadyTrashedException;
+
 enum ProductStatusEnum: int
 {
     case PUBLISHED = 0;
@@ -15,7 +22,7 @@ enum ProductStatusEnum: int
         return match ($this) {
             self::PUBLISHED => 'Published',
             self::NOT_PUBLISHED => 'Not Published',
-            self::TRASHED => 'Trashed'
+            self::TRASHED => 'Trashed',
         };
     }
 
@@ -24,7 +31,41 @@ enum ProductStatusEnum: int
         return match ($this) {
             self::PUBLISHED => 'success',
             self::NOT_PUBLISHED => 'warning',
-            self::TRASHED => 'danger'
+            self::TRASHED => 'danger',
         };
     }
+
+    public function is(self $status): bool
+    {
+        return $this === $status;
+    }
+
+    /**
+     * Check if `from` status can be changed to `to` status.
+     *
+     * @param  ProductStatusEnum  $from
+     * @param  ProductStatusEnum  $to
+     * @return true
+     * @throws Exception
+     */
+    public static function checkConsistency(self $from, self $to): true
+    {
+        $invalidTransitions = [
+            self::PUBLISHED->value.'_'.self::PUBLISHED->value => ProductHasAlreadyPublishedException::class,
+            self::TRASHED->value.'_'.self::PUBLISHED->value => CannotPublishTrashedProductException::class,
+            self::NOT_PUBLISHED->value.'_'.self::NOT_PUBLISHED->value => ProductHasAlreadyUnpublishedException::class,
+            self::TRASHED->value.'_'.self::NOT_PUBLISHED->value => CannotUnpublishTrashedProductException::class,
+            self::TRASHED->value.'_'.self::TRASHED->value => ProductIsAlreadyTrashedException::class,
+        ];
+
+        $transitionKey = $from->value.'_'.$to->value;
+
+        if (isset($invalidTransitions[$transitionKey])) {
+            throw new $invalidTransitions[$transitionKey]();
+        }
+
+        return true;
+    }
+
+
 }

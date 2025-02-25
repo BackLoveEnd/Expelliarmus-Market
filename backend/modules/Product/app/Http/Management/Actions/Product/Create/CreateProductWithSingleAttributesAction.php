@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Actions\Product\Create;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Exceptions\FailedToCreateProductException;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\AttributesForSingleValueDto;

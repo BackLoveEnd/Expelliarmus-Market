@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\Controllers;
+namespace Modules\Product\Http\Management\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use App\Services\Cache\CacheService;

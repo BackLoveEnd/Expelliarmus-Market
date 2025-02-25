@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Actions\Product\Create;
 
 use Illuminate\Support\Collection;
-use Modules\Product\Http\Management\DTO\CreateProductDto;
-use Modules\Product\Http\Management\DTO\ProductSpecsDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\ProductSpecsDto;
 use Modules\Product\Http\Management\Exceptions\FailedToCreateProductException;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductSpec;
@@ -41,7 +41,7 @@ class CreateProduct
             'product_article' => $dto->productArticle,
             'images' => ['product_preview.png'],
             'preview_image' => 'product_preview.png',
-            'with_attribute_combinations' => $dto->withCombinations
+            'with_attribute_combinations' => $dto->withCombinations()
         ]);
     }
 

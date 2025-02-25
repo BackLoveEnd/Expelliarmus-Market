@@ -21,7 +21,7 @@ class ProductPreviewResource extends JsonApiResource
             'article' => $this->product_article,
             'main_description' => $this->main_description_html,
             'title_description' => $this->title_description,
-            'images' => $this->images,
+            'images' => collect($this->images)->select(['order', 'image_url']),
             'specifications' => $this->productSpecs
         ];
 

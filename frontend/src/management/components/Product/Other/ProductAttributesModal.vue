@@ -46,7 +46,7 @@ function deleteAttributes() {
 
 onMounted(() => {
   if (props.manuallyGenerated) {
-    isGenerated.value = true;
+    isGenerated.value = props.manuallyGenerated;
   }
 });
 

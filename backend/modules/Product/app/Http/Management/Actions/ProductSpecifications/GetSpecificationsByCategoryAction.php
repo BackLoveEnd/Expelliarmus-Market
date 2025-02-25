@@ -6,7 +6,7 @@ namespace Modules\Product\Http\Management\Actions\ProductSpecifications;
 
 use Illuminate\Support\Collection;
 use Modules\Category\Models\Category;
-use Modules\Product\Http\Management\DTO\ProductViewSpecsDto;
+use Modules\Product\Http\Management\DTO\Product\ProductViewSpecsDto;
 
 class GetSpecificationsByCategoryAction
 {

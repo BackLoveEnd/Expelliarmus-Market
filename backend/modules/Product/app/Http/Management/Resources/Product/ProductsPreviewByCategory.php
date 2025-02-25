@@ -19,7 +19,7 @@ class ProductsPreviewByCategory extends JsonApiResource
         ];
     }
 
-    public function toRelationships(Request $request)
+    public function toRelationships(Request $request): array
     {
         return [
             'products' => fn() => ProductCartResource::collection($this->products)

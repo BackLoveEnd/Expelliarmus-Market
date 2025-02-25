@@ -27,7 +27,7 @@ trait Slugger
         return $this->newModelQuery()
             ->whereLike($this->slugColumn(), $name.'%')
             ->where('id', '<>', $id)
-            ->get($this->slugColumn(), 'id');
+            ->get([$this->slugColumn(), 'id']);
     }
 
     private function overrideSlugOnExist(string $slug): string

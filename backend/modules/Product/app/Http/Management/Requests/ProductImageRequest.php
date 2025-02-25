@@ -3,6 +3,7 @@
 namespace Modules\Product\Http\Management\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
 
 class ProductImageRequest extends FormRequest
 {
@@ -10,7 +11,8 @@ class ProductImageRequest extends FormRequest
     {
         return [
             'images' => ['nullable', 'array', 'max:4'],
-            'images.*' => ['image', 'max:10240'],
+            'images.*.image' => ['required', 'image', 'max:10240'],
+            'images.*.order' => ['required', 'integer', 'distinct', 'min:1', 'max:4'],
             'preview_image' => ['nullable', 'mimes:png,jpg,jpeg', 'max:10240']
         ];
     }

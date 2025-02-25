@@ -6,7 +6,7 @@ namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Exceptions\FailedToUpdateProductException;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\CreateProductAttributeCombinedVariationsDto as CombinedVariationsDto;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\CreateWarehouseDto;
 use Modules\Warehouse\Http\Actions\EditProductInWarehouse;
@@ -23,7 +23,7 @@ class EditProductWithoutOptions implements EditProductActionInterface
         return DB::transaction(function () use ($editProduct, $editProductInWarehouse) {
             $product = $editProduct->handle($this->productDto);
 
-            $warehouse = $editProductInWarehouse->handle($this->warehouseDto);
+            $editProductInWarehouse->handle($this->warehouseDto);
 
             return $product;
         });

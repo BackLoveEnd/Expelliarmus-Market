@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\Brand\Builders\ProductBuilder;
 use Modules\Brand\Models\Brand;
@@ -49,6 +50,7 @@ class Product extends Model
 {
     use HasFactory;
     use Slugger;
+    use SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -61,7 +63,7 @@ class Product extends Model
         'images',
         'preview_image',
         'preview_image_source',
-        'with_attribute_combinations'
+        'with_attribute_combinations',
     ];
 
     public function orderLines(): HasMany
@@ -86,12 +88,13 @@ class Product extends Model
 
     public function productSpecs(): BelongsToMany
     {
-        return $this->belongsToMany(
-            ProductSpecAttributes::class,
-            'product_specs',
-            'product_id',
-            'attribute_id'
-        )->withPivot(['value'])
+        return $this
+            ->belongsToMany(
+                ProductSpecAttributes::class,
+                'product_specs',
+                'product_id',
+                'attribute_id',
+            )->withPivot(['value'])
             ->using(ProductSpec::class);
     }
 
@@ -122,9 +125,33 @@ class Product extends Model
         });
     }
 
-    public function hasCombinedAttributes(): ?bool
+    public function hasCombinedAttributes(bool $original = false): ?bool
     {
+        if ($original) {
+            return $this->getOriginal('with_attribute_combinations');
+        }
+
         return $this->with_attribute_combinations;
+    }
+
+    public function changeStatus(ProductStatusEnum $status): void
+    {
+        if ($this->status === $status) {
+            return;
+        }
+
+        $this->status = $status->value;
+
+        $this->save();
+    }
+
+    public function moveToTrash(): void
+    {
+        $this->changeStatus(ProductStatusEnum::TRASHED);
+
+        $this->delete();
+
+        $this->warehouse()->delete();
     }
 
     public function publish(): void
@@ -151,9 +178,13 @@ class Product extends Model
 
     public function saveImages(array $images): void
     {
-        $this->saveMainImages($images['images'] ?? null);
+        if (array_key_exists('images', $images)) {
+            $this->saveMainImages($images['images']);
+        }
 
-        $this->savePreviewImage($images['preview_image'], $images['preview_image_source']);
+        if (array_key_exists('preview_image', $images) && array_key_exists('preview_image_source', $images)) {
+            $this->savePreviewImage($images['preview_image'], $images['preview_image_source']);
+        }
 
         $this->save();
     }
@@ -162,9 +193,7 @@ class Product extends Model
     {
         $this->preview_image = $url;
 
-        if ($source) {
-            $this->preview_image_source = $source;
-        }
+        $this->preview_image_source = $source;
 
         $this->save();
     }
@@ -184,7 +213,7 @@ class Product extends Model
             'images' => 'array',
             'with_attribute_combinations' => 'boolean',
             'product_article' => ProductArticleCast::class,
-            'status' => ProductStatusEnum::class
+            'status' => ProductStatusEnum::class,
         ];
     }
 

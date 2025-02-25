@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\DTO;
+namespace Modules\Product\Http\Management\DTO\Product;
 
 use Illuminate\Support\Collection;
 

@@ -11,7 +11,6 @@ class TotalQuantitySort implements Sort
 {
     public function __invoke(Builder $query, bool $descending, string $property): Builder
     {
-        return $query->join('warehouses', 'warehouses.product_id', '=', 'products.id')
-            ->orderBy('warehouses.total_quantity', $descending ? 'desc' : 'asc');
+        return $query->orderBy('warehouses.total_quantity', $descending ? 'desc' : 'asc');
     }
 }

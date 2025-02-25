@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Management\DTO;
+namespace Modules\Product\Http\Management\DTO\Product;
 
 use Modules\Product\Http\Management\Actions\ProductSpecifications\CreateManyProductSpecsAction;
 use Spatie\LaravelData\Data;

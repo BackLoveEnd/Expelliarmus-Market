@@ -16,9 +16,8 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
 {
     public function __construct(
         protected ImageManagerInterface $imageManager,
-        protected Filesystem $storage
-    ) {
-    }
+        protected Filesystem $storage,
+    ) {}
 
     public function saveResized(Product $product, string $imageId, Size $size): string
     {
@@ -29,7 +28,7 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
 
             $this->storage->put(
                 $this->getImageFullPath($product, $resizedImageId),
-                (string)$image->encode()
+                (string)$image->encode(),
             );
 
             return $resizedImageId;
@@ -41,7 +40,12 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
     public function getResized(Product $product, ?string $resizedImageId, Size $size): string
     {
         if (! $resizedImageId || ! $this->isExists($product, $resizedImageId)) {
-            $resizedImageId = $this->saveResized($product, $this->defaultPreviewImage(), $size);
+            $resizedImageId = $this->defaultResizedPreviewImage();
+
+            $this->storage->copy(
+                $resizedImageId,
+                $this->getImageFullPath($product, $resizedImageId),
+            );
         }
 
         return $this->getOne($product, $resizedImageId);
@@ -60,6 +64,11 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
     public function defaultPreviewImage(): string
     {
         return config('product.image.default_preview');
+    }
+
+    public function defaultResizedPreviewImage(): string
+    {
+        return config('product.image.default_resized_preview');
     }
 
     private function getResizedImageId(string $imageId, int $width, int $height): string

@@ -31,7 +31,12 @@ class EditProductInWarehouse
         if ($dto->getPrice() === null) {
             return null;
         }
-        return $dto->getVariationPrices()?->filter(fn(?int $price) => $price !== null)->isEmpty()
+
+        if ($dto->getVariationPrices() === null) {
+            return $dto->getPrice();
+        }
+
+        return $dto->getVariationPrices()->filter(fn(?int $price) => $price !== null)->isEmpty()
             ? round($dto->getPrice(), 2)
             : null;
     }

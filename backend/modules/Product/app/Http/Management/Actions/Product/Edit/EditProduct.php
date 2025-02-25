@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
 use Illuminate\Support\Collection;
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductSpec;
 
 class EditProduct
 {
-    public function __construct(private Product $product)
-    {
+    public function __construct(
+        private Product $product,
+        private DeleteVariationsWhenNeedAction $deleteVariationAction
+    ) {
     }
 
-    public function handle(CreateProductDto $productDto)
+    public function handle(CreateProductDto $productDto): Product
     {
         $this->product->fill([
             'title' => $productDto->title,
@@ -23,7 +25,7 @@ class EditProduct
             'main_description_markdown' => $productDto->mainDesc,
             'category_id' => $productDto->categoryId,
             'brand_id' => $productDto->brandId,
-            'with_attribute_combinations' => $productDto->withCombinations
+            'with_attribute_combinations' => $productDto->withCombinations()
         ]);
 
         if ($this->product->isDirty()) {
@@ -32,6 +34,8 @@ class EditProduct
             } else {
                 $changes = $this->product->getDirty();
             }
+
+            $this->deleteVariationAction->handle($this->product, $productDto->withCombinations());
 
             $this->product->update($changes);
         }

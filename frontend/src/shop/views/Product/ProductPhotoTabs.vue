@@ -28,18 +28,12 @@
   </tab-group>
 </template>
 
-<script>
+<script setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue";
 
-export default {
-  components: { TabPanel, TabPanels, Tab, TabList, TabGroup },
-  props: {
-    images: {
-      type: Array,
-      required: true,
-    },
-  },
-};
+const props = defineProps({
+  images: Array
+})
 </script>
 
 <style scoped></style>

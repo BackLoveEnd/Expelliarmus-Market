@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
-use Modules\Product\Http\Management\DTO\CreateProductDto;
+use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
 use Modules\Warehouse\DTO\CreateProductAttributeCombinedVariationsDto;
 use Modules\Warehouse\DTO\CreateProductAttributeSingleVariationDto;
@@ -14,11 +14,13 @@ class EditProductFactoryAction
 {
     public function createAction(ProductEditRequest $request): EditProductActionInterface
     {
-        if (is_null($request->is_combined_attributes)) {
+        if ($request->relation('product_variation')->isEmpty()
+            && $request->relation('product_variations_combinations')->isEmpty()
+        ) {
             return $this->editProductWithoutOptions($request);
         }
 
-        if ($request->is_combined_attributes === true) {
+        if ($request->relation('product_variations_combinations')->isNotEmpty()) {
             return $this->editCombinedOptionsProduct($request);
         }
 
@@ -27,8 +29,12 @@ class EditProductFactoryAction
 
     private function editSingleOptionProduct(ProductEditRequest $request): EditProductWithSingleOption
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(false);
+
         return new EditProductWithSingleOption(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
             singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request)
         );
@@ -36,8 +42,12 @@ class EditProductFactoryAction
 
     private function editCombinedOptionsProduct(ProductEditRequest $request): EditProductWithCombinedOptions
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(true);
+
         return new EditProductWithCombinedOptions(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
             combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request)
         );
@@ -45,8 +55,12 @@ class EditProductFactoryAction
 
     private function editProductWithoutOptions(ProductEditRequest $request): EditProductWithoutOptions
     {
+        $productDto = CreateProductDto::fromRequest($request);
+
+        $productDto->setAndGetVariationType(null);
+
         return new EditProductWithoutOptions(
-            productDto: CreateProductDto::fromRequest($request),
+            productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request)
         );
     }

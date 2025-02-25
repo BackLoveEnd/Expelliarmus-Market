@@ -11,7 +11,6 @@ class ArrivedAtSort implements Sort
 {
     public function __invoke(Builder $query, bool $descending, string $property): Builder
     {
-        return $query->join('warehouses', 'warehouses.product_id', '=', 'products.id')
-            ->orderBy('warehouses.arrived_at', $descending ? 'desc' : 'asc');
+        return $query->orderBy('warehouses.arrived_at', $descending ? 'desc' : 'asc');
     }
 }

@@ -1,6 +1,7 @@
 <script setup>
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import ProductPreviewDetails from "@/management/components/Product/Other/ProductPreviewDetails.vue";
+import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 
 const props = defineProps({
   id: Number | String,
@@ -14,9 +15,9 @@ const props = defineProps({
       <h1 class="text-3xl font-semibold">Product Preview</h1>
       <main class="space-y-32">
         <Suspense>
-          <ProductPreviewDetails :id="id" :slug="slug" />
+          <ProductPreviewDetails :id="id" :slug="slug"/>
           <template #fallback>
-            <p>Loading...</p>
+            <suspense-loader/>
           </template>
         </Suspense>
       </main>

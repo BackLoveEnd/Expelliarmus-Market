@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Product\Models\Product;
+use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Database\Factories\ProductVariationFactory;
 
 /**
@@ -17,12 +18,14 @@ use Modules\Warehouse\Database\Factories\ProductVariationFactory;
  * @property int $product_id
  * @property int $quantity
  * @property float $price,
+ * @property string $sku
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
 class ProductVariation extends Model
 {
     use HasFactory;
+    use Slugger;
 
     public $timestamps = false;
 
@@ -59,6 +62,24 @@ class ProductVariation extends Model
     public function variationsAttributesValues(): HasMany
     {
         return $this->hasMany(VariationAttributeValues::class, 'variation_id');
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (ProductVariation $variation) {
+            $variation->sku = $variation->createSlug($variation->sku);
+        });
+
+        static::updating(function (ProductVariation $variation) {
+            $variation->sku = $variation->createSlug($variation->sku);
+        });
+    }
+
+    protected function slugColumn(): string
+    {
+        return 'sku';
     }
 
     protected static function newFactory(): ProductVariationFactory

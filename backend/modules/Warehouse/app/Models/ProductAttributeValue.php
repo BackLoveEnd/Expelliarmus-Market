@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,20 @@ class ProductAttributeValue extends Model
         'price',
         'value'
     ];
+
+    public function value(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            return $this->attribute->type->castToType($value);
+        });
+    }
+
+    public function price(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            return round((float) $value, 2);
+        });
+    }
 
     public function attribute(): BelongsTo
     {
