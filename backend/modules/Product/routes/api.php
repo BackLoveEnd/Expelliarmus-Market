@@ -6,6 +6,7 @@ use Modules\Product\Http\Management\Controllers\Product\ManipulationProductContr
 use Modules\Product\Http\Management\Controllers\Product\ProductSpecificationsController;
 use Modules\Product\Http\Management\Controllers\Product\ProductStatusController;
 use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
+use Modules\Product\Http\Management\Controllers\Product\TrashedProductsController;
 
 //TODO: guards
 
@@ -33,6 +34,10 @@ Route::prefix('management')->group(function () {
             Route::post('/{product}/publish', 'publish')->whereNumber('product');
 
             Route::post('/{product}/unpublish', 'unPublish')->whereNumber('product');
+        });
+
+        Route::controller(TrashedProductsController::class)->group(function () {
+            Route::get('/trashed', 'getTrashed');
         });
     });
 

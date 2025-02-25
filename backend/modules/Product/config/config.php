@@ -10,6 +10,7 @@ return [
     ],
     'retrieve' => [
         'by_category' => 6,
+        'trashed' => 16,
     ],
     'image' => [
         'preview' => [

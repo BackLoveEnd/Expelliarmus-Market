@@ -7,10 +7,10 @@ namespace Modules\Warehouse\Sorts;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\Sorts\Sort;
 
-class ArrivedAtSort implements Sort
+class DeletedAtSort implements Sort
 {
     public function __invoke(Builder $query, bool $descending, string $property): Builder
     {
-        return $query->orderBy('warehouses.arrived_at', $descending ? 'desc' : 'asc');
+        return $query->orderBy('products.deleted_at', $descending ? 'desc' : 'asc');
     }
 }

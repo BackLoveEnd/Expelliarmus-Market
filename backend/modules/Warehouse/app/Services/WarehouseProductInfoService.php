@@ -22,9 +22,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 class WarehouseProductInfoService
 {
     public function __construct(
-        protected ProductAttributeService $productAttributeService
-    ) {
-    }
+        protected ProductAttributeService $productAttributeService,
+    ) {}
 
     public function searchProducts(mixed $searchable): Collection
     {
@@ -39,14 +38,15 @@ class WarehouseProductInfoService
         try {
             $products = QueryBuilder::for(Product::class)
                 ->defaultSort('title')
+                ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->allowedFilters([
                     AllowedFilter::custom('status', new StatusFilter()),
-                    AllowedFilter::trashed()
+                    AllowedFilter::trashed(),
                 ])
                 ->allowedSorts([
                     'title',
                     AllowedSort::custom('total_quantity', new TotalQuantitySort()),
-                    AllowedSort::custom('arrived_at', new ArrivedAtSort())
+                    AllowedSort::custom('arrived_at', new ArrivedAtSort()),
                 ])
                 ->offset($offset)
                 ->limit($limit)
@@ -54,7 +54,7 @@ class WarehouseProductInfoService
                     'products.id',
                     'products.title',
                     'products.product_article',
-                    'products.status'
+                    'products.status',
                 ]);
 
             return [
@@ -63,9 +63,9 @@ class WarehouseProductInfoService
                     'meta' => [
                         'total' => Product::query()->count(),
                         'limit' => $limit,
-                        'offset' => $offset
-                    ]
-                ]
+                        'offset' => $offset,
+                    ],
+                ],
             ];
         } catch (QueryException $e) {
             throw new InvalidFilterSortParamException();
@@ -85,13 +85,13 @@ class WarehouseProductInfoService
             dto: new FetchAttributesColumnsDto(
                 singleAttrCols: [
                     ['id', 'price', 'attribute_id', 'value', 'quantity'],
-                    ['id', 'name', 'type']
+                    ['id', 'name', 'type'],
                 ],
                 combinedAttrCols: [
                     ['id', 'sku', 'price', 'quantity'],
-                    ['product_attributes.id', 'name', 'type']
-                ]
-            )
+                    ['product_attributes.id', 'name', 'type'],
+                ],
+            ),
         );
 
         return $product;
@@ -103,7 +103,7 @@ class WarehouseProductInfoService
             ->with([
                 'category:id,name',
                 'brand:id,name',
-                'warehouse'
+                'warehouse',
             ])
             ->firstOrFail([
                 'id',
@@ -113,7 +113,7 @@ class WarehouseProductInfoService
                 'brand_id',
                 'product_article',
                 'status',
-                'with_attribute_combinations'
+                'with_attribute_combinations',
             ]);
     }
 
@@ -135,7 +135,8 @@ class WarehouseProductInfoService
 
     private function getSingleAttributesProduct(array $columns): Collection
     {
-        return $this->productAttributeService->setAttributesColumns(...$columns)
+        return $this->productAttributeService
+            ->setAttributesColumns(...$columns)
             ->getAttributes();
     }
 

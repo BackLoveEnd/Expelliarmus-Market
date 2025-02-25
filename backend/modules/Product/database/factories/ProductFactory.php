@@ -27,8 +27,8 @@ class ProductFactory extends Factory
             'title_description' => fake()->paragraph(4),
             'main_description_markdown' => fake()->paragraph(20),
             'product_article' => fake()->ean13(),
-            'preview_image' => null,
-            'preview_image_source' => null,
+            'preview_image' => url('storage/products/272_262_preview_product_preview.png'),
+            'preview_image_source' => '272_262_preview_product_preview.png',
             'images' => null,
         ];
     }
@@ -128,6 +128,16 @@ class ProductFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'status' => ProductStatusEnum::NOT_PUBLISHED->value,
+            ];
+        });
+    }
+
+    public function trashed(): ProductFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => ProductStatusEnum::TRASHED->value,
+                'deleted_at' => now(),
             ];
         });
     }
