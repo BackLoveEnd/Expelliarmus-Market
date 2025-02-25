@@ -38,6 +38,12 @@ Route::prefix('management')->group(function () {
 
         Route::controller(TrashedProductsController::class)->group(function () {
             Route::get('/trashed', 'getTrashed');
+
+            Route::post('/{product}/restore', 'restore')->whereNumber('product')
+                ->withTrashed();
+
+            Route::delete('/{product}', 'deleteForever')->whereNumber('product')
+                ->withTrashed();
         });
     });
 
