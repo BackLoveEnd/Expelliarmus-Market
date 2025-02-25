@@ -5,6 +5,8 @@
 /* Button */
 @import "./toggleSwitch.css";
 @import "./button.css";
+@import "./checkbox.css";
+@import "./multiselect.css";
 
 /* Data */
 @import './tree.css';

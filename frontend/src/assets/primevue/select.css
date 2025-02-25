@@ -4,13 +4,13 @@
 
 .p-select {
     @apply inline-flex cursor-pointer items-center relative
-    bg-surface-0 dark:bg-surface-950
+    bg-white
     border border-surface-300 dark:border-surface-700
     rounded-md shadow-sm transition-colors duration-200;
 }
 
 .p-select:not(.p-disabled):hover {
-    @apply border-surface-400 dark:border-surface-600;
+    @apply border-surface-400 dark:border-surface-600 bg-transparent;
 }
 
 .p-select:not(.p-disabled).p-focus {
