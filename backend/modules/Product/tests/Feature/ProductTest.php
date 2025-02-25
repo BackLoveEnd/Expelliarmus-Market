@@ -103,7 +103,6 @@ class ProductTest extends TestCase
 
         (new ProductImagesService($storage))->upload($dto, $product, new Size(100, 100));
 
-
         foreach ($images as $image) {
             Storage::disk('public_products_images')
                 ->assertExists("product-id-$product->id-images/".$image->image->hashName());

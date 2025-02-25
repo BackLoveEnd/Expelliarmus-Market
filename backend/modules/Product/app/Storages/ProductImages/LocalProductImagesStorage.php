@@ -6,7 +6,6 @@ namespace Modules\Product\Storages\ProductImages;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Intervention\Image\Image;
 use Modules\Product\Http\Management\Contracts\Storage\LocalProductImagesStorageInterface;
 use Modules\Product\Http\Management\DTO\Images\MainImageDto;
@@ -43,7 +42,7 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
         if ($files->isEmpty()) {
             $this->storage->copy(
                 $this->defaultImageId(),
-                $this->getImageFullPath($product, $this->defaultImageId())
+                $this->getImageFullPath($product, $this->defaultImageId()),
             );
 
             return [$this->defaultImageId()];
@@ -56,7 +55,7 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
                 return [
                     'id' => $image->id,
                     'order' => $image->order,
-                    'source' => $image->image->hashName()
+                    'source' => $image->image->hashName(),
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -72,11 +71,11 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
 
     public function getOne(Product $product, ?string $imageId): string
     {
-        if ($this->isExists($product, $imageId)) {
-            return $this->storage->url($this->getImageFullPath($product, $imageId));
+        if (! $imageId || ! $this->isExists($product, $imageId)) {
+            return $this->storage->url($this->defaultImageId());
         }
 
-        return $this->storage->url($this->defaultImageId());
+        return $this->storage->url($this->getImageFullPath($product, $imageId));
     }
 
     public function getAll(Product $product): array
@@ -93,10 +92,10 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
     public function getAllFromSources(Product $product, array $imagesSources): array
     {
         try {
-            return collect($imagesSources)->map(function (array $images) use($product) {
+            return collect($imagesSources)->map(function (array $images) use ($product) {
                 return [
                     ...$images,
-                    'image_url' => $this->storage->url($this->getImageFullPath($product, $images['source']))
+                    'image_url' => $this->storage->url($this->getImageFullPath($product, $images['source'])),
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -111,7 +110,7 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
 
     public function deleteMany(Product $product, Collection $sources): void
     {
-        $sources->each(function (string $source) use($product) {
+        $sources->each(function (string $source) use ($product) {
             $this->delete($product, $source);
         });
     }
@@ -123,15 +122,14 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
 
     protected function getInterventionPreviewImage(Product $product, string $imageId): Image
     {
-        Log::info($imageId);
         try {
             if ($imageId === $this->defaultPreviewImage()) {
                 $imageContent = $this->imageManager->read(
-                    storage_path("app/public/products/".$this->defaultPreviewImage())
+                    storage_path("app/public/products/".$this->defaultPreviewImage()),
                 );
             } else {
                 $imageContent = $this->imageManager->read(
-                    storage_path("app/public/products/product-id-$product->id-images/$imageId")
+                    storage_path("app/public/products/product-id-$product->id-images/$imageId"),
                 );
             }
         } catch (Throwable $e) {

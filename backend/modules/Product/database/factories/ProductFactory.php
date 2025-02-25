@@ -28,6 +28,7 @@ class ProductFactory extends Factory
             'main_description_markdown' => fake()->paragraph(20),
             'product_article' => fake()->ean13(),
             'preview_image' => null,
+            'preview_image_source' => null,
             'images' => null,
         ];
     }
@@ -40,19 +41,20 @@ class ProductFactory extends Factory
             ->for($category)
             ->create();
 
-        $product = $this->state(['with_attribute_combinations' => false])
+        $product = $this
+            ->state(['with_attribute_combinations' => false])
             ->for($category)
             ->for($this->fakeBrand())
             ->has(
                 factory: ProductAttributeValue::factory()
                     ->count(2)
                     ->for($productAttribute, 'attribute'),
-                relationship: 'singleAttributes'
+                relationship: 'singleAttributes',
             )
             ->hasAttached(
                 factory: ProductSpecAttributes::factory()->count(2),
                 pivot: ['value' => ['fake specification value']],
-                relationship: 'productSpecs'
+                relationship: 'productSpecs',
             )
             ->create();
 
@@ -70,7 +72,8 @@ class ProductFactory extends Factory
             ->for($category)
             ->create();
 
-        $product = $this->state(['with_attribute_combinations' => true])
+        $product = $this
+            ->state(['with_attribute_combinations' => true])
             ->for($category)
             ->for($this->fakeBrand())
             ->has(
@@ -80,12 +83,12 @@ class ProductFactory extends Factory
                         factory: $attributes,
                         pivot: ['value' => 'test value'],
                     ),
-                relationship: 'combinedAttributes'
+                relationship: 'combinedAttributes',
             )
             ->hasAttached(
                 factory: ProductSpecAttributes::factory()->count(2),
                 pivot: ['value' => ['fake specification value']],
-                relationship: 'productSpecs'
+                relationship: 'productSpecs',
             )
             ->create();
 
@@ -96,12 +99,13 @@ class ProductFactory extends Factory
 
     public function withoutAttributes(): Product
     {
-        $product = $this->for($this->fakeBrand())
+        $product = $this
+            ->for($this->fakeBrand())
             ->for($this->fakeCategory())
             ->hasAttached(
                 factory: ProductSpecAttributes::factory()->count(2),
                 pivot: ['value' => ['fake specification value']],
-                relationship: 'productSpecs'
+                relationship: 'productSpecs',
             )
             ->create();
 
@@ -114,7 +118,7 @@ class ProductFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status' => ProductStatusEnum::PUBLISHED->value
+                'status' => ProductStatusEnum::PUBLISHED->value,
             ];
         });
     }
@@ -123,7 +127,7 @@ class ProductFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'status' => ProductStatusEnum::NOT_PUBLISHED->value
+                'status' => ProductStatusEnum::NOT_PUBLISHED->value,
             ];
         });
     }
@@ -131,21 +135,21 @@ class ProductFactory extends Factory
     private function fakeCategory(): Category
     {
         return Category::query()->firstOrCreate([
-            'name' => 'Seed Test Category'
+            'name' => 'Seed Test Category',
         ]);
     }
 
     private function fakeBrand(): Brand
     {
         return Brand::query()->firstOrCreate([
-            'name' => 'Seed Test Brand'
+            'name' => 'Seed Test Brand',
         ]);
     }
 
     private function addToWarehouse(Product $product): void
     {
         Warehouse::factory()->state(
-            ['product_id' => $product->id]
+            ['product_id' => $product->id],
         )->create();
     }
 }

@@ -42,7 +42,7 @@ Route::prefix('management')->group(function () {
     )
         ->whereNumber('category');
 
-    Route::post('/product/{product}/images', [ProductImagesController::class, 'store']);
+    Route::post('/products/{product}/images', [ProductImagesController::class, 'store']);
 
-    Route::post('/product/{product}/images/edit', [ProductImagesController::class, 'edit']);
+    Route::post('/products/{product}/images/edit', [ProductImagesController::class, 'edit']);
 });

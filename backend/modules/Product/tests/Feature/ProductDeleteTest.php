@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Modules\Product\Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 
 class ProductDeleteTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_can_trash_product(): void
     {
         $product = Product::factory()->unPublished()->withoutAttributes();

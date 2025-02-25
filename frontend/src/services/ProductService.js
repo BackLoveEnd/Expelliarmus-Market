@@ -61,7 +61,7 @@ export const ProductService = {
         }
 
         return await api().post(
-            "/management/product/" + productId + "/images",
+            "/management/products/" + productId + "/images",
             formData,
             {
                 headers: {
@@ -163,7 +163,7 @@ export const ProductService = {
         }
 
         return await api().post(
-            "/management/product/" + product.id + "/images/edit",
+            "/management/products/" + product.id + "/images/edit",
             formData,
             {
                 headers: {

@@ -6,21 +6,18 @@ namespace Modules\Product\Http\Management\Service\Images;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Modules\Product\Http\Management\Contracts\Storage\ProductImagesStorageInterface;
 use Modules\Product\Http\Management\DTO\Images\MainImageDto;
 use Modules\Product\Http\Management\DTO\Images\ProductImageDto;
 use Modules\Product\Models\Product;
 use Modules\Product\Storages\ProductImages\Size;
-use Ramsey\Uuid\Uuid;
 
 class ProductImagesService
 {
     public function __construct(
         private ProductImagesStorageInterface $imagesStorage,
-    ) {
-    }
+    ) {}
 
     public function upload(ProductImageDto $imageDto, Product $product, Size $size): void
     {
@@ -30,7 +27,8 @@ class ProductImagesService
 
         $previewImage = $this->uploadResizedPreviewImage($product, $previewImageSource, $size);
 
-        $images = collect($images)->map(fn(array $image) => ['id' => Str::uuid7()->toString(), ...$image])
+        $images = collect($images)
+            ->map(fn(array $image) => ['id' => Str::uuid7()->toString(), ...$image])
             ->toArray();
 
         $product->saveImages([
@@ -38,9 +36,9 @@ class ProductImagesService
             'preview_image' => $previewImage ? $this->imagesStorage->getResized(
                 $product,
                 $previewImage,
-                $size
+                $size,
             ) : null,
-            'preview_image_source' => $previewImageSource
+            'preview_image_source' => $previewImageSource,
         ]);
     }
 
@@ -59,8 +57,11 @@ class ProductImagesService
 
             $this->imagesStorage->delete($product, $this->formatToResizedImage($product, $size));
 
-            $images['preview_image'] = $this->imagesStorage->getResized($product, $images['preview_image_source'],
-                $size);
+            $images['preview_image'] = $this->imagesStorage->getResized(
+                $product,
+                $images['preview_image_source'],
+                $size,
+            );
         }
 
         $product->saveImages($images);
@@ -85,7 +86,7 @@ class ProductImagesService
 
         $product->savePreviewImage(
             url: $resizedImage,
-            source: $this->formatToResizedImage($product, $size)
+            source: $this->formatToResizedImage($product, $size),
         );
 
         return $resizedImage;
@@ -105,14 +106,15 @@ class ProductImagesService
         $unTouchedImages = $this->getUntouchedImages($imageDto->mainImages);
 
         $imagesToDelete = collect($product->images)
-            ->filter(fn($image) => ! $imageDto->mainImages->pluck('id')->contains($image['id'])
-                || $changedImages->pluck('id')->contains($image['id'])
+            ->filter(fn($image)
+                => ! $imageDto->mainImages->pluck('id')->contains($image['id'])
+                || $changedImages->pluck('id')->contains($image['id']),
             );
 
         $newImages = $newImages->map(fn($image) => new MainImageDto(
             order: $image->order,
             id: Str::uuid7()->toString(),
-            image: $image->image
+            image: $image->image,
         ));
 
         if ($newImages->isNotEmpty() || $changedImages->isNotEmpty()) {
@@ -122,11 +124,12 @@ class ProductImagesService
         if ($imagesToDelete->isNotEmpty()) {
             $this->imagesStorage->deleteMany(
                 $product,
-                $imagesToDelete->whereNotNull('source')->pluck('source')
+                $imagesToDelete->whereNotNull('source')->pluck('source'),
             );
         }
 
-        return $newImages->merge($changedImages)->merge($unTouchedImages)
+        return $newImages
+            ->merge($changedImages)->merge($unTouchedImages)
             ->sortBy('order')
             ->values();
     }
@@ -138,14 +141,15 @@ class ProductImagesService
                 'id' => Str::uuid7()->toString(),
                 'image_url' => $this->imagesStorage->getOne($product, null),
                 'order' => 1,
-                'source' => $this->imagesStorage->defaultImageId()
+                'source' => $this->imagesStorage->defaultImageId(),
             ];
         } else {
-            $images = $updatedImages->map(fn(MainImageDto $dto) => [
+            $images = $updatedImages->map(fn(MainImageDto $dto)
+                => [
                 'id' => $dto->id,
                 'image_url' => $dto->existImageUrl ?? $this->imagesStorage->getOne($product, $dto->image?->hashName()),
                 'order' => $dto->order,
-                'source' => $dto->image ? $dto->image->hashName() : $product->images[$dto->id]['source'] ?? null
+                'source' => $dto->image ? $dto->image->hashName() : $product->images[$dto->id]['source'] ?? null,
             ])->toArray();
         }
 
@@ -182,7 +186,7 @@ class ProductImagesService
         return $this->imagesStorage->saveResized(
             product: $product,
             imageId: $imageId,
-            size: $size
+            size: $size,
         );
     }
 
