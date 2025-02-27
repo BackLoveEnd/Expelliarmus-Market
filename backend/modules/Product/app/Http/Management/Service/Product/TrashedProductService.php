@@ -6,7 +6,10 @@ namespace Modules\Product\Http\Management\Service\Product;
 
 use Illuminate\Config\Repository;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Product\Http\Management\Exceptions\CannotDeleteNotTrashedProduct;
+use Modules\Product\Http\Management\Exceptions\CannotRestoreNotTrashedProductException;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Filters\ProductInStockFilter;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Sorts\DeletedAtSort;
@@ -50,5 +53,29 @@ class TrashedProductService
         }
 
         return $products;
+    }
+
+    public function deleteForever(Product $product): void
+    {
+        if (! $product->trashed() || ! $product->status->is(ProductStatusEnum::TRASHED)) {
+            throw new CannotDeleteNotTrashedProduct();
+        }
+
+        $product->forceDelete();
+
+        $product->warehouse()->forceDelete();
+    }
+
+    public function restore(Product $product): void
+    {
+        if (! $product->trashed() && ! $product->status->is(ProductStatusEnum::TRASHED)) {
+            throw new CannotRestoreNotTrashedProductException();
+        }
+
+        $product->restore();
+
+        $product->warehouse()->restore();
+
+        $product->changeStatus(ProductStatusEnum::NOT_PUBLISHED);
     }
 }

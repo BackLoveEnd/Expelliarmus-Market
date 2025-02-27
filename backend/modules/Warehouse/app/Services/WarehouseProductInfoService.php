@@ -11,6 +11,7 @@ use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumn
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeHandler;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Filters\ProductInStockFilter;
 use Modules\Warehouse\Filters\StatusFilter;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Sorts\ArrivedAtSort;
@@ -41,6 +42,7 @@ class WarehouseProductInfoService
                 ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->allowedFilters([
                     AllowedFilter::custom('status', new StatusFilter()),
+                    AllowedFilter::custom('in_stock', new ProductInStockFilter()),
                     AllowedFilter::trashed(),
                 ])
                 ->allowedSorts([

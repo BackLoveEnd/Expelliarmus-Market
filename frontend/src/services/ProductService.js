@@ -183,5 +183,18 @@ export const ProductService = {
 
     async unPublishProduct(productId) {
         return await api().post(`/management/products/${productId}/unpublish`);
+    },
+
+    async trashedProducts(params) {
+        const url = formatter.formatUrl("/management/products/trashed", params);
+        return await api().get(url);
+    },
+
+    async restoreProduct(productId) {
+        return await api().post(`/management/products/${productId}/restore`);
+    },
+
+    async forceDelete(productId) {
+        return await api().delete(`/management/products/${productId}`);
     }
 };

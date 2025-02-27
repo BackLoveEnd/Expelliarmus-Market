@@ -1,5 +1,5 @@
 <script setup>
-import ProductEditForm from "@/management/components/Product/Other/ProductEditForm.vue";
+import ProductEditForm from "@/management/components/Product/Edit/ProductEditForm.vue";
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import DefaultModal from "@/management/components/Main/DefaultModal.vue";
 import {reactive, ref} from "vue";
