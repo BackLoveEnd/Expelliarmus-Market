@@ -1,7 +1,7 @@
 <script setup>
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import WarehouseProductSearcher from "@/management/components/Warehouse/WarehouseProductSearcher.vue";
-import { ref } from "vue";
+import {ref} from "vue";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 import WarehouseProductViewer from "@/management/components/Warehouse/WarehouseProductViewer.vue";
 import WarehouseTable from "@/management/components/Warehouse/WarehouseTable.vue";
@@ -23,19 +23,24 @@ const handleProductSelection = (id) => {
       </section>
       <section class="container mx-auto flex flex-col items-center">
         <warehouse-product-searcher
-          @selected-product="handleProductSelection"
+            @selected-product="handleProductSelection"
         />
       </section>
       <section class="container mx-auto" v-if="productId">
         <suspense>
-          <warehouse-product-viewer :product="productId" />
+          <warehouse-product-viewer :product="productId"/>
           <template #fallback>
-            <suspense-loader />
+            <suspense-loader/>
           </template>
         </suspense>
       </section>
       <section class="container mx-auto flex flex-col items-center">
-        <warehouse-table />
+        <suspense>
+          <warehouse-table/>
+          <template #fallback>
+            <suspense-loader/>
+          </template>
+        </suspense>
       </section>
     </div>
   </default-container>

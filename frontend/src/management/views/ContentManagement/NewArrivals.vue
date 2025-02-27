@@ -1,12 +1,10 @@
 <script setup>
-import { ref, computed } from "vue";
-import { ContentManagementService } from "@/services/ContentManagementService";
+import {computed, ref} from "vue";
+import {ContentManagementService} from "@/services/ContentManagementService";
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import Description from "@/components/Product/Arrival/Description.vue";
-import newArrivals from "@/components/Product/Arrival/NewArrivals.vue";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
-import { useToastStore } from "@/stores/useToastStore.js";
 
 const arrivals = ref([
   {
@@ -15,7 +13,7 @@ const arrivals = ref([
     title: "Playstation 5(1)",
     description: "Black and White version of the PS5 coming out on sale.",
     link: "#",
-    imgSize:"744x720"
+    imgSize: "744x720"
   },
   {
     id: 2,
@@ -23,7 +21,7 @@ const arrivals = ref([
     title: "Playstation 5(2)",
     description: "Black and White version of the PS5 coming out on sale.",
     link: "#",
-    imgSize:"744x336"
+    imgSize: "744x336"
   },
   {
     id: 3,
@@ -31,7 +29,7 @@ const arrivals = ref([
     title: "Playstation 5(3)",
     description: "Black and White version of the PS5 coming out on sale.",
     link: "#",
-    imgSize:"348x336"
+    imgSize: "348x336"
   },
   {
     id: 4,
@@ -39,7 +37,7 @@ const arrivals = ref([
     title: "Playstation 5(4)",
     description: "Black and White version of the PS5 coming out on sale.",
     link: "#",
-    imgSize:"348x336"
+    imgSize: "348x336"
   }
 ]);
 
@@ -71,11 +69,11 @@ const deleteArrival = async (arrivalId) => {
   try {
     await ContentManagementService.deleteArrival(arrivalId);
     arrivals.value = arrivals.value.filter(arrival => arrival.id !== arrivalId);
-    toast.showToast(response?.data?.message, defaultSuccessSettings)
+    toast.showToast(response?.data?.message, defaultSuccessSettings);
     selectedArrivalId.value = null;
   } catch (error) {
     console.error(error);
-    toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings,)
+    toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings,);
   }
 };
 
@@ -118,7 +116,8 @@ const handleFileUpload = (event, id) => {
           <h2 class="text-xl font-semibold">Arrivals</h2>
           <form class="max-w-max mx-4">
             <label for="arrivalsId" class="block mb-2 text-m font-semibold">Select an option</label>
-            <select v-model="selectedArrivalId" id="arrivalsId" class="bg-gray-50 border text-gray-900 text-sm rounded-lg p-2.5">
+            <select v-model="selectedArrivalId" id="arrivalsId"
+                    class="bg-gray-50 border text-gray-900 text-sm rounded-lg p-2.5">
               <option disabled selected>Choose arr-position</option>
               <option v-for="arrival in arrivals" :key="arrival.id" :value="arrival.id">
                 Arrival {{ arrival.id }}
@@ -132,16 +131,20 @@ const handleFileUpload = (event, id) => {
               />
 
 
-              <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. {{ selectedArrival.imgSize }}).</p>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX.
+                {{ selectedArrival.imgSize }}).</p>
 
               <label for="card-title" class="block mt-4 mb-2 text-sm font-medium">Card title</label>
-              <input type="text" id="card-title" v-model="selectedArrival.title" class="bg-gray-50 border text-sm rounded-lg p-2.5" />
+              <input type="text" id="card-title" v-model="selectedArrival.title"
+                     class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
 
               <label for="card-description" class="block mt-4 mb-2 text-sm font-medium">Card description</label>
-              <textarea id="card-description" v-model="selectedArrival.description" rows="4" class="block p-2.5 w-full text-sm bg-gray-50 border rounded-lg"></textarea>
+              <textarea id="card-description" v-model="selectedArrival.description" rows="4"
+                        class="block p-2.5 w-full text-sm bg-gray-50 border rounded-lg"></textarea>
 
               <label for="card-link" class="block mt-4 mb-2 text-sm font-medium">Product link</label>
-              <input type="text" id="card-link" v-model="selectedArrival.link" class="bg-gray-50 border text-sm rounded-lg p-2.5" />
+              <input type="text" id="card-link" v-model="selectedArrival.link"
+                     class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
 
             </div>
           </form>
@@ -167,21 +170,21 @@ const handleFileUpload = (event, id) => {
         <h2 class="text-xl font-semibold text-center">Arrivals Preview</h2>
         <div class="grid grid-cols-2 gap-12">
           <div class="relative">
-            <img class="w-full" :src="arrivals[0].image" alt="First arrival" />
-            <Description :description="arrivals[0].description" :name="arrivals[0].title" />
+            <img class="w-full" :src="arrivals[0].image" alt="First arrival"/>
+            <Description :description="arrivals[0].description" :name="arrivals[0].title"/>
           </div>
           <div class="grid grid-cols-2 grid-rows-2 gap-12">
             <div class="col-span-2 h-full relative">
-              <img :src="arrivals[1].image" alt="Second arrival" />
-              <Description :description="arrivals[1].description" :name="arrivals[1].title" />
+              <img :src="arrivals[1].image" alt="Second arrival"/>
+              <Description :description="arrivals[1].description" :name="arrivals[1].title"/>
             </div>
             <div class="h-full relative">
-              <img :src="arrivals[2].image" alt="Third arrival" />
-              <Description :description="arrivals[2].description" :name="arrivals[2].title" />
+              <img :src="arrivals[2].image" alt="Third arrival"/>
+              <Description :description="arrivals[2].description" :name="arrivals[2].title"/>
             </div>
             <div class="h-full relative">
-              <img :src="arrivals[3].image" alt="Fourth arrival" />
-              <Description :description="arrivals[3].description" :name="arrivals[3].title" />
+              <img :src="arrivals[3].image" alt="Fourth arrival"/>
+              <Description :description="arrivals[3].description" :name="arrivals[3].title"/>
             </div>
           </div>
         </div>

@@ -9,6 +9,8 @@ import Slider from "@/management/views/ContentManagement/Slider.vue";
 import NewArrivals from "@/management/views/ContentManagement/NewArrivals.vue";
 import EditProduct from "@/management/views/Product/EditProduct.vue";
 import TrashedProducts from "@/management/views/Product/TrashedProducts.vue";
+import Users from "@/management/views/Users/Users.vue";
+import Guests from "@/management/views/Users/Guests.vue";
 
 export default [
     {
@@ -27,6 +29,14 @@ export default [
     {
         path: "warehouse",
         component: Warehouse,
+    },
+    {
+        path: "clients/regular",
+        component: Users
+    },
+    {
+        path: "clients/guests",
+        component: Guests
     },
     {
         path: "categories-and-brands",

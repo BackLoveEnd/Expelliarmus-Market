@@ -103,7 +103,7 @@ async function submitForm() {
         await ProductService.editProductImages(props.product, changedImages.value, changedPreviewImage.value)
             .then(response => {
               toast.showToast(
-                  "Product was successfully created",
+                  "Product was successfully updated",
                   defaultSuccessSettings,
               );
 

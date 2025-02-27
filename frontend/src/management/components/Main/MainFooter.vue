@@ -26,11 +26,15 @@
                 Home
               </router-link>
             </li>
-            <li
-                class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0"
-            >
-              <i class="pi pi-user"></i>
-              Client
+            <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">
+              <custom-menu :links="clientLinks" drop-to-up>
+                <template v-slot:menu-button="{ isOpen }">
+                  <span class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0">
+                    <i class="pi pi-users"></i>
+                    Clients
+                  </span>
+                </template>
+              </custom-menu>
             </li>
             <li
                 class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0"
@@ -117,6 +121,11 @@ const productLinks = ref([
   {url: "/management/products/trashed", name: "Trashed Products", svg: 'pi pi-trash'},
   {url: "/management/products/create", name: "Add Product", svg: 'pi pi-plus'},
   {url: "/management/categories-and-brands", name: "Categories & Brands", svg: 'pi pi-th-large'},
+]);
+
+const clientLinks = ref([
+  {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified"},
+  {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user"}
 ]);
 
 const handleMouseMove = (event) => {
