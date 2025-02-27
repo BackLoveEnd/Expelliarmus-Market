@@ -1,90 +1,196 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
-import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
+import { ref, computed } from "vue";
 import { ContentManagementService } from "@/services/ContentManagementService";
-import { useRouter } from "vue-router";
-import { useToastStore } from "@/stores/useToastStore.js";
-import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
-import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import Description from "@/components/Product/Arrival/Description.vue";
 import newArrivals from "@/components/Product/Arrival/NewArrivals.vue";
+import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import { useToastStore } from "@/stores/useToastStore.js";
+
+const arrivals = ref([
+  {
+    id: 1,
+    image: "https://dummyimage.com/744x720/000/fff",
+    title: "Playstation 5(1)",
+    description: "Black and White version of the PS5 coming out on sale.",
+    link: "#",
+    imgSize:"744x720"
+  },
+  {
+    id: 2,
+    image: "https://dummyimage.com/744x336/000/fff",
+    title: "Playstation 5(2)",
+    description: "Black and White version of the PS5 coming out on sale.",
+    link: "#",
+    imgSize:"744x336"
+  },
+  {
+    id: 3,
+    image: "https://dummyimage.com/348x336/000/fff",
+    title: "Playstation 5(3)",
+    description: "Black and White version of the PS5 coming out on sale.",
+    link: "#",
+    imgSize:"348x336"
+  },
+  {
+    id: 4,
+    image: "https://dummyimage.com/348x336/000/fff",
+    title: "Playstation 5(4)",
+    description: "Black and White version of the PS5 coming out on sale.",
+    link: "#",
+    imgSize:"348x336"
+  }
+]);
+
+const selectedArrivalId = ref(null);
+const selectedArrival = computed(() =>
+    arrivals.value.find(arrival => arrival.id === selectedArrivalId.value)
+);
+
+const fetchArrivals = async () => {
+  try {
+    const response = await ContentManagementService.getAllArrivals();
+    arrivals.value = response.data;
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const saveArrivals = async () => {
+  try {
+    await ContentManagementService.uploadArrivalsContent(arrivals.value);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const deleteArrival = async (arrivalId) => {
+  if (!arrivalId) return;
+
+  try {
+    await ContentManagementService.deleteArrival(arrivalId);
+    arrivals.value = arrivals.value.filter(arrival => arrival.id !== arrivalId);
+    toast.showToast(response?.data?.message, defaultSuccessSettings)
+    useToastStore().add(defaultSuccessSettings("Arrival successfully deleted!"));
+    selectedArrivalId.value = null;
+  } catch (error) {
+    console.error(error);
+    toast.showToast("Unknown error. Try again or contact us.",
+        defaultErrorSettings,)
+  }
+};
 
 
+const handleFileUpload = (event, id) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const index = arrivals.value.findIndex(arrival => arrival.id === id);
+    if (index === -1) return;
+
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const [width, height] = arrivals.value[index].imgSize.split("x").map(Number);
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      arrivals.value[index].image = canvas.toDataURL("image/jpeg", 1); // 0.9 - качество
+    };
+  };
+  reader.readAsDataURL(file);
+};
 
 </script>
 
 <template>
-<default-container>
-  <div class="my-14 space-y-8">
-    <section class="container mx-auto">
-      <h1 class="font-semibold text-4xl mb-4">New Arrivals Management</h1>
-      <div class="flex flex-col items-start mt-12 space-y-8">
-        <h2 class="text-xl font-semibold">Arrivals</h2>
-        <!--    change card    -->
-        <form class="max-w-max mx-4">
-          <label for="arrivalsId" class="block mb-2 text-m font-semibold font-medium text-gray-900 dark:text-white"
-          >Select an option</label>
-          <select id="arrivalsId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-          focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
-          dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            <option selected>Choose arr-position</option>
-            <option value="1">First</option>
-            <option value="2">Second</option>
-            <option value="3">Third</option>
-            <option value="4">Fourth</option>
-          </select>
-        <!--    picture      -->
-          <div>
-          <label class="block min-w-max mt-4 mb-2 text-medium font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
-          <input class="block min-w-max text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="file_input_help" id="file_input" type="file">
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. {{ arrNumberSize }}).</p>
+  <default-container>
+    <div class="my-14 space-y-8">
+      <section class="container mx-auto">
+        <h1 class="font-semibold text-4xl mb-4">New Arrivals Management</h1>
+        <div class="flex flex-col items-start mt-12 space-y-8">
+          <h2 class="text-xl font-semibold">Arrivals</h2>
+          <form class="max-w-max mx-4">
+            <label for="arrivalsId" class="block mb-2 text-m font-semibold">Select an option</label>
+            <select v-model="selectedArrivalId" id="arrivalsId" class="bg-gray-50 border text-gray-900 text-sm rounded-lg p-2.5">
+              <option disabled selected>Choose arr-position</option>
+              <option v-for="arrival in arrivals" :key="arrival.id" :value="arrival.id">
+                Arrival {{ arrival.id }}
+              </option>
+            </select>
+            <div v-if="selectedArrival">
+              <label class="block mt-4 mb-2 text-medium font-medium">Upload file</label>
+              <input type="file"
+                     class="block text-sm border rounded-lg cursor-pointer"
+                     @change="handleFileUpload($event, selectedArrivalId)"
+              />
 
-        <!--     title      -->
 
-              <label for="card-title" class="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Card title</label>
-              <input type="text"
-                     id="card-title"
-                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                     placeholder="Write card title here..."
-              >
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. {{ selectedArrival.imgSize }}).</p>
 
-        <!--    Description      -->
+              <label for="card-title" class="block mt-4 mb-2 text-sm font-medium">Card title</label>
+              <input type="text" id="card-title" v-model="selectedArrival.title" class="bg-gray-50 border text-sm rounded-lg p-2.5" />
 
-            <label for="card-description" class="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Card description</label>
-            <textarea id="card-description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Write card description here..."></textarea>
+              <label for="card-description" class="block mt-4 mb-2 text-sm font-medium">Card description</label>
+              <textarea id="card-description" v-model="selectedArrival.description" rows="4" class="block p-2.5 w-full text-sm bg-gray-50 border rounded-lg"></textarea>
 
-        <!-- URL -->
-            <label for="card-link" class="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Product link</label>
-            <input type="text" id="card-link"
-                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                   placeholder="Write product URL here... " required />
+              <label for="card-link" class="block mt-4 mb-2 text-sm font-medium">Product link</label>
+              <input type="text" id="card-link" v-model="selectedArrival.link" class="bg-gray-50 border text-sm rounded-lg p-2.5" />
 
+            </div>
+          </form>
+          <div class="flex gap-4 mt-4">
+            <button
+                @click="saveArrivals"
+                class="bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Save
+            </button>
+            <button v-if="selectedArrival"
+                    @click="deleteArrival(selectedArrivalId)"
+                    class="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Delete
+            </button>
           </div>
-        </form>
-
-        <div class="flex gap-4 mt-4">
-          <button
-              @click="saveArrivals"
-              class="bg-gray-500 text-white px-4 py-2 rounded"
-          >
-            Save
-          </button>
         </div>
-      </div>
-    </section>
-    <hr/>
 
-    <section
-        class="container mx-auto space-y-4"
-
-    >
-      <h2 class="text-xl font-semibold text-center">Arrivals Preview</h2>
-      <new-arrivals/>
-    </section>
-  </div>
-</default-container>
+      </section>
+      <hr/>
+      <section class="container mx-auto space-y-4">
+        <h2 class="text-xl font-semibold text-center">Arrivals Preview</h2>
+        <div class="grid grid-cols-2 gap-12">
+          <div class="relative">
+            <img class="w-full" :src="arrivals[0].image" alt="First arrival" />
+            <Description :description="arrivals[0].description" :name="arrivals[0].title" />
+          </div>
+          <div class="grid grid-cols-2 grid-rows-2 gap-12">
+            <div class="col-span-2 h-full relative">
+              <img :src="arrivals[1].image" alt="Second arrival" />
+              <Description :description="arrivals[1].description" :name="arrivals[1].title" />
+            </div>
+            <div class="h-full relative">
+              <img :src="arrivals[2].image" alt="Third arrival" />
+              <Description :description="arrivals[2].description" :name="arrivals[2].title" />
+            </div>
+            <div class="h-full relative">
+              <img :src="arrivals[3].image" alt="Fourth arrival" />
+              <Description :description="arrivals[3].description" :name="arrivals[3].title" />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </default-container>
 </template>
 
 <style scoped>
