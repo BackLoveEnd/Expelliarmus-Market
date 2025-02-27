@@ -29,9 +29,9 @@ class WarehouseProductInfoResource extends JsonApiResource
             'previewImage' => $this->preview_image,
             'status' => [
                 'name' => $this->status->toString(),
-                'colorType' => $this->status->toColorType()
+                'colorType' => $this->status->toColorType(),
             ],
-            'variationType' => $variationsType
+            'variationType' => $variationsType,
         ];
     }
 
@@ -40,7 +40,7 @@ class WarehouseProductInfoResource extends JsonApiResource
         $relationships = [
             'category' => fn() => RootCategoryResource::make($this->category),
             'brand' => fn() => BrandResource::make($this->brand),
-            'warehouse' => fn() => WarehouseResource::make($this->warehouse)
+            'warehouse' => fn() => WarehouseResource::make($this->warehouse),
         ];
 
         if (is_null($this->hasCombinedAttributes())) {

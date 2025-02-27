@@ -20,9 +20,8 @@ class WarehouseController extends Controller
 {
     public function __construct(
         private WarehouseProductInfoService $warehouseService,
-        private CacheService $cacheService
-    ) {
-    }
+        private CacheService $cacheService,
+    ) {}
 
     /**
      * Search product by article, title, brand. Retrieve only info to show it in autocomplete.
@@ -56,10 +55,10 @@ class WarehouseController extends Controller
         $product = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(
                 config('warehouse.cache.product-warehouse-info'),
-                $productSlug->getProductId()
+                $productSlug->getProductId(),
             ),
             ttl: now()->addDay(),
-            callback: fn() => $this->warehouseService->getWarehouseInfoAboutProduct($productSlug->getProductId())
+            callback: fn() => $this->warehouseService->getWarehouseInfoAboutProduct($productSlug->getProductId()),
         );
 
         return WarehouseProductInfoResource::make($product);
@@ -78,13 +77,13 @@ class WarehouseController extends Controller
     {
         if ($request->hasAny(['limit', 'offset'])) {
             $products = $this->warehouseService->getPaginated(
-                offset: (int) $request->query('offset') ?? 0,
-                limit: (int) $request->query('limit') ?? config('warehouse.pagination.table')
+                offset: (int)$request->query('offset') ?? 0,
+                limit: (int)$request->query('limit') ?? config('warehouse.pagination.table'),
             );
         } else {
             $products = $this->warehouseService->getPaginated(
                 offset: 0,
-                limit: config('warehouse.pagination.table')
+                limit: config('warehouse.pagination.table'),
             );
         }
 
