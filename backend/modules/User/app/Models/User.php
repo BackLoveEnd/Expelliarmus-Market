@@ -13,6 +13,7 @@ use Modules\Order\Models\Cart;
 use Modules\Order\Models\Order;
 use Modules\User\Database\Factories\UserFactory;
 use Modules\User\Observers\UserObserver;
+use Propaganistas\LaravelPhone\Rules\Phone;
 
 /**
  * @property string $first_name
@@ -22,12 +23,15 @@ use Modules\User\Observers\UserObserver;
  * @property Carbon $email_verified_at
  * @property string $password
  * @property Carbon $created_at
+ * @property string $phone_country_code
+ * @property Phone $phone_number
  * @property int $id
  */
 #[ObservedBy(UserObserver::class)]
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     public $timestamps = false;
 
@@ -37,7 +41,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone_country_code',
-        'phone_number'
+        'phone_number',
     ];
 
     protected $hidden = [
@@ -47,7 +51,7 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'phone_country_code',
-        'phone_number'
+        'phone_number',
     ];
 
     public function orders(): MorphMany
@@ -65,13 +69,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'created_at' => 'datetime'
+            'created_at' => 'datetime',
         ];
     }
 
     public function userUuid(): string
     {
         return $this->user_id;
+    }
+
+    public function fullName(): string
+    {
+        return $this->last_name.' '.$this->first_name;
     }
 
     protected static function newFactory(): UserFactory
