@@ -72,12 +72,10 @@ const deleteArrival = async (arrivalId) => {
     await ContentManagementService.deleteArrival(arrivalId);
     arrivals.value = arrivals.value.filter(arrival => arrival.id !== arrivalId);
     toast.showToast(response?.data?.message, defaultSuccessSettings)
-    useToastStore().add(defaultSuccessSettings("Arrival successfully deleted!"));
     selectedArrivalId.value = null;
   } catch (error) {
     console.error(error);
-    toast.showToast("Unknown error. Try again or contact us.",
-        defaultErrorSettings,)
+    toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings,)
   }
 };
 
@@ -93,7 +91,6 @@ const handleFileUpload = (event, id) => {
 
     const img = new Image();
     img.src = e.target.result;
-
     img.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
