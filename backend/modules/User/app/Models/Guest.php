@@ -31,6 +31,10 @@ class Guest extends Model
 
     public $timestamps = false;
 
+    protected $primaryKey = 'guest_id';
+
+    public $incrementing = false;
+
     protected $fillable = [
         'first_name',
         'last_name',

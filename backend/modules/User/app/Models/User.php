@@ -11,9 +11,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Order\Models\Cart;
 use Modules\Order\Models\Order;
+use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\UserFactory;
 use Modules\User\Observers\UserObserver;
 use Propaganistas\LaravelPhone\Rules\Phone;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property string $first_name
@@ -28,12 +30,17 @@ use Propaganistas\LaravelPhone\Rules\Phone;
  * @property int $id
  */
 #[ObservedBy(UserObserver::class)]
-class User extends Authenticatable
+class User extends Authenticatable implements UserInterface
 {
     use HasFactory;
     use Notifiable;
+    use HasRoles;
 
     public $timestamps = false;
+
+    protected $primaryKey = 'user_id';
+
+    public $incrementing = false;
 
     protected $fillable = [
         'first_name',
