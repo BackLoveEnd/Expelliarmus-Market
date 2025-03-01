@@ -25,9 +25,6 @@ Route::prefix('management')->group(function () {
 
             Route::put('/{product}', 'edit')
                 ->whereNumber('productBind');
-
-            Route::delete('/{product}/trash', 'moveToTrash')
-                ->whereNumber('product');
         });
 
         Route::controller(ProductStatusController::class)->group(function () {
@@ -41,6 +38,9 @@ Route::prefix('management')->group(function () {
 
             Route::post('/{product}/restore', 'restore')->whereNumber('product')
                 ->withTrashed();
+
+            Route::delete('/{product}/trash', 'moveToTrash')
+                ->whereNumber('product');
 
             Route::delete('/{product}', 'deleteForever')->whereNumber('product')
                 ->withTrashed();

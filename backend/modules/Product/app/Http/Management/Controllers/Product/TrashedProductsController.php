@@ -7,11 +7,14 @@ namespace Modules\Product\Http\Management\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Product\Http\Management\Actions\Product\Edit\MoveProductToTrashAction;
 use Modules\Product\Http\Management\Exceptions\CannotDeleteNotTrashedProduct;
 use Modules\Product\Http\Management\Exceptions\CannotRestoreNotTrashedProductException;
+use Modules\Product\Http\Management\Exceptions\CannotTrashPublishedProductException;
 use Modules\Product\Http\Management\Resources\Product\TrashedProductsResource;
 use Modules\Product\Http\Management\Service\Product\TrashedProductService;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Enums\ProductStatusEnum as Status;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
@@ -49,6 +52,27 @@ class TrashedProductsController extends Controller
                     'per_page' => $products->perPage(),
                 ],
             ]);
+    }
+
+    /**
+     * Move product to trash.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  Product  $product
+     * @param  MoveProductToTrashAction  $action
+     * @return JsonResponse
+     * @throws CannotTrashPublishedProductException
+     */
+    public function moveToTrash(Product $product, MoveProductToTrashAction $action): JsonResponse
+    {
+        if ($product->trashed() || $product->status->is(Status::TRASHED)) {
+            return response()->json(['message' => 'Product is already in trash.'], 409);
+        }
+
+        $action->handle($product);
+
+        return response()->json(['message' => 'Product was moved to trash.']);
     }
 
     /**
