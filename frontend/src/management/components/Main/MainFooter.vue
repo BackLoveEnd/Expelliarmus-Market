@@ -39,7 +39,7 @@
             <li
                 class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0"
             >
-              <i class="pi pi-shopping-cart"></i>
+              <i class="pi pi-shopping-bag"></i>
               Orders
             </li>
             <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">

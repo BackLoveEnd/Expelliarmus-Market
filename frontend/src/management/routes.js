@@ -20,6 +20,7 @@ export default [
     {
         path: "products/create",
         component: CreateProduct,
+        name: "create-product"
     },
     {
         path: "products",
@@ -29,14 +30,17 @@ export default [
     {
         path: "warehouse",
         component: Warehouse,
+        name: "warehouse"
     },
     {
         path: "clients/regular",
-        component: Users
+        component: Users,
+        name: "regular-customers"
     },
     {
         path: "clients/guests",
-        component: Guests
+        component: Guests,
+        name: "guests"
     },
     {
         path: "categories-and-brands",
