@@ -5,5 +5,6 @@
     "Warehouse": true,
     "Category": true,
     "Brand": true,
-    "ContentManagement": true
+    "ContentManagement": true,
+    "Statistics": true
 }
