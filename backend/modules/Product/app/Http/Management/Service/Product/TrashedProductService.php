@@ -30,7 +30,11 @@ class TrashedProductService
         try {
             $products = QueryBuilder::for(Product::class)
                 ->onlyTrashed()
-                ->with(['warehouse:id,product_id,total_quantity'])
+                ->with([
+                    'warehouse' => function ($query) {
+                        $query->withTrashed()->select('id', 'product_id', 'total_quantity');
+                    },
+                ])
                 ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->defaultSort('-deleted_at')
                 ->allowedSorts([
