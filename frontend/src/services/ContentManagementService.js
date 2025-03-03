@@ -28,7 +28,7 @@ export const ContentManagementService = {
   },
 
   async getAllArrivals() {
-    return await api().get("/management/content/newarrivals");
+    return await api().get("/management/content/new-arrivals");
   },
 
 
@@ -42,13 +42,13 @@ export const ContentManagementService = {
       form.append(`arrivals[${index}][arrival_url]`, arrival.arrival_url);
       form.append(`arrivals[${index}][content]`, JSON.stringify(arrival.content));
     });
-
     return await api().post("/management/content/new-arrivals", form, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   },
+
 
   async deleteArrival(arrivalId) {
     return api().delete(`/management/content/new-arrivals/${arrivalId}`);
