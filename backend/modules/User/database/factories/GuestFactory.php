@@ -18,8 +18,8 @@ class GuestFactory extends Factory
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'email' => fake()->unique()->email(),
-            'phone_country_code' => '+380',
-            'phone_number' => fake()->numberBetween(100000000, 999999999)
+            'phone_country_code' => 'UA',
+            'phone_number' => fake()->e164PhoneNumber(),
         ];
     }
 }

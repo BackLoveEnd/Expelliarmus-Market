@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
@@ -129,10 +129,6 @@ const inStockFilters = ref([
 
 
 const offset = computed(() => page.value * limit.value);
-
-onMounted(async () => {
-  await fetchProducts(0);
-});
 
 async function fetchProducts(pageIndex) {
   if (cache.has(pageIndex)) {
@@ -222,4 +218,6 @@ const getSeverity = (status) => {
       return "danger";
   }
 };
+
+await fetchProducts(0);
 </script>

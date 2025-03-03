@@ -9,10 +9,10 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class GetPagePaginatedBrandsAction
 {
-    public function handle(array $columns, int $defailtBrandsShowNumber): array
+    public function handle(array $columns, int $defaultBrandsShowNumber): array
     {
         $brands = QueryBuilder::for(Brand::class)
-            ->paginate($defailtBrandsShowNumber, $columns);
+            ->paginate($defaultBrandsShowNumber, $columns);
 
         return [
             'items' => $brands->items(),
@@ -21,12 +21,12 @@ class GetPagePaginatedBrandsAction
                     'current' => $brands->url($brands->currentPage()),
                     'first' => $brands->url(1),
                     'last' => $brands->url($brands->lastPage()),
-                    'next' => $brands->nextPageUrl()
+                    'next' => $brands->nextPageUrl(),
                 ],
                 'meta' => [
-                    'total' => $brands->total()
-                ]
-            ]
+                    'total' => $brands->total(),
+                ],
+            ],
         ];
     }
 }

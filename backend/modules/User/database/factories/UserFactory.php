@@ -25,12 +25,15 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
+            'phone_country_code' => 'UA',
+            'phone_number' => fake()->e164PhoneNumber(),
         ];
     }
 
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes)
+            => [
             'email_verified_at' => null,
         ]);
     }

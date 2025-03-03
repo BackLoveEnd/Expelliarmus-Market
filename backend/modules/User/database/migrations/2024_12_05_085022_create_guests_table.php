@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('phone_country_code');
-            $table->integer('phone_number');
+            $table->string('phone_number');
             $table->timestamp('created_at')->nullable();
             $table->primary('id');
         });

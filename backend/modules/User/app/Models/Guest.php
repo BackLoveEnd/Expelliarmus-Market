@@ -12,6 +12,7 @@ use Modules\Order\Models\Cart;
 use Modules\Order\Models\Order;
 use Modules\User\Database\Factories\GuestFactory;
 use Modules\User\Observers\GuestObserver;
+use Propaganistas\LaravelPhone\Rules\Phone;
 
 /**
  * @property int $id,
@@ -19,6 +20,8 @@ use Modules\User\Observers\GuestObserver;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $phone_country_code
+ * @property Phone $phone_number
  * @property Carbon $created_at
  */
 #[ObservedBy(GuestObserver::class)]
@@ -28,17 +31,21 @@ class Guest extends Model
 
     public $timestamps = false;
 
+    protected $primaryKey = 'guest_id';
+
+    public $incrementing = false;
+
     protected $fillable = [
         'first_name',
         'last_name',
         'email',
         'phone_country_code',
-        'phone_number'
+        'phone_number',
     ];
 
     protected $hidden = [
         'phone_country_code',
-        'phone_number'
+        'phone_number',
     ];
 
     public function orders(): MorphMany
@@ -54,8 +61,13 @@ class Guest extends Model
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime'
+            'created_at' => 'datetime',
         ];
+    }
+
+    public function fullName(): string
+    {
+        return $this->last_name.' '.$this->first_name;
     }
 
     protected static function newFactory(): GuestFactory

@@ -11,7 +11,7 @@ class SingleAttributeVariationResource extends JsonApiResource
 {
     public function toAttributes(Request $request): array
     {
-        return [
+        $attributes = [
             'price' => $this->price,
             'value' => $this->value,
             'quantity' => $this->quantity,
@@ -19,8 +19,13 @@ class SingleAttributeVariationResource extends JsonApiResource
             'attribute_id' => $this->attribute->id,
             'attribute_type' => $this->attribute->type->toTypes(),
             'attribute_type_id' => $this->attribute->type->value,
-            'attribute_view_type' => $this->attribute->view_type->value
         ];
+        
+        if ($this->attribute->view_type) {
+            $attributes['attribute_view_type'] = $this->attribute->view_type->value;
+        }
+
+        return $attributes;
     }
 
     public function toType(Request $request): string

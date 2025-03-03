@@ -16,7 +16,8 @@ use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
 use Modules\Warehouse\Rules\AttributesExistsInCombinedVariationsRule;
 use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
 
-#[AllowDynamicProperties] class ProductCreateRequest extends JsonApiRelationsFormRequest
+#[AllowDynamicProperties]
+class ProductCreateRequest extends JsonApiRelationsFormRequest
 {
     public function authorize(): bool
     {
@@ -34,11 +35,16 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'required_if:data.attributes.is_combined_attributes,null',
                 'regex:/^\d{1,6}(\.\d{1,2})?$/',
                 'max:10000000',
-                'min:1'
+                'min:1',
             ],
             'total_quantity' => ['required', 'integer'],
-            'product_article' => ['required', 'string', Rule::unique('products', 'product_article')],
-            'is_combined_attributes' => ['present', 'nullable', 'boolean']
+            'product_article' => [
+                'required',
+                'string',
+                'regex:/^\w{8}$|^\w{13}$/',
+                Rule::unique('products', 'product_article'),
+            ],
+            'is_combined_attributes' => ['present', 'nullable', 'boolean'],
         ];
     }
 
@@ -53,7 +59,7 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'array',
                 new AttributesExistsInCombinedVariationsRule(),
                 new UniqueSkuInCombinationsRule(),
-                new PriceComplianceForCombinedVariationsRule($this->price)
+                new PriceComplianceForCombinedVariationsRule($this->price),
             ],
             'product_variations_combinations.*' => [
                 'sku' => [
@@ -66,11 +72,11 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                     'nullable',
                     'regex:/^\d{1,6}(\.\d{1,2})?$/',
                     'max:10000000',
-                    'min:1'
+                    'min:1',
                 ],
                 'quantity' => [
                     'required',
-                    'integer'
+                    'integer',
                 ],
                 'attributes' => [
                     'required',
@@ -87,24 +93,24 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                         $type = $this->input(str_replace('.value', '.type.id', $attribute));
 
                         (new ValueHasCorrectDataTypeRule(
-                            ProductAttributeTypeEnum::tryFrom($type)
+                            ProductAttributeTypeEnum::tryFrom($type),
                         ))->validate($attribute, $value, $fail);
-                    }
+                    },
                 ],
                 'attributes.*.name' => [
                     'required_without:data.relationships.product_variations_combinations.data.*.attributes.*.id',
                     'nullable',
-                    'string'
+                    'string',
                 ],
                 'attributes.*.type.id' => [
                     'required_with:data.relationships.product_variations_combinations.data.*.attributes.*.name',
                     'nullable',
-                    Rule::enum(ProductAttributeTypeEnum::class)
+                    Rule::enum(ProductAttributeTypeEnum::class),
                 ],
                 'attributes.*.attribute_view_type' => [
                     'required',
-                    Rule::enum(ProductAttributeViewTypeEnum::class)
-                ]
+                    Rule::enum(ProductAttributeViewTypeEnum::class),
+                ],
             ],
 
             'product_variation' => [
@@ -118,28 +124,28 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'attribute_id' => [
                     'nullable',
                     'integer',
-                    Rule::exists('product_attributes', 'id')
+                    Rule::exists('product_attributes', 'id'),
                 ],
                 'attribute_name' => [
                     'required_without:data.relationships.product_variation.data.*.attribute_id',
-                    'string'
+                    'string',
                 ],
                 'attribute_type' => [
                     'required_with:data.relationships.product_variation.data.*.attribute_name',
-                    Rule::enum(ProductAttributeTypeEnum::class)
+                    Rule::enum(ProductAttributeTypeEnum::class),
                 ],
                 'attribute_view_type' => [
                     'required',
-                    Rule::enum(ProductAttributeViewTypeEnum::class)
+                    Rule::enum(ProductAttributeViewTypeEnum::class),
                 ],
                 'attributes' => [
                     'required',
                     'array',
-                    new PriceComplianceForSingleVariationsRule($this->price)
+                    new PriceComplianceForSingleVariationsRule($this->price),
                 ],
                 'attributes.*.quantity' => [
                     'required',
-                    'integer'
+                    'integer',
                 ],
                 'attributes.*.value' => [
                     'required',
@@ -147,24 +153,24 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                         $type = $this->relation('product_variation')[0]['attribute_type'];
 
                         (new ValueHasCorrectDataTypeRule(
-                            ProductAttributeTypeEnum::tryFrom($type)
+                            ProductAttributeTypeEnum::tryFrom($type),
                         ))->validate($attribute, $value, $fail);
-                    }
+                    },
                 ],
                 'attributes.*.price' => [
                     'required_if:data.attributes.price,null',
                     'nullable',
                     'regex:/^\d{1,6}(\.\d{1,2})?$/',
                     'max:10000000',
-                    'min:1'
+                    'min:1',
                 ],
             ],
 
             'brand' => [
-                'id' => ['required', 'integer', Rule::exists('brands', 'id')]
+                'id' => ['required', 'integer', Rule::exists('brands', 'id')],
             ],
             'category' => [
-                'id' => ['required', 'integer', Rule::exists('categories', 'id')]
+                'id' => ['required', 'integer', Rule::exists('categories', 'id')],
             ],
             'product_specs' => [
                 'required',
@@ -177,10 +183,10 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'specifications.*.id' => ['nullable', 'integer'],
                 'specifications.*.spec_name' => [
                     'required_without:data.relationships.product_specs.data.*.specifications.*.id',
-                    'string'
+                    'string',
                 ],
                 'specifications.*.value' => ['required', 'array'],
-            ]
+            ],
         ];
     }
 
@@ -197,13 +203,13 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'attributes.*.price' => 'product price for attribute',
                 'attributes.*.name' => 'attribute name',
                 'attributes.*.type' => 'attribute type',
-                'attributes.*.attribute_view_type' => 'attribute view type'
+                'attributes.*.attribute_view_type' => 'attribute view type',
             ],
             'brand' => [
-                'id' => 'brand'
+                'id' => 'brand',
             ],
             'category' => [
-                'id' => 'category'
+                'id' => 'category',
             ],
             'product_specs' => 'product specification',
             'product_specs.*' => [
@@ -211,7 +217,7 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'specifications' => 'specifications',
                 'specifications.*.id' => 'specification id',
                 'specifications.*.spec_name' => 'specification name',
-                'specifications.*.value' => 'specification value'
+                'specifications.*.value' => 'specification value',
             ],
             'product_variation' => 'product variation of attributes',
             'product_variation.*' => [
@@ -222,8 +228,8 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
                 'attributes' => 'product attributes',
                 'attributes.*.quantity' => 'products quantity for attribute',
                 'attributes.*.value' => 'product attribute value',
-                'attributes.*.price' => 'product price for attribute'
-            ]
+                'attributes.*.price' => 'product price for attribute',
+            ],
         ];
     }
 
@@ -232,19 +238,19 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
         return [
             'product_variations_combinations' => [
                 'present_if' => 'Product combination of variations must be presented in this creation type.',
-                'exclude_if' => 'Product combination of variations must not be presented in this creation type.'
+                'exclude_if' => 'Product combination of variations must not be presented in this creation type.',
             ],
             'product_variations' => [
                 'present_if' => 'Product single variation must be presented in this creation type.',
-                'exclude_if' => 'Product single variation must not be presented in this creation type.'
+                'exclude_if' => 'Product single variation must not be presented in this creation type.',
             ],
             'product_variations_combinations.*' => [
                 'sku.unique' => 'The SKU must be unique.',
             ],
             'product_specs.*' => [
                 'group.distinct' => 'Groups in specifications must be unique.',
-                'specifications.spec_name.required_without' => 'The specification name is required if you dont choose existing one.'
-            ]
+                'specifications.spec_name.required_without' => 'The specification name is required if you dont choose existing one.',
+            ],
         ];
     }
 
@@ -264,8 +270,11 @@ use Modules\Warehouse\Rules\UniqueSkuInCombinationsRule;
     {
         return [
             'price' => [
-                'required_if' => 'The price is required'
-            ]
+                'required_if' => 'The price is required',
+            ],
+            'product_article' => [
+                'regex' => 'Product Article can only be 8 or 13 symbols.',
+            ],
         ];
     }
 }
