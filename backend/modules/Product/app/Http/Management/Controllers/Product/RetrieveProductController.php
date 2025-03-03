@@ -23,8 +23,7 @@ class RetrieveProductController extends Controller
 {
     public function __construct(
         private CacheService $cacheService,
-    ) {
-    }
+    ) {}
 
     /**
      * Fetch products by all available root categories (paginated).
@@ -73,12 +72,12 @@ class RetrieveProductController extends Controller
         $product = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(
                 configKey: config('product.cache.product-preview'),
-                identifier: $productSlug->getProductId()
+                identifier: $productSlug->getProductId(),
             ),
             ttl: now()->addMonth(),
             callback: function () use ($productSlug, $action) {
                 return $action->handle($productSlug->getProductId());
-            }
+            },
         );
 
         return ProductPreviewResource::make($product);

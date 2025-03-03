@@ -13,18 +13,19 @@ use Modules\Product\Storages\ProductImages\Size;
 class GetProductsByCategoryAction
 {
     public function __construct(
-        private ProductImagesService $imagesService
-    ) {
-    }
+        private ProductImagesService $imagesService,
+    ) {}
 
     public function handle(Category $category): object
     {
-        $products = $category->products()->orderBy('id')
+        $products = $category
+            ->products()->orderBy('id')
             ->paginate(config('product.retrieve.by_category'), [
                 'id',
                 'slug',
                 'product_article',
                 'title',
+                'status',
                 'preview_image',
                 'category_id',
                 'created_at',
@@ -32,15 +33,15 @@ class GetProductsByCategoryAction
 
         $products = $this->overrideImageUrlWhenNeeded($products);
 
-        return (object)[
+        return (object) [
             'category_id' => $category->id,
             'name' => $category->name,
             'slug' => $category->slug,
             'products' => $products,
-            'pagination' => (object)[
+            'pagination' => (object) [
                 'total' => $products->total(),
-                'next' => $products->nextPageUrl()
-            ]
+                'next' => $products->nextPageUrl(),
+            ],
         ];
     }
 
@@ -52,8 +53,8 @@ class GetProductsByCategoryAction
                     $product,
                     new Size(
                         width: config('product.image.preview.size.width'),
-                        height: config('product.image.preview.size.height')
-                    )
+                        height: config('product.image.preview.size.height'),
+                    ),
                 );
             }
 
