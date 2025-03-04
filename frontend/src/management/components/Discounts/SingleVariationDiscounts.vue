@@ -82,12 +82,12 @@ const selectedVariation = ref(null);
             />
             <discount-info-viewer
                 title="Old Price"
-                :value="selectedVariation.discount.old_price"
+                :value="`$${selectedVariation.discount.old_price}`"
                 icon="pi-arrow-up text-red-500"
             />
             <discount-info-viewer
                 title="Discount Price"
-                :value="selectedVariation.discount.discount_price"
+                :value="`$${selectedVariation.discount.discount_price}`"
                 icon="pi-arrow-down text-green-500"
             />
           </div>

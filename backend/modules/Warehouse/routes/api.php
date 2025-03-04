@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Warehouse\Http\Controllers\DiscountController;
 use Modules\Warehouse\Http\Controllers\RetrieveDiscountController;
 use Modules\Warehouse\Http\Controllers\WarehouseController;
 use Modules\Warehouse\Models\ProductAttribute;
@@ -11,14 +12,19 @@ Route::prefix('management')->group(function () {
     });
 
     Route::prefix('warehouse')->group(function () {
-        Route::get('/products', [WarehouseController::class, 'searchProductBySearchable'])
-            ->withoutMiddleware(['throttle']);
+        Route::prefix('products')->group(function () {
+            Route::get('/', [WarehouseController::class, 'searchProductBySearchable'])
+                ->withoutMiddleware(['throttle']);
+
+            Route::get('/{productBind}', [WarehouseController::class, 'getWarehouseProductInfo'])
+                ->whereNumber('productBind');
+
+            Route::post('/{product}/discounts', [DiscountController::class, 'addDiscount'])
+                ->whereNumber('product');
+        });
 
         Route::get('/table', [WarehouseController::class, 'getProductPaginated'])
             ->withoutMiddleware(['throttle']);
-
-        Route::get('/products/{productBind}', [WarehouseController::class, 'getWarehouseProductInfo'])
-            ->whereNumber('productBind');
     });
 
     Route::prefix('discounts')->group(function () {

@@ -40,6 +40,14 @@ class RetrieveDiscountController extends Controller
         return SearchedProductsSetResource::collection($products);
     }
 
+    /**
+     * Retrieve product discount information.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  ProductSlug  $productSlug
+     * @return ProductWarehouseDiscountsResource
+     */
     public function getProductWithDiscountsInfo(ProductSlug $productSlug): ProductWarehouseDiscountsResource
     {
         $product = $this->discountService->getProductWithDiscounts($productSlug->getProductId());
