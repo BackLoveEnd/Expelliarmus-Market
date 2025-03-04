@@ -58,7 +58,7 @@ class ProductFactory extends Factory
             )
             ->create();
 
-        $this->addToWarehouse($product);
+        $this->addToWarehouse($product, false);
 
         return $product;
     }
@@ -92,7 +92,7 @@ class ProductFactory extends Factory
             )
             ->create();
 
-        $this->addToWarehouse($product);
+        $this->addToWarehouse($product, false);
 
         return $product;
     }
@@ -156,10 +156,16 @@ class ProductFactory extends Factory
         ]);
     }
 
-    private function addToWarehouse(Product $product): void
+    private function addToWarehouse(Product $product, bool $price = true): void
     {
-        Warehouse::factory()->state(
-            ['product_id' => $product->id],
-        )->create();
+        $state = [
+            'product_id' => $product->id,
+        ];
+
+        if (! $price) {
+            $state['default_price'] = null;
+        }
+
+        Warehouse::factory()->state($state)->create();
     }
 }
