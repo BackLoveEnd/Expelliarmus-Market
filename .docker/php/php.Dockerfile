@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     libicu-dev \
     libpng-dev \
+    libicu-dev \
     libzip-dev \
     libfreetype6-dev \
     libjpeg-dev \
@@ -42,6 +43,9 @@ RUN git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick && \
     rm -rf /tmp/imagick
 
 RUN docker-php-ext-install opcache
+
+RUN docker-php-ext-configure intl \
+&& docker-php-ext-install intl
 
 RUN docker-php-ext-configure gd \
     --with-freetype=/usr/include/freetype2 \
