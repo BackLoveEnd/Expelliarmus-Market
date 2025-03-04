@@ -21,6 +21,7 @@ use Modules\Product\Database\Factories\ProductFactory;
 use Modules\Product\Observers\ProductObserver;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Enums\ProductStatusEnum;
+use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
 use Modules\Warehouse\Models\Warehouse;
@@ -106,6 +107,17 @@ class Product extends Model
     public function combinedAttributes(): HasMany
     {
         return $this->hasMany(ProductVariation::class, 'product_id');
+    }
+
+    // For products that do not have options defining their prices.
+    public function discount(): BelongsToMany
+    {
+        return $this->belongsToMany(Discount::class);
+    }
+
+    public function lastDiscount(): BelongsToMany
+    {
+        return $this->discount()->whereDate('end_date', '>', now())->first();
     }
 
     public function getDescriptionMarkdown(): string

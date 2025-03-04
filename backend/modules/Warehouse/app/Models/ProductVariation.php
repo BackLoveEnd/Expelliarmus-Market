@@ -33,7 +33,7 @@ class ProductVariation extends Model
         'product_id',
         'quantity',
         'price',
-        'sku'
+        'sku',
     ];
 
     public function product(): BelongsTo
@@ -50,13 +50,32 @@ class ProductVariation extends Model
 
     public function productAttributes(): BelongsToMany
     {
-        return $this->belongsToMany(
-            ProductAttribute::class,
-            'variation_attribute_values',
-            'variation_id',
-            'attribute_id'
-        )
+        return $this
+            ->belongsToMany(
+                ProductAttribute::class,
+                'variation_attribute_values',
+                'variation_id',
+                'attribute_id',
+            )
             ->using(VariationAttributeValues::class);
+    }
+
+    public function discount(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            related: Discount::class,
+            table: 'product_combined_variation_discounts',
+            foreignPivotKey: 'c_variation_id',
+            relatedPivotKey: 'discount_id',
+        );
+    }
+
+    public function lastDiscount(): BelongsToMany
+    {
+        return $this
+            ->discount()
+            ->whereDate('discounts.end_date', '>', now()->format('Y-m-d H:i:s'))
+            ->orderByDesc('discounts.end_date');
     }
 
     public function variationsAttributesValues(): HasMany
