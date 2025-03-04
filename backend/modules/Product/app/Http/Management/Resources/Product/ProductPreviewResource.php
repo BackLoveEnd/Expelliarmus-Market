@@ -7,8 +7,8 @@ namespace Modules\Product\Http\Management\Resources\Product;
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Resources\BrandResource;
 use Modules\Category\Http\Resources\RootCategoryResource;
-use Modules\Warehouse\Http\Resources\CombinedAttributeVariationResource;
-use Modules\Warehouse\Http\Resources\SingleAttributeVariationResource;
+use Modules\Warehouse\Http\Resources\Warehouse\CombinedAttributeVariationResource;
+use Modules\Warehouse\Http\Resources\Warehouse\SingleAttributeVariationResource;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class ProductPreviewResource extends JsonApiResource
@@ -22,7 +22,7 @@ class ProductPreviewResource extends JsonApiResource
             'main_description' => $this->main_description_html,
             'title_description' => $this->title_description,
             'images' => collect($this->images)->select(['order', 'image_url']),
-            'specifications' => $this->productSpecs
+            'specifications' => $this->productSpecs,
         ];
 
         if ($this->previewAttributes) {

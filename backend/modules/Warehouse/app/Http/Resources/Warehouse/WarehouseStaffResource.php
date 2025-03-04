@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Http\Resources;
+namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Illuminate\Http\Request;
 use TiMacDonald\JsonApi\JsonApiResource;
@@ -13,7 +13,7 @@ class WarehouseStaffResource extends JsonApiResource
     {
         return [
             'total_quantity' => $this->total_quantity,
-            'default_price' => $this->defaultPrice()
+            'default_price' => $this->defaultPrice(),
         ];
     }
 }

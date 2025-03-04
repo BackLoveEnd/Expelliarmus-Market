@@ -25,9 +25,8 @@ class CreateProductWithCombinedAttributesAction implements CreateProductActionIn
         private CreateProductDto $productDto,
         private CreateWarehouseDto $warehouseDto,
         /**@var Collection<int, CombinedVariationsDto> */
-        private Collection $combinedVariationsDto
-    ) {
-    }
+        private Collection $combinedVariationsDto,
+    ) {}
 
     public function handle(CreateProduct $createProduct, CreateProductInWarehouse $createInWarehouse): Product
     {
@@ -47,11 +46,11 @@ class CreateProductWithCombinedAttributesAction implements CreateProductActionIn
     private function prepareWarehouseData(): void
     {
         $this->warehouseDto->setTotalQuantity(
-            $this->combinedVariationsDto->sum('quantity')
+            $this->combinedVariationsDto->sum('quantity'),
         );
 
         $this->warehouseDto->setVariationPrices(
-            $this->combinedVariationsDto->pluck('price')
+            $this->combinedVariationsDto->pluck('price'),
         );
     }
 
@@ -79,9 +78,9 @@ class CreateProductWithCombinedAttributesAction implements CreateProductActionIn
                     'quantity' => $dto->quantity,
                     'price' => $dto->price
                         ? round($dto->price, 2)
-                        : $warehouse->defaultPrice()
+                        : $warehouse->default_price,
                 ];
-            }
+            },
         );
 
         return $this->createVariations($productVariations->toArray(), $product);
@@ -107,7 +106,7 @@ class CreateProductWithCombinedAttributesAction implements CreateProductActionIn
                         'attribute_id' => $attribute->id,
                         'value' => $attribute->value,
                     ];
-                }
+                },
             );
         });
 

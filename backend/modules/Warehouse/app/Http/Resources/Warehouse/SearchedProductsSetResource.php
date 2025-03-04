@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Http\Resources;
+namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Illuminate\Http\Request;
 use TiMacDonald\JsonApi\JsonApiResource;
@@ -14,7 +14,7 @@ class SearchedProductsSetResource extends JsonApiResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'article' => $this->product_article
+            'article' => $this->product_article,
         ];
     }
 }

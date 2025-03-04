@@ -21,9 +21,8 @@ class EditProductWithSingleOption implements EditProductActionInterface
     public function __construct(
         private CreateProductDto $productDto,
         private CreateWarehouseDto $warehouseDto,
-        private CreateProductAttributeSingleVariationDto $singleVariationDto
-    ) {
-    }
+        private CreateProductAttributeSingleVariationDto $singleVariationDto,
+    ) {}
 
     public function handle(EditProduct $editProduct, EditProductInWarehouse $editProductInWarehouse): Product
     {
@@ -43,11 +42,11 @@ class EditProductWithSingleOption implements EditProductActionInterface
     private function prepareWarehouseData(): void
     {
         $this->warehouseDto->setTotalQuantity(
-            $this->singleVariationDto->attributes->sum('quantity')
+            $this->singleVariationDto->attributes->sum('quantity'),
         );
 
         $this->warehouseDto->setVariationPrices(
-            $this->singleVariationDto->attributes->pluck('price')
+            $this->singleVariationDto->attributes->pluck('price'),
         );
     }
 
@@ -63,9 +62,9 @@ class EditProductWithSingleOption implements EditProductActionInterface
                         'attribute_id' => $this->singleVariationDto->attributeId,
                         'value' => $dto->value,
                         'quantity' => $dto->quantity,
-                        'price' => $dto->price ? round($dto->price, 2) : $warehouse->defaultPrice(),
+                        'price' => $dto->price ? round($dto->price, 2) : $warehouse->default_price,
                     ];
-                }
+                },
             );
 
             ProductAttributeValue::query()->insert($attributes->toArray());

@@ -29,8 +29,7 @@ class WarehouseProductInfoService
     public function searchProducts(mixed $searchable): Collection
     {
         return Product::withTrashed()
-            ->whereRaw('document_search @@ plainto_tsquery(?)', [$searchable])
-            ->orderByRaw('ts_rank(document_search, plainto_tsquery(?))', [$searchable])
+            ->search($searchable)
             ->get(['id', 'title', 'product_article']);
     }
 

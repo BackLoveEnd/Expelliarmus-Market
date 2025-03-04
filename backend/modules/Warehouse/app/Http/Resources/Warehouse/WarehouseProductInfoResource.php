@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Http\Resources;
+namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Resources\BrandResource;

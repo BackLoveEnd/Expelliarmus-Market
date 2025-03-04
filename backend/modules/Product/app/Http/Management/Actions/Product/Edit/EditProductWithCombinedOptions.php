@@ -22,9 +22,8 @@ class EditProductWithCombinedOptions implements EditProductActionInterface
         private CreateProductDto $productDto,
         private CreateWarehouseDto $warehouseDto,
         /**@var Collection<int, CombinedVariationsDto> */
-        private Collection $combinedVariationsDto
-    ) {
-    }
+        private Collection $combinedVariationsDto,
+    ) {}
 
     public function handle(EditProduct $editProduct, EditProductInWarehouse $editProductInWarehouse): Product
     {
@@ -44,11 +43,11 @@ class EditProductWithCombinedOptions implements EditProductActionInterface
     private function prepareWarehouseData(): void
     {
         $this->warehouseDto->setTotalQuantity(
-            $this->combinedVariationsDto->sum('quantity')
+            $this->combinedVariationsDto->sum('quantity'),
         );
 
         $this->warehouseDto->setVariationPrices(
-            $this->combinedVariationsDto->pluck('price')
+            $this->combinedVariationsDto->pluck('price'),
         );
     }
 
@@ -73,22 +72,23 @@ class EditProductWithCombinedOptions implements EditProductActionInterface
                 'quantity' => $dto->quantity,
                 'price' => $dto->price
                     ? round($dto->price, 2)
-                    : $warehouse->defaultPrice(),
-                'product_id' => $product->id
+                    : $warehouse->default_price,
+                'product_id' => $product->id,
             ];
         });
 
         $toDelete = $currentVariations->diff($mappedVariations->pluck('sku'));
 
         if ($toDelete->isNotEmpty()) {
-            $product->combinedAttributes()->whereIn('sku', $toDelete->toArray())
+            $product
+                ->combinedAttributes()->whereIn('sku', $toDelete->toArray())
                 ->delete();
         }
 
         $product->combinedAttributes()->upsert(
             values: $mappedVariations->toArray(),
             uniqueBy: ['sku'],
-            update: ['sku', 'price', 'quantity']
+            update: ['sku', 'price', 'quantity'],
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Modules\Warehouse\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +29,7 @@ class Warehouse extends Model
     protected $fillable = [
         'product_id',
         'total_quantity',
-        'default_price'
+        'default_price',
     ];
 
     protected function casts(): array
@@ -44,9 +45,11 @@ class Warehouse extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function defaultPrice(): ?float
+    public function defaultPrice(): Attribute
     {
-        return $this->default_price;
+        return Attribute::get(function ($value) {
+            return round((float) $value, 2);
+        });
     }
 
     protected static function boot(): void

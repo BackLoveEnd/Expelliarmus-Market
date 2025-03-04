@@ -7,9 +7,9 @@ namespace Modules\Product\Http\Management\Resources\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Modules\Warehouse\Enums\ProductStatusEnum;
-use Modules\Warehouse\Http\Resources\CombinedAttributeVariationResource;
-use Modules\Warehouse\Http\Resources\SingleAttributeVariationResource;
-use Modules\Warehouse\Http\Resources\WarehouseStaffResource;
+use Modules\Warehouse\Http\Resources\Warehouse\CombinedAttributeVariationResource;
+use Modules\Warehouse\Http\Resources\Warehouse\SingleAttributeVariationResource;
+use Modules\Warehouse\Http\Resources\Warehouse\WarehouseStaffResource;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class ProductStaffInfoResource extends JsonApiResource

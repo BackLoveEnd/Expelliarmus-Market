@@ -10,9 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Support\ProductSlug;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
-use Modules\Warehouse\Http\Resources\SearchedProductsSetResource;
-use Modules\Warehouse\Http\Resources\WarehouseProductInfoResource;
-use Modules\Warehouse\Http\Resources\WarehouseProductsTableResource;
+use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
+use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductInfoResource;
+use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductsTableResource;
 use Modules\Warehouse\Services\WarehouseProductInfoService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
@@ -52,14 +52,7 @@ class WarehouseController extends Controller
      */
     public function getWarehouseProductInfo(ProductSlug $productSlug): WarehouseProductInfoResource
     {
-        $product = $this->cacheService->repo()->remember(
-            key: $this->cacheService->key(
-                config('warehouse.cache.product-warehouse-info'),
-                $productSlug->getProductId(),
-            ),
-            ttl: now()->addDay(),
-            callback: fn() => $this->warehouseService->getWarehouseInfoAboutProduct($productSlug->getProductId()),
-        );
+        $product = $this->warehouseService->getWarehouseInfoAboutProduct($productSlug->getProductId());
 
         return WarehouseProductInfoResource::make($product);
     }
@@ -77,8 +70,8 @@ class WarehouseController extends Controller
     {
         if ($request->hasAny(['limit', 'offset'])) {
             $products = $this->warehouseService->getPaginated(
-                offset: (int)$request->query('offset') ?? 0,
-                limit: (int)$request->query('limit') ?? config('warehouse.pagination.table'),
+                offset: (int) $request->query('offset') ?? 0,
+                limit: (int) $request->query('limit') ?? config('warehouse.pagination.table'),
             );
         } else {
             $products = $this->warehouseService->getPaginated(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Http\Resources;
+namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,10 +17,10 @@ class WarehouseProductsTableResource extends JsonApiResource
             'article' => $this->product_article,
             'status' => [
                 'name' => $this->status->toString(),
-                'colorType' => $this->status->toColorType()
+                'colorType' => $this->status->toColorType(),
             ],
             'totalQuantity' => $this->warehouse->total_quantity,
-            'arrived_at' => $this->warehouse->arrived_at.' '.Carbon::now()->timezone
+            'arrived_at' => $this->warehouse->arrived_at.' '.Carbon::now()->timezone,
         ];
     }
 }

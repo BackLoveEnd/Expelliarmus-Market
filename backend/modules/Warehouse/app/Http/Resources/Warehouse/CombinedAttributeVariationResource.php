@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Http\Resources;
+namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Illuminate\Http\Request;
+use Modules\Warehouse\Http\Resources\Discount\DiscountBaseResource;
 use Modules\Warehouse\Models\ProductAttribute;
 use TiMacDonald\JsonApi\JsonApiResource;
 
@@ -15,6 +16,7 @@ class CombinedAttributeVariationResource extends JsonApiResource
         return [
             'sku' => $this->sku,
             'price' => $this->price,
+            'discount' => $this->discount?->isEmpty() ? null : DiscountBaseResource::make($this->discount->first()),
             'quantity' => $this->quantity,
             'attributes' => $this->productAttributes->map(function (ProductAttribute $attribute) {
                 $attributes = [
