@@ -52,13 +52,15 @@
                 </template>
               </custom-menu>
             </li>
-            <li
-                class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0"
-            >
-              <router-link to="/management/warehouse">
-                <i class="pi pi-warehouse"></i>
-                Warehouse
-              </router-link>
+            <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">
+              <custom-menu :links="warehouseLinks" drop-to-up>
+                <template v-slot:menu-button="{ isOpen }">
+                  <span class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0">
+                    <i class="pi pi-objects-column"></i>
+                    Warehouse
+                  </span>
+                </template>
+              </custom-menu>
             </li>
             <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">
               <custom-menu :links="contentLinks" drop-to-up>
@@ -126,6 +128,11 @@ const productLinks = ref([
 const clientLinks = ref([
   {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified"},
   {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user"}
+]);
+
+const warehouseLinks = ref([
+  {url: "/management/warehouse", name: "Products", svg: "pi pi-align-justify"},
+  {url: "/management/products/discounts", name: "Discounts", svg: "pi pi-percentage"}
 ]);
 
 const handleMouseMove = (event) => {

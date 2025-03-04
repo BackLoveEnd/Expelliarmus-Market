@@ -11,6 +11,7 @@ import EditProduct from "@/management/views/Product/EditProduct.vue";
 import TrashedProducts from "@/management/views/Product/TrashedProducts.vue";
 import Users from "@/management/views/Users/Users.vue";
 import Guests from "@/management/views/Users/Guests.vue";
+import Discounts from "@/management/views/Warehouse/Discounts.vue";
 
 export default [
     {
@@ -41,6 +42,11 @@ export default [
         path: "clients/guests",
         component: Guests,
         name: "guests"
+    },
+    {
+        path: "products/discounts",
+        component: Discounts,
+        name: "discounts"
     },
     {
         path: "categories-and-brands",
