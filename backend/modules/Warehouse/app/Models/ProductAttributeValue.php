@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\Database\Factories\SingleAttributeFactory;
 
-class ProductAttributeValue extends Model
+class ProductAttributeValue extends Model implements DiscountRelationInterface
 {
     use HasFactory;
 

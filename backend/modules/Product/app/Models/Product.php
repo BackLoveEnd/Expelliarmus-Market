@@ -20,6 +20,7 @@ use Modules\Product\Casts\ProductArticleCast;
 use Modules\Product\Database\Factories\ProductFactory;
 use Modules\Product\Observers\ProductObserver;
 use Modules\Product\Traits\Slugger;
+use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
@@ -42,12 +43,12 @@ use Modules\Warehouse\Models\Warehouse;
  * @property Carbon $created_at
  * @property Carbon $published_at
  * @property ProductStatusEnum $status
- * @property boolean|null $with_attribute_combinations
+ * @property bool|null $with_attribute_combinations
  * @method ProductBuilder wherePublished
  * @method ProductBuilder whereNotPublished
  */
 #[ObservedBy(ProductObserver::class)]
-class Product extends Model
+class Product extends Model implements DiscountRelationInterface
 {
     use HasFactory;
     use Slugger;
