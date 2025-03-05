@@ -7,7 +7,7 @@ namespace Modules\Product\Http\Management\Actions\Product\Retrieve;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Management\Service\Product\ProductSpecificationsService;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\Services\WarehouseProductInfoService;
+use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 
 class GetProductStaffInfoAction
 {

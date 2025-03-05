@@ -13,7 +13,7 @@ use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductInfoResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductsTableResource;
-use Modules\Warehouse\Services\WarehouseProductInfoService;
+use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class WarehouseController extends Controller

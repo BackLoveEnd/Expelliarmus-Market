@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Services;
+namespace Modules\Warehouse\Services\Warehouse;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;

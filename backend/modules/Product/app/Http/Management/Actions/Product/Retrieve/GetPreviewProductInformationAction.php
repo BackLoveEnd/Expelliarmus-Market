@@ -8,23 +8,22 @@ use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumn
 use Modules\Product\Http\Management\Service\Images\ProductImagesService;
 use Modules\Product\Http\Management\Service\Product\ProductSpecificationsService;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\Services\WarehouseProductInfoService;
+use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 
 class GetPreviewProductInformationAction
 {
     public function __construct(
         private ProductImagesService $imagesService,
         private WarehouseProductInfoService $warehouseProductService,
-        private ProductSpecificationsService $specificationsService
-    ) {
-    }
+        private ProductSpecificationsService $specificationsService,
+    ) {}
 
     public function handle(int $productId): Product
     {
         $product = $this->loadProduct($productId);
 
         $product->productSpecs = $this->specificationsService->prepareProductSpecifications(
-            $product->productSpecs
+            $product->productSpecs,
         );
 
         if (is_null($product->images)) {
@@ -40,16 +39,17 @@ class GetPreviewProductInformationAction
             dto: new FetchAttributesColumnsDto(
                 singleAttrCols: [
                     ['id', 'price', 'attribute_id', 'value', 'quantity'],
-                    ['id', 'name', 'type', 'view_type']
+                    ['id', 'name', 'type', 'view_type'],
                 ],
                 combinedAttrCols: [
                     ['id', 'sku', 'price', 'quantity'],
-                    ['product_attributes.id', 'name', 'type', 'view_type']
-                ]
-            )
+                    ['product_attributes.id', 'name', 'type', 'view_type'],
+                ],
+            ),
         );
 
-        $product->previewAttributes = $this->warehouseProductService->getAttributeServiceHandler()
+        $product->previewAttributes = $this->warehouseProductService
+            ->getAttributeServiceHandler()
             ->formatPreviewAttributes($product->productAttributes);
 
         return $product;
@@ -63,7 +63,7 @@ class GetPreviewProductInformationAction
                 'brand:id,name',
                 'productSpecs' => function ($query) {
                     $query->withPivot('value');
-                }
+                },
             ])
             ->firstOrFail();
     }

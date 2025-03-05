@@ -2,38 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\Services;
+namespace Modules\Warehouse\Services\Discount;
 
 use Illuminate\Support\Facades\DB;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\DTO\ProductDiscountDto as DiscountDto;
-use Modules\Warehouse\Http\Exceptions\CannotAddDiscountToProductWithoutPriceException;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 use Modules\Warehouse\Models\Discount;
 
-class ProductDiscountService
+class AddDiscountService extends AbstractDiscountService
 {
-    public function __construct(
-        protected WarehouseProductInfoService $warehouseService,
-    ) {}
-
-    public function getProductWithDiscounts(int $productId): Product
-    {
-        $product = $this->warehouseService->getWarehouseInfoAboutProduct($productId);
-
-        if (is_null($product->hasCombinedAttributes())) {
-            $product->load('lastDiscount');
-
-            return $product;
-        }
-
-        $product->productAttributes->load('lastDiscount');
-
-        return $product;
-    }
-
-    public function addDiscount(Product $product, DiscountDto $dto): void
+    public function process(Product $product, DiscountDto $dto): void
     {
         if (is_null($product->hasCombinedAttributes())) {
             $this->forProductWithoutVariations($product, $dto);
@@ -137,17 +117,5 @@ class ProductDiscountService
 
             $relation->discount()->attach($discount);
         });
-    }
-
-    protected function calculateDiscountPrice(float $originalPrice, DiscountDto $dto): float
-    {
-        if ((int) $originalPrice === 0) {
-            throw new CannotAddDiscountToProductWithoutPriceException();
-        }
-
-        return round(
-            num: $originalPrice * (1 - ($dto->percentage / 100)),
-            precision: 2,
-        );
     }
 }

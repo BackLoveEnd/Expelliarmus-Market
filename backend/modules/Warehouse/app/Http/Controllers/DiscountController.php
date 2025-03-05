@@ -9,12 +9,12 @@ use Illuminate\Http\JsonResponse;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\ProductDiscountDto;
 use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
-use Modules\Warehouse\Services\ProductDiscountService;
+use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 
 class DiscountController extends Controller
 {
     public function __construct(
-        private ProductDiscountService $discountService,
+        private ProductDiscountServiceFactory $discountService,
     ) {}
 
     /**

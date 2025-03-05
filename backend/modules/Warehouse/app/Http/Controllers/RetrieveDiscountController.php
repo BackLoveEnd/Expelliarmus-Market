@@ -8,18 +8,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Support\ProductSlug;
+use Modules\Warehouse\Http\Actions\GetProductWithDiscountInfoAction;
 use Modules\Warehouse\Http\Actions\SearchForProductToAddDiscount;
 use Modules\Warehouse\Http\Resources\Discount\ProductWarehouseDiscountsResource;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
-use Modules\Warehouse\Services\ProductDiscountService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection as Resource;
 
 class RetrieveDiscountController extends Controller
 {
-    public function __construct(
-        private ProductDiscountService $discountService,
-    ) {}
-
     /**
      * Search for products that are available for a discount.
      *
@@ -46,11 +42,14 @@ class RetrieveDiscountController extends Controller
      * Usage place - Admin section.
      *
      * @param  ProductSlug  $productSlug
+     * @param  GetProductWithDiscountInfoAction  $action
      * @return ProductWarehouseDiscountsResource
      */
-    public function getProductWithDiscountsInfo(ProductSlug $productSlug): ProductWarehouseDiscountsResource
-    {
-        $product = $this->discountService->getProductWithDiscounts($productSlug->getProductId());
+    public function getProductWithDiscountsInfo(
+        ProductSlug $productSlug,
+        GetProductWithDiscountInfoAction $action,
+    ): ProductWarehouseDiscountsResource {
+        $product = $action->handle($productSlug->getProductId());
 
         return ProductWarehouseDiscountsResource::make($product);
     }

@@ -20,8 +20,8 @@ final readonly class ProductDiscountDto
     {
         return new self(
             percentage: $request->percentage,
-            startFrom: Carbon::parse($request->start_date),
-            endAt: Carbon::parse($request->end_date),
+            startFrom: Carbon::parse($request->start_date)->setTimezone(config('app.timezone')),
+            endAt: Carbon::parse($request->end_date)->setTimezone(config('app.timezone')),
             variationId: $request->variation,
         );
     }
