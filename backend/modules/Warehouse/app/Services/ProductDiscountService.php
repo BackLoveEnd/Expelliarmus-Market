@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Services;
 
+use Illuminate\Support\Facades\DB;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\DTO\ProductDiscountDto as DiscountDto;
@@ -72,7 +73,7 @@ class ProductDiscountService
         $this->createDiscount(
             relation: $variation,
             dto: $dto,
-            oldPrice: $variation->getRawOriginal('price'),
+            oldPrice: (float) $variation->getRawOriginal('price'),
         );
     }
 
@@ -99,7 +100,7 @@ class ProductDiscountService
         $this->createDiscount(
             relation: $variation,
             dto: $dto,
-            oldPrice: $variation->getRawOriginal('price'),
+            oldPrice: (float) $variation->getRawOriginal('price'),
         );
     }
 
@@ -119,21 +120,23 @@ class ProductDiscountService
         $this->createDiscount(
             relation: $product,
             dto: $dto,
-            oldPrice: $product->warehouse->getRawOriginal('default_price'),
+            oldPrice: (float) $product->warehouse->getRawOriginal('default_price'),
         );
     }
 
     protected function createDiscount(DiscountRelationInterface $relation, DiscountDto $dto, float $oldPrice): void
     {
-        $discount = Discount::query()->create([
-            'percentage' => $dto->percentage,
-            'original_price' => $oldPrice,
-            'discount_price' => $this->calculateDiscountPrice($oldPrice, $dto),
-            'start_date' => $dto->startFrom,
-            'end_date' => $dto->endAt,
-        ]);
+        DB::transaction(function () use ($relation, $dto, $oldPrice) {
+            $discount = Discount::query()->create([
+                'percentage' => $dto->percentage,
+                'original_price' => $oldPrice,
+                'discount_price' => $this->calculateDiscountPrice($oldPrice, $dto),
+                'start_date' => $dto->startFrom,
+                'end_date' => $dto->endAt,
+            ]);
 
-        $relation->discount()->attach($discount);
+            $relation->discount()->attach($discount);
+        });
     }
 
     protected function calculateDiscountPrice(float $originalPrice, DiscountDto $dto): float

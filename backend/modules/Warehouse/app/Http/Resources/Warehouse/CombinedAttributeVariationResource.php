@@ -14,6 +14,7 @@ class CombinedAttributeVariationResource extends JsonApiResource
     public function toAttributes(Request $request): array
     {
         return [
+            'id' => $this->id,
             'sku' => $this->sku,
             'price' => $this->price,
             'discount' => $this->discount?->isEmpty() ? null : DiscountBaseResource::make($this->discount->first()),

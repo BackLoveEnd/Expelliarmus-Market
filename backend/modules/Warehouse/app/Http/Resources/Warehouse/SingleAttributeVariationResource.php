@@ -13,6 +13,7 @@ class SingleAttributeVariationResource extends JsonApiResource
     public function toAttributes(Request $request): array
     {
         $attributes = [
+            'id' => $this->id,
             'price' => $this->price,
             'discount' => $this->discount?->isEmpty() ? null : DiscountBaseResource::make($this->discount->first()),
             'value' => $this->value,

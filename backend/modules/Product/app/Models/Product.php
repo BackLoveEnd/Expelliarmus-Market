@@ -113,7 +113,7 @@ class Product extends Model implements DiscountRelationInterface
     // For products that do not have options defining their prices.
     public function discount(): BelongsToMany
     {
-        return $this->belongsToMany(Discount::class);
+        return $this->belongsToMany(Discount::class, 'product_discounts');
     }
 
     public function lastDiscount(): BelongsToMany
