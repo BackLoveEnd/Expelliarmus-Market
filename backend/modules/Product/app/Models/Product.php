@@ -118,7 +118,10 @@ class Product extends Model implements DiscountRelationInterface
 
     public function lastDiscount(): BelongsToMany
     {
-        return $this->discount()->whereDate('end_date', '>', now())->first();
+        return $this
+            ->discount()
+            ->whereDate('discounts.end_date', '>', now()->format('Y-m-d H:i:s'))
+            ->orderByDesc('discounts.end_date');
     }
 
     public function getDescriptionMarkdown(): string
