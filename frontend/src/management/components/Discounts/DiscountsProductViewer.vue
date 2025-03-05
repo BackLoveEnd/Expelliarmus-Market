@@ -4,6 +4,7 @@ import {computed, reactive, ref, watch} from "vue";
 import {statusColors} from "@/utils/statusColors.js";
 import CombinedVariationDiscounts from "@/management/components/Discounts/CombinedVariationDiscounts.vue";
 import SingleVariationDiscounts from "@/management/components/Discounts/SingleVariationDiscounts.vue";
+import WithoutAttributeDiscounts from "@/management/components/Discounts/WithoutVariationsDiscounts.vue";
 
 const props = defineProps({
   product: Number | String,
@@ -19,6 +20,7 @@ let product = reactive({
     name: null,
     colorType: null,
   },
+  discount: null
 });
 
 const category = reactive({
@@ -65,6 +67,15 @@ async function getDiscountedProduct() {
 
 await getDiscountedProduct();
 
+const priceWhenWithoutVariations = computed(() => {
+  if (product.variationType === null) {
+    if (product?.discount) {
+      return '$' + product.discount.discount_price;
+    }
+
+    return parseInt(warehouse.price) ? '$' + warehouse.price : warehouse.price;
+  }
+});
 watch(
     () => props.product,
     async () => {
@@ -104,11 +115,7 @@ watch(
             <span class="text-lg font-semibold">Warehouse</span>
             <p class="text-gray-900 text-sm">
               Price:
-              {{
-                parseInt(warehouse.price)
-                    ? "$" + warehouse.price
-                    : warehouse.price
-              }}
+              {{ priceWhenWithoutVariations }}
             </p>
             <p class="text-gray-900 text-sm">
               Total quantity: {{ warehouse.quantity }} unit(s).
@@ -127,14 +134,21 @@ watch(
     </div>
     <section
         class="container mx-auto space-y-8"
-        v-if="product.variationType !== null"
     >
       <h2 class="text-center text-3xl">Product Discounts</h2>
       <combined-variation-discounts
           v-if="product.variationType === 'combined'"
           :variations="selectedVariationDetails"
       />
-      <single-variation-discounts v-else :variations="selectedVariationDetails"/>
+      <single-variation-discounts
+          v-else-if="product.variationType === 'single'"
+          :variations="selectedVariationDetails"
+      />
+      <without-attribute-discounts
+          v-else
+          :discountData="product?.discount"
+          :original-price="warehouse.price"
+      />
     </section>
   </section>
 </template>

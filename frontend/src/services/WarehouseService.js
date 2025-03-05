@@ -60,6 +60,7 @@ export const WarehouseService = {
                     status: productAttr.status,
                     variationType: productAttr.variationType,
                     previewImage: productAttr.previewImage,
+                    discount: productAttr.discount
                 };
 
                 const includedParsed = formatter.parseIncluded(response.data);
