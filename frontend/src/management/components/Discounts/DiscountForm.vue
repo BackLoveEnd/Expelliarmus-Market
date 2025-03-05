@@ -13,7 +13,11 @@ const discountError = ref(null);
 const newPrice = ref(null);
 
 const schema = yup.object().shape({
-  percentage: yup.number().min(1, 'Percentage must be at least 1').required('Percentage is required'),
+  percentage: yup
+      .number()
+      .transform((value, originalValue) => originalValue === "" ? null : value)
+      .min(1, 'Percentage must be at least 1')
+      .required('Percentage is required'),
   start_date: yup
       .date()
       .min(new Date(), 'The start date must be today or later')
@@ -23,6 +27,8 @@ const schema = yup.object().shape({
       .min(yup.ref('start_date'), 'The end date must be after start date')
       .required('End date is required')
 });
+
+const emit = defineEmits(["form-submitted"]);
 
 const data = reactive({
   percentage: null,
@@ -35,12 +41,14 @@ function clearError() {
 }
 
 function onSubmit(values) {
-
+  emit("form-submitted", values);
 }
 
 watch((data), (newValue) => {
   if (newValue.percentage) {
     newPrice.value = parseFloat((props.originalPrice * (1 - (newValue.percentage / 100))).toFixed(2));
+  } else {
+    newPrice.value = null;
   }
 }, {deep: true});
 </script>

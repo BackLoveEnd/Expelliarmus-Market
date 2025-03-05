@@ -1,11 +1,53 @@
 <script setup>
 import DiscountInfoViewer from "@/management/components/Discounts/DiscountInfoViewer.vue";
 import DiscountForm from "@/management/components/Discounts/DiscountForm.vue";
+import {useToastStore} from "@/stores/useToastStore.js";
+import {formatInTimeZone} from "date-fns-tz";
+import {WarehouseService} from "@/services/WarehouseService.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 
 const props = defineProps({
   discountData: Object | null,
-  originalPrice: Number
+  originalPrice: Number,
+  productId: Number | String,
 });
+
+const toast = useToastStore();
+
+const emit = defineEmits(["discount-added"]);
+
+const onFormSubmit = async (values) => {
+  const date = {
+    percentage: values.percentage,
+    variation: null,
+    start_date: prepareStartDate(values.start_date),
+    end_date: prepareEndDate(values.end_date)
+  };
+
+  await WarehouseService.addDiscount(props.productId, date)
+      .then((response) => {
+        if (response?.status === 200) {
+          emit("discount-added");
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+        }
+      })
+      .catch((e) => {
+        if (e?.response?.status === 422 || e?.response?.status === 404) {
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+        } else {
+          toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        }
+      });
+};
+
+function prepareStartDate(startDate) {
+  return formatInTimeZone(startDate, "UTC", "yyyy-MM-dd HH:mm");
+}
+
+function prepareEndDate(endDate) {
+  return formatInTimeZone(endDate, "UTC", "yyyy-MM-dd HH:mm");
+}
 </script>
 
 <template>
@@ -47,7 +89,7 @@ const props = defineProps({
           </div>
         </div>
       </div>
-      <discount-form v-else :original-price="originalPrice"/>
+      <discount-form v-else :original-price="originalPrice" @form-submitted="onFormSubmit"/>
     </div>
   </section>
 </template>

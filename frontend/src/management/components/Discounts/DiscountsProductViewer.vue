@@ -76,12 +76,17 @@ const priceWhenWithoutVariations = computed(() => {
     return parseInt(warehouse.price) ? '$' + warehouse.price : warehouse.price;
   }
 });
+
 watch(
     () => props.product,
     async () => {
       await getDiscountedProduct();
     },
 );
+
+const onDiscountAdded = async () => {
+  await getDiscountedProduct();
+};
 </script>
 
 <template>
@@ -139,15 +144,21 @@ watch(
       <combined-variation-discounts
           v-if="product.variationType === 'combined'"
           :variations="selectedVariationDetails"
+          :product-id="product.id"
+          @discount-added="onDiscountAdded"
       />
       <single-variation-discounts
           v-else-if="product.variationType === 'single'"
           :variations="selectedVariationDetails"
+          :product-id="product.id"
+          @discount-added="onDiscountAdded"
       />
       <without-attribute-discounts
           v-else
           :discountData="product?.discount"
           :original-price="warehouse.price"
+          :product-id="product.id"
+          @discount-added="onDiscountAdded"
       />
     </section>
   </section>

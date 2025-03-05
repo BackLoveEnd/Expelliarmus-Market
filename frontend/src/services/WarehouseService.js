@@ -76,5 +76,12 @@ export const WarehouseService = {
             .catch((e) => {
                 throw e;
             });
+    },
+
+    async addDiscount(productId, discountInfo) {
+        return await api().post(
+            `/management/warehouse/products/${productId}/discounts`,
+            formatter.toJsonApi(discountInfo, 'discounts')
+        );
     }
 };

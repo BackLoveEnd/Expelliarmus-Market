@@ -2,12 +2,56 @@
 import {ref} from "vue";
 import Select from "primevue/select";
 import DiscountInfoViewer from "@/management/components/Discounts/DiscountInfoViewer.vue";
+import DiscountForm from "@/management/components/Discounts/DiscountForm.vue";
+import {WarehouseService} from "@/services/WarehouseService.js";
+import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import {formatInTimeZone} from "date-fns-tz";
+import {useToastStore} from "@/stores/useToastStore.js";
 
 const props = defineProps({
-  variations: Array
+  variations: Array,
+  productId: Number | String
 });
 
+const toast = useToastStore();
+
 const selectedVariation = ref(null);
+
+const emit = defineEmits(["discount-added"]);
+
+const onFormSubmit = async (values) => {
+  const date = {
+    percentage: values.percentage,
+    variation: selectedVariation.value.id,
+    start_date: prepareStartDate(values.start_date),
+    end_date: prepareEndDate(values.end_date)
+  };
+
+  await WarehouseService.addDiscount(props.productId, date)
+      .then((response) => {
+        if (response?.status === 200) {
+          emit("discount-added");
+          selectedVariation.value = null;
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+        }
+      })
+      .catch((e) => {
+        if (e?.response?.status === 422 || e?.response?.status === 404) {
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+        } else {
+          toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        }
+      });
+};
+
+function prepareStartDate(startDate) {
+  return formatInTimeZone(startDate, "UTC", "yyyy-MM-dd HH:mm");
+}
+
+function prepareEndDate(endDate) {
+  return formatInTimeZone(endDate, "UTC", "yyyy-MM-dd HH:mm");
+}
 </script>
 
 <template>
@@ -71,7 +115,7 @@ const selectedVariation = ref(null);
         >
           Discounts
         </h5>
-        <div class="flex flex-col gap-2" v-if="selectedVariation.discount">
+        <div class="flex flex-col gap-2" v-if="selectedVariation?.discount">
           <div class="flex justify-around items-center gap-14">
             <discount-info-viewer
                 title="Percentage"
@@ -102,6 +146,11 @@ const selectedVariation = ref(null);
             </div>
           </div>
         </div>
+        <discount-form
+            v-else
+            :original-price="selectedVariation.price"
+            @form-submitted="onFormSubmit"
+        />
       </div>
     </div>
   </section>
