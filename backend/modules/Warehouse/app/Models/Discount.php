@@ -32,6 +32,7 @@ class Discount extends Model
         'discount_price',
         'start_date',
         'end_date',
+        'is_cancelled',
     ];
 
     public function products(): BelongsToMany

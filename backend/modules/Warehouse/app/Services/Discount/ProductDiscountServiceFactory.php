@@ -26,8 +26,22 @@ class ProductDiscountServiceFactory
     public function editDiscount(Product $product, Discount $discount, ProductDiscountDto $dto): void
     {
         /**@var EditDiscountService $service */
-        $service = $this->app->make(EditDiscountService::class, ['product' => $product, 'discount' => $discount]);
+        $service = $this->app->make(EditDiscountService::class, [
+            'product' => $product,
+            'discount' => $discount,
+        ]);
 
         $service->process($dto);
+    }
+
+    public function cancelDiscount(Product $product, Discount $discount): void
+    {
+        /**@var CancelDiscountService $service */
+        $service = $this->app->make(CancelDiscountService::class, [
+            'product' => $product,
+            'discount' => $discount,
+        ]);
+
+        $service->process();
     }
 }

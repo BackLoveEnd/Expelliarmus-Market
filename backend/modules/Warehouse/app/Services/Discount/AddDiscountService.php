@@ -10,7 +10,7 @@ use Modules\Warehouse\DTO\Discount\ProductDiscountDto as DiscountDto;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 use Modules\Warehouse\Models\Discount;
 
-class AddDiscountService extends AbstractDiscountService
+final class AddDiscountService extends AbstractDiscountService implements DiscountProcessingInterface
 {
     /**
      * @param  DiscountDto  $dto
@@ -38,7 +38,7 @@ class AddDiscountService extends AbstractDiscountService
         );
     }
 
-    protected function createDiscount(DiscountRelationInterface $relation, DiscountDto $dto, float $oldPrice): void
+    private function createDiscount(DiscountRelationInterface $relation, DiscountDto $dto, float $oldPrice): void
     {
         DB::transaction(function () use ($relation, $dto, $oldPrice) {
             $discount = Discount::query()->create([
@@ -49,7 +49,22 @@ class AddDiscountService extends AbstractDiscountService
                 'end_date' => $dto->endAt,
             ]);
 
+            $relation->discount()->update(['is_cancelled' => true]);
+
             $relation->discount()->attach($discount);
         });
+    }
+
+    private function getVariationForCurrentDiscount(DiscountDto $dto): DiscountRelationInterface
+    {
+        $variation = $this->productVariations
+            ->where('id', $dto->variationId)
+            ->first();
+
+        if (! $variation) {
+            throw new VariationToApplyDiscountDoesNotExists();
+        }
+
+        return $variation;
     }
 }

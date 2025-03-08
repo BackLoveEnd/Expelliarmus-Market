@@ -9,7 +9,8 @@ use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto as DiscountDto;
 use Modules\Warehouse\Http\Exceptions\CannotAddDiscountToProductWithoutPriceException;
-use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
+use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
+use Modules\Warehouse\Models\Discount;
 
 abstract class AbstractDiscountService
 {
@@ -33,18 +34,37 @@ abstract class AbstractDiscountService
         );
     }
 
-    protected function getVariationForCurrentDiscount(DiscountDto $dto): DiscountRelationInterface
+    /**
+     * @param  Discount  $discount
+     * @return void
+     * @throws DiscountIsNotRelatedToProductException
+     */
+    protected function ensureDiscountRelatedToProduct(Discount $discount): void
     {
-        $variation = $this->productVariations
-            ->where('id', $dto->variationId)
-            ->first();
+        if (is_null($this->product->hasCombinedAttributes())) {
+            $this->discountRelatedToProductWithoutVariations($discount);
 
-        if (! $variation) {
-            throw new VariationToApplyDiscountDoesNotExists();
+            return;
         }
 
-        return $variation;
+        $this->discountRelatedToProductWithVariations($discount);
     }
 
-    abstract public function process(DiscountDto $dto): void;
+    private function discountRelatedToProductWithoutVariations(Discount $discount): void
+    {
+        if (! $this->product->discount()->where('discount_id', $discount->id)->exists()) {
+            throw new DiscountIsNotRelatedToProductException();
+        }
+    }
+
+    private function discountRelatedToProductWithVariations(Discount $discount): void
+    {
+        $discounts = $this->productVariations
+            ->load('discount')->pluck('discount')
+            ->collapse();
+
+        if ($discounts->where('id', $discount->id)->isEmpty()) {
+            throw new DiscountIsNotRelatedToProductException();
+        }
+    }
 }

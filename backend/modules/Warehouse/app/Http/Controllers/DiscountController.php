@@ -38,6 +38,16 @@ class DiscountController extends Controller
         return response()->json(['message' => 'Discount was added successfully.']);
     }
 
+    /**
+     * Edit discount information.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  EditDiscountRequest  $request
+     * @param  Product  $product
+     * @param  Discount  $discount
+     * @return JsonResponse
+     */
     public function editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
     {
         $this->discountService->editDiscount(
@@ -47,5 +57,21 @@ class DiscountController extends Controller
         );
 
         return response()->json(['message' => 'Discount was updated.']);
+    }
+
+    /**
+     * Cancel product discount.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  Product  $product
+     * @param  Discount  $discount
+     * @return JsonResponse
+     */
+    public function cancelDiscount(Product $product, Discount $discount): JsonResponse
+    {
+        $this->discountService->cancelDiscount($product, $discount);
+
+        return response()->json(['message' => 'Discount was cancelled.']);
     }
 }
