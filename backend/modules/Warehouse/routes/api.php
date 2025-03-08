@@ -21,6 +21,9 @@ Route::prefix('management')->group(function () {
 
             Route::post('/{product}/discounts', [DiscountController::class, 'addDiscount'])
                 ->whereNumber('product');
+
+            Route::put('/{product}/discounts/{discount}', [DiscountController::class, 'editDiscount'])
+                ->whereNumber('product');
         });
 
         Route::get('/table', [WarehouseController::class, 'getProductPaginated'])
