@@ -75,6 +75,8 @@ const priceWhenWithoutVariations = computed(() => {
 
     return parseInt(warehouse.price) ? '$' + warehouse.price : warehouse.price;
   }
+
+  return parseInt(warehouse.price) ? '$' + warehouse.price : warehouse.price;
 });
 
 watch(
