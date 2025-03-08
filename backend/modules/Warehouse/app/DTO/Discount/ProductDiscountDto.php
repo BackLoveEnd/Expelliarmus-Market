@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\DTO;
+namespace Modules\Warehouse\DTO\Discount;
 
+use App\Services\Validators\JsonApiFormRequest;
 use Carbon\Carbon;
-use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
 
 final readonly class ProductDiscountDto
 {
@@ -16,7 +16,7 @@ final readonly class ProductDiscountDto
         public ?int $variationId = null,
     ) {}
 
-    public static function fromRequest(AddDiscountToProductRequest $request): ProductDiscountDto
+    public static function fromRequest(JsonApiFormRequest $request): ProductDiscountDto
     {
         return new self(
             percentage: $request->percentage,

@@ -3,6 +3,7 @@
 namespace Modules\Warehouse\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ use Modules\Product\Models\Product;
  * @property string|int $percentage
  * @property float $original_price
  * @property float $discount_price
+ * @property bool $is_cancelled
  * @property Carbon $start_date
  * @property Carbon $end_date
  */
@@ -55,6 +57,23 @@ class Discount extends Model
             foreignPivotKey: 'discount_id',
             relatedPivotKey: 'c_variation_id',
         );
+    }
+
+    public function scopeNotCancelled(Builder $builder): Builder
+    {
+        return $builder->where('is_cancelled', false);
+    }
+
+    public function scopeCancelled(Builder $builder): Builder
+    {
+        return $builder->where('is_cancelled', true);
+    }
+
+    public function cancelDiscount(): void
+    {
+        $this->is_cancelled = true;
+
+        $this->save();
     }
 
     protected function casts(): array

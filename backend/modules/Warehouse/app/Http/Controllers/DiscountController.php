@@ -7,8 +7,10 @@ namespace Modules\Warehouse\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\DTO\ProductDiscountDto;
+use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
+use Modules\Warehouse\Http\Requests\EditDiscountRequest;
+use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 
 class DiscountController extends Controller
@@ -34,5 +36,16 @@ class DiscountController extends Controller
         );
 
         return response()->json(['message' => 'Discount was added successfully.']);
+    }
+
+    public function editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
+    {
+        $this->discountService->editDiscount(
+            product: $product,
+            discount: $discount,
+            dto: ProductDiscountDto::fromRequest($request),
+        );
+
+        return response()->json(['message' => 'Discount was updated.']);
     }
 }

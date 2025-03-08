@@ -120,6 +120,7 @@ class Product extends Model implements DiscountRelationInterface
     {
         return $this
             ->discount()
+            ->notCancelled()
             ->whereDate('discounts.end_date', '>', now()->format('Y-m-d H:i:s'))
             ->orderByDesc('discounts.end_date');
     }
