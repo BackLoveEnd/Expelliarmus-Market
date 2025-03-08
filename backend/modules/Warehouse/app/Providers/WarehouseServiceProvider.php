@@ -2,9 +2,11 @@
 
 namespace Modules\Warehouse\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Modules\Warehouse\Http\Controllers\DiscountController;
+use Modules\Warehouse\Jobs\CancelExpiredDiscounts;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
@@ -32,7 +34,7 @@ class WarehouseServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
-        
+
         $this->app->register(RouteServiceProvider::class);
 
         $this->app
@@ -53,10 +55,12 @@ class WarehouseServiceProvider extends ServiceProvider
 
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function () {
+            /**@var Schedule $schedule */
+            $schedule = $this->app->make(Schedule::class);
+
+            $schedule->job(new CancelExpiredDiscounts(), 'low')->everyMinute();
+        });
     }
 
     protected function registerConfig(): void

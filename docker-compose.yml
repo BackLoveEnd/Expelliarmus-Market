@@ -71,15 +71,43 @@ services:
     networks:
       - expelliarmus
 
-  supervisor:
+  #  supervisor:
+  #    build:
+  #      context: .docker/php
+  #      dockerfile: supervisor.Dockerfile
+  #    container_name: supervisor
+  #    volumes:
+  #      - .:/var/www/expelliarmus
+  #    networks:
+  #      - expelliarmus
+
+  scheduler:
     build:
       context: .docker/php
-      dockerfile: supervisor.Dockerfile
-    container_name: supervisor
+      dockerfile: scheduler.Dockerfile
+    container_name: scheduler
     volumes:
       - .:/var/www/expelliarmus
+    command: /bin/sh -c "/usr/sbin/crond -f -l 8"
     networks:
       - expelliarmus
+    depends_on:
+      - php
+
+  queue:
+    build:
+      context: .docker/php
+      dockerfile: queue.Dockerfile
+    container_name: queue
+    volumes:
+      - .:/var/www/expelliarmus
+    command: /bin/sh -c "php artisan queue:work --queue=high,low --sleep=3 --tries=3"
+    networks:
+      - expelliarmus
+    restart: always
+    depends_on:
+      - php
+      - redis
 
   redis:
     container_name: redis
