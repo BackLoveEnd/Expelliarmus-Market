@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\DTO;
+namespace Modules\Warehouse\DTO\Warehouse;
 
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
@@ -17,9 +17,8 @@ class AttributesForCombinedValueDto extends Data
         public readonly string $value,
         public readonly ?int $id = null,
         public readonly ?string $attributeName = null,
-        public readonly ?ProductAttributeTypeEnum $type = null
-    ) {
-    }
+        public readonly ?ProductAttributeTypeEnum $type = null,
+    ) {}
 
     public static function collectWithCategory(mixed $items, Category $category, Collection $createdAttributes)
     {
@@ -45,14 +44,15 @@ class AttributesForCombinedValueDto extends Data
         self::ensureAllRequiredAttributesArePresented($category, $newItems);
 
         return $newItems->map(fn($item) => new self(
-            value: (string)$item['value'],
-            id: $item['id']
+            value: (string) $item['value'],
+            id: $item['id'],
         ));
     }
 
     private static function ensureAllRequiredAttributesArePresented(Category $category, Collection $newAttributes): void
     {
-        $attributes = $category->allAttributesFromTree()
+        $attributes = $category
+            ->allAttributesFromTree()
             ->filter(fn(ProductAttribute $attribute) => $attribute->required)
             ->pluck('id');
 
@@ -60,7 +60,7 @@ class AttributesForCombinedValueDto extends Data
 
         if ($presentedRequiredAttributes->count() !== $attributes->count()) {
             throw ValidationException::withMessages([
-                'combination_attributes' => 'Combination must have all required attributes. See more in category section.'
+                'combination_attributes' => 'Combination must have all required attributes. See more in category section.',
             ]);
         }
     }

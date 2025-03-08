@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\DTO;
+namespace Modules\Warehouse\DTO\Warehouse;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
@@ -13,15 +13,14 @@ class CreateWarehouseDto extends Dto
     public function __construct(
         private int $totalQuantity,
         private readonly ?float $price = null,
-        private ?Collection $variationPrices = null
-    ) {
-    }
+        private ?Collection $variationPrices = null,
+    ) {}
 
     public static function fromRequest(JsonApiRelationsFormRequest $request): CreateWarehouseDto
     {
         return new self(
             totalQuantity: (int) $request->total_quantity,
-            price: $request->price
+            price: $request->price,
         );
     }
 

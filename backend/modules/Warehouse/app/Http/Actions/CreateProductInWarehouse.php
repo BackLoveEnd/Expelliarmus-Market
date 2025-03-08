@@ -6,7 +6,7 @@ namespace Modules\Warehouse\Http\Actions;
 
 use Modules\Product\Http\Management\Exceptions\FailedToCreateProductException;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\DTO\CreateWarehouseDto;
+use Modules\Warehouse\DTO\Warehouse\CreateWarehouseDto;
 use Modules\Warehouse\Models\Warehouse;
 use Throwable;
 
@@ -21,7 +21,7 @@ class CreateProductInWarehouse
             return Warehouse::query()->create([
                 'product_id' => $product->id,
                 'total_quantity' => $dto->getTotalQuantity(),
-                'default_price' => $this->price($dto)
+                'default_price' => $this->price($dto),
             ]);
         } catch (Throwable $e) {
             throw new FailedToCreateProductException($e->getMessage(), $e);

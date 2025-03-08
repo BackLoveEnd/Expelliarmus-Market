@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Modules\Warehouse\Http\Actions;
 
 use Modules\Product\Models\Product;
-use Modules\Warehouse\DTO\CreateWarehouseDto;
+use Modules\Warehouse\DTO\Warehouse\CreateWarehouseDto;
 use Modules\Warehouse\Models\Warehouse;
 
 class EditProductInWarehouse
 {
-    public function __construct(private Product $product)
-    {
-    }
+    public function __construct(private Product $product) {}
 
     public function handle(CreateWarehouseDto $warehouseDto): Warehouse
     {
@@ -20,7 +18,7 @@ class EditProductInWarehouse
 
         $this->product->warehouse->update([
             'default_price' => $this->price($warehouseDto),
-            'total_quantity' => $warehouseDto->getTotalQuantity()
+            'total_quantity' => $warehouseDto->getTotalQuantity(),
         ]);
 
         return $this->product->warehouse;

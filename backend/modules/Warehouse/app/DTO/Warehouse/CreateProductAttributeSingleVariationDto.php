@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\DTO;
+namespace Modules\Warehouse\DTO\Warehouse;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
@@ -18,8 +18,7 @@ class CreateProductAttributeSingleVariationDto extends Data
         /**@var Collection<int, AttributesForSingleValueDto> */
         public readonly Collection $attributes,
         public readonly ?int $attributeId = null,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(JsonApiRelationsFormRequest $request): ?CreateProductAttributeSingleVariationDto
     {
@@ -35,7 +34,7 @@ class CreateProductAttributeSingleVariationDto extends Data
             $newAttribute = (new CreateAttributesForCategoryAction())->handle($category, collect([
                 'name' => $attributes[0]['attribute_name'],
                 'type' => $attributes[0]['attribute_type'],
-                'view_type' => $attributes[0]['attribute_view_type']
+                'view_type' => $attributes[0]['attribute_view_type'],
             ]));
 
             self::ensureRequiredAttributePresent($category, $newAttribute->id);
@@ -56,12 +55,13 @@ class CreateProductAttributeSingleVariationDto extends Data
 
     private static function ensureRequiredAttributePresent(Category $category, int $attributeId): void
     {
-        $attributes = $category->allAttributesFromTree()
+        $attributes = $category
+            ->allAttributesFromTree()
             ->filter(fn(ProductAttribute $productAttribute) => $productAttribute->required);
 
         if ($attributes->count() > 1) {
             throw ValidationException::withMessages([
-                'single_attributes' => 'Selected category contains more than 1 required attribute. Please create attributes combinations.'
+                'single_attributes' => 'Selected category contains more than 1 required attribute. Please create attributes combinations.',
             ]);
         }
 

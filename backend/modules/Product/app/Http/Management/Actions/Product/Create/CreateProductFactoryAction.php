@@ -6,9 +6,9 @@ namespace Modules\Product\Http\Management\Actions\Product\Create;
 
 use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Requests\ProductCreateRequest;
-use Modules\Warehouse\DTO\CreateProductAttributeCombinedVariationsDto;
-use Modules\Warehouse\DTO\CreateProductAttributeSingleVariationDto;
-use Modules\Warehouse\DTO\CreateWarehouseDto;
+use Modules\Warehouse\DTO\Warehouse\CreateProductAttributeCombinedVariationsDto;
+use Modules\Warehouse\DTO\Warehouse\CreateProductAttributeSingleVariationDto;
+use Modules\Warehouse\DTO\Warehouse\CreateWarehouseDto;
 
 class CreateProductFactoryAction
 {
@@ -36,7 +36,7 @@ class CreateProductFactoryAction
         return new CreateProductWithSingleAttributesAction(
             productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
-            singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request)
+            singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request),
         );
     }
 
@@ -49,7 +49,7 @@ class CreateProductFactoryAction
         return new CreateProductWithCombinedAttributesAction(
             productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
-            combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request)
+            combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request),
         );
     }
 
@@ -61,7 +61,7 @@ class CreateProductFactoryAction
 
         return new CreateProductWithoutAttributes(
             productDto: $productDto,
-            warehouseDto: CreateWarehouseDto::fromRequest($request)
+            warehouseDto: CreateWarehouseDto::fromRequest($request),
         );
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Http\Actions;
 
-use Modules\Warehouse\DTO\ProductDiscountDto;
+use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Models\Discount;
 
 class CreateDiscountAction

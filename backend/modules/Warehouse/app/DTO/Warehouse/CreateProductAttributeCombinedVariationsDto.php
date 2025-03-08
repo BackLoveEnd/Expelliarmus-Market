@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Warehouse\DTO;
+namespace Modules\Warehouse\DTO\Warehouse;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
@@ -19,8 +19,7 @@ class CreateProductAttributeCombinedVariationsDto extends Data
         /** @var Collection<int, AttributesForCombinedValueDto> */
         public readonly Collection $attributes,
         public readonly ?float $price = null,
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(JsonApiRelationsFormRequest $request): Collection
     {
@@ -43,17 +42,17 @@ class CreateProductAttributeCombinedVariationsDto extends Data
                         'attributes' => AttributesForCombinedValueDto::collectWithCategory(
                             items: $variation['attributes'],
                             category: $category,
-                            createdAttributes: $createdAttributes
-                        )
+                            createdAttributes: $createdAttributes,
+                        ),
                     ]);
-                }
+                },
             );
         });
     }
 
     private static function prepareAttributeBeforeCollection(
         Category $category,
-        Collection $productVariations
+        Collection $productVariations,
     ): Collection {
         $attributes = $productVariations->pluck('attributes')->collapse();
 
@@ -63,11 +62,12 @@ class CreateProductAttributeCombinedVariationsDto extends Data
 
         return (new CreateAttributesForCategoryAction())->handle(
             $category,
-            $newAttributes->map(fn($attr) => [
+            $newAttributes->map(fn($attr)
+                => [
                 'name' => $attr['name'],
                 'type' => $attr['type']['id'],
-                'view_type' => $attr['attribute_view_type']
-            ])->values()
+                'view_type' => $attr['attribute_view_type'],
+            ])->values(),
         );
     }
 }

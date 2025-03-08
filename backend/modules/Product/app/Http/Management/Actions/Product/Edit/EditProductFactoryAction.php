@@ -6,9 +6,9 @@ namespace Modules\Product\Http\Management\Actions\Product\Edit;
 
 use Modules\Product\Http\Management\DTO\Product\CreateProductDto;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
-use Modules\Warehouse\DTO\CreateProductAttributeCombinedVariationsDto;
-use Modules\Warehouse\DTO\CreateProductAttributeSingleVariationDto;
-use Modules\Warehouse\DTO\CreateWarehouseDto;
+use Modules\Warehouse\DTO\Warehouse\CreateProductAttributeCombinedVariationsDto;
+use Modules\Warehouse\DTO\Warehouse\CreateProductAttributeSingleVariationDto;
+use Modules\Warehouse\DTO\Warehouse\CreateWarehouseDto;
 
 class EditProductFactoryAction
 {
@@ -36,7 +36,7 @@ class EditProductFactoryAction
         return new EditProductWithSingleOption(
             productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
-            singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request)
+            singleVariationDto: CreateProductAttributeSingleVariationDto::fromRequest($request),
         );
     }
 
@@ -49,7 +49,7 @@ class EditProductFactoryAction
         return new EditProductWithCombinedOptions(
             productDto: $productDto,
             warehouseDto: CreateWarehouseDto::fromRequest($request),
-            combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request)
+            combinedVariationsDto: CreateProductAttributeCombinedVariationsDto::fromRequest($request),
         );
     }
 
@@ -61,7 +61,7 @@ class EditProductFactoryAction
 
         return new EditProductWithoutOptions(
             productDto: $productDto,
-            warehouseDto: CreateWarehouseDto::fromRequest($request)
+            warehouseDto: CreateWarehouseDto::fromRequest($request),
         );
     }
 }
