@@ -2,7 +2,10 @@
 
 namespace Modules\Warehouse\Providers;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Modules\Warehouse\Http\Controllers\DiscountController;
+use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -29,7 +32,15 @@ class WarehouseServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
+        
         $this->app->register(RouteServiceProvider::class);
+
+        $this->app
+            ->when(DiscountController::class)
+            ->needs(ProductDiscountServiceFactory::class)
+            ->give(function (Application $app) {
+                return new ProductDiscountServiceFactory($app);
+            });
     }
 
     /**

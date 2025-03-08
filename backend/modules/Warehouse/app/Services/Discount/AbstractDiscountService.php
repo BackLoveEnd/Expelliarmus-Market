@@ -13,11 +13,12 @@ use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 
 abstract class AbstractDiscountService
 {
-    protected ?Collection $productVariations = null;
+    /**@var ?Collection<int, DiscountRelationInterface> $productVariations */
+    protected readonly ?Collection $productVariations;
 
     public function __construct(protected readonly Product $product)
     {
-        $this->setVariations();
+        $this->productVariations = $this->product->getCurrentVariationRelation();
     }
 
     protected function calculateDiscountPrice(float $originalPrice, DiscountDto $dto): float
@@ -43,23 +44,6 @@ abstract class AbstractDiscountService
         }
 
         return $variation;
-    }
-
-    private function setVariations(): void
-    {
-        if (is_null($this->product->hasCombinedAttributes())) {
-            $this->productVariations = null;
-
-            return;
-        }
-
-        if ($this->product->hasCombinedAttributes()) {
-            $this->productVariations = $this->product->combinedAttributes;
-
-            return;
-        }
-
-        $this->productVariations = $this->product->singleAttributes;
     }
 
     abstract public function process(DiscountDto $dto): void;

@@ -4,6 +4,7 @@ namespace Modules\Product\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -133,6 +134,17 @@ class Product extends Model implements DiscountRelationInterface
     public function getDescriptionHtml(): string
     {
         return $this->main_description_html;
+    }
+
+    public function getCurrentVariationRelation(): ?Collection
+    {
+        if (is_null($this->hasCombinedAttributes())) {
+            return null;
+        }
+
+        return $this->hasCombinedAttributes()
+            ? $this->combinedAttributes
+            : $this->singleAttributes;
     }
 
     public function productRootCategory(): int

@@ -4,19 +4,30 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Services\Discount;
 
+use Illuminate\Foundation\Application;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Models\Discount;
 
 class ProductDiscountServiceFactory
 {
+    public function __construct(
+        private Application $app,
+    ) {}
+
     public function addDiscount(Product $product, ProductDiscountDto $dto): void
     {
-        (new AddDiscountService($product))->process($dto);
+        /**@var AddDiscountService $service */
+        $service = $this->app->make(AddDiscountService::class, ['product' => $product]);
+
+        $service->process($dto);
     }
 
     public function editDiscount(Product $product, Discount $discount, ProductDiscountDto $dto): void
     {
-        (new EditDiscountService($product, $discount))->process($dto);
+        /**@var EditDiscountService $service */
+        $service = $this->app->make(EditDiscountService::class, ['product' => $product, 'discount' => $discount]);
+
+        $service->process($dto);
     }
 }
