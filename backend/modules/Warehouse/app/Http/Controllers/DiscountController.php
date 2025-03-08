@@ -30,10 +30,8 @@ class DiscountController extends Controller
      */
     public function addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
     {
-        $this->discountService->addDiscount(
-            product: $product,
-            dto: ProductDiscountDto::fromRequest($request),
-        );
+        $this->discountService->addDiscount($product)
+            ->process(ProductDiscountDto::fromRequest($request));
 
         return response()->json(['message' => 'Discount was added successfully.']);
     }
@@ -50,11 +48,8 @@ class DiscountController extends Controller
      */
     public function editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
     {
-        $this->discountService->editDiscount(
-            product: $product,
-            discount: $discount,
-            dto: ProductDiscountDto::fromRequest($request),
-        );
+        $this->discountService->editDiscount($product, $discount)
+            ->process(ProductDiscountDto::fromRequest($request));
 
         return response()->json(['message' => 'Discount was updated.']);
     }
@@ -67,10 +62,11 @@ class DiscountController extends Controller
      * @param  Product  $product
      * @param  Discount  $discount
      * @return JsonResponse
+     * @throws \Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException
      */
     public function cancelDiscount(Product $product, Discount $discount): JsonResponse
     {
-        $this->discountService->cancelDiscount($product, $discount);
+        $this->discountService->cancelDiscount($product, $discount)->process();
 
         return response()->json(['message' => 'Discount was cancelled.']);
     }

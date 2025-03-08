@@ -15,33 +15,24 @@ class ProductDiscountServiceFactory
         private Application $app,
     ) {}
 
-    public function addDiscount(Product $product, ProductDiscountDto $dto): void
+    public function addDiscount(Product $product): DiscountProcessingInterface
     {
-        /**@var AddDiscountService $service */
-        $service = $this->app->make(AddDiscountService::class, ['product' => $product]);
-
-        $service->process($dto);
+        return $this->app->make(AddDiscountService::class, ['product' => $product]);
     }
 
-    public function editDiscount(Product $product, Discount $discount, ProductDiscountDto $dto): void
+    public function editDiscount(Product $product, Discount $discount): DiscountProcessingInterface
     {
-        /**@var EditDiscountService $service */
-        $service = $this->app->make(EditDiscountService::class, [
+        return $this->app->make(EditDiscountService::class, [
             'product' => $product,
             'discount' => $discount,
         ]);
-
-        $service->process($dto);
     }
 
-    public function cancelDiscount(Product $product, Discount $discount): void
+    public function cancelDiscount(Product $product, Discount $discount): CancelDiscountService
     {
-        /**@var CancelDiscountService $service */
-        $service = $this->app->make(CancelDiscountService::class, [
+        return $this->app->make(CancelDiscountService::class, [
             'product' => $product,
             'discount' => $discount,
         ]);
-
-        $service->process();
     }
 }
