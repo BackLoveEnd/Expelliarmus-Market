@@ -11,6 +11,7 @@ return [
     'retrieve' => [
         'by_category' => 6,
         'trashed' => 16,
+        'discounted' => 16,
     ],
     'image' => [
         'preview' => [

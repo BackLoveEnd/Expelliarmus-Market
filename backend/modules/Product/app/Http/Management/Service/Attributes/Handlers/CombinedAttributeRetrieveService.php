@@ -17,56 +17,62 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
 {
     public function __construct(
         private array $variationCols,
-        private array $attributeCols
-    ) {
-    }
+        private array $attributeCols,
+    ) {}
 
     public function getAttributes(Product $product): Collection
     {
         return $product->combinedAttributes()->with([
-            'productAttributes' => fn($query) => $query->select(...$this->attributeCols)->withPivot('id', 'value')
+            'productAttributes' => fn($query) => $query->select(...$this->attributeCols),
         ])->get($this->variationCols);
     }
 
+
     public function formatPreviewAttributes(Collection $attributes): BaseCollection
     {
-        return $attributes->flatMap(function (ProductVariation $variation) {
-            return $variation->productAttributes->map(function (ProductAttribute $attribute) {
-                return [
-                    'name' => $attribute->name,
-                    'type' => (object)[
-                        'id' => $attribute->type->value,
-                        'name' => $attribute->type->toTypes()
-                    ],
-                    'attribute_view_type' => $attribute->view_type->toTypes(),
-                    'value' => $attribute->pivot->value
-                ];
-            });
-        })
+        return $attributes
+            ->flatMap(function (ProductVariation $variation) {
+                return $variation->productAttributes->map(function (ProductAttribute $attribute) {
+                    return [
+                        'name' => $attribute->name,
+                        'type' => (object) [
+                            'id' => $attribute->type->value,
+                            'name' => $attribute->type->toTypes(),
+                        ],
+                        'attribute_view_type' => $attribute->view_type->toTypes(),
+                        'value' => $attribute->pivot->value,
+                    ];
+                });
+            })
             ->groupBy('name')
-            ->map(fn($items) => [
+            ->map(fn($items)
+                => [
                 'name' => $items[0]['name'],
                 'type' => $items[0]['type'],
                 'attribute_view_type' => $items[0]['attribute_view_type'],
-                'value' => $items->pluck('value')->unique()->values()
+                'value' => $items->pluck('value')->unique()->values(),
             ])
             ->values();
     }
 
     public function formatWarehouseInfoAttributes(Collection $attributes): BaseCollection
     {
-        return $attributes->map(fn(ProductAttributeValue $attributeValue) => [
-            'name' => $attributeValue->attribute->name,
-            'value' => $attributeValue->value,
-            'price' => $attributeValue->price
-        ])
+        return $attributes
+            ->map(fn(ProductAttributeValue $attributeValue)
+                => [
+                'name' => $attributeValue->attribute->name,
+                'value' => $attributeValue->value,
+                'price' => $attributeValue->price,
+            ])
             ->groupBy('name')
-            ->map(fn($items) => [
+            ->map(fn($items)
+                => [
                 'name' => $items->first()['name'],
-                'data' => $items->map(fn($item) => [
+                'data' => $items->map(fn($item)
+                    => [
                     'value' => $item['value'],
-                    'price' => $item['price']
-                ])->toArray()
+                    'price' => $item['price'],
+                ])->toArray(),
             ])
             ->collapse();
     }

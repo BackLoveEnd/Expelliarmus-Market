@@ -27,6 +27,8 @@ Route::prefix('management')->group(function () {
 
                 Route::delete('/{product}/discounts/{discount}', 'cancelDiscount');
             });
+
+            Route::get('/discounted', [RetrieveDiscountController::class, 'getAllDiscountedProducts']);
         });
 
         Route::get('/table', [WarehouseController::class, 'getProductPaginated'])

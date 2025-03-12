@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
+use Modules\Warehouse\Enums\ProductStatusEnum as Status;
 use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
 use Modules\Warehouse\Http\Requests\EditDiscountRequest;
@@ -31,6 +32,15 @@ class DiscountController extends Controller
      */
     public function addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
     {
+        if ($product->status->is(Status::PUBLISHED)
+            || $product->status->is(Status::NOT_PUBLISHED)
+        ) {
+            return response()->json([
+                'message' => 'Adding discount allowed only for published or not published products',
+            ],
+                403);
+        }
+
         $this->discountService
             ->addDiscount($product)
             ->process(ProductDiscountDto::fromRequest($request));

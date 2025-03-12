@@ -2,9 +2,9 @@
 
 namespace Modules\Warehouse\Contracts;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 interface DiscountRelationInterface
 {
-    public function discount(): BelongsToMany;
+    public function discount(): MorphMany;
 }

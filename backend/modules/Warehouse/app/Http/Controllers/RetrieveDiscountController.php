@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Support\ProductSlug;
+use Modules\Warehouse\Http\Actions\GetAllDiscountedProductsAction;
 use Modules\Warehouse\Http\Actions\GetProductWithDiscountInfoAction;
 use Modules\Warehouse\Http\Actions\SearchForProductToAddDiscount;
+use Modules\Warehouse\Http\Resources\Discount\DiscountedProductResource;
 use Modules\Warehouse\Http\Resources\Discount\ProductWarehouseDiscountsResource;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
 use TiMacDonald\JsonApi\JsonApiResourceCollection as Resource;
@@ -34,6 +36,33 @@ class RetrieveDiscountController extends Controller
         }
 
         return SearchedProductsSetResource::collection($products);
+    }
+
+    /**
+     * Retrieve discounted products.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  GetAllDiscountedProductsAction  $action
+     * @return Resource
+     */
+    public function getAllDiscountedProducts(GetAllDiscountedProductsAction $action): Resource
+    {
+        $discountedProducts = $action->handle();
+
+        return DiscountedProductResource::collection($discountedProducts->items())
+            ->additional([
+                'links' => [
+                    'first' => $discountedProducts->url(1),
+                    'next' => $discountedProducts->nextPageUrl(),
+                    'last' => $discountedProducts->lastPage(),
+                    'next_page' => $discountedProducts->hasMorePages() ? $discountedProducts->currentPage() + 1 : null,
+                ],
+                'meta' => [
+                    'total' => $discountedProducts->total(),
+                    'per_page' => $discountedProducts->perPage(),
+                ],
+            ]);
     }
 
     /**
