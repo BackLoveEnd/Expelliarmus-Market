@@ -7,6 +7,7 @@ import {WarehouseService} from "@/services/WarehouseService.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import {ref} from "vue";
+import DiscountCancelModal from "@/management/components/Discounts/DiscountCancelModal.vue";
 
 const props = defineProps({
   discountData: Object | null,
@@ -17,6 +18,8 @@ const props = defineProps({
 const toast = useToastStore();
 
 const isEditing = ref(false);
+
+const modalOpen = ref(false);
 
 const emit = defineEmits(["discount-added"]);
 
@@ -36,7 +39,7 @@ const onFormSubmit = async (values) => {
         }
       })
       .catch((e) => {
-        if (e?.response?.status === 422 || e?.response?.status === 404) {
+        if ([422, 404].includes(e?.response?.status)) {
           toast.showToast(e?.response?.data?.message, defaultErrorSettings);
         } else {
           toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
@@ -55,14 +58,33 @@ const onFormUpdate = async (values) => {
         }
       })
       .catch((e) => {
-        if (e?.response?.status === 422 || e?.response?.status === 404) {
+        if ([400, 409, 422, 404].includes(e?.response?.status)) {
           toast.showToast(e?.response?.data?.message, defaultErrorSettings);
         } else {
           toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
         }
       })
       .finally(() => isEditing.value = false);
-}
+};
+
+const onCancelDiscount = async () => {
+  modalOpen.value = false;
+
+  await WarehouseService.cancelDiscount(props.productId, props.discountData?.id)
+      .then((response) => {
+        if (response?.status === 200) {
+          emit("discount-added");
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+        }
+      })
+      .catch((e) => {
+        if ([409, 422, 404].includes(e?.response?.status)) {
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+        } else {
+          toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        }
+      });
+};
 
 function prepareDate(values) {
   return {
@@ -83,14 +105,14 @@ function prepareEndDate(endDate) {
 
 const discardEditing = () => {
   isEditing.value = false;
-}
+};
 
 const editDiscount = () => {
   isEditing.value = true;
-}
+};
 
 function formatDate(date) {
-  return new Date(date).toLocaleString()
+  return new Date(date).toLocaleString();
 }
 </script>
 
@@ -144,7 +166,10 @@ function formatDate(date) {
           >
             Edit Discount
           </button>
-          <button type="button" class="p-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-800">
+          <button
+              @click="modalOpen = true"
+              type="button"
+              class="p-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-800">
             Cancel Discount
           </button>
         </div>
@@ -163,6 +188,11 @@ function formatDate(date) {
       />
     </div>
   </section>
+  <discount-cancel-modal
+      :is-modal-open="modalOpen"
+      @modal-closed="modalOpen = false"
+      @cancel-approved="onCancelDiscount"
+  />
 </template>
 
 <style scoped>

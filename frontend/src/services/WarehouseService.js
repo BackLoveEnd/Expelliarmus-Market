@@ -90,5 +90,9 @@ export const WarehouseService = {
             `/management/warehouse/products/${productId}/discounts/${discountId}`,
             formatter.toJsonApi(discountInfo, 'discounts')
         );
+    },
+
+    async cancelDiscount(productId, discountId) {
+        return await api().delete(`/management/warehouse/products/${productId}/discounts/${discountId}`);
     }
 };

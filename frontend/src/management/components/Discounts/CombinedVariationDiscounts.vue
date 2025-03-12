@@ -8,6 +8,7 @@ import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultS
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import {formatInTimeZone} from "date-fns-tz";
 import {useToastStore} from "@/stores/useToastStore.js";
+import DiscountCancelModal from "@/management/components/Discounts/DiscountCancelModal.vue";
 
 const props = defineProps({
   variations: Array,
@@ -22,6 +23,8 @@ const emit = defineEmits(["discount-added"]);
 
 const isEditing = ref(false);
 
+const modalOpen = ref(false);
+
 const onFormSubmit = async (values) => {
   const date = prepareDate(values);
 
@@ -34,7 +37,7 @@ const onFormSubmit = async (values) => {
         }
       })
       .catch((e) => {
-        if (e?.response?.status === 422 || e?.response?.status === 404) {
+        if ([422, 404].includes(e?.response?.status)) {
           toast.showToast(e?.response?.data?.message, defaultErrorSettings);
         } else {
           toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
@@ -54,14 +57,34 @@ const onFormUpdate = async (values) => {
         }
       })
       .catch((e) => {
-        if (e?.response?.status === 422 || e?.response?.status === 404) {
+        if ([400, 409, 422, 404].includes(e?.response?.status)) {
           toast.showToast(e?.response?.data?.message, defaultErrorSettings);
         } else {
           toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
         }
       })
       .finally(() => isEditing.value = false);
-}
+};
+
+const onCancelDiscount = async () => {
+  modalOpen.value = false;
+
+  await WarehouseService.cancelDiscount(props.productId, selectedVariation.value?.discount?.id)
+      .then((response) => {
+        if (response?.status === 200) {
+          emit("discount-added");
+          selectedVariation.value = null;
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+        }
+      })
+      .catch((e) => {
+        if ([409, 422, 404].includes(e?.response?.status)) {
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+        } else {
+          toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        }
+      });
+};
 
 function prepareStartDate(startDate) {
   return formatInTimeZone(startDate, "UTC", "yyyy-MM-dd HH:mm");
@@ -82,14 +105,14 @@ function prepareDate(values) {
 
 const discardEditing = () => {
   isEditing.value = false;
-}
+};
 
 const editDiscount = () => {
   isEditing.value = true;
-}
+};
 
 function formatDate(date) {
-  return new Date(date).toLocaleString()
+  return new Date(date).toLocaleString();
 }
 </script>
 
@@ -196,7 +219,10 @@ function formatDate(date) {
             >
               Edit Discount
             </button>
-            <button type="button" class="p-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-800">
+            <button
+                @click="modalOpen = true"
+                type="button"
+                class="p-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-800">
               Cancel Discount
             </button>
           </div>
@@ -216,6 +242,11 @@ function formatDate(date) {
       </div>
     </div>
   </section>
+  <discount-cancel-modal
+      :is-modal-open="modalOpen"
+      @modal-closed="modalOpen = false"
+      @cancel-approved="onCancelDiscount"
+  />
 </template>
 
 <style scoped>
