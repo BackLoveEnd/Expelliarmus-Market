@@ -6,6 +6,7 @@ import {formatInTimeZone} from "date-fns-tz";
 import {WarehouseService} from "@/services/WarehouseService.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
+import {ref} from "vue";
 
 const props = defineProps({
   discountData: Object | null,
@@ -14,6 +15,8 @@ const props = defineProps({
 });
 
 const toast = useToastStore();
+
+const isEditing = ref(false);
 
 const emit = defineEmits(["discount-added"]);
 
@@ -41,12 +44,53 @@ const onFormSubmit = async (values) => {
       });
 };
 
+const onFormUpdate = async (values) => {
+  const date = prepareDate(values);
+
+  await WarehouseService.updateDiscount(props.productId, props.discountData?.id, date)
+      .then((response) => {
+        if (response?.status === 200) {
+          emit("discount-added");
+          toast.showToast(response?.data?.message, defaultSuccessSettings);
+        }
+      })
+      .catch((e) => {
+        if (e?.response?.status === 422 || e?.response?.status === 404) {
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+        } else {
+          toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        }
+      })
+      .finally(() => isEditing.value = false);
+}
+
+function prepareDate(values) {
+  return {
+    percentage: values.percentage,
+    variation: null,
+    start_date: values.start_date ? prepareStartDate(values.start_date) : null,
+    end_date: prepareEndDate(values.end_date)
+  };
+}
+
 function prepareStartDate(startDate) {
   return formatInTimeZone(startDate, "UTC", "yyyy-MM-dd HH:mm");
 }
 
 function prepareEndDate(endDate) {
   return formatInTimeZone(endDate, "UTC", "yyyy-MM-dd HH:mm");
+}
+
+const discardEditing = () => {
+  isEditing.value = false;
+}
+
+const editDiscount = () => {
+  isEditing.value = true;
+}
+
+function formatDate(date) {
+  return new Date(date).toLocaleString()
 }
 </script>
 
@@ -58,7 +102,7 @@ function prepareEndDate(endDate) {
       >
         Discounts
       </h5>
-      <div class="flex flex-col gap-2" v-if="discountData">
+      <div class="flex flex-col gap-4" v-if="discountData && !isEditing">
         <div class="flex justify-around items-center gap-14">
           <discount-info-viewer
               title="Percentage"
@@ -79,17 +123,44 @@ function prepareEndDate(endDate) {
         <div class="flex justify-around">
           <div class="p-4 rounded-md shadow-md flex flex-col items-center gap-y-2">
             <i class="pi pi-calendar-plus text-sm text-green-500"></i>
-            <span class="text-sm font-semibold">{{ discountData.start_from }}</span>
+            <span class="text-sm font-semibold">{{
+                formatDate(discountData.start_from)
+              }}</span>
             <span class="text-sm">Start Date</span>
           </div>
           <div class="p-4 rounded-md shadow-md flex flex-col items-center gap-y-2">
             <i class="pi pi-calendar-minus text-sm text-red-500"></i>
-            <span class="text-sm font-semibold">{{ discountData.end_at }}</span>
+            <span class="text-sm font-semibold">{{
+                formatDate(discountData.end_at)
+              }}</span>
             <span class="text-sm">End Date</span>
           </div>
         </div>
+        <div class="flex justify-end gap-4">
+          <button
+              type="button"
+              class="p-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-800"
+              @click="editDiscount"
+          >
+            Edit Discount
+          </button>
+          <button type="button" class="p-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-800">
+            Cancel Discount
+          </button>
+        </div>
       </div>
-      <discount-form v-else :original-price="originalPrice" @form-submitted="onFormSubmit"/>
+      <discount-form
+          v-else-if="!discountData && !isEditing"
+          :original-price="originalPrice"
+          @form-submitted="onFormSubmit"
+      />
+      <discount-form
+          v-if="isEditing"
+          :original-price="originalPrice"
+          :exists-discount="discountData"
+          @form-updated="onFormUpdate"
+          @update-cancel="discardEditing"
+      />
     </div>
   </section>
 </template>

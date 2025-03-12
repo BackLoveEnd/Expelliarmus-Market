@@ -1,11 +1,12 @@
 <script setup>
 import {ErrorMessage, Field, Form} from "vee-validate";
 import {DatePicker} from "primevue";
-import {reactive, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import * as yup from "yup";
 
 const props = defineProps({
-  originalPrice: Number
+  originalPrice: Number,
+  existsDiscount: Object | null
 });
 
 const discountError = ref(null);
@@ -20,7 +21,6 @@ const schema = yup.object().shape({
       .required('Percentage is required'),
   start_date: yup
       .date()
-      .min(new Date(), 'The start date must be today or later')
       .required('Start date is required'),
   end_date: yup
       .date()
@@ -28,9 +28,9 @@ const schema = yup.object().shape({
       .required('End date is required')
 });
 
-const emit = defineEmits(["form-submitted"]);
+const emit = defineEmits(["form-submitted", "update-cancel", "form-updated"]);
 
-const data = reactive({
+const data = ref({
   percentage: null,
   start_date: null,
   end_date: null
@@ -41,7 +41,19 @@ function clearError() {
 }
 
 function onSubmit(values) {
-  emit("form-submitted", values);
+  if (props.existsDiscount && new Date(values.start_date) < new Date()) {
+    values.start_date = null;
+  }
+
+  if (props.existsDiscount) {
+    emit("form-updated", values);
+  } else {
+    emit("form-submitted", values);
+  }
+}
+
+const cancelUpdate = () => {
+  emit("update-cancel");
 }
 
 watch((data), (newValue) => {
@@ -50,12 +62,26 @@ watch((data), (newValue) => {
   } else {
     newPrice.value = null;
   }
+  if (newValue.start_date && typeof newValue.start_date === 'string') {
+    data.value.start_date = new Date(newValue.start_date);
+  }
+  if (newValue.end_date && typeof newValue.end_date === 'string') {
+    data.value.end_date = new Date(newValue.end_date);
+  }
 }, {deep: true});
+
+watch(() => props.existsDiscount, (newData) => {
+  if (newData) {
+    data.value.percentage = parseFloat(newData.percentage.replace('%', ''));
+    data.value.start_date = new Date(newData.start_from);
+    data.value.end_date = new Date(newData.end_at);
+  }
+}, {immediate: true});
 </script>
 
 <template>
   <Form @submit="onSubmit" :validation-schema="schema" class="flex flex-col gap-y-4">
-    <div class="flex gap-x-4 items-center">
+    <div class="flex gap-x-4 items-center ml-10">
       <div class="flex flex-col justify-between">
         <label for="percentage">
           Percentage
@@ -74,7 +100,7 @@ watch((data), (newValue) => {
         </div>
         <ErrorMessage name="percentage" class="text-sm text-red-600"/>
       </div>
-      <div class="flex items-center flex-col text-sm" v-if="newPrice">
+      <div class="flex items-center flex-col text-sm flex-1" v-if="newPrice">
         <span>Discount price will be:</span>
         <span class="font-semibold">{{ newPrice }}</span>
       </div>
@@ -85,7 +111,7 @@ watch((data), (newValue) => {
           Discount Start Date
           <span class="text-red-700">*</span>
         </label>
-        <Field name="start_date" v-slot="{ field }">
+        <Field name="start_date" v-slot="{ field }" v-model="data.start_date">
           <DatePicker
               v-bind="field"
               v-model="data.start_date"
@@ -103,7 +129,7 @@ watch((data), (newValue) => {
           Discount End Date
           <span class="text-red-700">*</span>
         </label>
-        <Field name="end_date" v-slot="{ field }">
+        <Field name="end_date" v-slot="{ field }" v-model="data.end_date">
           <DatePicker
               v-bind="field"
               v-model="data.end_date"
@@ -117,8 +143,26 @@ watch((data), (newValue) => {
         <ErrorMessage name="end_date" class="text-sm text-red-600"/>
       </div>
     </div>
-    <div class="flex justify-center">
-      <button type="submit" class="bg-blue-500 p-2 hover:bg-blue-800 w-1/3 text-white text-sm rounded-md">Save</button>
+    <div class="flex justify-around">
+      <button
+          type="button"
+          v-if="existsDiscount"
+          @click="cancelUpdate"
+          class="bg-gray-500 p-2 hover:bg-gray-800 w-1/3 text-white text-sm rounded-md">
+        Cancel
+      </button>
+      <button
+          type="submit"
+          v-if="existsDiscount"
+          class="bg-blue-500 p-2 hover:bg-blue-800 w-1/3 text-white text-sm rounded-md">
+        Update
+      </button>
+      <button
+          type="submit"
+          v-if="!existsDiscount"
+          class="bg-blue-500 p-2 hover:bg-blue-800 w-1/3 text-white text-sm rounded-md">
+        Save
+      </button>
     </div>
   </Form>
 </template>

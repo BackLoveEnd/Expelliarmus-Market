@@ -61,6 +61,9 @@ import LiLink from "@/management/components/Home/LiLink.vue";
               <li class="mb-4">
                 <li-link title="Warehouse" icon="pi-warehouse" link-name="warehouse"/>
               </li>
+              <li class="mb-4">
+                <li-link title="Discounts" icon="pi-percentage" link-name="discounts"/>
+              </li>
             </ul>
           </div>
         </div>

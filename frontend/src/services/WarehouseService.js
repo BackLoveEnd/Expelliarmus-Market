@@ -83,5 +83,12 @@ export const WarehouseService = {
             `/management/warehouse/products/${productId}/discounts`,
             formatter.toJsonApi(discountInfo, 'discounts')
         );
+    },
+
+    async updateDiscount(productId, discountId, discountInfo) {
+        return await api().put(
+            `/management/warehouse/products/${productId}/discounts/${discountId}`,
+            formatter.toJsonApi(discountInfo, 'discounts')
+        );
     }
 };
