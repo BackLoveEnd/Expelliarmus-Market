@@ -11,6 +11,6 @@ class CannotAddDiscountToProductWithoutPriceException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => 'Cannot add discount for product with price 0.']);
+        return response()->json(['message' => 'Cannot add discount for product with price 0.'], 400);
     }
 }

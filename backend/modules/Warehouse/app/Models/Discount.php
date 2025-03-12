@@ -62,12 +62,12 @@ class Discount extends Model
 
     public function scopeNotCancelled(Builder $builder): Builder
     {
-        return $builder->where('is_cancelled', false);
+        return $builder->where('discounts.is_cancelled', false);
     }
 
     public function scopeCancelled(Builder $builder): Builder
     {
-        return $builder->where('is_cancelled', true);
+        return $builder->where('discounts.is_cancelled', true);
     }
 
     public function cancelDiscount(): void
@@ -82,6 +82,7 @@ class Discount extends Model
         return [
             'start_date' => 'datetime',
             'end_date' => 'datetime',
+            'is_cancelled' => 'boolean',
         ];
     }
 

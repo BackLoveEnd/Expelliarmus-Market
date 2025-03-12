@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
+use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
 use Modules\Warehouse\Http\Requests\EditDiscountRequest;
 use Modules\Warehouse\Models\Discount;
@@ -30,7 +31,8 @@ class DiscountController extends Controller
      */
     public function addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
     {
-        $this->discountService->addDiscount($product)
+        $this->discountService
+            ->addDiscount($product)
             ->process(ProductDiscountDto::fromRequest($request));
 
         return response()->json(['message' => 'Discount was added successfully.']);
@@ -48,7 +50,8 @@ class DiscountController extends Controller
      */
     public function editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
     {
-        $this->discountService->editDiscount($product, $discount)
+        $this->discountService
+            ->editDiscount($product, $discount)
             ->process(ProductDiscountDto::fromRequest($request));
 
         return response()->json(['message' => 'Discount was updated.']);
@@ -62,7 +65,7 @@ class DiscountController extends Controller
      * @param  Product  $product
      * @param  Discount  $discount
      * @return JsonResponse
-     * @throws \Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException
+     * @throws DiscountIsNotRelatedToProductException
      */
     public function cancelDiscount(Product $product, Discount $discount): JsonResponse
     {

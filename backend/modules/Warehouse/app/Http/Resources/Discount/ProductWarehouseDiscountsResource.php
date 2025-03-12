@@ -35,8 +35,10 @@ class ProductWarehouseDiscountsResource extends JsonApiResource
             } else {
                 $attributes['variationType'] = 'single';
             }
-        } elseif ($this->discount?->isNotEmpty()) {
-            $attributes['discount'] = DiscountBaseResource::make($this->discount->first());
+        }
+
+        if ($this->lastDiscount?->isNotEmpty()) {
+            $attributes['discount'] = DiscountBaseResource::make($this->lastDiscount->first());
         } else {
             $attributes['discount'] = null;
         }

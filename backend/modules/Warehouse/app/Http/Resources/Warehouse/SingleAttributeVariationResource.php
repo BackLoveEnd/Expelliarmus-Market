@@ -15,7 +15,7 @@ class SingleAttributeVariationResource extends JsonApiResource
         $attributes = [
             'id' => $this->id,
             'price' => $this->price,
-            'discount' => $this->discount?->isEmpty() ? null : DiscountBaseResource::make($this->discount->first()),
+            'discount' => $this->lastDiscount?->isEmpty() ? null : DiscountBaseResource::make($this->lastDiscount->first()),
             'value' => $this->value,
             'quantity' => $this->quantity,
             'attribute_name' => $this->attribute->name,

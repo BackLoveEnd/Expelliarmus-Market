@@ -17,7 +17,7 @@ class CombinedAttributeVariationResource extends JsonApiResource
             'id' => $this->id,
             'sku' => $this->sku,
             'price' => $this->price,
-            'discount' => $this->discount?->isEmpty() ? null : DiscountBaseResource::make($this->discount->first()),
+            'discount' => $this->lastDiscount?->isEmpty() ? null : DiscountBaseResource::make($this->lastDiscount->first()),
             'quantity' => $this->quantity,
             'attributes' => $this->productAttributes->map(function (ProductAttribute $attribute) {
                 $attributes = [
