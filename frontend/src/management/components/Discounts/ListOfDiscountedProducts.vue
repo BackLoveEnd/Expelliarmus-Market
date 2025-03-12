@@ -1,28 +1,190 @@
 <script setup>
-import {reactive} from "vue";
-import Tag from "primevue/tag";
+import {reactive, ref} from "vue";
 import MultiSelect from "primevue/multiselect";
+import {WarehouseService} from "@/services/WarehouseService.js";
+import Select from "primevue/select";
 
-let products = reactive([]);
+let discountedProducts = reactive([]);
 
+const cancelledFilters = ref([
+  {value: true, name: "Yes"},
+  {value: false, name: "No"},
+]);
+
+const finishedFilters = ref([
+  {value: true, name: "Yes"},
+  {value: false, name: "No"},
+]);
+
+const filters = ref({});
+
+const isLoading = ref(false);
+
+const selectedSorts = ref([]);
+
+const nextPage = ref();
+
+const sorts = ref([
+  {value: 'start_date', name: 'By start date', direction: 'asc'},
+  {value: 'end_date', name: 'By end date', direction: ''},
+  {value: 'percentage', name: 'By percentage', direction: ''},
+  {value: 'discount_price', name: 'By discount price', direction: ''}
+]);
+
+const total = ref(0);
+
+const getDiscountedProducts = async (page = 1) => {
+  const params = {
+    filter: filters.value,
+    sort: selectedSorts.value,
+    page: page
+  };
+
+  isLoading.value = true;
+
+  await WarehouseService.discountedProducts(params)
+      .then((response) => {
+        if (page === 1) {
+          discountedProducts.splice(0, discountedProducts.length, ...response?.data?.data?.map((discount) => ({
+            id: discount?.id,
+            percentage: discount?.attributes.percentage,
+            cancelled: discount?.attributes.cancelled,
+            start_date: new Date(discount?.attributes.start_date).toLocaleString(),
+            end_date: new Date(discount?.attributes.end_date).toLocaleString(),
+            discount_price: discount?.attributes.discount_price,
+            product: {
+              id: discount?.attributes?.product?.id,
+              title: discount?.attributes?.product?.title,
+              article: discount?.attributes?.product?.product_article,
+              image: discount?.attributes?.product?.image
+            }
+          })));
+        } else {
+          discountedProducts.push(...response?.data?.data?.map((discount) => ({
+            id: discount?.id,
+            percentage: discount?.attributes.percentage,
+            cancelled: discount?.attributes.cancelled,
+            start_date: new Date(discount?.attributes.start_date).toLocaleString(),
+            end_date: new Date(discount?.attributes.end_date).toLocaleString(),
+            discount_price: discount?.attributes.discount_price,
+            product: {
+              id: discount?.attributes?.product?.id,
+              title: discount?.attributes?.product?.title,
+              article: discount?.attributes?.product?.product_article,
+              image: discount?.attributes?.product?.image
+            }
+          })));
+        }
+
+        total.value = response?.data?.meta.total;
+
+        nextPage.value = response?.data?.links.next_page;
+      })
+      .catch((e) => {
+        if (e.response?.status === 404) {
+          discountedProducts.splice(0, discountedProducts.length);
+          total.value = 0;
+        }
+      })
+      .finally(() => isLoading.value = false);
+};
+
+async function loadMore() {
+  await getDiscountedProducts(nextPage.value);
+}
+
+const onCancelFilter = async (selectedFilter) => {
+  if (selectedFilter === null) {
+    delete filters.value['cancelled'];
+  } else {
+    filters.value['cancelled'] = selectedFilter.value;
+  }
+
+  await getDiscountedProducts();
+};
+
+const onFinishedFilter = async (selectedFilter) => {
+  if (selectedFilter === null) {
+    delete filters.value['finished'];
+  } else {
+    filters.value['finished'] = selectedFilter.value;
+  }
+
+  await getDiscountedProducts();
+};
+
+const onSort = async (selectedFields) => {
+  selectedSorts.value = selectedFields.map((field) => {
+    const existingSort = selectedSorts.value.find((s) => s.field === field.value);
+    return {
+      field: field.value,
+      order: existingSort ? existingSort.order : field.direction || "asc",
+    };
+  });
+
+  await getDiscountedProducts();
+};
+
+const setSort = async (field, order) => {
+  const existingSort = selectedSorts.value.find((sort) => sort.field === field);
+
+  if (existingSort) {
+    existingSort.order = order;
+
+    await getDiscountedProducts();
+  }
+};
+
+const isActiveSort = (field, order) => {
+  return selectedSorts.value.some((sort) => sort.field === field && sort.order === order);
+};
+
+await getDiscountedProducts();
 </script>
 
 <template>
   <section class="container mx-auto h-full">
     <div :class="{
-          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center': products.length > 0,
-          'grid grid-cols-1 sm:grid-cols-2 gap-4 place-items-center': products.length === 0
+          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 place-items-center': discountedProducts.length > 0,
+          'grid grid-cols-1 sm:grid-cols-2 gap-4 place-items-center': discountedProducts.length === 0
       }">
       <div class="flex flex-col justify-around h-full">
         <div class="flex gap-y-2 flex-col">
           <div class="text-lg font-semibold text-center">Total: {{ total }} products</div>
-          <div class="text-sm text-center">Showing {{ products.length }} products</div>
+          <div class="text-sm text-center">Showing {{ discountedProducts.length }} products</div>
         </div>
         <div class="flex flex-col gap-y-4">
           <label class="text-center font-semibold">Filters & Sorting</label>
 
+          <Select
+              :options="cancelledFilters"
+              placeholder="Cancelled"
+              style="min-width: 12rem"
+              :showClear="true"
+              option-label="name"
+              @update:modelValue="onCancelFilter"
+          >
+            <template #option="{ option }">
+              <span>{{ option.name }}</span>
+            </template>
+          </Select>
+
+          <Select
+              :options="finishedFilters"
+              placeholder="Discount Finished"
+              style="min-width: 12rem"
+              :showClear="true"
+              option-label="name"
+              @update:modelValue="onFinishedFilter"
+          >
+            <template #option="{ option }">
+              <span>{{ option.name }}</span>
+            </template>
+          </Select>
+
           <MultiSelect
-              @update:modelValue=""
+              @update:modelValue="onSort"
+              :options="sorts"
               optionLabel="name"
               filter
               placeholder="Select Sort Fields"
@@ -34,11 +196,21 @@ let products = reactive([]);
                 <span>{{ option.name }}</span>
                 <div class="flex gap-1 ml-2">
                   <button
+                      @click.stop="setSort(option.value, 'asc')"
+                      :class="{
+                        'bg-yellow-500 text-white': isActiveSort(option.value, 'asc'),
+                        'bg-gray-200': !isActiveSort(option.value, 'asc')
+                      }"
                       class="px-2 py-1 rounded text-xs"
                   >
                     ASC
                   </button>
                   <button
+                      @click.stop="setSort(option.value, 'desc')"
+                      :class="{
+                        'bg-blue-500 text-white': isActiveSort(option.value, 'desc'),
+                        'bg-gray-200': !isActiveSort(option.value, 'desc')
+                      }"
                       class="px-2 py-1 rounded text-xs"
                   >
                     DESC
@@ -50,52 +222,37 @@ let products = reactive([]);
         </div>
       </div>
 
-      <template v-if="products.length > 0">
-        <div v-for="(product, index) in products" :key="product.id" class="max-w-[240px] my-8">
+      <template v-if="discountedProducts.length > 0">
+        <div v-for="(discount, index) in discountedProducts" :key="discount.id" class="max-w-[240px] my-8">
           <div class="bg-transparent rounded-lg overflow-hidden shadow-md">
             <div class="p-5 pb-0 overflow-hidden">
-              <img :src="product.preview_image" alt="Product Image" class="w-full h-full object-cover rounded-lg"/>
+              <img :src="discount.product.image" alt="Product Image" class="w-full h-full object-cover rounded-lg"/>
             </div>
             <div class="p-5 space-y-2">
               <div class="text-sm text-center text-gray-900">
-                {{ product.title }}
+                {{ discount.product.title }}
               </div>
               <div class="flex flex-col items-start mt-2 space-y-1">
-                <span class="text-xs text-gray-500">Article: {{ product.article }}</span>
-                <span class="text-xs text-gray-500">Quantity: {{ product.quantity }}</span>
-                <span class="text-xs text-gray-500">Deleted At: {{ product.deleted_at }}</span>
-                <span class="text-xs text-gray-500">
-                Status:
-                <Tag class="text-xs" :value="product.status.name" :severity="getSeverity(product.status.name)"/>
-              </span>
-              </div>
-              <div class="flex justify-between">
-                <button
-                    type="button"
-                    class="bg-gray-200 text-xs rounded-md p-1 hover:bg-gray-400"
-                >
-                  Delete Forever
-                </button>
-                <button
-                    type="button"
-                    class="bg-green-200 text-xs rounded-md p-1 hover:bg-green-400"
-                >
-                  Restore
-                </button>
+                <span class="text-xs text-gray-500">Article: {{ discount.product.article }}</span>
+                <span class="text-xs text-gray-500">Cancelled: {{ discount.cancelled }}</span>
+                <span class="text-xs text-gray-500 font-semibold">Percentage: {{ discount.percentage }}</span>
+                <span class="text-xs text-gray-500 font-semibold">Discount Price: {{ discount.discount_price }}</span>
+                <span class="text-xs text-gray-500">Start At: {{ discount.start_date }}</span>
+                <span class="text-xs text-gray-500">End At: {{ discount.end_date }}</span>
               </div>
             </div>
           </div>
         </div>
-        <!--        <div v-if="products.length < total">
-                  <button type="button" class="flex flex-col items-center gap-y-2" @click="loadMore">
-                    <i class="pi pi-sync text-4xl text-[#374151]" :class="{ 'pi-spin': isLoading }"></i>
-                    <span class="font-semibold text-[#374151]">Load more</span>
-                  </button>
-                </div>
-                <div v-else class="flex flex-col items-center gap-y-2">
-                  <i class="pi pi-check text-green-500 text-3xl"></i>
-                  <span class="text-[#374151] text-sm font-semibold">That all.</span>
-                </div>-->
+        <div v-if="discountedProducts.length < total">
+          <button type="button" class="flex flex-col items-center gap-y-2" @click="loadMore">
+            <i class="pi pi-sync text-4xl text-[#374151]" :class="{ 'pi-spin': isLoading }"></i>
+            <span class="font-semibold text-[#374151]">Load more</span>
+          </button>
+        </div>
+        <div v-else class="flex flex-col items-center gap-y-2">
+          <i class="pi pi-check text-green-500 text-3xl"></i>
+          <span class="text-[#374151] text-sm font-semibold">That all.</span>
+        </div>
       </template>
       <div
           v-else

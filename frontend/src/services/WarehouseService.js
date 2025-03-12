@@ -94,5 +94,10 @@ export const WarehouseService = {
 
     async cancelDiscount(productId, discountId) {
         return await api().delete(`/management/warehouse/products/${productId}/discounts/${discountId}`);
-    }
+    },
+
+    async discountedProducts(params) {
+        const url = formatter.formatUrl("/management/warehouse/products/discounted", params);
+        return await api().get(url);
+    },
 };
