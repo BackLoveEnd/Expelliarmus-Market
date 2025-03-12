@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
@@ -58,20 +59,15 @@ class ProductVariation extends Model implements DiscountRelationInterface
                 'variation_id',
                 'attribute_id',
             )
-            ->using(VariationAttributeValues::class);
+            ->withPivot(['id', 'value']);
     }
 
-    public function discount(): BelongsToMany
+    public function discount(): MorphMany
     {
-        return $this->belongsToMany(
-            related: Discount::class,
-            table: 'product_combined_variation_discounts',
-            foreignPivotKey: 'c_variation_id',
-            relatedPivotKey: 'discount_id',
-        );
+        return $this->morphMany(Discount::class, 'discountable');
     }
 
-    public function lastDiscount(): BelongsToMany
+    public function lastDiscount(): MorphMany
     {
         return $this
             ->discount()

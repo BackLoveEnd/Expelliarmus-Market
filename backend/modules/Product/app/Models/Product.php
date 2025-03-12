@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\Brand\Builders\ProductBuilder;
@@ -112,12 +113,12 @@ class Product extends Model implements DiscountRelationInterface
     }
 
     // For products that do not have options defining their prices.
-    public function discount(): BelongsToMany
+    public function discount(): MorphMany
     {
-        return $this->belongsToMany(Discount::class, 'product_discounts');
+        return $this->morphMany(Discount::class, 'discountable');
     }
 
-    public function lastDiscount(): BelongsToMany
+    public function lastDiscount(): MorphMany
     {
         return $this
             ->discount()

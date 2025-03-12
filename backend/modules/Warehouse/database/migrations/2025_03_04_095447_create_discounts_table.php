@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->timestamp('start_date');
             $table->timestamp('end_date');
             $table->boolean('is_cancelled')->default(false);
+            $table->morphs('discountable');
             $table->primary('id');
         });
     }

@@ -43,10 +43,10 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
     private function createDiscount(
         DiscountRelationInterface $relation,
         DiscountDto $dto,
-        float $oldPrice
+        float $oldPrice,
     ): void {
         DB::transaction(function () use ($relation, $dto, $oldPrice) {
-            $discount = Discount::query()->create([
+            $discount = new Discount([
                 'percentage' => $dto->percentage,
                 'original_price' => $oldPrice,
                 'discount_price' => $this->calculateDiscountPrice($oldPrice, $dto),
@@ -56,7 +56,7 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
 
             $relation->discount()->update(['is_cancelled' => true]);
 
-            $relation->discount()->attach($discount);
+            $relation->discount()->save($discount);
         });
     }
 
@@ -66,7 +66,7 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
             ->where('id', $dto->variationId)
             ->first();
 
-        if ( ! $variation) {
+        if (! $variation) {
             throw new VariationToApplyDiscountDoesNotExists();
         }
 

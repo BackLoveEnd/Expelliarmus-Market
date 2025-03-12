@@ -7,13 +7,7 @@ return new class extends Migration {
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        /*Schema::create('product_discounts', function (Blueprint $table) {
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('discount_id')->constrained()->cascadeOnDelete();
-        });*/
-    }
+    public function up(): void {}
 
     /**
      * Reverse the migrations.

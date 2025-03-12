@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\Database\Factories\SingleAttributeFactory;
@@ -53,17 +53,12 @@ class ProductAttributeValue extends Model implements DiscountRelationInterface
         return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function discount(): BelongsToMany
+    public function discount(): MorphMany
     {
-        return $this->belongsToMany(
-            related: Discount::class,
-            table: 'product_single_variation_discounts',
-            foreignPivotKey: 's_variation_id',
-            relatedPivotKey: 'discount_id',
-        );
+        return $this->morphMany(Discount::class, 'discountable');
     }
 
-    public function lastDiscount(): BelongsToMany
+    public function lastDiscount(): MorphMany
     {
         return $this
             ->discount()

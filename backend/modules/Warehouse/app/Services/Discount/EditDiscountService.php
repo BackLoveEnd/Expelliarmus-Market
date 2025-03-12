@@ -71,7 +71,7 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
                 ->contains('id', $this->discount->id);
         })->first();
 
-        if ( ! $variation) {
+        if (! $variation) {
             throw new VariationToApplyDiscountDoesNotExists();
         }
 

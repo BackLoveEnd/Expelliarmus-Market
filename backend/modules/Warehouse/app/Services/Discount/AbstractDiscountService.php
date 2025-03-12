@@ -52,7 +52,7 @@ abstract class AbstractDiscountService
 
     private function discountRelatedToProductWithoutVariations(Discount $discount): void
     {
-        if (! $this->product->discount()->where('discount_id', $discount->id)->exists()) {
+        if (! $this->product->discount()->where('id', $discount->id)->exists()) {
             throw new DiscountIsNotRelatedToProductException();
         }
     }
