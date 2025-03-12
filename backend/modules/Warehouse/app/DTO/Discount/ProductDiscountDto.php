@@ -9,10 +9,11 @@ use Carbon\Carbon;
 
 final readonly class ProductDiscountDto
 {
+
     public function __construct(
         public int $percentage,
-        public Carbon $startFrom,
         public Carbon $endAt,
+        public ?Carbon $startFrom = null,
         public ?int $variationId = null,
     ) {}
 
@@ -20,9 +21,11 @@ final readonly class ProductDiscountDto
     {
         return new self(
             percentage: $request->percentage,
-            startFrom: Carbon::parse($request->start_date)->setTimezone(config('app.timezone')),
             endAt: Carbon::parse($request->end_date)->setTimezone(config('app.timezone')),
+            startFrom: $request->start_date ? Carbon::parse($request->start_date)
+                ->setTimezone(config('app.timezone')) : null,
             variationId: $request->variation,
         );
     }
+
 }

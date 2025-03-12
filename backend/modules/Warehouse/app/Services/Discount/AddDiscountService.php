@@ -12,8 +12,10 @@ use Modules\Warehouse\Models\Discount;
 
 final class AddDiscountService extends AbstractDiscountService implements DiscountProcessingInterface
 {
+
     /**
      * @param  DiscountDto  $dto
+     *
      * @return void
      * @throws VariationToApplyDiscountDoesNotExists
      */
@@ -21,7 +23,7 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
     {
         if (is_null($this->product->hasCombinedAttributes())) {
             $this->createDiscount(
-                relation: $this->product->warehouse,
+                relation: $this->product,
                 dto: $dto,
                 oldPrice: (float) $this->product->warehouse->getRawOriginal('default_price'),
             );
@@ -38,8 +40,11 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
         );
     }
 
-    private function createDiscount(DiscountRelationInterface $relation, DiscountDto $dto, float $oldPrice): void
-    {
+    private function createDiscount(
+        DiscountRelationInterface $relation,
+        DiscountDto $dto,
+        float $oldPrice
+    ): void {
         DB::transaction(function () use ($relation, $dto, $oldPrice) {
             $discount = Discount::query()->create([
                 'percentage' => $dto->percentage,
@@ -61,10 +66,11 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
             ->where('id', $dto->variationId)
             ->first();
 
-        if (! $variation) {
+        if ( ! $variation) {
             throw new VariationToApplyDiscountDoesNotExists();
         }
 
         return $variation;
     }
+
 }

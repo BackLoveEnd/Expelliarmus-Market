@@ -14,6 +14,7 @@ use Modules\Warehouse\Models\Discount;
 
 final class EditDiscountService extends AbstractDiscountService implements DiscountProcessingInterface
 {
+
     public function __construct(
         Product $product,
         private Discount $discount,
@@ -23,6 +24,7 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
 
     /**
      * @param  DiscountDto  $dto
+     *
      * @return void
      * @throws DiscountIsNotRelatedToProductException
      * @throws VariationToApplyDiscountDoesNotExists
@@ -48,12 +50,17 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
 
     private function updateDiscount(DiscountDto $dto, float $originalPrice): void
     {
-        $this->discount->update([
+        $toUpdate = [
             'percentage' => $dto->percentage,
-            'start_date' => $dto->startFrom,
             'end_date' => $dto->endAt,
             'discount_price' => $this->calculateDiscountPrice($originalPrice, $dto),
-        ]);
+        ];
+
+        if ($dto->startFrom) {
+            $toUpdate['start_date'] = $dto->startFrom;
+        }
+
+        $this->discount->update($toUpdate);
     }
 
     private function getVariationForCurrentDiscount(): DiscountRelationInterface
@@ -64,10 +71,11 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
                 ->contains('id', $this->discount->id);
         })->first();
 
-        if (! $variation) {
+        if ( ! $variation) {
             throw new VariationToApplyDiscountDoesNotExists();
         }
 
         return $variation;
     }
+
 }
