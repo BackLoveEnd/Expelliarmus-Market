@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->decimal('discount_price');
             $table->timestamp('start_date');
             $table->timestamp('end_date');
-            $table->boolean('is_cancelled')->default(false);
+            $table->tinyInteger('status');
             $table->morphs('discountable');
             $table->primary('id');
         });
