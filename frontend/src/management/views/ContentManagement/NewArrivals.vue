@@ -14,7 +14,7 @@ const arrivals = ref([
     image: "https://dummyimage.com/744x720/000/fff",
     title: "Playstation 5(1)",
     description: "Black and White version of the PS5 coming out on sale.",
-    link: "#",
+    link: "",
     imgSize:"744x720"
   },
   {
@@ -22,7 +22,7 @@ const arrivals = ref([
     image: "https://dummyimage.com/744x336/000/fff",
     title: "Playstation 5(2)",
     description: "Black and White version of the PS5 coming out on sale.",
-    link: "#",
+    link: "",
     imgSize:"744x336"
   },
   {
@@ -30,7 +30,7 @@ const arrivals = ref([
     image: "https://dummyimage.com/348x336/000/fff",
     title: "Playstation 5(3)",
     description: "Black and White version of the PS5 coming out on sale.",
-    link: "#",
+    link: "",
     imgSize:"348x336"
   },
   {
@@ -38,7 +38,7 @@ const arrivals = ref([
     image: "https://dummyimage.com/348x336/000/fff",
     title: "Playstation 5(4)",
     description: "Black and White version of the PS5 coming out on sale.",
-    link: "#",
+    link: "",
     imgSize:"348x336"
   }
 ]);
@@ -48,6 +48,8 @@ const selectedArrival = computed(() =>
     arrivals.value.find(arrival => arrival.id === selectedArrivalId.value)
 );
 
+
+/*
 const fetchArrivals = () => {
   ContentManagementService.getAllArrivals()
       .then(response => {
@@ -57,25 +59,33 @@ const fetchArrivals = () => {
         console.error(error);
       });
 };
+*/
 
-const toast = useToastStore(); // Добавляем
+const fetchArrivals = () => {
+  ContentManagementService.getAllArrivals()
+      .then(response => {
+        arrivals.value = response.data.map((arrival, index) => ({
+          id: arrival.arrival_id,
+          image: arrival.exists_image_url || `https://dummyimage.com/${arrival.imgSize}/000/fff`,
+          title: arrival.content?.title || "",
+          description: arrival.content?.body || "",
+          link: arrival.link || "",
+          imgSize: arrival.imgSize,
+          position: arrival.position || index + 1,
+          arrival_id: arrival.arrival_id || null,
+          exists_image_url: arrival.exists_image_url || null
+        }));
+      })
+      .catch(error => {
+        console.error(error);
+      });
+};
 
-function dataURItoBlob(dataURI) {
-  const byteString = atob(dataURI.split(",")[1]);
-  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-  const arrayBuffer = new ArrayBuffer(byteString.length);
-  const intArray = new Uint8Array(arrayBuffer);
 
-  for (let i = 0; i < byteString.length; i++) {
-    intArray[i] = byteString.charCodeAt(i);
-  }
-
-  return new Blob([arrayBuffer], { type: mimeString });
-}
-
-
+const toast = useToastStore();
 
 const saveArrivals = () => {
+  console.log("Sending data:", arrivals.value);
   ContentManagementService.uploadArrivalContent(arrivals.value)
       .then(() => {
         toast.showToast("Arrivals saved successfully!",defaultSuccessSettings);
@@ -171,7 +181,7 @@ const handleFileUpload = (event, id) => {
           <div class="flex gap-4 mt-4">
             <button
                 @click="saveArrivals"
-                class="bg-gray-500 text-white px-4 py-2 rounded"
+                class="bg-blue-500 text-white px-4 py-2 rounded"
             >
               Save
             </button>
