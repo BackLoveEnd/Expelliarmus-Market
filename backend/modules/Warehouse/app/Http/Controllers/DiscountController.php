@@ -32,13 +32,12 @@ class DiscountController extends Controller
      */
     public function addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
     {
-        if ($product->status->is(Status::PUBLISHED)
-            || $product->status->is(Status::NOT_PUBLISHED)
+        if (! $product->status->is(Status::PUBLISHED)
+            && ! $product->status->is(Status::NOT_PUBLISHED)
         ) {
             return response()->json([
                 'message' => 'Adding discount allowed only for published or not published products',
-            ],
-                403);
+            ], 403);
         }
 
         $this->discountService

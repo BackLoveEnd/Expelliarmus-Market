@@ -7,6 +7,7 @@ namespace Modules\Warehouse\Services\Discount;
 use Illuminate\Support\Facades\DB;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto as DiscountDto;
+use Modules\Warehouse\Enums\DiscountStatusEnum;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 use Modules\Warehouse\Models\Discount;
 
@@ -52,9 +53,10 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
                 'discount_price' => $this->calculateDiscountPrice($oldPrice, $dto),
                 'start_date' => $dto->startFrom,
                 'end_date' => $dto->endAt,
+                'status' => DiscountStatusEnum::PENDING,
             ]);
 
-            $relation->discount()->update(['is_cancelled' => true]);
+            $relation->discount()->update(['status' => DiscountStatusEnum::CANCELLED]);
 
             $relation->discount()->save($discount);
         });

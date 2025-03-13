@@ -67,7 +67,7 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
     {
         $variation = $this->productVariations->filter(function ($variation) {
             return $variation->discount
-                ->where('is_cancelled', false)
+                ->notCancelled()
                 ->contains('id', $this->discount->id);
         })->first();
 

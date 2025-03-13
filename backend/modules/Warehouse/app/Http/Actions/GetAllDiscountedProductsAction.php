@@ -7,8 +7,8 @@ namespace Modules\Warehouse\Http\Actions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\Filters\CancelledDiscountsFilter;
 use Modules\Warehouse\Filters\DiscountFinishedFilter;
+use Modules\Warehouse\Filters\DiscountStatusFilter;
 use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
@@ -45,7 +45,7 @@ class GetAllDiscountedProductsAction
                 },
             ])
             ->allowedFilters([
-                AllowedFilter::custom('cancelled', new CancelledDiscountsFilter()),
+                AllowedFilter::custom('status', new DiscountStatusFilter()),
                 AllowedFilter::custom('finished', new DiscountFinishedFilter()),
             ])
             ->allowedSorts(['start_date', 'end_date', 'percentage', 'discount_price'])

@@ -19,6 +19,7 @@ class DiscountBaseResource extends JsonResource
             'discount_price' => $this->discount_price,
             'start_from' => $this->start_date,
             'end_at' => $this->end_date,
+            'status' => $this->status->toString(),
         ];
     }
 

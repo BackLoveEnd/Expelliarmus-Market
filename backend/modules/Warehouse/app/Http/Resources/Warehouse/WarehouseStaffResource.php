@@ -13,7 +13,7 @@ class WarehouseStaffResource extends JsonApiResource
     {
         return [
             'total_quantity' => $this->total_quantity,
-            'default_price' => $this->defaultPrice(),
+            'default_price' => $this->default_price,
         ];
     }
 }

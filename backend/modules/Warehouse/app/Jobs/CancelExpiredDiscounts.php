@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Modules\Warehouse\Enums\DiscountStatusEnum;
 use Modules\Warehouse\Models\Discount;
 
 class CancelExpiredDiscounts implements ShouldQueue
@@ -18,8 +20,13 @@ class CancelExpiredDiscounts implements ShouldQueue
 
     public function handle(): void
     {
-        Discount::query()
-            ->whereDate('end_date', '<', now())
-            ->update(['is_cancelled' => true]);
+        DB::transaction(static function () {
+            Discount::query()
+                ->chunkById(100, function ($discounts) {
+                    foreach ($discounts as $discount) {
+                        $discount->update(['status' => DiscountStatusEnum::defineStatus($discount)]);
+                    }
+                });
+        });
     }
 }

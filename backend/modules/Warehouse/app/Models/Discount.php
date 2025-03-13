@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Number;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Enums\DiscountStatusEnum;
 
 /**
  * @property int $id
  * @property string|int $percentage
  * @property float $original_price
  * @property float $discount_price
- * @property bool $is_cancelled
+ * @property DiscountStatusEnum $status
  * @property Carbon $start_date
  * @property Carbon $end_date
  */
@@ -33,7 +34,7 @@ class Discount extends Model
         'discount_price',
         'start_date',
         'end_date',
-        'is_cancelled',
+        'status',
     ];
 
     public function products(): BelongsToMany
@@ -68,17 +69,17 @@ class Discount extends Model
 
     public function scopeNotCancelled(Builder $builder): Builder
     {
-        return $builder->where('discounts.is_cancelled', false);
+        return $builder->whereNot('discounts.status', DiscountStatusEnum::CANCELLED);
     }
 
     public function scopeCancelled(Builder $builder): Builder
     {
-        return $builder->where('discounts.is_cancelled', true);
+        return $builder->where('discounts.status', DiscountStatusEnum::CANCELLED);
     }
 
     public function cancelDiscount(): void
     {
-        $this->is_cancelled = true;
+        $this->status = DiscountStatusEnum::CANCELLED;
 
         $this->save();
     }
@@ -88,7 +89,7 @@ class Discount extends Model
         return [
             'start_date' => 'datetime',
             'end_date' => 'datetime',
-            'is_cancelled' => 'boolean',
+            'status' => DiscountStatusEnum::class,
         ];
     }
 
