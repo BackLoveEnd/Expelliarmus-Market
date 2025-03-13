@@ -7,6 +7,7 @@ namespace Modules\Warehouse\Services\Discount;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto as DiscountDto;
+use Modules\Warehouse\Enums\DiscountStatusEnum;
 use Modules\Warehouse\Http\Exceptions\CannotAddDiscountToProductWithoutPriceException;
 use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
@@ -67,7 +68,7 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
     {
         $variation = $this->productVariations->filter(function ($variation) {
             return $variation->discount
-                ->notCancelled()
+                ->where('status', '!=', DiscountStatusEnum::CANCELLED->value)
                 ->contains('id', $this->discount->id);
         })->first();
 
@@ -77,5 +78,4 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
 
         return $variation;
     }
-
 }

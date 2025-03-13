@@ -29,7 +29,7 @@ class AddDiscountToProductRequest extends JsonApiFormRequest
             'variation' => 'variation',
             'percentage' => 'percentage',
             'start_date' => 'start date',
-            'edn_date' => 'end date',
+            'end_date' => 'end date',
         ];
     }
 

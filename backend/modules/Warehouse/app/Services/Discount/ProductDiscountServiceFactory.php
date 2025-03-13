@@ -6,7 +6,6 @@ namespace Modules\Warehouse\Services\Discount;
 
 use Illuminate\Foundation\Application;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Models\Discount;
 
 class ProductDiscountServiceFactory
