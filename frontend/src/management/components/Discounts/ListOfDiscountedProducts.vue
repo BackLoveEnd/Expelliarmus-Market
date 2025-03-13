@@ -7,7 +7,7 @@ import Tag from "primevue/tag";
 
 let discountedProducts = reactive([]);
 
-const cancelledFilters = ref([
+const statusFilter = ref([
   {value: 'cancelled', name: "Cancelled"},
   {value: 'finished', name: "Finished"},
   {value: 'active', name: "Active"},
@@ -98,11 +98,11 @@ async function loadMore() {
   await getDiscountedProducts(nextPage.value);
 }
 
-const onCancelFilter = async (selectedFilter) => {
+const onStatusFilter = async (selectedFilter) => {
   if (selectedFilter === null) {
-    delete filters.value['cancelled'];
+    delete filters.value['status'];
   } else {
-    filters.value['cancelled'] = selectedFilter.value;
+    filters.value['status'] = selectedFilter.value;
   }
 
   await getDiscountedProducts();
@@ -175,12 +175,12 @@ const getSeverity = (status) => {
           <label class="text-center font-semibold">Filters & Sorting</label>
 
           <Select
-              :options="cancelledFilters"
+              :options="statusFilter"
               placeholder="Status"
               style="min-width: 12rem"
               :showClear="true"
               option-label="name"
-              @update:modelValue="onCancelFilter"
+              @update:modelValue="onStatusFilter"
           >
             <template #option="{ option }">
               <span>{{ option.name }}</span>

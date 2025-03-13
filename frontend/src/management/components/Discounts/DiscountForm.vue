@@ -54,7 +54,7 @@ function onSubmit(values) {
 
 const cancelUpdate = () => {
   emit("update-cancel");
-}
+};
 
 watch((data), (newValue) => {
   if (newValue.percentage) {
@@ -92,6 +92,8 @@ watch(() => props.existsDiscount, (newData) => {
               type="number"
               name="percentage"
               id="percentage"
+              min="1"
+              max="100"
               v-model="data.percentage"
               @input="clearError"
               class="w-full bg-white outline-none text-gray-700 placeholder-gray-500 text-base p-4"
