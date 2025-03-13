@@ -3,12 +3,15 @@ import {reactive, ref} from "vue";
 import MultiSelect from "primevue/multiselect";
 import {WarehouseService} from "@/services/WarehouseService.js";
 import Select from "primevue/select";
+import Tag from "primevue/tag";
 
 let discountedProducts = reactive([]);
 
 const cancelledFilters = ref([
-  {value: true, name: "Yes"},
-  {value: false, name: "No"},
+  {value: 'cancelled', name: "Cancelled"},
+  {value: 'finished', name: "Finished"},
+  {value: 'active', name: "Active"},
+  {value: 'pending', name: "Pending"}
 ]);
 
 const finishedFilters = ref([
@@ -47,11 +50,12 @@ const getDiscountedProducts = async (page = 1) => {
         if (page === 1) {
           discountedProducts.splice(0, discountedProducts.length, ...response?.data?.data?.map((discount) => ({
             id: discount?.id,
-            percentage: discount?.attributes.percentage,
-            cancelled: discount?.attributes.cancelled,
-            start_date: new Date(discount?.attributes.start_date).toLocaleString(),
-            end_date: new Date(discount?.attributes.end_date).toLocaleString(),
-            discount_price: discount?.attributes.discount_price,
+            percentage: discount?.attributes?.percentage,
+            cancelled: discount?.attributes?.cancelled,
+            start_date: new Date(discount?.attributes?.start_date).toLocaleString(),
+            end_date: new Date(discount?.attributes?.end_date).toLocaleString(),
+            discount_price: discount?.attributes?.discount_price,
+            status: discount?.attributes?.status,
             product: {
               id: discount?.attributes?.product?.id,
               title: discount?.attributes?.product?.title,
@@ -62,11 +66,12 @@ const getDiscountedProducts = async (page = 1) => {
         } else {
           discountedProducts.push(...response?.data?.data?.map((discount) => ({
             id: discount?.id,
-            percentage: discount?.attributes.percentage,
-            cancelled: discount?.attributes.cancelled,
-            start_date: new Date(discount?.attributes.start_date).toLocaleString(),
-            end_date: new Date(discount?.attributes.end_date).toLocaleString(),
-            discount_price: discount?.attributes.discount_price,
+            percentage: discount?.attributes?.percentage,
+            cancelled: discount?.attributes?.cancelled,
+            start_date: new Date(discount?.attributes?.start_date).toLocaleString(),
+            end_date: new Date(discount?.attributes?.end_date).toLocaleString(),
+            discount_price: discount?.attributes?.discount_price,
+            status: discount?.attributes?.status,
             product: {
               id: discount?.attributes?.product?.id,
               title: discount?.attributes?.product?.title,
@@ -140,6 +145,19 @@ const isActiveSort = (field, order) => {
 };
 
 await getDiscountedProducts();
+
+const getSeverity = (status) => {
+  switch (status) {
+    case "Cancelled":
+      return "danger";
+    case "Active":
+      return "success";
+    case "Pending":
+      return "warn";
+    case "Finished":
+      return "secondary";
+  }
+};
 </script>
 
 <template>
@@ -158,7 +176,7 @@ await getDiscountedProducts();
 
           <Select
               :options="cancelledFilters"
-              placeholder="Cancelled"
+              placeholder="Status"
               style="min-width: 12rem"
               :showClear="true"
               option-label="name"
@@ -234,7 +252,10 @@ await getDiscountedProducts();
               </div>
               <div class="flex flex-col items-start mt-2 space-y-1">
                 <span class="text-xs text-gray-500">Article: {{ discount.product.article }}</span>
-                <span class="text-xs text-gray-500">Cancelled: {{ discount.cancelled }}</span>
+                <span class="text-xs text-gray-500">
+                  Status:
+                  <Tag class="text-xs" :value="discount.status" :severity="getSeverity(discount.status)"/>
+                </span>
                 <span class="text-xs text-gray-500 font-semibold">Percentage: {{ discount.percentage }}</span>
                 <span class="text-xs text-gray-500 font-semibold">Discount Price: {{ discount.discount_price }}</span>
                 <span class="text-xs text-gray-500">Start At: {{ discount.start_date }}</span>

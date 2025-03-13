@@ -145,7 +145,7 @@ function formatDate(date) {
       <div class="flex flex-col gap-y-4 text-sm">
         <div class="flex justify-between">
           <p class="font-semibold">Price: {{
-              "$" + selectedVariation?.discount?.discount_price ?? selectedVariation.price
+              "$" + (selectedVariation?.discount?.discount_price ?? selectedVariation.price)
             }}</p>
           <p class="font-semibold">
             Total quantity: {{ selectedVariation.quantity }} unit(s)
