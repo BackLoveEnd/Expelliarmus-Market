@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Actions;
+namespace Modules\Category\Http\Management\Actions;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Modules\Category\Models\Category;
 use Modules\Warehouse\Models\ProductAttribute;
 
 class CreateAttributesForCategoryAction
 {
+
     public function handle(
         Category $category,
         Collection $attributes,
@@ -63,4 +63,5 @@ class CreateAttributesForCategoryAction
 
         return $category->productAttributes()->create($attributes->toArray());
     }
+
 }

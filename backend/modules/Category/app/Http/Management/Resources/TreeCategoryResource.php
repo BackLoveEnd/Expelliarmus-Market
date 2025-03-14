@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Resources;
+namespace Modules\Category\Http\Management\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TreeCategoryResource extends JsonResource
 {
+
     public function toArray(Request $request): array
     {
         return [
@@ -32,4 +33,5 @@ class TreeCategoryResource extends JsonResource
         }
         return $root->name;
     }
+
 }

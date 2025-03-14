@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Category\Http\Controllers\CategoryController;
-use Modules\Category\Http\Controllers\CategoryIconController;
+use Modules\Category\Http\Management\Controllers\CategoryController;
+use Modules\Category\Http\Management\Controllers\CategoryIconController;
 use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
 
 Route::prefix('management')->group(function () {

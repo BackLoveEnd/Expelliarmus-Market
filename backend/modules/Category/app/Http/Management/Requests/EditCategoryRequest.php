@@ -1,15 +1,16 @@
 <?php
 
-namespace Modules\Category\Http\Requests;
+declare(strict_types=1);
+
+namespace Modules\Category\Http\Management\Requests;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Validation\Rule;
-use Modules\Category\Rules\CreateSubCategoryRule;
-use Modules\Category\Rules\UniqueRootCategoryRule;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
-class CreateCategoryRequest extends JsonApiRelationsFormRequest
+class EditCategoryRequest extends JsonApiRelationsFormRequest
 {
+
     public function authorize(): bool
     {
         return true;
@@ -17,18 +18,9 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
 
     public function jsonApiAttributeRules(): array
     {
-        $rules = [
+        return [
             'name' => ['required', 'string', 'max:100'],
-            'parent' => ['nullable', 'integer']
         ];
-
-        if ($this->input('data.attributes.parent') !== null) {
-            $rules['parent'][] = new CreateSubCategoryRule($this->input('data.attributes.name'));
-        } else {
-            $rules['name'][] = new UniqueRootCategoryRule();
-        }
-
-        return $rules;
     }
 
     public function jsonApiRelationshipsRules(): array
@@ -38,8 +30,8 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
             'attributes.*' => [
                 'name' => ['required', 'string', 'max:50'],
                 'type' => ['required', Rule::enum(ProductAttributeTypeEnum::class)],
-                'required' => ['nullable', 'boolean']
-            ]
+                'required' => ['nullable', 'boolean'],
+            ],
         ];
     }
 
@@ -50,8 +42,8 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
             'attributes.*' => [
                 'name' => 'attribute name',
                 'type' => 'attribute type',
-                'required' => 'required'
-            ]
+                'required' => 'required',
+            ],
         ];
     }
 
@@ -59,7 +51,8 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
     {
         return [
             'name' => 'name',
-            'parent' => 'parent'
+            'parent' => 'parent',
         ];
     }
+
 }

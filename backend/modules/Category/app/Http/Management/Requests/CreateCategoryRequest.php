@@ -1,15 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Modules\Category\Http\Requests;
+namespace Modules\Category\Http\Management\Requests;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Validation\Rule;
+use Modules\Category\Rules\CreateSubCategoryRule;
+use Modules\Category\Rules\UniqueRootCategoryRule;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
-class EditCategoryRequest extends JsonApiRelationsFormRequest
+class CreateCategoryRequest extends JsonApiRelationsFormRequest
 {
+
     public function authorize(): bool
     {
         return true;
@@ -17,9 +18,18 @@ class EditCategoryRequest extends JsonApiRelationsFormRequest
 
     public function jsonApiAttributeRules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:100']
+        $rules = [
+            'name' => ['required', 'string', 'max:100'],
+            'parent' => ['nullable', 'integer'],
         ];
+
+        if ($this->input('data.attributes.parent') !== null) {
+            $rules['parent'][] = new CreateSubCategoryRule($this->input('data.attributes.name'));
+        } else {
+            $rules['name'][] = new UniqueRootCategoryRule();
+        }
+
+        return $rules;
     }
 
     public function jsonApiRelationshipsRules(): array
@@ -29,8 +39,8 @@ class EditCategoryRequest extends JsonApiRelationsFormRequest
             'attributes.*' => [
                 'name' => ['required', 'string', 'max:50'],
                 'type' => ['required', Rule::enum(ProductAttributeTypeEnum::class)],
-                'required' => ['nullable', 'boolean']
-            ]
+                'required' => ['nullable', 'boolean'],
+            ],
         ];
     }
 
@@ -41,8 +51,8 @@ class EditCategoryRequest extends JsonApiRelationsFormRequest
             'attributes.*' => [
                 'name' => 'attribute name',
                 'type' => 'attribute type',
-                'required' => 'required'
-            ]
+                'required' => 'required',
+            ],
         ];
     }
 
@@ -50,7 +60,8 @@ class EditCategoryRequest extends JsonApiRelationsFormRequest
     {
         return [
             'name' => 'name',
-            'parent' => 'parent'
+            'parent' => 'parent',
         ];
     }
+
 }

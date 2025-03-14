@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\DTO;
+namespace Modules\Category\Http\Management\DTO;
 
 use Illuminate\Support\Collection;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class ProductAttributesDto
 {
+
     public function __construct(
         public readonly string $name,
         public readonly int $type,
         public readonly bool $required,
-    ) {
-    }
+    ) {}
 
     public static function collect(Collection $attributes): Collection
     {
@@ -26,4 +26,5 @@ class ProductAttributesDto
             );
         });
     }
+
 }

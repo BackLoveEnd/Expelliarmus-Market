@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Resources;
+namespace Modules\Category\Http\Management\Resources;
 
 use Illuminate\Http\Request;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class RootCategoryResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
         $attrs = [
-            'name' => $this->name
+            'name' => $this->name,
         ];
 
         if ($this->slug) {
@@ -21,4 +22,5 @@ class RootCategoryResource extends JsonApiResource
 
         return $attrs;
     }
+
 }

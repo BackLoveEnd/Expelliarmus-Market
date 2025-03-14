@@ -2,32 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Controllers;
+namespace Modules\Category\Http\Management\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Modules\Category\Http\Actions\DeleteCategoryAttributeAction as DeleteAction;
-use Modules\Category\Http\Actions\EditCategoryAction;
-use Modules\Category\Http\Actions\GetCategoryAttributesAction;
-use Modules\Category\Http\Actions\SaveCategoryWithAttributesAction;
-use Modules\Category\Http\DTO\CreateCategoryDto;
-use Modules\Category\Http\DTO\EditCategoryDto;
-use Modules\Category\Http\Exceptions\AttributeNotRelatedToCategoryException;
-use Modules\Category\Http\Exceptions\FailedToDeleteCategoryAttributeException;
-use Modules\Category\Http\Exceptions\FailedToDeleteCategoryException;
-use Modules\Category\Http\Requests\CreateCategoryRequest;
-use Modules\Category\Http\Requests\EditCategoryRequest;
-use Modules\Category\Http\Resources\RootCategoryResource;
-use Modules\Category\Http\Resources\TreeCategoryResource;
+use Modules\Category\Http\Management\Actions\DeleteCategoryAttributeAction as DeleteAction;
+use Modules\Category\Http\Management\Actions\EditCategoryAction;
+use Modules\Category\Http\Management\Actions\GetCategoryAttributesAction;
+use Modules\Category\Http\Management\Actions\SaveCategoryWithAttributesAction;
+use Modules\Category\Http\Management\DTO\CreateCategoryDto;
+use Modules\Category\Http\Management\DTO\EditCategoryDto;
+use Modules\Category\Http\Management\Exceptions\AttributeNotRelatedToCategoryException;
+use Modules\Category\Http\Management\Exceptions\FailedToDeleteCategoryAttributeException;
+use Modules\Category\Http\Management\Exceptions\FailedToDeleteCategoryException;
+use Modules\Category\Http\Management\Requests\CreateCategoryRequest;
+use Modules\Category\Http\Management\Requests\EditCategoryRequest;
+use Modules\Category\Http\Management\Resources\RootCategoryResource;
+use Modules\Category\Http\Management\Resources\TreeCategoryResource;
+use Modules\Category\Http\Management\Services\CategoryIconService;
 use Modules\Category\Models\Category;
-use Modules\Category\Services\CategoryIconService;
 use Modules\Warehouse\Models\ProductAttribute as Attribute;
 use Throwable;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CategoryController extends Controller
 {
+
     /**
      * Retrieve all categories in tree view.
      *
@@ -72,10 +73,13 @@ class CategoryController extends Controller
      *
      * @param  Category  $category
      * @param  GetCategoryAttributesAction  $action
+     *
      * @return JsonResponse
      */
-    public function getAllAttributesForCategory(Category $category, GetCategoryAttributesAction $action): JsonResponse
-    {
+    public function getAllAttributesForCategory(
+        Category $category,
+        GetCategoryAttributesAction $action
+    ): JsonResponse {
         $attributes = $action->handle($category);
 
         if ($attributes->isEmpty()) {
@@ -83,7 +87,7 @@ class CategoryController extends Controller
         }
 
         return response()->json([
-            'data' => $attributes
+            'data' => $attributes,
         ]);
     }
 
@@ -94,10 +98,13 @@ class CategoryController extends Controller
      *
      * @param  CreateCategoryRequest  $request
      * @param  SaveCategoryWithAttributesAction  $action
+     *
      * @return JsonResponse
      */
-    public function create(CreateCategoryRequest $request, SaveCategoryWithAttributesAction $action): JsonResponse
-    {
+    public function create(
+        CreateCategoryRequest $request,
+        SaveCategoryWithAttributesAction $action
+    ): JsonResponse {
         $categoryAttributes = CreateCategoryDto::fromRequest($request);
 
         $category = $action->handle($categoryAttributes);
@@ -106,7 +113,7 @@ class CategoryController extends Controller
             'message' => 'Category created',
             'data' => [
                 'id' => $category->id,
-            ]
+            ],
         ], 201);
     }
 
@@ -117,6 +124,7 @@ class CategoryController extends Controller
      *
      * @param  EditCategoryRequest  $request
      * @param  EditCategoryAction  $action
+     *
      * @return JsonResponse
      */
     public function edit(EditCategoryRequest $request, EditCategoryAction $action): JsonResponse
@@ -137,6 +145,7 @@ class CategoryController extends Controller
      *
      * @param  Category  $category
      * @param  CategoryIconService  $categoryIconService
+     *
      * @return JsonResponse
      * @throws FailedToDeleteCategoryException
      */
@@ -151,7 +160,7 @@ class CategoryController extends Controller
         $category->delete();
 
         return response()->json([
-            'message' => 'Category deleted'
+            'message' => 'Category deleted',
         ]);
     }
 
@@ -163,14 +172,19 @@ class CategoryController extends Controller
      * @param  Category  $category
      * @param  Attribute  $attribute
      * @param  DeleteAction  $action
+     *
      * @return JsonResponse
      * @throws AttributeNotRelatedToCategoryException
      * @throws FailedToDeleteCategoryAttributeException
      */
-    public function deleteAttribute(Category $category, Attribute $attribute, DeleteAction $action): JsonResponse
-    {
+    public function deleteAttribute(
+        Category $category,
+        Attribute $attribute,
+        DeleteAction $action
+    ): JsonResponse {
         $action->handle($category, $attribute);
 
         return response()->json(['message' => 'Attribute deleted']);
     }
+
 }

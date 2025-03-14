@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Controllers;
+namespace Modules\Category\Http\Management\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Modules\Category\Http\Exceptions\CannotUploadIconForNotRootCategoryException;
-use Modules\Category\Http\Requests\CreateCategoryIconRequest;
+use Modules\Category\Http\Management\Exceptions\CannotUploadIconForNotRootCategoryException;
+use Modules\Category\Http\Management\Requests\CreateCategoryIconRequest;
+use Modules\Category\Http\Management\Services\CategoryIconService;
 use Modules\Category\Models\Category;
-use Modules\Category\Services\CategoryIconService;
 
 class CategoryIconController extends Controller
 {
+
     public function __construct(
         private CategoryIconService $categoryIconService
-    ) {
-    }
+    ) {}
 
     /**
      * Upload icon for category.
@@ -25,6 +25,7 @@ class CategoryIconController extends Controller
      *
      * @param  CreateCategoryIconRequest  $request
      * @param  Category  $category
+     *
      * @return JsonResponse
      * @throws CannotUploadIconForNotRootCategoryException
      */
@@ -42,6 +43,7 @@ class CategoryIconController extends Controller
      *
      * @param  CreateCategoryIconRequest  $request
      * @param  Category  $category
+     *
      * @return JsonResponse
      * @throws CannotUploadIconForNotRootCategoryException
      */
@@ -51,4 +53,5 @@ class CategoryIconController extends Controller
 
         return response()->json(['message' => 'Icon updated successfully.']);
     }
+
 }

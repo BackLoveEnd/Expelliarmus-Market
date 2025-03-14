@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Actions;
+namespace Modules\Category\Http\Management\Actions;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Category\Http\DTO\CreateCategoryDto;
-use Modules\Category\Http\Exceptions\AttributesMustBeUniqueForCategoryException;
+use Modules\Category\Http\Management\DTO\CreateCategoryDto;
+use Modules\Category\Http\Management\Exceptions\AttributesMustBeUniqueForCategoryException;
 use Modules\Category\Models\Category;
 
 class SaveCategoryWithAttributesAction
 {
+
     public function handle(CreateCategoryDto $categoryDto): Category
     {
         return $categoryDto->wantsCreateRootCategory()
@@ -59,8 +60,9 @@ class SaveCategoryWithAttributesAction
             ->pluck('name')
             ->map(fn($name) => mb_strtolower($name));
 
-        if (! $existingNames->intersect($newNames)->isEmpty()) {
+        if ( ! $existingNames->intersect($newNames)->isEmpty()) {
             throw new AttributesMustBeUniqueForCategoryException();
         }
     }
+
 }

@@ -9,12 +9,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Modules\Category\Http\Exceptions\CannotUploadIconForNotRootCategoryException;
+use Modules\Category\Http\Management\Exceptions\CannotUploadIconForNotRootCategoryException;
+use Modules\Category\Http\Management\Services\CategoryIconService;
 use Modules\Category\Models\Category;
-use Modules\Category\Services\CategoryIconService;
 
 class CategoryIconTest extends TestCase
 {
+
     use RefreshDatabase;
 
     private FilesystemManager $storageMock;
@@ -44,7 +45,7 @@ class CategoryIconTest extends TestCase
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
-            'icon_origin' => $name
+            'icon_origin' => $name,
         ]);
 
         Storage::disk('public_icons')->assertExists('categories/'.$name);
@@ -64,7 +65,7 @@ class CategoryIconTest extends TestCase
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
-            'icon_origin' => $firstIconName
+            'icon_origin' => $firstIconName,
         ]);
 
         Storage::disk('public_icons')->assertExists('categories/'.$firstIconName);
@@ -78,7 +79,7 @@ class CategoryIconTest extends TestCase
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
-            'icon_origin' => $secondIconName
+            'icon_origin' => $secondIconName,
         ]);
 
         Storage::disk('public_icons')->assertExists('categories/'.$secondIconName);
@@ -94,10 +95,9 @@ class CategoryIconTest extends TestCase
                 [
                     'name' => 'Drinks',
                     'slug' => 'drinks',
-                ]
-            ]
+                ],
+            ],
         ]);
-
 
         $service = new CategoryIconService($this->storageMock);
 
@@ -108,4 +108,5 @@ class CategoryIconTest extends TestCase
             expectedClass: CannotUploadIconForNotRootCategoryException::class
         );
     }
+
 }

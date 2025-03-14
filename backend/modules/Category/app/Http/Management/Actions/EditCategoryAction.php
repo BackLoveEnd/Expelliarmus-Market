@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Actions;
+namespace Modules\Category\Http\Management\Actions;
 
 use Illuminate\Support\Facades\DB;
-use Modules\Category\Http\DTO\EditCategoryDto;
+use Modules\Category\Http\Management\DTO\EditCategoryDto;
 use Modules\Category\Models\Category;
 
 class EditCategoryAction
 {
+
     public function handle(EditCategoryDto $categoryDto): void
     {
         DB::transaction(function () use ($categoryDto) {
@@ -23,7 +24,7 @@ class EditCategoryAction
 
     private function saveAttributes(Category $category, ?array $newAttributes = null): void
     {
-        if (! $newAttributes) {
+        if ( ! $newAttributes) {
             return;
         }
 
@@ -31,7 +32,9 @@ class EditCategoryAction
             ->pluck('name')
             ->map(fn($name) => mb_strtolower($name));
 
-        $diffAttributes = collect($newAttributes)->filter(function (array $attribute) use ($existingAttributes) {
+        $diffAttributes = collect($newAttributes)->filter(function (array $attribute) use (
+            $existingAttributes
+        ) {
             return ! $existingAttributes->contains(mb_strtolower($attribute['name']));
         });
 
@@ -39,4 +42,5 @@ class EditCategoryAction
             $category->productAttributes()->createMany($diffAttributes->toArray());
         }
     }
+
 }

@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Services;
+namespace Modules\Category\Http\Management\Services;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
-use Modules\Category\Http\Exceptions\CannotUploadIconForNotRootCategoryException;
-use Modules\Category\Http\Exceptions\FailedToUploadIconForCategory;
+use Modules\Category\Http\Management\Exceptions\CannotUploadIconForNotRootCategoryException;
+use Modules\Category\Http\Management\Exceptions\FailedToUploadIconForCategory;
 use Modules\Category\Models\Category;
 
 class CategoryIconService
 {
+
     private Filesystem $filesystem;
 
     public function __construct(
@@ -23,7 +24,7 @@ class CategoryIconService
 
     public function upload(UploadedFile $icon, Category $category): void
     {
-        if (! $category->isRoot()) {
+        if ( ! $category->isRoot()) {
             throw new CannotUploadIconForNotRootCategoryException();
         }
 
@@ -39,7 +40,7 @@ class CategoryIconService
 
     public function edit(UploadedFile $icon, Category $category): void
     {
-        if (! $category->isRoot()) {
+        if ( ! $category->isRoot()) {
             throw new CannotUploadIconForNotRootCategoryException();
         }
 
@@ -68,7 +69,7 @@ class CategoryIconService
 
     protected function saveIcon(UploadedFile $icon): void
     {
-        if (! $this->filesystem->put('categories/', $icon)) {
+        if ( ! $this->filesystem->put('categories/', $icon)) {
             throw new FailedToUploadIconForCategory();
         }
     }
@@ -77,4 +78,5 @@ class CategoryIconService
     {
         return 'categories/'.$iconId;
     }
+
 }

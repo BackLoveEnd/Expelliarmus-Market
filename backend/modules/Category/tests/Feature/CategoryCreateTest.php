@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
-use Modules\Category\Http\Actions\SaveCategoryWithAttributesAction;
-use Modules\Category\Http\DTO\CreateCategoryDto;
-use Modules\Category\Http\Exceptions\AttributesMustBeUniqueForCategoryException;
-use Modules\Category\Http\Requests\CreateCategoryRequest;
+use Modules\Category\Http\Management\Actions\SaveCategoryWithAttributesAction;
+use Modules\Category\Http\Management\DTO\CreateCategoryDto;
+use Modules\Category\Http\Management\Exceptions\AttributesMustBeUniqueForCategoryException;
+use Modules\Category\Http\Management\Requests\CreateCategoryRequest;
 use Modules\Category\Models\Category;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryCreateTest extends TestCase
 {
+
     use RefreshDatabase;
 
     public function test_can_create_new_category_with_attributes(): void
@@ -25,11 +26,11 @@ class CategoryCreateTest extends TestCase
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
-            'parent_id' => null
+            'parent_id' => null,
         ]);
 
         $this->assertDatabaseHas('product_attributes', [
-            'category_id' => $category->id
+            'category_id' => $category->id,
         ]);
     }
 
@@ -45,11 +46,11 @@ class CategoryCreateTest extends TestCase
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
-            'parent_id' => $existedCategory->id
+            'parent_id' => $existedCategory->id,
         ]);
 
         $this->assertDatabaseHas('product_attributes', [
-            'category_id' => $category->id
+            'category_id' => $category->id,
         ]);
     }
 
@@ -73,20 +74,23 @@ class CategoryCreateTest extends TestCase
         );
     }
 
-    private function createRequest(?string $categoryName = null, ?int $parent = null, array $attributes = [])
-    {
-        if (! $attributes) {
+    private function createRequest(
+        ?string $categoryName = null,
+        ?int $parent = null,
+        array $attributes = []
+    ) {
+        if ( ! $attributes) {
             $attributes = [
                 [
                     'name' => 'Size',
                     'type' => ProductAttributeTypeEnum::NUMBER->value,
-                    'required' => false
+                    'required' => false,
                 ],
                 [
                     'name' => 'Color',
                     'type' => ProductAttributeTypeEnum::COLOR->value,
-                    'required' => false
-                ]
+                    'required' => false,
+                ],
             ];
         }
 
@@ -108,12 +112,13 @@ class CategoryCreateTest extends TestCase
             [
                 'name' => 'Test Attribute',
                 'type' => ProductAttributeTypeEnum::NUMBER->value,
-                'required' => false
-            ]
+                'required' => false,
+            ],
         ];
 
         $category->productAttributes()->createMany($attribute);
 
         return $attribute;
     }
+
 }
