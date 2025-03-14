@@ -36,7 +36,7 @@ async function fetchProducts() {
 
       totalItems.value = response.data?.meta?.total;
 
-      totalPages.value = Math.ceil(totalItems.value / itemsToShow);
+      totalPages.value = Math.ceil(discountedProducts.value.length / itemsToShow);
     }
   } catch (error) {
   } finally {
@@ -45,9 +45,7 @@ async function fetchProducts() {
 }
 
 watch(currentIndex, async (newIndex) => {
-  if (newIndex >= totalPages.value - 1 && !isLoading.value) {
-    isLoading.value = true;
-
+  if (newIndex >= totalPages.value - 1) {
     offset.value = discountedProducts.value.length;
 
     limit.value += itemsToShow;
