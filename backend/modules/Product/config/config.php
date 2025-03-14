@@ -12,6 +12,7 @@ return [
         'by_category' => 6,
         'trashed' => 16,
         'discounted' => 16,
+        'flash-sales' => 5,
     ],
     'image' => [
         'preview' => [
