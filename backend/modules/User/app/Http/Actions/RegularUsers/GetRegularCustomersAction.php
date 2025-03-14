@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Modules\User\Http\Actions\RegularUsers;
 
+use App\Services\Pagination\LimitOffsetDto;
 use Modules\User\Models\User;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class GetRegularCustomersAction
 {
-    public function handle(int $limit, int $offset): array
+    public function handle(int $limit, int $offset): LimitOffsetDto
     {
         $users = QueryBuilder::for(User::class)
             ->allowedSorts(['created_at', 'first_name', 'last_name'])
@@ -24,15 +25,11 @@ class GetRegularCustomersAction
                 'created_at',
             ]);
 
-        return [
-            'items' => $users,
-            'additional' => [
-                'meta' => [
-                    'total' => User::query()->count(),
-                    'limit' => $limit,
-                    'offset' => $offset,
-                ],
-            ],
-        ];
+        return new LimitOffsetDto(
+            items: $users,
+            total: User::query()->count(),
+            limit: $limit,
+            offset: $offset,
+        );
     }
 }

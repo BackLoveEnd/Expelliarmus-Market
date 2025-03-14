@@ -70,8 +70,8 @@ class WarehouseController extends Controller
     {
         if ($request->hasAny(['limit', 'offset'])) {
             $products = $this->warehouseService->getPaginated(
-                offset: (int) $request->query('offset') ?? 0,
-                limit: (int) $request->query('limit') ?? config('warehouse.pagination.table'),
+                offset: (int)$request->query('offset', 0),
+                limit: (int)$request->query('limit', config('warehouse.pagination.table')),
             );
         } else {
             $products = $this->warehouseService->getPaginated(
@@ -80,7 +80,7 @@ class WarehouseController extends Controller
             );
         }
 
-        return WarehouseProductsTableResource::collection($products['items'])
-            ->additional($products['additional']);
+        return WarehouseProductsTableResource::collection($products->items)
+            ->additional($products->wrapMeta());
     }
 }

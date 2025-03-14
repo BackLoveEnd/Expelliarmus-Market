@@ -24,10 +24,10 @@ class GuestsController extends Controller
     public function getGuests(Request $request, GetGuestsAction $action): JsonApiResourceCollection
     {
         $guests = $action->handle(
-            limit: (int) $request->query('limit', config('user.retrieve.users-table')),
-            offset: (int) $request->query('offset'),
+            limit: (int)$request->query('limit', config('user.retrieve.users-table')),
+            offset: (int)$request->query('offset'),
         );
 
-        return GuestResource::collection($guests['items'])->additional($guests['additional']);
+        return GuestResource::collection($guests->items)->additional($guests->wrapMeta());
     }
 }

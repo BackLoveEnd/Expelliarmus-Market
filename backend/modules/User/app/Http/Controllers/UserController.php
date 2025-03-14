@@ -56,10 +56,10 @@ class UserController extends Controller
     public function getRegularCustomers(Request $request, GetRegularCustomersAction $action): JsonApiResourceCollection
     {
         $users = $action->handle(
-            limit: (int) $request->query('limit', config('user.retrieve.users-table')),
-            offset: (int) $request->query('offset'),
+            limit: (int)$request->query('limit', config('user.retrieve.users-table')),
+            offset: (int)$request->query('offset'),
         );
 
-        return UserResource::collection($users['items'])->additional($users['additional']);
+        return UserResource::collection($users->items)->additional($users->wrapMeta());
     }
 }

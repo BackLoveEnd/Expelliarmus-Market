@@ -31,6 +31,7 @@ class DiscountedProductResource extends JsonApiResource
         return [
             'percentage' => $this->percentage,
             'discount_price' => $this->discount_price,
+            'old_price' => $this->original_price,
             'status' => $this->status->toString(),
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

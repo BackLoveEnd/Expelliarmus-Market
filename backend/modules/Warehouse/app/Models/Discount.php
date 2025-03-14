@@ -101,14 +101,14 @@ class Discount extends Model
     public function originalPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
     }
 
     public function discountPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
     }
 }

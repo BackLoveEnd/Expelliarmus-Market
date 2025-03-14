@@ -54,10 +54,10 @@ class RetrieveBrandsController extends Controller
         $brands = (new GetLimitOffsetPaginatedBrandsAction())
             ->handle(
                 columns: $this->columns,
-                limit: (int) $this->request->query('limit') ?? $this->defaultBrandsShowNumber,
-                offset: (int) $this->request->query('offset') ?? 0,
+                limit: (int)$this->request->query('limit', $this->defaultBrandsShowNumber),
+                offset: (int)$this->request->query('offset', 0),
             );
 
-        return BrandsPaginatedResource::collection($brands['items'])->additional($brands['additional']);
+        return BrandsPaginatedResource::collection($brands->items)->additional($brands->wrapMeta());
     }
 }

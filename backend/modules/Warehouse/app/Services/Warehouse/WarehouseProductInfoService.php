@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Services\Warehouse;
 
+use App\Services\Pagination\LimitOffsetDto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection as BaseCollection;
@@ -33,7 +34,7 @@ class WarehouseProductInfoService
             ->get(['id', 'title', 'product_article']);
     }
 
-    public function getPaginated(int $offset, int $limit): array
+    public function getPaginated(int $offset, int $limit): LimitOffsetDto
     {
         try {
             $products = QueryBuilder::for(Product::class)
@@ -58,16 +59,12 @@ class WarehouseProductInfoService
                     'products.status',
                 ]);
 
-            return [
-                'items' => $products,
-                'additional' => [
-                    'meta' => [
-                        'total' => Product::query()->count(),
-                        'limit' => $limit,
-                        'offset' => $offset,
-                    ],
-                ],
-            ];
+            return new LimitOffsetDto(
+                items: $products,
+                total: Product::query()->count(),
+                limit: $limit,
+                offset: $offset,
+            );
         } catch (QueryException $e) {
             throw new InvalidFilterSortParamException();
         }
