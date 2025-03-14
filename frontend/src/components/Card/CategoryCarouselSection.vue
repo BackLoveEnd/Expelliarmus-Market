@@ -1,51 +1,57 @@
 <template>
   <div class="flex justify-between relative">
-    <div class="mt-10 w-3/6">
-      <!--      <ul class="space-y-4 text-left">
-              <li
-                  v-for="(category, index) in categories"
-                  :key="index"
-                  class="text-lg"
-              >
-                <button
-                    href="#"
-                    @click.prevent="selectCategory(index)"
-                    class="text-black hover:underline underline-offset-4"
-                >
-                  {{ category }}
-                </button>
-              </li>
-            </ul>-->
+    <div class="mt-10">
       <main-categories-menu/>
     </div>
 
-    <div class="h-auto w-px bg-gray-300"></div>
-
-    <slider :slides="slides" class="mt-10 ml-10"/>
+    <div class="flex items-stretch">
+      <div class="h-auto w-px bg-gray-300"></div>
+      <slider :slides="slidesPreview" class="mt-10 ml-10"/>
+    </div>
   </div>
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import Slider from "@/components/Default/Slider.vue";
 import MainCategoriesMenu from "@/shop/components/Categories/MainCategoriesMenu.vue";
+import {ContentManagementService} from "@/services/ContentManagementService.js";
 
-const slides = ref([
-  "https://dummyimage.com/1080x400/000/fff",
-  "https://dummyimage.com/1080x400/000/fff",
-  "https://dummyimage.com/1080x400/000/fff",
-]);
+const images = ref([]);
 
-const categories = ref([
-  "Category 1adadadada",
-  "Category 2",
-  "Category 3",
-  "Category 4",
-  "Category 5",
-  "Category 6",
-  "Category 7",
-  "Category 8",
-]);
+onMounted(async () => {
+  await ContentManagementService.getAllSlides()
+      .then((response) => {
+        const slides = response.data.data;
+
+        if (slides && slides.length) {
+          images.value = slides.map((slide, index) => ({
+            preview: slide.attributes.image,
+            content_url: slide.attributes.content_url,
+          }));
+        } else {
+          images.value = [
+            {
+              preview: 'https://dummyimage.com/1080x400/000/fff',
+              content_url: "/",
+            },
+          ];
+        }
+      })
+      .catch(() => {
+        images.value = [
+          {
+            preview: 'https://dummyimage.com/1080x400/000/fff',
+            content_url: "/",
+          },
+        ];
+      });
+});
+
+const slidesPreview = computed(() =>
+    images.value.map((image) => image.preview),
+);
+
 </script>
 
 <style scoped></style>
