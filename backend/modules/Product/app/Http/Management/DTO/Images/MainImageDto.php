@@ -13,9 +13,8 @@ final readonly class MainImageDto
         public int $order,
         public ?string $id = null,
         public ?UploadedFile $image = null,
-        public ?string $existImageUrl = null
-    ) {
-    }
+        public ?string $existImageUrl = null,
+    ) {}
 
     public static function collection(array $files): Collection
     {
@@ -24,7 +23,7 @@ final readonly class MainImageDto
                 order: (int)$files['order'],
                 id: $files['id'] ?? null,
                 image: $files['image'] ?? null,
-                existImageUrl: $files['image_url'] ?? null
+                existImageUrl: $files['image_url'] ?? null,
             );
         });
     }

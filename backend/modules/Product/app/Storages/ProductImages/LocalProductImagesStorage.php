@@ -45,7 +45,12 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
                 $this->getImageFullPath($product, $this->defaultImageId()),
             );
 
-            return [$this->defaultImageId()];
+            return [
+                [
+                    'order' => 1,
+                    'source' => $this->defaultImageId(),
+                ],
+            ];
         }
 
         try {
@@ -124,14 +129,15 @@ class LocalProductImagesStorage extends BaseProductImagesStorage implements Loca
     {
         try {
             if ($imageId === $this->defaultPreviewImage()) {
-                $imageContent = $this->imageManager->read(
-                    storage_path("app/public/products/".$this->defaultPreviewImage()),
-                );
-            } else {
-                $imageContent = $this->imageManager->read(
-                    storage_path("app/public/products/product-id-$product->id-images/$imageId"),
+                $this->storage->copy(
+                    $imageId,
+                    $this->getImageFullPath($product, $imageId),
                 );
             }
+
+            $imageContent = $this->imageManager->read(
+                storage_path("app/public/products/product-id-$product->id-images/$imageId"),
+            );
         } catch (Throwable $e) {
             throw new FailedToUploadImagesException($e->getMessage(), $e);
         }

@@ -41,10 +41,15 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
         if ($files->isEmpty()) {
             $this->storage->copy(
                 'products/'.$this->defaultImageId(),
-                $this->getImageFullPath($product, $this->defaultImageId())
+                $this->getImageFullPath($product, $this->defaultImageId()),
             );
 
-            return [$this->defaultImageId()];
+            return [
+                [
+                    'order' => 1,
+                    'source' => $this->defaultImageId(),
+                ],
+            ];
         }
 
         try {
@@ -53,7 +58,7 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
 
                 return [
                     'order' => $image->order,
-                    'source' => $image->image->hashName()
+                    'source' => $image->image->hashName(),
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -89,10 +94,10 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
 
     public function getAllFromSources(Product $product, array $imagesSources): array
     {
-        return collect($imagesSources)->map(function (array $images) use($product) {
+        return collect($imagesSources)->map(function (array $images) use ($product) {
             return [
                 'order' => $images['order'],
-                'image_url' => $this->storage->url($this->getImageFullPath($product, $images['image']))
+                'image_url' => $this->storage->url($this->getImageFullPath($product, $images['image'])),
             ];
         })->toArray();
     }
@@ -104,7 +109,7 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
 
     public function deleteMany(Product $product, Collection $sources): void
     {
-        $sources->each(function (string $source) use($product) {
+        $sources->each(function (string $source) use ($product) {
             $this->delete($product, $source);
         });
     }
@@ -112,10 +117,13 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
     protected function getInterventionPreviewImage(Product $product, string $imageId): Image
     {
         if ($imageId === $this->defaultPreviewImage()) {
-            $imageContent = $this->storage->get('products/'.$this->defaultPreviewImage());
-        } else {
-            $imageContent = $this->storage->get($this->getImageFullPath($product, $imageId));
+            $this->storage->copy(
+                'products/'.$imageId,
+                $this->getImageFullPath($product, $imageId),
+            );
         }
+
+        $imageContent = $this->storage->get($this->getImageFullPath($product, $imageId));
 
         if (! $imageContent) {
             throw new FileException('Failed to get image content');
