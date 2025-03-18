@@ -87,7 +87,7 @@ watch(() => props.existsDiscount, (newData) => {
           Percentage
           <span class="text-red-800">*</span>
         </label>
-        <div class="relative w-1/2 overflow-hidden cursor-default rounded-lg bg-gray-100 text-left shadow-md">
+        <div class="relative overflow-hidden cursor-default rounded-lg bg-gray-100 text-left shadow-md">
           <Field
               type="number"
               name="percentage"

@@ -7,13 +7,14 @@ namespace Feature;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
-use Modules\Category\Http\Actions\DeleteCategoryAttributeAction;
-use Modules\Category\Http\Exceptions\AttributeNotRelatedToCategoryException;
+use Modules\Category\Http\Management\Actions\DeleteCategoryAttributeAction;
+use Modules\Category\Http\Management\Exceptions\AttributeNotRelatedToCategoryException;
 use Modules\Category\Models\Category;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryDeleteTest extends TestCase
 {
+
     use RefreshDatabase;
 
     public function test_can_delete_category(): void
@@ -21,13 +22,13 @@ class CategoryDeleteTest extends TestCase
         $category = Category::query()->create(['name' => 'Category 1']);
 
         $this->assertDatabaseHas('categories', [
-            'id' => $category->id
+            'id' => $category->id,
         ]);
 
         $this->delete('/api/management/categories/'.$category->id);
 
         $this->assertDatabaseMissing('categories', [
-            'id' => $category->id
+            'id' => $category->id,
         ]);
     }
 
@@ -39,13 +40,13 @@ class CategoryDeleteTest extends TestCase
 
         $this->assertDatabaseHas('product_attributes', [
             'category_id' => $category->id,
-            'name' => 'Attribute 1'
+            'name' => 'Attribute 1',
         ]);
 
         (new DeleteCategoryAttributeAction())->handle($category, $attributes->first());
 
         $this->assertDatabaseMissing('product_attributes', [
-            'id' => $attributes->first()->id
+            'id' => $attributes->first()->id,
         ]);
     }
 
@@ -60,7 +61,8 @@ class CategoryDeleteTest extends TestCase
         $fakeAttribute = $this->createTestAttribute($fakeCategory);
 
         $this->assertThrows(
-            test: fn() => (new DeleteCategoryAttributeAction())->handle($category, $fakeAttribute->first()),
+            test: fn() => (new DeleteCategoryAttributeAction())->handle($category,
+                $fakeAttribute->first()),
             expectedClass: AttributeNotRelatedToCategoryException::class
         );
     }
@@ -71,8 +73,9 @@ class CategoryDeleteTest extends TestCase
             [
                 'name' => 'Attribute 1',
                 'type' => ProductAttributeTypeEnum::NUMBER->value,
-                'required' => false
-            ]
+                'required' => false,
+            ],
         ]);
     }
+
 }

@@ -6,7 +6,7 @@ namespace Modules\Warehouse\Http\Resources\Discount;
 
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Resources\BrandResource;
-use Modules\Category\Http\Resources\RootCategoryResource;
+use Modules\Category\Http\Management\Resources\RootCategoryResource;
 use Modules\Warehouse\Http\Resources\Warehouse\CombinedAttributeVariationResource;
 use Modules\Warehouse\Http\Resources\Warehouse\SingleAttributeVariationResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseResource;
@@ -14,6 +14,7 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class ProductWarehouseDiscountsResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
         $variationsType = null;
@@ -29,7 +30,7 @@ class ProductWarehouseDiscountsResource extends JsonApiResource
             'variationType' => $variationsType,
         ];
 
-        if (! is_null($this->hasCombinedAttributes())) {
+        if ( ! is_null($this->hasCombinedAttributes())) {
             if ($this->hasCombinedAttributes()) {
                 $attributes['variationType'] = 'combined';
             } else {
@@ -68,4 +69,5 @@ class ProductWarehouseDiscountsResource extends JsonApiResource
 
         return $relationships;
     }
+
 }

@@ -17,50 +17,12 @@
 
     <!-- CATEGORIES SLIDER -->
     <section class="container mx-auto">
-      <section-title :title="'Categories'"/>
-      <div class="space-y-16">
-        <card-slider
-            :title="'Browse By Category'"
-            :items-to-show="7"
-            :width-between-items="224"
-            additional-classes="gap-8"
-            :items-length="8"
-        >
-          <category-card
-              :category-name="'Phone'"
-              :category-icon="'/category-icons/phone.svg'"
-          />
-          <category-card
-              :category-name="'Computer'"
-              :category-icon="'/category-icons/computer.svg'"
-          />
-          <category-card
-              :category-name="'Gaming'"
-              :category-icon="'/category-icons/gaming-pad.svg'"
-          />
-          <category-card
-              :category-name="'Smartwatch'"
-              :category-icon="'/category-icons/smartwatch.svg'"
-          />
-          <category-card
-              :category-name="'Headphones'"
-              :category-icon="'/category-icons/headphones.svg'"
-          />
-          <category-card
-              :category-name="'Camera'"
-              :category-icon="'/category-icons/camera.svg'"
-          />
-          <category-card
-              :category-name="'Clothes'"
-              :category-icon="'/category-icons/clothes.svg'"
-          />
-          <category-card
-              :category-name="'Parfum'"
-              :category-icon="'/category-icons/parfum.svg'"
-          />
-        </card-slider>
-        <div class="h-px bg-gray-300 border-0"></div>
-      </div>
+      <suspense>
+        <categories-browse-list/>
+        <template #fallback>
+          <products-skeleton card-number="7"/>
+        </template>
+      </suspense>
     </section>
 
     <!-- TOP SELLERS -->
@@ -190,9 +152,7 @@
 
 <script setup>
 import CategoryCarouselSection from "@/components/Card/CategoryCarouselSection.vue";
-import CardSlider from "@/components/Card/CardSlider.vue";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
-import CategoryCard from "@/components/Card/CategoryCard.vue";
 import ProductCardSet from "@/components/Card/ProductCardSet.vue";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import NewArrivals from "@/components/Product/Arrival/NewArrivals.vue";
@@ -204,6 +164,7 @@ import wishlistToastSetting from "@/components/Default/Toasts/Wishlist/toastSett
 import {useScrolling} from "@/composables/useScrolling.js";
 import FlashSales from "@/shop/components/Products/Sales/FlashSales.vue";
 import ProductsSkeleton from "@/management/components/Product/Other/ProductsSkeleton.vue";
+import CategoriesBrowseList from "@/shop/components/Categories/CategoriesBrowseList.vue";
 
 const emitter = inject("emitter");
 const toast = useToast();

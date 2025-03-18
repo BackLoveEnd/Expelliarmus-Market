@@ -7,12 +7,13 @@ namespace Modules\Warehouse\DTO\Warehouse;
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Modules\Category\Http\Actions\CreateAttributesForCategoryAction;
+use Modules\Category\Http\Management\Actions\CreateAttributesForCategoryAction;
 use Modules\Category\Models\Category;
 use Spatie\LaravelData\Data;
 
 class CreateProductAttributeCombinedVariationsDto extends Data
 {
+
     public function __construct(
         public readonly string $skuName,
         public readonly int $quantity,
@@ -62,12 +63,12 @@ class CreateProductAttributeCombinedVariationsDto extends Data
 
         return (new CreateAttributesForCategoryAction())->handle(
             $category,
-            $newAttributes->map(fn($attr)
-                => [
+            $newAttributes->map(fn($attr) => [
                 'name' => $attr['name'],
                 'type' => $attr['type']['id'],
                 'view_type' => $attr['attribute_view_type'],
             ])->values(),
         );
     }
+
 }

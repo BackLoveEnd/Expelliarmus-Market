@@ -16,8 +16,9 @@ class SingleAttributeFactory extends Factory
     {
         return [
             'quantity' => fake()->numberBetween(10, 1000),
-            'price' => (float)number_format(fake()->numberBetween(30, 100)),
-            'value' => 'fake'
+            'price' => round(fake()->numberBetween(30, 100), 2),
+            'value' => 'fake',
         ];
     }
+
 }

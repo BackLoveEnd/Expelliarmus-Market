@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Number;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Database\Factories\DiscountFactory;
 use Modules\Warehouse\Enums\DiscountStatusEnum;
 
 /**
@@ -24,6 +25,7 @@ use Modules\Warehouse\Enums\DiscountStatusEnum;
  */
 class Discount extends Model
 {
+
     use HasFactory;
 
     public $timestamps = false;
@@ -101,14 +103,20 @@ class Discount extends Model
     public function originalPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
     public function discountPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
+
+    protected static function newFactory(): DiscountFactory
+    {
+        return DiscountFactory::new();
+    }
+
 }

@@ -6,13 +6,14 @@ namespace Modules\Product\Http\Management\Resources\Product;
 
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Resources\BrandResource;
-use Modules\Category\Http\Resources\RootCategoryResource;
+use Modules\Category\Http\Management\Resources\RootCategoryResource;
 use Modules\Warehouse\Http\Resources\Warehouse\CombinedAttributeVariationResource;
 use Modules\Warehouse\Http\Resources\Warehouse\SingleAttributeVariationResource;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class ProductPreviewResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
         $attributes = [
@@ -53,4 +54,5 @@ class ProductPreviewResource extends JsonApiResource
 
         return $relationships;
     }
+
 }

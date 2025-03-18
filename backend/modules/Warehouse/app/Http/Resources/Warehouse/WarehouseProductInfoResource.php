@@ -6,16 +6,17 @@ namespace Modules\Warehouse\Http\Resources\Warehouse;
 
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Resources\BrandResource;
-use Modules\Category\Http\Resources\RootCategoryResource;
+use Modules\Category\Http\Management\Resources\RootCategoryResource;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class WarehouseProductInfoResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
         $variationsType = null;
 
-        if (! is_null($this->hasCombinedAttributes())) {
+        if ( ! is_null($this->hasCombinedAttributes())) {
             if ($this->hasCombinedAttributes()) {
                 $variationsType = 'combined';
             } else {
@@ -57,4 +58,5 @@ class WarehouseProductInfoResource extends JsonApiResource
 
         return $relationships;
     }
+
 }

@@ -15,6 +15,7 @@ use Modules\User\Models\User;
 
 class ManagerDefaultStatsController extends Controller
 {
+
     public function __construct(private CountStatisticsService $service) {}
 
     /**
@@ -44,4 +45,5 @@ class ManagerDefaultStatsController extends Controller
             ],
         ]);
     }
+
 }
