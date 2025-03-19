@@ -53,7 +53,8 @@ export const ProductService = {
         const formData = new FormData();
 
         images.forEach((image, index) => {
-            formData.append(`images[]`, image.file);
+            formData.append(`images[${index}][image]`, image.file);
+            formData.append(`images[${index}][order]`, image.order);
         });
 
         if (previewImage?.file) {

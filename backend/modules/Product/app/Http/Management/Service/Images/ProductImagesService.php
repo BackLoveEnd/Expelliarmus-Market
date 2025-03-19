@@ -28,7 +28,7 @@ class ProductImagesService
         $previewImage = $this->uploadResizedPreviewImage($product, $previewImageSource, $size);
 
         $images = collect($images)
-            ->map(fn(array $image) => ['id' => Str::uuid7()->toString(), ...$image])
+            ->map(fn(array $image) => [...$image, 'id' => Str::uuid7()->toString()])
             ->toArray();
 
         $product->saveImages([
@@ -38,7 +38,7 @@ class ProductImagesService
                 $previewImage,
                 $size,
             ) : null,
-            'preview_image_source' => $previewImageSource,
+            'preview_image_source' => $previewImageSource ?? $this->imagesStorage->defaultPreviewImage(),
         ]);
     }
 
@@ -49,18 +49,22 @@ class ProductImagesService
         $images['images'] = $this->prepareUpdatedImageForDb($updatedImages, $product);
 
         if ($imageDto->previewImage) {
-            $previewImageSource = $this->uploadPreviewImage($imageDto->previewImage, $product);
+            $images['preview_image_source'] = $this->uploadPreviewImage($imageDto->previewImage, $product);
 
-            $images['preview_image_source'] = $this->uploadResizedPreviewImage($product, $previewImageSource, $size);
+            $resizedPreviewImage = $this->uploadResizedPreviewImage(
+                product: $product,
+                imageId: $images['preview_image_source'],
+                size: $size,
+            );
 
             $this->imagesStorage->delete($product, $product->preview_image_source);
 
             $this->imagesStorage->delete($product, $this->formatToResizedImage($product, $size));
 
             $images['preview_image'] = $this->imagesStorage->getResized(
-                $product,
-                $images['preview_image_source'],
-                $size,
+                product: $product,
+                resizedImageId: $resizedPreviewImage,
+                size: $size,
             );
         }
 
@@ -123,8 +127,8 @@ class ProductImagesService
 
         if ($imagesToDelete->isNotEmpty()) {
             $this->imagesStorage->deleteMany(
-                $product,
-                $imagesToDelete->whereNotNull('source')->pluck('source'),
+                product: $product,
+                sources: $imagesToDelete->whereNotNull('source')->pluck('source'),
             );
         }
 
