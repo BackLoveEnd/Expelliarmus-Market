@@ -60,7 +60,7 @@ const sliderStyle = computed(() => {
     </div>
   </div>
   <div class="overflow-hidden">
-    <div :class="['flex transition-transform duration-300', additionalClasses]" :style="sliderStyle">
+    <div :class="['flex transition-transform duration-300 mb-2', additionalClasses]" :style="sliderStyle">
       <slot></slot>
     </div>
   </div>

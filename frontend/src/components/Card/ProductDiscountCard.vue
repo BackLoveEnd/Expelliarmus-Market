@@ -1,6 +1,6 @@
 <template>
   <router-link
-      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md p-3 cursor-pointer transition-all duration-200"
+      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md cursor-pointer transition-all duration-200"
       :to="`/shop/products/${props.discountedProduct?.product?.slug}`"
   >
     <div class="relative overflow-hidden">
@@ -44,7 +44,7 @@
         {{ isInCart ? "Remove From Cart" : "Add To Cart" }}
       </button>
     </div>
-    <div class="flex flex-col space-y-2">
+    <div class="flex flex-col space-y-2 p-3">
       <p class="font-medium">{{ truncatedTitle }}</p>
       <div class="flex gap-3">
         <p class="font-semibold text-[#db4444]">{{ '$' + props.discountedProduct?.discountPrice }}</p>
