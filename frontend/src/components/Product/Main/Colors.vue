@@ -12,7 +12,7 @@
       />
       <label
         :for="'color-' + index"
-        :style="{ backgroundColor: color.color, borderColor: color.color }"
+        :style="{ backgroundColor: color.color, borderColor: color.black }"
         class="relative flex items-center justify-center p-1 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-white w-6 h-6 cursor-pointer border-2 rounded-full overflow-hidden"
       >
         <span

@@ -15,7 +15,7 @@ const defaultPrice = defineModel("defaultPrice");
     name="article"
     v-model="productArticle"
     placeholder="ABC21412"
-    label="Product Article"
+    label="Product Article (8 or 13 symb.)"
     required
   />
   <focused-text-input
