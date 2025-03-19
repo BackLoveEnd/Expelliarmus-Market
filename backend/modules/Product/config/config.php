@@ -7,12 +7,14 @@ return [
         'product-image-preview' => 'product:image:preview:%s',
         'product-images' => 'product:%s:images',
         'product-preview' => 'product:%s:preview',
+        'products-explore' => 'products:explore',
     ],
     'retrieve' => [
         'by_category' => 6,
         'trashed' => 16,
         'discounted' => 16,
         'flash-sales' => 5,
+        'explore' => 10,
     ],
     'image' => [
         'preview' => [
