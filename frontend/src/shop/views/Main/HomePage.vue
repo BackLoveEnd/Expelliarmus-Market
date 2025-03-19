@@ -20,7 +20,7 @@
       <suspense>
         <categories-browse-list/>
         <template #fallback>
-          <products-skeleton card-number="7"/>
+          <categories-skeleton :card-number="7"/>
         </template>
       </suspense>
     </section>
@@ -165,6 +165,7 @@ import {useScrolling} from "@/composables/useScrolling.js";
 import FlashSales from "@/shop/components/Products/Sales/FlashSales.vue";
 import ProductsSkeleton from "@/management/components/Product/Other/ProductsSkeleton.vue";
 import CategoriesBrowseList from "@/shop/components/Categories/CategoriesBrowseList.vue";
+import CategoriesSkeleton from "@/management/components/Categories/CategoriesSkeleton.vue";
 
 const emitter = inject("emitter");
 const toast = useToast();
