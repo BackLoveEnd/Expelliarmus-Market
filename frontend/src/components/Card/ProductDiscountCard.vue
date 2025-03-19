@@ -1,5 +1,8 @@
 <template>
-  <div class="w-272 h-auto flex flex-col gap-4 group">
+  <router-link
+      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md p-3 cursor-pointer transition-all duration-200"
+      :to="`/shop/products/${props.discountedProduct?.product?.slug}`"
+  >
     <div class="relative overflow-hidden">
       <img
           :src="props.discountedProduct?.product?.image"
@@ -55,7 +58,7 @@
       </div>
       <star-rating :rating="4" :review-number="50"/>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script setup>
