@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Modules\Category\Http\Shop\Resources;
+namespace Modules\Product\Http\Shop\Resources;
 
 use Illuminate\Http\Request;
 use TiMacDonald\JsonApi\JsonApiResource;
 
-class CategoriesBrowseListResource extends JsonApiResource
+class ExploredProductsResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         return [
-            'name' => $this->name,
+            'title' => $this->title,
             'slug' => $this->slug,
-            'icon' => $this->icon_url,
+            'image' => $this->preview_image,
+            'price' => $this->price,
         ];
     }
-
 }
