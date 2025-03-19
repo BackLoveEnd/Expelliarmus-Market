@@ -18,6 +18,7 @@ class DiscountedProductResource extends JsonApiResource
                 'title' => $this->discountable->title,
                 'product_article' => $this->discountable->product_article,
                 'image' => $this->discountable->preview_image,
+                'slug' => $this->discountable->slug,
             ];
         } else {
             $product = [
@@ -25,6 +26,7 @@ class DiscountedProductResource extends JsonApiResource
                 'title' => $this->discountable->product?->title,
                 'product_article' => $this->discountable->product?->product_article,
                 'image' => $this->discountable->product?->preview_image,
+                'slug' => $this->discountable->product?->slug,
             ];
         }
 

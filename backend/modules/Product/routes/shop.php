@@ -6,7 +6,7 @@ use Modules\Product\Http\Shop\Controllers\HomePageProductsController;
 
 Route::prefix('/shop')->group(function () {
     Route::controller(DiscountedProductsController::class)->group(function () {
-        Route::get('/home/flash-sales', 'getFlashSales');
+        Route::get('/home/products/flash-sales', 'getFlashSales');
     });
 
     Route::controller(HomePageProductsController::class)->group(function () {

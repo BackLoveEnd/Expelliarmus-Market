@@ -21,7 +21,7 @@ final class DiscountedProductsService
         $discounts = Discount::query()
             ->with([
                 'discountable' => function (MorphTo $morphTo) {
-                    $columns = ['id', 'title', 'preview_image', 'product_article'];
+                    $columns = ['id', 'title', 'preview_image', 'product_article', 'slug'];
 
                     $morphTo->morphWith([
                         ProductVariation::class => [
