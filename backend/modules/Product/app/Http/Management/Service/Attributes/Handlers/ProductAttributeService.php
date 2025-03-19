@@ -18,33 +18,50 @@ class ProductAttributeService
 
     public function __construct(
         private array $variationCols = ['*'],
-        private array $attributeCols = ['*']
-    ) {
-    }
+        private array $attributeCols = ['*'],
+    ) {}
 
     public function getAttributeHandler(): ProductAttributeHandler
     {
         return $this->attributeHandler;
     }
 
-    public function setAttributesColumns(array $variationCols, array $attributeCols): ProductAttributeHandler
+    public function combinedHandler(): ProductAttributeHandler
+    {
+        return new ProductAttributeHandler(
+            new CombinedAttributeRetrieveService($this->variationCols, $this->attributeCols),
+        );
+    }
+
+    public function singleHandler(): ProductAttributeHandler
+    {
+        return new ProductAttributeHandler(
+            new SingleAttributeRetrieveService($this->variationCols, $this->attributeCols),
+        );
+    }
+
+    public function setAttributesColumns(array $variationCols, array $attributeCols): static
     {
         $this->variationCols = $variationCols;
 
         $this->attributeCols = $attributeCols;
 
-        return $this->makeAttributeHandler();
+        return $this;
     }
 
-    public function setProduct(Product $product): ProductAttributeHandler
+    public function setProduct(Product $product): static
     {
         $this->product = $product;
 
-        return $this->makeAttributeHandler();
+        return $this;
     }
 
     public function __call(string $name, array $arguments)
     {
+        if (! $this->attributeHandler) {
+            $this->makeAttributeHandler();
+        }
+
         return $this->getAttributeHandler()->$name(...$arguments);
     }
 
@@ -56,12 +73,9 @@ class ProductAttributeService
 
         $this->setRetrieveStrategy($this->product);
 
-        $this->attributeHandler = new ProductAttributeHandler(
-            product: $this->product,
-            retrieveStrategy: $this->retrieveStrategy
-        );
+        $this->attributeHandler = new ProductAttributeHandler($this->retrieveStrategy);
 
-        return $this->getAttributeHandler();
+        return $this->getAttributeHandler()->setProduct($this->product);
     }
 
     protected function setRetrieveStrategy(Product $product): void

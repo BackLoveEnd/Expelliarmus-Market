@@ -8,7 +8,7 @@ final readonly class FetchAttributesColumnsDto
 {
     public function __construct(
         public array $singleAttrCols = [['*'], ['*']],
-        public array $combinedAttrCols = [['*'], ['*']]
-    ) {
-    }
+        public array $combinedAttrCols = [['*'], ['*']],
+        public array $warehouseCols = ['*'],
+    ) {}
 }

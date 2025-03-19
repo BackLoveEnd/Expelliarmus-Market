@@ -8,4 +8,6 @@ use Modules\Product\Models\Product;
 interface ProductAttributeRetrieveInterface
 {
     public function getAttributes(Product $product): Collection;
+
+    public function getAttributesForProductCollection(Collection $products): Collection;
 }

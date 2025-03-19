@@ -25,6 +25,22 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         ])->get($this->variationCols);
     }
 
+    public function getAttributesForProductCollection(Collection $products): Collection
+    {
+        $relations = [
+            'singleAttributes' => fn($query) => $query->select([...$this->variationCols, 'product_id']),
+        ];
+
+        if (! empty($this->attributeCols)) {
+            $relations['singleAttributes.attribute'] = fn($query)
+                => $query->select(
+                [...$this->attributeCols, 'attribute_id'],
+            );
+        }
+
+        return $products->load($relations);
+    }
+
     public function formatPreviewAttributes(Collection $attributes): BaseCollection
     {
         return $attributes
