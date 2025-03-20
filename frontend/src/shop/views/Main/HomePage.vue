@@ -20,54 +20,29 @@
       <suspense>
         <categories-browse-list/>
         <template #fallback>
-          <products-skeleton card-number="7"/>
+          <categories-skeleton :card-number="6"/>
         </template>
       </suspense>
     </section>
 
     <!-- TOP SELLERS -->
     <section class="container mx-auto">
-      <section-title :title="'This month'"/>
-      <product-card-set
-          :title="'Best Selling Products'"
-          :button-name="'View All'"
-      >
-        <product-card/>
-        <product-card/>
-        <product-card/>
-        <product-card/>
-        <product-card/>
-      </product-card-set>
+      <suspense>
+        <top-sellers/>
+        <template #fallback>
+          <products-skeleton :card-number="6"/>
+        </template>
+      </suspense>
     </section>
 
     <!-- EXPLORE PRODUCTS -->
     <section class="container mx-auto">
-      <section-title :title="'Our Products'"/>
-      <div class="flex justify-between mb-10">
-        <p class="text-4xl font-semibold">Explore Our Products</p>
-      </div>
-      <div class="space-y-14">
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-11">
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-          <product-card/>
-        </div>
-        <div class="flex justify-center">
-          <router-link
-              to="#"
-              class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
-          >
-            View More Products
-          </router-link>
-        </div>
-      </div>
+      <suspense>
+        <explore-products/>
+        <template #fallback>
+          <products-skeleton :card-number="10"/>
+        </template>
+      </suspense>
     </section>
 
     <!-- NEW ARRIVAL SECTION -->
@@ -153,8 +128,6 @@
 <script setup>
 import CategoryCarouselSection from "@/components/Card/CategoryCarouselSection.vue";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
-import ProductCardSet from "@/components/Card/ProductCardSet.vue";
-import ProductCard from "@/components/Card/ProductCard.vue";
 import NewArrivals from "@/components/Product/Arrival/NewArrivals.vue";
 import Guarantee from "@/components/Default/Guarantee.vue";
 import {inject, onMounted} from "vue";
@@ -165,6 +138,9 @@ import {useScrolling} from "@/composables/useScrolling.js";
 import FlashSales from "@/shop/components/Products/Sales/FlashSales.vue";
 import ProductsSkeleton from "@/management/components/Product/Other/ProductsSkeleton.vue";
 import CategoriesBrowseList from "@/shop/components/Categories/CategoriesBrowseList.vue";
+import CategoriesSkeleton from "@/management/components/Categories/CategoriesSkeleton.vue";
+import ExploreProducts from "@/shop/components/Products/Sets/ExploreProducts.vue";
+import TopSellers from "@/shop/components/Products/Sets/TopSellers.vue";
 
 const emitter = inject("emitter");
 const toast = useToast();

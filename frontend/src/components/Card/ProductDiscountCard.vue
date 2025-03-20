@@ -1,5 +1,8 @@
 <template>
-  <div class="w-272 h-auto flex flex-col gap-4 group">
+  <router-link
+      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md cursor-pointer transition-all duration-200"
+      :to="`/shop/products/${props.discountedProduct?.product?.slug}`"
+  >
     <div class="relative overflow-hidden">
       <img
           :src="props.discountedProduct?.product?.image"
@@ -41,7 +44,7 @@
         {{ isInCart ? "Remove From Cart" : "Add To Cart" }}
       </button>
     </div>
-    <div class="flex flex-col space-y-2">
+    <div class="flex flex-col space-y-2 p-3">
       <p class="font-medium">{{ truncatedTitle }}</p>
       <div class="flex gap-3">
         <p class="font-semibold text-[#db4444]">{{ '$' + props.discountedProduct?.discountPrice }}</p>
@@ -55,7 +58,7 @@
       </div>
       <star-rating :rating="4" :review-number="50"/>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script setup>

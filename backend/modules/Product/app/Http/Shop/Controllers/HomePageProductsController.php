@@ -4,4 +4,38 @@ declare(strict_types=1);
 
 namespace Modules\Product\Http\Shop\Controllers;
 
-class HomePageProductsController {}
+use App\Services\Cache\CacheService;
+use Illuminate\Http\JsonResponse;
+use Modules\Product\Http\Shop\Actions\GetExploredProductsAction;
+use Modules\Product\Http\Shop\Exceptions\FailedToLoadExploreProductsException;
+use Modules\Product\Http\Shop\Resources\ExploredProductsResource;
+use TiMacDonald\JsonApi\JsonApiResourceCollection;
+
+class HomePageProductsController
+{
+    public function __construct(private CacheService $cacheService) {}
+
+    /**
+     * Retrieve set of product to show in explore section.
+     *
+     * Usage place - Shop.
+     *
+     * @param  GetExploredProductsAction  $action
+     * @return JsonApiResourceCollection|JsonResponse
+     * @throws FailedToLoadExploreProductsException
+     */
+    public function explore(GetExploredProductsAction $action): JsonApiResourceCollection|JsonResponse
+    {
+        $products = $this->cacheService->repo()->remember(
+            key: $this->cacheService->key(config('product.cache.products-explore')),
+            ttl: now()->addDay(),
+            callback: fn() => $action->handle(config('product.retrieve.explore')),
+        );
+
+        if (! $products) {
+            return response()->json(['message' => 'Products not found.'], 404);
+        }
+
+        return ExploredProductsResource::collection($products);
+    }
+}

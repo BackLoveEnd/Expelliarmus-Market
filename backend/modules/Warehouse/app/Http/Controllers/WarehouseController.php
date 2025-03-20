@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Modules\Warehouse\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Services\Cache\CacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Support\ProductSlug;
+use Modules\Warehouse\Http\Actions\GetWarehouseProductsPaginatedAction as GetProductAction;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductInfoResource;
@@ -20,7 +20,6 @@ class WarehouseController extends Controller
 {
     public function __construct(
         private WarehouseProductInfoService $warehouseService,
-        private CacheService $cacheService,
     ) {}
 
     /**
@@ -63,20 +62,21 @@ class WarehouseController extends Controller
      * Usage - Admin section.
      *
      * @param  Request  $request
+     * @param  GetProductAction  $action
      * @return JsonApiResourceCollection
      * @throws InvalidFilterSortParamException
      */
-    public function getProductPaginated(Request $request): JsonApiResourceCollection
+    public function getProductPaginated(Request $request, GetProductAction $action): JsonApiResourceCollection
     {
         if ($request->hasAny(['limit', 'offset'])) {
-            $products = $this->warehouseService->getPaginated(
-                offset: (int)$request->query('offset', 0),
+            $products = $action->handle(
                 limit: (int)$request->query('limit', config('warehouse.pagination.table')),
+                offset: (int)$request->query('offset', 0),
             );
         } else {
-            $products = $this->warehouseService->getPaginated(
-                offset: 0,
+            $products = $action->handle(
                 limit: config('warehouse.pagination.table'),
+                offset: 0,
             );
         }
 

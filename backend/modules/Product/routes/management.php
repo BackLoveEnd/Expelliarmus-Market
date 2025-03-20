@@ -7,7 +7,6 @@ use Modules\Product\Http\Management\Controllers\Product\ProductSpecificationsCon
 use Modules\Product\Http\Management\Controllers\Product\ProductStatusController;
 use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
 use Modules\Product\Http\Management\Controllers\Product\TrashedProductsController;
-use Modules\Product\Http\Shop\Controllers\DiscountedProductsController;
 
 //TODO: guards
 
@@ -57,10 +56,4 @@ Route::prefix('management')->group(function () {
     Route::post('/products/{product}/images', [ProductImagesController::class, 'store']);
 
     Route::post('/products/{product}/images/edit', [ProductImagesController::class, 'edit']);
-});
-
-Route::prefix('/shop')->group(function () {
-    Route::controller(DiscountedProductsController::class)->group(function () {
-        Route::get('/flash-sales', 'getFlashSales');
-    });
 });

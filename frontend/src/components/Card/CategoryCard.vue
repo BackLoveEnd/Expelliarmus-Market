@@ -1,10 +1,10 @@
 <template>
   <router-link
-    to=""
-    class="card w-48 h-40 border-2 border-gray-400 rounded-md flex flex-col justify-center items-center gap-y-4"
+      :to="link"
+      class="card w-48 h-40 border-2 border-gray-400 rounded-md flex flex-col justify-center items-center gap-y-4"
   >
     <div class="max-w-14 max-h-14">
-      <img :src="categoryIcon" :alt="categoryName" />
+      <img :src="categoryIcon" :alt="categoryName"/>
     </div>
     <div>
       <span class="text-base">{{ categoryName }}</span>
@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import {defineProps} from "vue";
 
 const props = defineProps({
   categoryName: String,

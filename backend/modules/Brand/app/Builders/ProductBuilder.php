@@ -57,4 +57,12 @@ class ProductBuilder extends Builder
             }
         });
     }
+
+    public function withoutDiscounts(): ProductBuilder
+    {
+        return $this
+            ->whereDoesntHave('discount')
+            ->whereDoesntHave('singleAttributes.discount')
+            ->whereDoesntHave('combinedAttributes.discount');
+    }
 }

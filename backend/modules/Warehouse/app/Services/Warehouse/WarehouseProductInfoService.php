@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Services\Warehouse;
 
-use App\Services\Pagination\LimitOffsetDto;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection as BaseCollection;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeHandler;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Product\Models\Product;
-use Modules\Warehouse\Filters\ProductInStockFilter;
-use Modules\Warehouse\Filters\StatusFilter;
-use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
-use Modules\Warehouse\Sorts\ArrivedAtSort;
-use Modules\Warehouse\Sorts\TotalQuantitySort;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\AllowedSort;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class WarehouseProductInfoService
 {
@@ -32,42 +22,6 @@ class WarehouseProductInfoService
         return Product::withTrashed()
             ->search($searchable)
             ->get(['id', 'title', 'product_article']);
-    }
-
-    public function getPaginated(int $offset, int $limit): LimitOffsetDto
-    {
-        try {
-            $products = QueryBuilder::for(Product::class)
-                ->defaultSort('title')
-                ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
-                ->allowedFilters([
-                    AllowedFilter::custom('status', new StatusFilter()),
-                    AllowedFilter::custom('in_stock', new ProductInStockFilter()),
-                    AllowedFilter::trashed(),
-                ])
-                ->allowedSorts([
-                    'title',
-                    AllowedSort::custom('total_quantity', new TotalQuantitySort()),
-                    AllowedSort::custom('arrived_at', new ArrivedAtSort()),
-                ])
-                ->offset($offset)
-                ->limit($limit)
-                ->get([
-                    'products.id',
-                    'products.title',
-                    'products.product_article',
-                    'products.status',
-                ]);
-
-            return new LimitOffsetDto(
-                items: $products,
-                total: Product::query()->count(),
-                limit: $limit,
-                offset: $offset,
-            );
-        } catch (QueryException $e) {
-            throw new InvalidFilterSortParamException();
-        }
     }
 
     public function getWarehouseInfoAboutProduct(int $productId): Product
@@ -93,6 +47,26 @@ class WarehouseProductInfoService
         );
 
         return $product;
+    }
+
+    public function getWarehouseInfoAboutProducts(Collection $products, FetchAttributesColumnsDto $dto): Collection
+    {
+        [$withoutVariationProducts, $withVariationProducts] = $products->partition(
+            fn(Product $product) => is_null($product->hasCombinedAttributes()),
+        );
+
+        $withoutVariationProducts = $withoutVariationProducts->load([
+            'warehouse' => fn($query) => $query->select($dto->warehouseCols),
+        ]);
+
+        [$combinedVariationProducts, $singleVariationProducts] = $this->getLoadedVariations(
+            unloadVariations: $withVariationProducts,
+            dto: $dto,
+        );
+
+        return $withoutVariationProducts
+            ->merge($combinedVariationProducts)
+            ->merge($singleVariationProducts);
     }
 
     private function loadProduct(int $productId): Product
@@ -143,5 +117,40 @@ class WarehouseProductInfoService
         return $this->productAttributeService
             ->setAttributesColumns(...$columns)
             ->getAttributes();
+    }
+
+    private function getLoadedVariations(Collection $unloadVariations, FetchAttributesColumnsDto $dto): array
+    {
+        [$combinedVariationProducts, $singleVariationProducts] = $unloadVariations->partition(
+            fn(Product $product) => $product->hasCombinedAttributes(),
+        );
+
+        $combinedVariationProducts = $this->getLoadedCombinedVariations(
+            variations: $combinedVariationProducts,
+            columns: $dto->combinedAttrCols,
+        );
+
+        $singleVariationProducts = $this->getLoadedSingleVariations(
+            variations: $singleVariationProducts,
+            columns: $dto->singleAttrCols,
+        );
+
+        return [$combinedVariationProducts, $singleVariationProducts];
+    }
+
+    private function getLoadedCombinedVariations(Collection $variations, array $columns): Collection
+    {
+        return $this->productAttributeService
+            ->setAttributesColumns(...$columns)
+            ->combinedHandler()
+            ->getAttributesForCollection($variations);
+    }
+
+    private function getLoadedSingleVariations(Collection $variations, array $columns): Collection
+    {
+        return $this->productAttributeService
+            ->setAttributesColumns(...$columns)
+            ->singleHandler()
+            ->getAttributesForCollection($variations);
     }
 }

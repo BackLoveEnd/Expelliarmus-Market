@@ -15,7 +15,7 @@ class CategoriesBrowseListResource extends JsonApiResource
         return [
             'name' => $this->name,
             'slug' => $this->slug,
-            'icon' => $this->icon,
+            'icon' => $this->icon_url,
         ];
     }
 

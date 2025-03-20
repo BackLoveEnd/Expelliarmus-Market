@@ -3,11 +3,15 @@ import SectionTitle from "@/components/Default/SectionTitle.vue";
 import CardSlider from "@/components/Card/CardSlider.vue";
 import CategoryCard from "@/components/Card/CategoryCard.vue";
 import {CategoriesShopService} from "@/services/CategoriesShopService.js";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 
 const categories = ref([]);
 
 const totalItems = ref(0);
+
+const categoriesCollapsed = computed(() => {
+  return categories.value.map((category) => category.attributes);
+});
 
 async function fetchCategories() {
   await CategoriesShopService.getCategoriesBrowseList()
@@ -15,14 +19,14 @@ async function fetchCategories() {
         categories.value = response?.data?.data ?? [];
 
         totalItems.value = categories.value.length;
-      })
+      });
 }
 
 await fetchCategories();
 </script>
 
 <template>
-  <div v-if="categories.length">
+  <div v-if="categoriesCollapsed.length">
     <section-title :title="'Categories'"/>
     <div class="space-y-16">
       <card-slider
@@ -33,7 +37,7 @@ await fetchCategories();
           :items-length="totalItems"
       >
         <category-card
-            v-for="(category, index) in categories"
+            v-for="(category, index) in categoriesCollapsed"
             :key="index"
             :category-icon="category.icon"
             :category-name="category.name"

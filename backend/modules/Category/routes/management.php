@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Category\Http\Management\Controllers\CategoryController;
 use Modules\Category\Http\Management\Controllers\CategoryIconController;
-use Modules\Category\Http\Shop\Controllers\ShopCategoryAccessController;
 use Modules\Product\Http\Management\Controllers\Product\RetrieveProductController;
 
 Route::prefix('management')->group(function () {
@@ -39,8 +38,4 @@ Route::prefix('management')->group(function () {
             Route::post('/{category}/icon', 'editIcon');
         });
     });
-});
-
-Route::prefix('shop')->group(function () {
-    Route::get('/categories/browse', [ShopCategoryAccessController::class, 'getCategoriesBrowseList']);
 });

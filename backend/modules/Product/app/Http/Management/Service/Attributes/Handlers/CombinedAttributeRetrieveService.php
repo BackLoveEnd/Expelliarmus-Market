@@ -27,6 +27,21 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
         ])->get($this->variationCols);
     }
 
+    public function getAttributesForProductCollection(Collection $products): Collection
+    {
+        $relations = [
+            'combinedAttributes' => fn($query) => $query->select([...$this->variationCols, 'product_id']),
+        ];
+
+        if (! empty($this->attributeCols)) {
+            $relations['combinedAttributes.productAttributes'] = fn($query)
+                => $query->select(
+                [...$this->attributeCols, 'product_attributes.id'],
+            );
+        }
+
+        return $products->load($relations);
+    }
 
     public function formatPreviewAttributes(Collection $attributes): BaseCollection
     {
@@ -35,7 +50,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
                 return $variation->productAttributes->map(function (ProductAttribute $attribute) {
                     return [
                         'name' => $attribute->name,
-                        'type' => (object) [
+                        'type' => (object)[
                             'id' => $attribute->type->value,
                             'name' => $attribute->type->toTypes(),
                         ],

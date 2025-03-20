@@ -11,11 +11,21 @@ class RouteServiceProvider extends ServiceProvider
 
     public function map(): void
     {
-        $this->mapApiRoutes();
+        $this->mapManagementRoute();
+        $this->mapShopRoute();
     }
 
-    protected function mapApiRoutes(): void
+    protected function mapManagementRoute(): void
     {
-        Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name, '/routes/api.php'));
+        Route::middleware('api')->prefix('api')->name('management.')->group(
+            module_path($this->name, '/routes/management.php'),
+        );
+    }
+
+    protected function mapShopRoute(): void
+    {
+        Route::middleware('api')->prefix('api')->name('shop.')->group(
+            module_path($this->name, '/routes/shop.php'),
+        );
     }
 }
