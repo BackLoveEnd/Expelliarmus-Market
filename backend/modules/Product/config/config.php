@@ -16,7 +16,7 @@ return [
         'flash-sales' => 5,
         'explore' => 10,
         'shop' => [
-            'default' => 10,
+            'default' => 12,
         ],
     ],
     'image' => [

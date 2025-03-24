@@ -19,8 +19,10 @@ class ProductsShopCardResource extends JsonApiResource
 
         $discountColumns = [
             'percentage',
-            'original_price',
             'discount_price',
+            'original_price',
+            'start_date',
+            'end_date',
         ];
 
         if (is_null($this->resource->hasCombinedAttributes())) {

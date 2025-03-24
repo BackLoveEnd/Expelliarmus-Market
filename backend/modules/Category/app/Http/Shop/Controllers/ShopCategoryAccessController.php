@@ -45,7 +45,7 @@ class ShopCategoryAccessController extends Controller
      */
     public function getChildrenOfCategory(Category $category): JsonApiResourceCollection|JsonResponse
     {
-        $children = $category->children->load('parent:id,name,slug', 'children:id');
+        $children = $category->children->load(['parent:id,name,slug', 'children:id,parent_id']);
 
         if ($children->isEmpty()) {
             return response()->json(['message' => 'Children for requested category not found.'], 404);
