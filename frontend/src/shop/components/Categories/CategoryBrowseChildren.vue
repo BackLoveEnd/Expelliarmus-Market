@@ -4,12 +4,14 @@ import {CategoriesShopService} from "@/services/CategoriesShopService.js";
 import {useRoute, useRouter} from "vue-router";
 
 const props = defineProps({
-  categorySlug: String
+  categorySlug: String,
+  initCategoryName: String
 });
 
 const categories = ref([]);
 
 const router = useRouter();
+
 const route = useRoute();
 
 const parentCategory = ref({});
@@ -25,6 +27,7 @@ const fetchChildrenCategories = async (categorySlug) => {
       slug: cat.attributes.slug,
       name: cat.attributes.name,
       icon: cat.attributes.icon,
+      last: cat.attributes.last,
       parent: cat.attributes.parent
     }));
 
@@ -36,6 +39,7 @@ const fetchChildrenCategories = async (categorySlug) => {
 
     emit('category-selected', {name: parentCategory.value.name, slug: parentCategory.value.slug});
   } catch (error) {
+    emit('category-selected', {name: props.initCategoryName, slug: props.categorySlug});
   }
 };
 
@@ -52,8 +56,6 @@ function showChild(category) {
 
   router.push({name: 'categories-browse', params: {categorySlug: category.slug}});
 }
-
-await fetchChildrenCategories(props.categorySlug);
 </script>
 
 <template>

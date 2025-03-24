@@ -1,7 +1,7 @@
 <template>
   <router-link
       @click.prevent="useScrolling().scrollToTop()"
-      :to="link"
+      :to="{ name: 'categories-browse', params: { categorySlug: categorySlug }, query: { name: categoryName }}"
       class="card w-48 h-40 border-2 border-gray-400 rounded-md flex flex-col justify-center items-center gap-y-4"
   >
     <div class="max-w-14 max-h-14">
@@ -20,10 +20,7 @@ import {useScrolling} from "@/composables/useScrolling.js";
 const props = defineProps({
   categoryName: String,
   categoryIcon: String,
-  link: {
-    type: String,
-    default: "#",
-  },
+  categorySlug: String
 });
 </script>
 

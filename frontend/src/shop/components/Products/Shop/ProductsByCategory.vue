@@ -1,11 +1,73 @@
 <script setup>
+import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ref, watch} from "vue";
+import ProductCard from "@/components/Card/ProductCard.vue";
+import ProductDiscountCard from "@/components/Card/ProductDiscountCard.vue";
+import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
+
 const props = defineProps({
   selectedCategory: Object
 });
+
+const products = ref([]);
+
+const isLoading = ref(true);
+
+const nextPage = ref();
+
+async function getProducts(page = 1) {
+  const params = {
+    filter: {
+      category: props.selectedCategory.slug
+    },
+    page: page
+  };
+
+  await ProductsShopService.getProductsShopCard(params)
+      .then((response) => {
+        if (page === 1) {
+          products.value.splice(0, products.length, ...response?.data?.data?.map((product) => ({
+            id: product?.attributes?.id,
+            title: product?.attributes?.title,
+            image: product?.attributes?.image,
+            slug: product?.attributes?.slug,
+            price: product?.attributes?.price,
+            discount: product?.attributes?.discount
+          })));
+        } else {
+          products.value.push(...response?.data?.data?.map((product) => ({
+            id: product?.attributes?.id,
+            title: product?.attributes?.title,
+            image: product?.attributes?.image,
+            slug: product?.attributes?.slug,
+            price: product?.attributes?.price,
+            discount: product?.attributes?.discount
+          })));
+        }
+
+        nextPage.value = response?.data?.links.next_page;
+      })
+      .catch(e => {
+      })
+      .finally(() => isLoading.value = false);
+}
+
+async function getNextPage() {
+  await getProducts(nextPage.value);
+}
+
+watch(() => props.selectedCategory, async (newCategory) => {
+  if (newCategory?.slug) {
+    products.value = [];
+    isLoading.value = true;
+
+    await getProducts();
+  }
+}, {immediate: true, deep: true});
 </script>
 
 <template>
-  <section class="antialiased">
+  <section class="antialiased" v-if="!isLoading">
     <div class="mx-auto container px-4 2xl:px-0">
       <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8">
         <div>
@@ -81,17 +143,40 @@ const props = defineProps({
           </div>
         </div>
       </div>
-      <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
-        <!-- carts --->
+      <div v-if="products.length">
+        <div class="mb-4 grid gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
+          <template v-for="product in products" :key="product.id">
+            <product-discount-card :discounted-product="product" v-if="product.discount"/>
+            <product-card :product="product" v-else/>
+          </template>
+        </div>
+        <div class="w-full text-center" v-if="nextPage">
+          <button
+              @click="getNextPage"
+              type="button"
+              class="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
+            Show more
+          </button>
+        </div>
       </div>
-      <div class="w-full text-center">
-        <button type="button"
-                class="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700">
-          Show more
-        </button>
+      <div v-else class="flex flex-col items-center justify-center space-y-4 py-10">
+        <i class="pi pi-times-circle text-gray-400 dark:text-gray-600 text-6xl"></i>
+        <p class="text-lg font-semibold text-gray-700 dark:text-gray-300">No products found</p>
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center max-w-md">
+          Unfortunately, there are no products available in this category. Try selecting a different category or check
+          back later.
+        </p>
+        <router-link
+            to="/"
+            class="mt-4 inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-white hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-800"
+        >
+          <i class="pi pi-arrow-left text-white mr-2"></i>
+          Back to Home
+        </router-link>
       </div>
     </div>
   </section>
+  <suspense-loader v-else/>
 </template>
 
 <style scoped>

@@ -35,7 +35,7 @@ export default [
     {
         path: "/shop/categories/:categorySlug",
         name: "categories-browse",
-        props: true,
+        props: ({name: null}),
         component: CategoriesBrowse,
         meta: {
             breadcrumb: [

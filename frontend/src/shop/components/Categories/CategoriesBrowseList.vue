@@ -41,7 +41,7 @@ await fetchCategories();
             :key="index"
             :category-icon="category.icon"
             :category-name="category.name"
-            :link="'/shop/categories/' + category.slug"
+            :category-slug="category.slug"
         />
       </card-slider>
       <div class="h-px bg-gray-300 border-0"></div>

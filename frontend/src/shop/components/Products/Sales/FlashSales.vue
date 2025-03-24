@@ -21,15 +21,11 @@ async function fetchProducts() {
   try {
     const response = await ProductsShopService.getFlashSales(limit.value, offset.value);
     if (response?.data?.data) {
-      const newProducts = response.data.data.map((discount) => ({
-        id: discount.id,
-        percentage: discount.attributes.percentage,
-        discountPrice: discount.attributes.discount_price,
-        oldPrice: discount.attributes.old_price,
-        status: discount.attributes.status,
-        startDate: discount.attributes.start_date,
-        endDate: discount.attributes.end_date,
-        product: discount.attributes.product,
+      const newProducts = response.data.data.map((discountedProducts) => ({
+        id: discountedProducts.id,
+        title: discountedProducts.attributes.title,
+        image: discountedProducts.attributes.image,
+        discount: discountedProducts.attributes.discount,
       }));
 
       discountedProducts.value.push(...newProducts);
@@ -67,7 +63,7 @@ await fetchProducts();
           :items-to-show="itemsToShow"
           :width-between-items="316"
           :items-length="totalItems"
-          additional-classes="gap-11"
+          additional-classes="gap-10"
       >
         <product-discount-card
             v-for="discount in discountedProducts"

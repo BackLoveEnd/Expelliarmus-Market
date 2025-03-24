@@ -1,13 +1,13 @@
 <template>
   <router-link
-      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md cursor-pointer transition-all duration-200"
-      :to="`/shop/products/${props.discountedProduct?.product?.slug}`"
+      class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md cursor-pointer p-3 transition-all duration-200"
+      :to="`/shop/products/${props.discountedProduct?.slug}`"
   >
     <div class="relative overflow-hidden">
       <img
-          :src="props.discountedProduct?.product?.image"
+          :src="props.discountedProduct?.image"
           class="rounded product-image"
-          alt="Product Image"
+          :alt="props.discountedProduct?.title"
       />
       <div class="">
         <button
@@ -33,7 +33,7 @@
         <div
             class="absolute top-4 left-3 w-14 h-6 bg-[#db4444] text-center rounded-md"
         >
-          <span class="text-xs text-white">{{ '-' + props.discountedProduct?.percentage }}</span>
+          <span class="text-xs text-white">{{ '-' + props.discountedProduct?.discount?.percentage }}</span>
         </div>
       </div>
       <button
@@ -47,13 +47,15 @@
     <div class="flex flex-col space-y-2 p-3">
       <p class="font-medium">{{ truncatedTitle }}</p>
       <div class="flex gap-3">
-        <p class="font-semibold text-[#db4444]">{{ '$' + props.discountedProduct?.discountPrice }}</p>
-        <p class="font-medium text-[#808080] line-through">{{ '$' + props.discountedProduct?.oldPrice }}</p>
+        <p class="font-semibold text-[#db4444]">{{ '$' + props.discountedProduct?.discount?.discount_price }}</p>
+        <p class="font-medium text-[#808080] line-through">{{
+            '$' + props.discountedProduct?.discount?.original_price
+          }}</p>
       </div>
       <div class="flex items-center gap-x-2">
         <i class="pi pi-clock text-sm"></i>
         <span class="text-xs text-gray-600 font-semibold">Until {{
-            new Date(props.discountedProduct?.endDate).toLocaleString()
+            new Date(props.discountedProduct?.discount?.end_date).toLocaleString()
           }}</span>
       </div>
       <star-rating :rating="4" :review-number="50"/>
@@ -84,8 +86,8 @@ function addToCart() {
 }
 
 const truncatedTitle = computed(() => {
-  const title = props.discountedProduct?.product?.title || "";
-  return title.length > 25 ? title.substring(0, 25) + "..." : title;
+  const title = props.discountedProduct?.title || "";
+  return title.length > 20 ? title.substring(0, 20) + "..." : title;
 });
 
 onUnmounted(() => {
