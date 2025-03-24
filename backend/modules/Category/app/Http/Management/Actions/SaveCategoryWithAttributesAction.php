@@ -37,7 +37,10 @@ class SaveCategoryWithAttributesAction
         return DB::transaction(function () use ($categoryDto) {
             $parent = Category::query()->findOrFail($categoryDto->parent);
 
-            $category = $parent->children()->create(['name' => $categoryDto->categoryName]);
+            $category = $parent->children()->create([
+                'name' => $categoryDto->categoryName,
+                'icon_url' => $parent->icon_url ?? null,
+            ]);
 
             $this->ensureNewAttributesUnique($category, $categoryDto->attributes);
 
@@ -60,7 +63,7 @@ class SaveCategoryWithAttributesAction
             ->pluck('name')
             ->map(fn($name) => mb_strtolower($name));
 
-        if ( ! $existingNames->intersect($newNames)->isEmpty()) {
+        if (! $existingNames->intersect($newNames)->isEmpty()) {
             throw new AttributesMustBeUniqueForCategoryException();
         }
     }

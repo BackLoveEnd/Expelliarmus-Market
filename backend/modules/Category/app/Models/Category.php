@@ -32,6 +32,7 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'icon_url',
     ];
 
     public function products(): HasMany
@@ -74,7 +75,8 @@ class Category extends Model
             return true;
         }
 
-        $children = $this->descendants()->with('products')
+        $children = $this
+            ->descendants()->with('products')
             ->get();
 
         foreach ($children as $child) {
@@ -108,7 +110,7 @@ class Category extends Model
     {
         return [
             'created_at' => 'datetime',
-            'updated_at' => 'datetime'
+            'updated_at' => 'datetime',
         ];
     }
 

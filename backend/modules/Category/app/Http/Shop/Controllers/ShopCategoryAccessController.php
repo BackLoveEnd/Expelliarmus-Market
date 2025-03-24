@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Category\Http\Shop\Actions\GetCategoriesBrowseListAction as BrowseAction;
 use Modules\Category\Http\Shop\Resources\CategoriesBrowseListResource;
+use Modules\Category\Http\Shop\Resources\CategoriesChildResource;
+use Modules\Category\Models\Category;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class ShopCategoryAccessController extends Controller
@@ -33,4 +35,22 @@ class ShopCategoryAccessController extends Controller
         return CategoriesBrowseListResource::collection($action->handle());
     }
 
+    /**
+     * Retrieve children of category.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Category  $category
+     * @return JsonApiResourceCollection|JsonResponse
+     */
+    public function getChildrenOfCategory(Category $category): JsonApiResourceCollection|JsonResponse
+    {
+        $children = $category->children->load('parent:id,name,slug', 'children:id');
+
+        if ($children->isEmpty()) {
+            return response()->json(['message' => 'Children for requested category not found.'], 404);
+        }
+
+        return CategoriesChildResource::collection($children);
+    }
 }

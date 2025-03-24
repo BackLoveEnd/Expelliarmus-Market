@@ -15,6 +15,9 @@ return [
         'discounted' => 16,
         'flash-sales' => 5,
         'explore' => 10,
+        'shop' => [
+            'default' => 10,
+        ],
     ],
     'image' => [
         'preview' => [
