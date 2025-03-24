@@ -1,5 +1,6 @@
 <template>
   <router-link
+      @click.prevent="useScrolling().scrollToTop()"
       :to="link"
       class="card w-48 h-40 border-2 border-gray-400 rounded-md flex flex-col justify-center items-center gap-y-4"
   >
@@ -14,6 +15,7 @@
 
 <script setup>
 import {defineProps} from "vue";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const props = defineProps({
   categoryName: String,

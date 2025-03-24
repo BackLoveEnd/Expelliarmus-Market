@@ -10,7 +10,7 @@
           :alt="product.title"
       />
       <button
-          @click="addToWishlist"
+          @click.prevent="addToWishlist"
           :class="{ active: isInWishlist }"
           class="wishlist w-9 h-9 rounded-full flex items-center justify-center absolute top-3 right-3 bg-white"
       >
@@ -30,7 +30,7 @@
         </svg>
       </button>
       <button
-          @click="addToCart"
+          @click.prevent="addToCart"
           :class="{ 'bg-[#db4444]': isInCart, 'bg-black': !isInCart }"
           class="absolute bottom-0 left-0 w-full text-center py-2 text-white opacity-0 translate-y-full transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
       >
