@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Modules\Product\Http\Shop\Services\ProductsRetrieve;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Shop\Filters\CategoryFilter;
-use Modules\Product\Models\Product;
+use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -16,9 +17,10 @@ class RetrieveProductsService
     public function __construct(
         private ProductsRetriever $retriever,
         private WarehouseProductInfoService $warehouseService,
+        private DiscountedProductsService $discountedService,
     ) {}
 
-    public function getProducts()
+    public function getProducts(): LengthAwarePaginator
     {
         $this->retriever->filtersConnector->defineFilters([
             AllowedFilter::custom('category', new CategoryFilter()),
@@ -33,28 +35,22 @@ class RetrieveProductsService
             'preview_image',
         ]);
 
-        $products = $this->warehouseService->getWarehouseInfoAboutProducts(
-            products: $products->getCollection(),
+        return $products->setCollection(
+            $this->discountedService->loadDiscountsForProducts(
+                $this->loadWarehouseInfo($products->getCollection()),
+            ),
+        );
+    }
+
+    private function loadWarehouseInfo(Collection $products): Collection
+    {
+        return $this->warehouseService->getWarehouseInfoAboutProducts(
+            products: $products,
             dto: new FetchAttributesColumnsDto(
-                singleAttrCols: [['id', 'price'], ['name']],
+                singleAttrCols: [['id', 'price'], []],
                 combinedAttrCols: [['id', 'price'], []],
                 warehouseCols: ['id', 'default_price', 'product_id'],
             ),
         );
-
-        dd($products);
-    }
-
-    private function mapPricesForProducts(Collection $products): Collection
-    {
-        return $products->each(function (Product $product) {
-            if (is_null($product->hasCombinedAttributes())) {
-                $product->price = $product->warehouse->default_price;
-            } elseif ($product->hasCombinedAttributes()) {
-                $product->price = $product->combinedAttributes->first()->price;
-            } else {
-                $product->price = $product->singleAttributes->first()->price;
-            }
-        });
     }
 }

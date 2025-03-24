@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Shop\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Modules\Product\Http\Shop\Resources\ProductsShopCardResource;
 use Modules\Product\Http\Shop\Services\ProductsRetrieve\RetrieveProductsService;
+use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveProductsController extends Controller
 {
@@ -14,8 +15,26 @@ class RetrieveProductsController extends Controller
         private RetrieveProductsService $productsService,
     ) {}
 
-    public function index(Request $request)
+    /**
+     * Retrieve products shop cards info with filters, sorts.
+     *
+     * Usage place - Shop.
+     *
+     * @return JsonApiResourceCollection
+     */
+    public function index(): JsonApiResourceCollection
     {
-        $this->productsService->getProducts();
+        $products = $this->productsService->getProducts();
+
+        return ProductsShopCardResource::collection($products->items())
+            ->additional([
+                'links' => [
+                    'next_page' => $products->hasMorePages() ? $products->currentPage() + 1 : null,
+                ],
+                'meta' => [
+                    'total' => $products->total(),
+                    'per_page' => $products->perPage(),
+                ],
+            ]);
     }
 }

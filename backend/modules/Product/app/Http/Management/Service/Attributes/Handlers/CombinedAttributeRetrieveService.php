@@ -40,7 +40,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             );
         }
 
-        return $products->load($relations);
+        return $products->loadMissing($relations);
     }
 
     public function formatPreviewAttributes(Collection $attributes): BaseCollection
