@@ -46,7 +46,7 @@ class ProductVariation extends Model implements DiscountRelationInterface
     public function price(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
     }
 
@@ -79,6 +79,11 @@ class ProductVariation extends Model implements DiscountRelationInterface
     public function variationsAttributesValues(): HasMany
     {
         return $this->hasMany(VariationAttributeValues::class, 'variation_id');
+    }
+
+    public function quantity(): Attribute
+    {
+        return Attribute::set(fn($value) => max($value, 0));
     }
 
     protected static function boot(): void

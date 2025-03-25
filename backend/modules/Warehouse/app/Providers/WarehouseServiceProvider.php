@@ -7,6 +7,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Modules\Warehouse\Http\Controllers\DiscountController;
 use Modules\Warehouse\Jobs\CancelExpiredDiscounts;
+use Modules\Warehouse\Jobs\WarehouseCombinedProductAvailability;
+use Modules\Warehouse\Jobs\WarehouseDefaultProductAvailability;
+use Modules\Warehouse\Jobs\WarehouseSingleProductAvailability;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
@@ -60,6 +63,12 @@ class WarehouseServiceProvider extends ServiceProvider
             $schedule = $this->app->make(Schedule::class);
 
             $schedule->job(new CancelExpiredDiscounts(), 'low')->everyMinute();
+
+            $schedule->job(new WarehouseSingleProductAvailability(), 'low')->everyThirtySeconds();
+
+            $schedule->job(new WarehouseCombinedProductAvailability(), 'low')->everyThirtySeconds();
+
+            $schedule->job(new WarehouseDefaultProductAvailability(), 'low')->everyThirtySeconds();
         });
     }
 

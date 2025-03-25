@@ -18,8 +18,8 @@ class ProductObserver
             'main_description_html' => str($product->main_description_markdown)->markdown([
                 'html_input' => 'strip',
                 'allow_unsafe_links' => false,
-                'max_nesting_level' => 5
-            ])
+                'max_nesting_level' => 5,
+            ]),
         ]);
     }
 
@@ -29,6 +29,7 @@ class ProductObserver
         CacheService::forgetKey(config('product.cache.product-images'), $product->id);
         CacheService::forgetKey(config('product.cache.product-preview'), $product->id);
         CacheService::forgetKey(config('warehouse.cache.product-warehouse-info'), $product->id);
+        CacheService::forgetKey(config('product.cache.products-explore'));
     }
 
     /**
@@ -40,6 +41,7 @@ class ProductObserver
         CacheService::forgetKey(config('product.cache.product-images'), $product->id);
         CacheService::forgetKey(config('product.cache.product-preview'), $product->id);
         CacheService::forgetKey(config('warehouse.cache.product-warehouse-info'), $product->id);
+        CacheService::forgetKey(config('product.cache.products-explore'));
     }
 
     /**
@@ -59,5 +61,6 @@ class ProductObserver
         CacheService::forgetKey(config('product.cache.product-images'), $product->id);
         CacheService::forgetKey(config('product.cache.product-preview'), $product->id);
         CacheService::forgetKey(config('warehouse.cache.product-warehouse-info'), $product->id);
+        CacheService::forgetKey(config('product.cache.products-explore'));
     }
 }
