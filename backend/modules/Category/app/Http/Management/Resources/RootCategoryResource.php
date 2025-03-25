@@ -20,6 +20,10 @@ class RootCategoryResource extends JsonApiResource
             $attrs['slug'] = $this->slug;
         }
 
+        if ($this->icon_url) {
+            $attrs['icon'] = $this->icon_url;
+        }
+
         return $attrs;
     }
 
