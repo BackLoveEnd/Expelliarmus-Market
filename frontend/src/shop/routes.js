@@ -10,6 +10,7 @@ import Cart from "@/shop/views/Order/Cart.vue";
 import CheckOut from "@/shop/views/Order/Checkout.vue";
 import Product from "@/shop/views/Product/Product.vue";
 import CategoriesBrowse from "@/shop/views/Shop/CategoriesBrowse.vue";
+import CategoriesOverview from "@/shop/views/Shop/CategoriesOverview.vue";
 
 export default [
     {
@@ -33,15 +34,15 @@ export default [
         },
     },
     {
+        path: "/shop/categories",
+        component: CategoriesOverview,
+        name: "categories-overview"
+    },
+    {
         path: "/shop/categories/:categorySlug",
         name: "categories-browse",
         props: ({name: null}),
         component: CategoriesBrowse,
-        meta: {
-            breadcrumb: [
-                {name: 'Home', url: '/'}
-            ]
-        }
     },
     {
         path: "/shop/:productSlug",

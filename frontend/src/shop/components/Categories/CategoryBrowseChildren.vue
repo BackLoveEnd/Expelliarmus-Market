@@ -60,6 +60,12 @@ function showChild(category) {
 
 <template>
   <section class="flex flex-col gap-y-4">
+    <router-link
+        :to="{ name: 'categories-overview' }"
+        class="p-2 hover:underline underline-offset-2"
+    >
+      <span>&lt; Main</span>
+    </router-link>
     <div>
       <span class="text-3xl font-semibold">{{ parentCategory?.name }}</span>
     </div>
@@ -84,14 +90,15 @@ function showChild(category) {
           <span>{{ category.name }}</span>
         </div>
       </template>
-
-      <router-link
-          v-if="mainCategorySlug && mainCategorySlug !== route.params.categorySlug"
-          :to="{ name: 'categories-browse', params: { categorySlug: mainCategorySlug } }"
-          class="p-2 hover:underline underline-offset-2"
-      >
-        <span>&lt; Previous</span>
-      </router-link>
+      <div class="flex gap-x-4">
+        <router-link
+            v-if="mainCategorySlug && mainCategorySlug !== route.params.categorySlug"
+            :to="{ name: 'categories-browse', params: { categorySlug: mainCategorySlug } }"
+            class="p-2 hover:underline underline-offset-2"
+        >
+          <span>&lt; Previous</span>
+        </router-link>
+      </div>
     </div>
   </section>
 </template>
