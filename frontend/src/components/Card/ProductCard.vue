@@ -1,7 +1,7 @@
 <template>
   <router-link
       class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md p-3 cursor-pointer transition-all duration-200"
-      :to="`/shop/products/${product.slug}`"
+      :to="`/shop/products/${product.id}/${product.slug}`"
   >
     <div class="relative overflow-hidden">
       <img

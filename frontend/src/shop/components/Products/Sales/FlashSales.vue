@@ -25,6 +25,7 @@ async function fetchProducts() {
         id: discountedProducts.id,
         title: discountedProducts.attributes.title,
         image: discountedProducts.attributes.image,
+        slug: discountedProducts.attributes.slug,
         discount: discountedProducts.attributes.discount,
       }));
 

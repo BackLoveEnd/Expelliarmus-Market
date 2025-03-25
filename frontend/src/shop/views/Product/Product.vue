@@ -115,11 +115,11 @@
     <section class="container mx-auto mt-32 max-w-screen-2xl">
       <section-title title="Related Item"></section-title>
       <div class="grid grid-cols-5 gap-11">
-        <product-card />
-        <product-card />
-        <product-card />
-        <product-card />
-        <product-card />
+        <product-card/>
+        <product-card/>
+        <product-card/>
+        <product-card/>
+        <product-card/>
       </div>
     </section>
   </main>
@@ -130,40 +130,20 @@ import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
-import { computed, inject, ref } from "vue";
+import {computed, inject, ref} from "vue";
 
 const emitter = inject("emitter");
 
-const links = ref([
-  { url: "/", name: "Home" },
-  { url: "/", name: "Category" },
-  { url: "/", name: "Product Name" },
-]);
-
-const colors = ref([
-  { value: "red", color: "#e07575" },
-  { value: "blue", color: "#0c8ce9" },
-]);
-
-const sizes = ref([
-  { value: "xs", name: "XS" },
-  { value: "s", name: "S" },
-  { value: "m", name: "M" },
-  { value: "l", name: "L" },
-  { value: "xl", name: "XL" },
-]);
-
-const quantity = ref(1);
-const price = ref(198);
 const isInWishlist = ref(false);
+
 const isCartModalOpen = ref(false);
 
 function addToWishList() {
   isInWishlist.value = !isInWishlist.value;
 
   isInWishlist.value
-    ? emitter.emit("add-to-wishlist")
-    : emitter.emit("remove-from-wishlist");
+      ? emitter.emit("add-to-wishlist")
+      : emitter.emit("remove-from-wishlist");
 }
 
 function toggleCartModal() {
@@ -171,7 +151,7 @@ function toggleCartModal() {
 }
 
 const priceDependOnQuantity = computed(() =>
-  (price.value * quantity.value).toFixed(2),
+    (price.value * quantity.value).toFixed(2),
 );
 
 const pricePerUnit = computed(() => price.value.toFixed(2));

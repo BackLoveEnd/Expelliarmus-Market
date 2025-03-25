@@ -8,6 +8,7 @@ return [
         'product-images' => 'product:%s:images',
         'product-preview' => 'product:%s:preview',
         'products-explore' => 'products:explore',
+        'product-public' => 'products:%s:public',
     ],
     'retrieve' => [
         'by_category' => 6,

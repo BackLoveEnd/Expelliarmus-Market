@@ -44,7 +44,7 @@ export default [
         component: CategoriesBrowse,
     },
     {
-        path: "/shop/products/:productSlug",
+        path: "/shop/products/:productId/:productSlug",
         name: "product-page",
         component: Product
     },
