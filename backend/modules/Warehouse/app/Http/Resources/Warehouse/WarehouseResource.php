@@ -11,10 +11,19 @@ class WarehouseResource extends JsonApiResource
 {
     public function toAttributes(Request $request): array
     {
-        return [
+        $attributes = [
             'price' => $this->default_price ?: 'depend on variations.',
             'quantity' => $this->total_quantity,
-            'arrived_at' => $this->arrived_at.' '.config('app.timezone'),
         ];
+
+        if ($this->arrived_at) {
+            $attributes['arrived_at'] = $this->arrived_at;
+        }
+
+        if ($this->status) {
+            $attributes['status'] = $this->status->toString();
+        }
+
+        return $attributes;
     }
 }

@@ -6,13 +6,12 @@ namespace Modules\Product\Http\Management\Support;
 
 use Modules\Product\Models\Product;
 
-class ProductSlug
+readonly class ProductSlug
 {
     public function __construct(
         private int $product,
-        private ?string $slug = null
-    ) {
-    }
+        private ?string $slug = null,
+    ) {}
 
     public function bind(array $columns = ['*']): Product
     {

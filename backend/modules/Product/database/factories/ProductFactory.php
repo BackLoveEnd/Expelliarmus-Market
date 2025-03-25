@@ -14,6 +14,7 @@ use Modules\Warehouse\Models\ProductAttribute;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
 use Modules\Warehouse\Models\Warehouse;
+use Ramsey\Uuid\Uuid;
 
 class ProductFactory extends Factory
 {
@@ -29,7 +30,14 @@ class ProductFactory extends Factory
             'product_article' => fake()->ean13(),
             'preview_image' => url('storage/products/272_262_preview_product_preview.png'),
             'preview_image_source' => '272_262_preview_product_preview.png',
-            'images' => null,
+            'images' => [
+                [
+                    'order' => 1,
+                    'source' => null,
+                    'id' => Uuid::uuid7()->toString(),
+                    'image_url' => url('/storage/products'.config('product.image.default')),
+                ],
+            ],
         ];
     }
 

@@ -57,6 +57,19 @@ final class DiscountedProductsService
         );
     }
 
+    public function loadDiscountForProduct(Product $product): Product
+    {
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->loadMissing('lastDiscount');
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->loadMissing('combinedAttributes.lastDiscount');
+        }
+
+        return $product->loadMissing('singleAttributes.lastDiscount');
+    }
+
     public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(

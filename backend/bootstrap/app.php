@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Modules\Product\Http\Middleware\AppendIncludeRelationships;
 use Modules\User\Http\Exceptions\AlreadyAuthenticatedException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,7 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
+
         $middleware->throttleApi();
+
+        $middleware->alias([
+            'include' => AppendIncludeRelationships::class,
+        ]);
 
         $middleware->redirectUsersTo(function (Request $request) {
             if ($request->expectsJson()) {

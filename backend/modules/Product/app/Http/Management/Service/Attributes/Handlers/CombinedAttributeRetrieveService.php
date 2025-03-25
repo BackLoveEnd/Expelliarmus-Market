@@ -48,25 +48,42 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
         return $attributes
             ->flatMap(function (ProductVariation $variation) {
                 return $variation->productAttributes->map(function (ProductAttribute $attribute) {
-                    return [
+                    $attributes = [
                         'name' => $attribute->name,
-                        'type' => (object)[
-                            'id' => $attribute->type->value,
-                            'name' => $attribute->type->toTypes(),
-                        ],
-                        'attribute_view_type' => $attribute->view_type->toTypes(),
                         'value' => $attribute->pivot->value,
                     ];
+
+                    if ($attribute->type) {
+                        $attributes['type'] = (object)[
+                            'id' => $attribute->type->value,
+                            'name' => $attribute->type->toTypes(),
+                        ];
+                    }
+
+                    if ($attribute->view_type) {
+                        $attributes['attribute_view_type'] = $attribute->view_type->toTypes();
+                    }
+
+                    return $attributes;
                 });
             })
             ->groupBy('name')
-            ->map(fn($items)
-                => [
-                'name' => $items[0]['name'],
-                'type' => $items[0]['type'],
-                'attribute_view_type' => $items[0]['attribute_view_type'],
-                'value' => $items->pluck('value')->unique()->values(),
-            ])
+            ->map(function ($items) {
+                $attributes = [
+                    'name' => $items[0]['name'],
+                    'value' => $items->pluck('value')->unique()->values(),
+                ];
+
+                if (array_key_exists('type', $items[0])) {
+                    $attributes['type'] = $items[0]['type'];
+                }
+
+                if (array_key_exists('attribute_view_type', $items[0])) {
+                    $attributes['attribute_view_type'] = $items[0]['attribute_view_type'];
+                }
+
+                return $attributes;
+            })
             ->values();
     }
 
