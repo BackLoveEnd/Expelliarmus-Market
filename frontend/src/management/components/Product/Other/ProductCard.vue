@@ -107,6 +107,10 @@ const getSeverity = (status) => {
       return "danger";
   }
 };
+
+const truncatedTitle = (title) => {
+  return title.length > 20 ? title.substring(0, 20) + "..." : title;
+};
 </script>
 
 <template>
@@ -117,8 +121,7 @@ const getSeverity = (status) => {
         <span class="font-semibold text-black">{{ category.name }}</span>
         (Total: {{ category.total }})
       </h2>
-
-      <div v-if="category.products.length > 0">
+      <div v-if="category.products.length > 0" class="relative">
         <div
             class="flex flex-wrap gap-4"
             :class="[
@@ -142,7 +145,7 @@ const getSeverity = (status) => {
               </div>
               <div class="p-5 space-y-2">
                 <div class="text-sm text-center text-gray-900">
-                  {{ product.title }}
+                  {{ truncatedTitle(product.title) }}
                 </div>
                 <div class="flex flex-col items-start mt-2">
                   <span class="text-xs text-gray-500"

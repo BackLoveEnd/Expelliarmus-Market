@@ -17,7 +17,7 @@
         <div class="flex justify-between">
           <div class="flex gap-x-4">
             <div class="flex items-center gap-x-4">
-              <span>Status:</span>
+              <span>Product Status:</span>
               <Select
                   :options="statuses"
                   placeholder="Select One"
@@ -29,7 +29,25 @@
                 <template #option="{ option }">
                   <Tag
                       :value="option.name"
-                      :severity="getSeverity(option.name)"
+                      :severity="getProductStatusSeverity(option.name)"
+                  />
+                </template>
+              </Select>
+            </div>
+            <div class="flex items-center gap-x-4">
+              <span>Warehouse status:</span>
+              <Select
+                  :options="warehouseStatuses"
+                  placeholder="Select One"
+                  style="min-width: 12rem"
+                  :showClear="true"
+                  option-label="name"
+                  @update:modelValue="onWarehouseStatusFilter"
+              >
+                <template #option="{ option }">
+                  <Tag
+                      :value="option.name"
+                      :severity="getWarehouseStatusSeverity(option.name)"
                   />
                 </template>
               </Select>
@@ -82,7 +100,20 @@
         <template #body="{ data }">
           <Tag
               :value="data.status.name"
-              :severity="getSeverity(data.status.name)"
+              :severity="getProductStatusSeverity(data.status.name)"
+          />
+        </template>
+      </Column>
+      <Column
+          field="warehouse_status"
+          header="Warehouse Status"
+          :filter="true"
+          style="min-width: 12rem"
+      >
+        <template #body="{ data }">
+          <Tag
+              :value="data.warehouse_status.name"
+              :severity="getWarehouseStatusSeverity(data.warehouse_status.name)"
           />
         </template>
       </Column>
@@ -109,11 +140,20 @@ import {WarehouseService} from "@/services/WarehouseService.js";
 const products = ref([]);
 const totalRecords = ref(0);
 const loading = ref(true);
+
 const statuses = ref([
   {id: 1, name: "Not Published"},
   {id: 0, name: "Published"},
   {id: 2, name: "Trashed"},
 ]);
+
+const warehouseStatuses = ref([
+  {id: 0, name: "In Stock"},
+  {id: 1, name: "Pending"},
+  {id: 2, name: "Not Available"},
+  {id: 3, name: "Partially"},
+]);
+
 const page = ref(0);
 const limit = ref(10);
 const cache = reactive(new Map());
@@ -198,6 +238,16 @@ const onStatusFilter = async (selectedStatus) => {
   await fetchProducts(0);
 };
 
+const onWarehouseStatusFilter = async (selectedStatus) => {
+  if (selectedStatus === null) {
+    delete filters.value["warehouse_status"];
+  } else {
+    filters.value["warehouse_status"] = selectedStatus.id;
+  }
+  cache.clear();
+  await fetchProducts(0);
+};
+
 const onInStockFilter = async (selectedStock) => {
   if (selectedStock === null) {
     delete filters.value["in_stock"];
@@ -208,7 +258,7 @@ const onInStockFilter = async (selectedStock) => {
   await fetchProducts(0);
 };
 
-const getSeverity = (status) => {
+const getProductStatusSeverity = (status) => {
   switch (status) {
     case "Not Published":
       return "warn";
@@ -216,6 +266,19 @@ const getSeverity = (status) => {
       return "success";
     case "Trashed":
       return "danger";
+  }
+};
+
+const getWarehouseStatusSeverity = (status) => {
+  switch (status) {
+    case "In Stock":
+      return "success";
+    case "Pending":
+      return "warn";
+    case "Not Available":
+      return "danger";
+    case "Partially":
+      return "info";
   }
 };
 

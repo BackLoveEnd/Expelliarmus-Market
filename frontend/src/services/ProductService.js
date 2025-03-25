@@ -73,7 +73,7 @@ export const ProductService = {
     },
 
     async getProductsForEachRootCategory() {
-        return await api().get("/management/categories/products?include=products");
+        return await api().get(`/management/categories/products?include=products`);
     },
 
     async getAttributesForCategory(categoryId) {
