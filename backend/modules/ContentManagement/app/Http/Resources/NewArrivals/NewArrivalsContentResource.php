@@ -15,10 +15,7 @@ class NewArrivalsContentResource extends JsonApiResource
             'image_url' => $this->image_url,
             'arrival_url' => $this->arrival_url,
             'position' => $this->position->value,
-            'content' => [
-                'title' => $this->content['title'],
-                'body' => $this->content['body']
-            ]
+            'content' => $this->content,
         ];
     }
 }

@@ -1,5 +1,4 @@
 import HomePage from "@/shop/views/Main/HomePage.vue";
-import NotFound from "@/components/Default/NotFound.vue";
 import SignUp from "@/shop/views/Auth/SignUp.vue";
 import LogIn from "@/shop/views/Auth/LogIn.vue";
 import Wishlist from "@/shop/views/Order/Wishlist.vue";
@@ -45,9 +44,9 @@ export default [
         component: CategoriesBrowse,
     },
     {
-        path: "/shop/:productSlug",
-        name: "product",
-        component: Product,
+        path: "/shop/products/:productSlug",
+        name: "product-page",
+        component: Product
     },
     {
         path: "/wishlist",
@@ -78,10 +77,5 @@ export default [
         meta: {
             requiresAuth: true,
         },
-    },
-    {
-        path: "/:any(.*)*",
-        component: NotFound,
-        name: "not-found",
     },
 ];
