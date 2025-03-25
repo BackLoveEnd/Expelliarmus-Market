@@ -26,4 +26,14 @@ enum WarehouseProductStatusEnum: int
             self::PARTIALLY => 'Partially',
         };
     }
+
+    public function toColorType(): string
+    {
+        return match ($this) {
+            self::IN_STOCK => 'success',
+            self::PENDING => 'warning',
+            self::NOT_AVAILABLE => 'danger',
+            self::PARTIALLY => 'info',
+        };
+    }
 }
