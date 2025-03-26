@@ -1,5 +1,5 @@
 <template>
-  <div class="flex space-x-4 text-sm">
+  <div class="flex space-x-2 text-sm">
     <template v-for="link in linksMapped" :key="link.url">
       <router-link :to="link.url"
                    :class="link.isLast ? 'text-black' : 'text-gray-400'"
