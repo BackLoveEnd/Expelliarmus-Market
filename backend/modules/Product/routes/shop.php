@@ -19,6 +19,5 @@ Route::prefix('/shop')->withoutMiddleware(['throttle'])->group(function () {
 
     Route::get('/products/{productBind}/{slug?}', RetrieveProductController::class)
         ->middleware(['include:category,warehouse,brand,variations'])
-        ->whereNumber('productBind')
-        ->whereAlpha('slug');
+        ->whereNumber('productBind');
 });

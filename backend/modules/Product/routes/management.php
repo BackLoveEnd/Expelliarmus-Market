@@ -17,6 +17,7 @@ Route::prefix('management')->group(function () {
                 ->whereNumber('productBind');
 
             Route::get('/{productBind}/{slug}', 'show')
+                ->middleware(['include:category,brand,variations'])
                 ->whereNumber('productBind');
         });
 

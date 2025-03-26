@@ -23,7 +23,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
     public function getAttributes(Product $product): Collection
     {
         return $product->combinedAttributes()->with([
-            'productAttributes' => fn($query) => $query->select(...$this->attributeCols),
+            'productAttributes' => fn($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
     }
 
