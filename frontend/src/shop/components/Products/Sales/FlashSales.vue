@@ -22,7 +22,7 @@ async function fetchProducts() {
     const response = await ProductsShopService.getFlashSales(limit.value, offset.value);
     if (response?.data?.data) {
       const newProducts = response.data.data.map((discountedProducts) => ({
-        id: discountedProducts.id,
+        id: discountedProducts.attributes.id,
         title: discountedProducts.attributes.title,
         image: discountedProducts.attributes.image,
         slug: discountedProducts.attributes.slug,

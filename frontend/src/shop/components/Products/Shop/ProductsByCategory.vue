@@ -27,7 +27,7 @@ async function getProducts(page = 1) {
       .then((response) => {
         if (page === 1) {
           products.value.splice(0, products.length, ...response?.data?.data?.map((product) => ({
-            id: product?.attributes?.id,
+            id: product?.id,
             title: product?.attributes?.title,
             image: product?.attributes?.image,
             slug: product?.attributes?.slug,
@@ -36,7 +36,7 @@ async function getProducts(page = 1) {
           })));
         } else {
           products.value.push(...response?.data?.data?.map((product) => ({
-            id: product?.attributes?.id,
+            id: product?.id,
             title: product?.attributes?.title,
             image: product?.attributes?.image,
             slug: product?.attributes?.slug,

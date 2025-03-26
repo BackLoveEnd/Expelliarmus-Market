@@ -4,11 +4,11 @@ import SectionTitle from "@/components/Default/SectionTitle.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
 import ProductPhotoTabs from "@/shop/views/Product/ProductPhotoTabs.vue";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
-import { computed, reactive, ref } from "vue";
-import { ProductService } from "@/services/ProductService.js";
+import {computed, reactive, ref} from "vue";
+import {ProductService} from "@/services/ProductService.js";
 import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsViewer.vue";
 import CombinedVariationsViewer from "@/components/Product/Main/CombinedVariationsViewer.vue";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   id: Number | String,
@@ -44,25 +44,24 @@ const quantity = ref(1);
 const price = ref(0);
 
 const priceDependOnQuantity = computed(() =>
-  (price.value * quantity.value).toFixed(2),
+    (price.value * quantity.value).toFixed(2),
 );
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
 
 const imagesUrls = computed(() => {
   return product.images.map((image) => image.image_url);
-})
+});
 
 function updatePrice(variation) {
-  console.log(variation);
   price.value = parseFloat(variation.price);
 }
 
 async function getProduct() {
   try {
     const response = await ProductService.getProductPreview(
-      props.id,
-      props.slug,
+        props.id,
+        props.slug,
     );
 
     Object.assign(product, response.product);
@@ -74,8 +73,8 @@ async function getProduct() {
     previewVariations.value = response.previewVariations;
 
     links.value = [
-      { url: "/management/products", name: "All Products" },
-      { url: "", name: product.title },
+      {url: "/management/products", name: "All Products"},
+      {url: "", name: product.title},
     ];
   } catch (e) {
     if (e.response?.status === 404) {
@@ -94,29 +93,29 @@ await getProduct();
     </section>
     <section class="container mx-auto">
       <div class="flex justify-between">
-        <product-photo-tabs :images="imagesUrls" />
+        <product-photo-tabs :images="imagesUrls"/>
         <div class="flex flex-col gap-y-8 items-start min-w-[35%]">
           <div class="flex flex-col gap-y-4 w-full">
             <description
-              :price="priceDependOnQuantity"
-              :price-per-unit="pricePerUnit"
-              :title="product.title"
-              :title-desc="product.title_description"
-              :article="product.article"
+                :price="priceDependOnQuantity"
+                :price-per-unit="pricePerUnit"
+                :title="product.title"
+                :title-desc="product.title_description"
+                :article="product.article"
             >
             </description>
           </div>
           <div class="flex flex-col gap-y-8" v-if="previewVariations">
             <combined-variations-viewer
-              v-if="Array.isArray(previewVariations)"
-              :previewed-variations="previewVariations"
-              :variations="variations"
-              @variation-selected="updatePrice"
+                v-if="Array.isArray(previewVariations)"
+                :previewed-variations="previewVariations"
+                :variations="variations"
+                @variation-selected="updatePrice"
             />
             <single-variations-viewer
-              v-else
-              :previewed-variation="previewVariations"
-              @selected-option="updatePrice"
+                v-else
+                :previewed-variation="previewVariations"
+                @selected-option="updatePrice"
             />
           </div>
         </div>
@@ -133,8 +132,8 @@ await getProduct();
     <section-title title="Specifications"></section-title>
     <article class="w-1/2">
       <specs
-        :grouped="product.specifications.grouped"
-        :separated="product.specifications.separated"
+          :grouped="product.specifications.grouped"
+          :separated="product.specifications.separated"
       />
     </article>
   </section>

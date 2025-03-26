@@ -1,5 +1,6 @@
 <template>
   <router-link
+      @click.prevent="useScrolling().scrollToTop()"
       class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md cursor-pointer p-3 transition-all duration-200"
       :to="`/shop/products/${props.discountedProduct?.id}/${props.discountedProduct?.slug}`"
   >
@@ -65,34 +66,22 @@
 
 <script setup>
 import StarRating from "@/components/Card/StarRating.vue";
-import {computed, inject, onUnmounted, ref} from "vue";
+import {computed} from "vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
-
-const emitter = inject("emitter");
-const isInCart = ref(false);
-
-const {isInWishlist, addToWishlist} = useAddToWishlist(emitter);
+import {useAddToCart} from "@/composables/useAddToCart.js";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const props = defineProps({
   discountedProduct: Object
 });
 
-function addToCart() {
-  isInCart.value = !isInCart.value;
+const {isInWishlist, addToWishlist} = useAddToWishlist();
 
-  isInCart.value
-      ? emitter.emit("add-to-cart")
-      : emitter.emit("remove-from-cart");
-}
+const {isInCart, addToCart} = useAddToCart();
 
 const truncatedTitle = computed(() => {
   const title = props.discountedProduct?.title || "";
   return title.length > 20 ? title.substring(0, 20) + "..." : title;
-});
-
-onUnmounted(() => {
-  emitter.off("add-to-cart");
-  emitter.off("remove-from-cart");
 });
 </script>
 
