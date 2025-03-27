@@ -50,17 +50,17 @@ const getDiscountedProducts = async (page = 1) => {
         if (page === 1) {
           discountedProducts.splice(0, discountedProducts.length, ...response?.data?.data?.map((discount) => ({
             id: discount?.id,
-            percentage: discount?.attributes?.percentage,
-            cancelled: discount?.attributes?.cancelled,
-            start_date: new Date(discount?.attributes?.start_date).toLocaleString(),
-            end_date: new Date(discount?.attributes?.end_date).toLocaleString(),
-            discount_price: discount?.attributes?.discount_price,
-            status: discount?.attributes?.status,
+            percentage: discount?.attributes?.discount?.percentage,
+            cancelled: discount?.attributes?.discount?.cancelled,
+            start_date: new Date(discount?.attributes?.discount?.start_date).toLocaleString(),
+            end_date: new Date(discount?.attributes?.discount?.end_date).toLocaleString(),
+            discount_price: discount?.attributes?.discount?.discount_price,
+            status: discount?.attributes?.discount?.status,
             product: {
-              id: discount?.attributes?.product?.id,
-              title: discount?.attributes?.product?.title,
-              article: discount?.attributes?.product?.product_article,
-              image: discount?.attributes?.product?.image
+              id: discount?.attributes?.id,
+              title: discount?.attributes?.title,
+              article: discount?.attributes?.product_article,
+              image: discount?.attributes?.image
             }
           })));
         } else {
@@ -145,6 +145,10 @@ const isActiveSort = (field, order) => {
 };
 
 await getDiscountedProducts();
+
+const truncatedTitle = (title) => {
+  return title.length > 20 ? title.substring(0, 20) + "..." : title;
+};
 
 const getSeverity = (status) => {
   switch (status) {
@@ -248,7 +252,7 @@ const getSeverity = (status) => {
             </div>
             <div class="p-5 space-y-2">
               <div class="text-sm text-center text-gray-900">
-                {{ discount.product.title }}
+                {{ truncatedTitle(discount.product.title) }}
               </div>
               <div class="flex flex-col items-start mt-2 space-y-1">
                 <span class="text-xs text-gray-500">Article: {{ discount.product.article }}</span>
