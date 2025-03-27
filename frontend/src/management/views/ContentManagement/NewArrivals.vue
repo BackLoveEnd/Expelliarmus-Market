@@ -1,79 +1,81 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, ref, watch, onMounted} from "vue";
 import {ContentManagementService} from "@/services/ContentManagementService";
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import Description from "@/components/Product/Arrival/Description.vue";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import {useToastStore} from "@/stores/useToastStore.js";
+import Colors from "@/components/Product/Main/Colors.vue";
 
-const arrivals = ref([
+const defaultArrivals = [
   {
     id: 1,
     image: "https://dummyimage.com/744x720/000/fff",
-    title: "Playstation 5(1)",
-    description: "Black and White version of the PS5 coming out on sale.",
+    title: "Title(1)",
+    description: "Desc.1",
     link: "",
     imgSize: "744x720"
   },
   {
     id: 2,
     image: "https://dummyimage.com/744x336/000/fff",
-    title: "Playstation 5(2)",
-    description: "Black and White version of the PS5 coming out on sale.",
+    title: "Title(2)",
+    description: "Desc.2",
     link: "",
     imgSize: "744x336"
   },
   {
     id: 3,
     image: "https://dummyimage.com/348x336/000/fff",
-    title: "Playstation 5(3)",
-    description: "Black and White version of the PS5 coming out on sale.",
+    title: "Title(3)",
+    description: "Desc.3",
     link: "",
     imgSize: "348x336"
   },
   {
     id: 4,
     image: "https://dummyimage.com/348x336/000/fff",
-    title: "Playstation 5(4)",
-    description: "Black and White version of the PS5 coming out on sale.",
+    title: "Title(4)",
+    description: "Desc.4",
     link: "",
     imgSize: "348x336"
   }
-]);
-
+]
+const arrivals = ref([...defaultArrivals]);
 const selectedArrivalId = ref(null);
+
 const selectedArrival = computed(() =>
     arrivals.value.find(arrival => arrival.id === selectedArrivalId.value)
 );
 
-
-/*
-const fetchArrivals = () => {
-  ContentManagementService.getAllArrivals()
-      .then(response => {
-        arrivals.value = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
+const loadFromStorage = () => {
+  const savedData = localStorage.getItem("arrivals");
+  if (savedData) {
+    arrivals.value = JSON.parse(savedData);
+  } else {
+    fetchArrivals();
+  }
 };
-*/
+
+const saveToStorage = () => {
+  localStorage.setItem("arrivals", JSON.stringify(arrivals.value));
+};
 
 const fetchArrivals = () => {
   ContentManagementService.getAllArrivals()
       .then(response => {
-        arrivals.value = response.data.map((arrival, index) => ({
-          id: arrival.arrival_id,
-          image: arrival.exists_image_url || `https://dummyimage.com/${arrival.imgSize}/000/fff`,
-          title: arrival.content?.title || "",
-          description: arrival.content?.body || "",
-          link: arrival.link || "",
-          imgSize: arrival.imgSize,
-          position: arrival.position || index + 1,
-          arrival_id: arrival.arrival_id || null,
-          exists_image_url: arrival.exists_image_url || null
+        if (response.data.length) {
+          arrivals.value = response.data.map((arrival, index) => ({
+            id: index,
+            image: arrival.exists_image_url || `https://dummyimage.com/${arrival.imgSize}/000/fff`,
+              title: arrival.content?.title || "",
+              description: arrival.content?.body || "",
+              link: arrival.link || "",
+              imgSize: arrival.imgSize
         }));
+        }
+        saveToStorage();
       })
       .catch(error => {
         console.error(error);
@@ -83,30 +85,53 @@ const fetchArrivals = () => {
 const toast = useToastStore();
 
 const saveArrivals = () => {
-  console.log("Sending data:", arrivals.value);
-  ContentManagementService.uploadArrivalContent(arrivals.value)
+  const formattedData = arrivals.value.map(arrival => ({
+    position: arrival.id + 1,
+    arrival_url: arrival.link,
+    content: {
+      title: arrival.title,
+      body: arrival.description
+    },
+    file: arrival.image && typeof arrival.image === "string" && arrival.image.startsWith("data:image")
+        ? arrival.image
+        : undefined
+  }));
+
+  ContentManagementService.uploadArrivalContent(formattedData)
       .then(() => {
         toast.showToast("Arrivals saved successfully!", defaultSuccessSettings);
+        saveToStorage();
       })
       .catch(error => {
         console.error(error);
-        toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        toast.showToast("Arrivals saved successfully!", defaultSuccessSettings);
+        // toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
       });
 };
 
 const deleteArrival = (arrivalId) => {
-  if (!arrivalId) return;
+  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
+  if (index !== -1) {
+    arrivals.value[index] = { ...defaultArrivals[index] };
+    saveToStorage();
+  }
+  selectedArrivalId.value = null;
+};
 
-  ContentManagementService.deleteArrival(arrivalId)
-      .then(response => {
-        arrivals.value = arrivals.value.filter(arrival => arrival.id !== arrivalId);
-        toast.showToast(response?.data?.message, defaultSuccessSettings);
-        selectedArrivalId.value = null;
-      })
-      .catch(error => {
-        console.error(error);
-        toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
-      });
+const hideArrival = (arrivalId) => {
+  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
+  if (index !== -1) {
+    arrivals.value[index].hidden = true;
+    saveToStorage()
+  }
+};
+
+const showArrival = (arrivalId) => {
+  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
+  if (index !== -1) {
+    arrivals.value[index].hidden = false;
+    saveToStorage()
+  }
 };
 
 
@@ -130,15 +155,17 @@ const handleFileUpload = (event, id) => {
       canvas.height = height;
 
       ctx.drawImage(img, 0, 0, width, height);
-
-      arrivals.value[index].image = canvas.toDataURL("image/jpeg", 1); // 0.9 - качество
+      arrivals.value[index].image = canvas.toDataURL("image/jpeg", 1);
+      saveToStorage();
     };
   };
   reader.readAsDataURL(file);
 };
 
-</script>
+onMounted(loadFromStorage);
 
+watch(arrivals, saveToStorage, { deep: true });
+</script>
 <template>
   <default-container>
     <div class="my-14 space-y-8">
@@ -193,6 +220,11 @@ const handleFileUpload = (event, id) => {
             >
               Delete
             </button>
+            <button v-if="selectedArrival"
+                    @click="hideArrival(selectedArrivalId)"
+                    class="bg-gray-500 text-white px-3 py-1 rounded"
+                    disabled
+            >Hide</button>
           </div>
         </div>
 
