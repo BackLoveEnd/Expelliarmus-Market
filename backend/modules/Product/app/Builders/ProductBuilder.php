@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Modules\Brand\Builders;
+namespace Modules\Product\Builders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Modules\Warehouse\Enums\ProductStatusEnum;
+use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 use RuntimeException;
 
 class ProductBuilder extends Builder
@@ -71,6 +72,18 @@ class ProductBuilder extends Builder
                 throw new RuntimeException('Unknown boolean type in whereStatus method');
             }
         });
+    }
+
+    public function availableInStock(): ProductBuilder
+    {
+        return $this->with([
+            'warehouse' => function ($query) {
+                $query->whereStatus([
+                    WarehouseProductStatusEnum::IN_STOCK,
+                    WarehouseProductStatusEnum::PARTIALLY,
+                ]);
+            },
+        ]);
     }
 
     public function withoutDiscounts(): ProductBuilder

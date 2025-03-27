@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Modules\Brand\Builders\ProductBuilder;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
 use Modules\Order\Models\OrderLine;
+use Modules\Product\Builders\ProductBuilder;
 use Modules\Product\Casts\ProductArticleCast;
 use Modules\Product\Database\Factories\ProductFactory;
 use Modules\Product\Observers\ProductObserver;
@@ -44,6 +44,7 @@ use Modules\Warehouse\Models\Warehouse;
  * @property string $preview_image_source
  * @property Carbon $created_at
  * @property Carbon $published_at
+ * @property Warehouse $warehouse
  * @property ProductStatusEnum $status
  * @property bool|null $with_attribute_combinations
  * @method ProductBuilder wherePublished

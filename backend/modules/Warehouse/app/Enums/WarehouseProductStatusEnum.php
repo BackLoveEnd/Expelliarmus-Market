@@ -17,6 +17,15 @@ enum WarehouseProductStatusEnum: int
         return $this === $status;
     }
 
+    public function isIn(array $statuses): bool
+    {
+        if (in_array($this, $statuses, true)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function toString(): string
     {
         return match ($this) {

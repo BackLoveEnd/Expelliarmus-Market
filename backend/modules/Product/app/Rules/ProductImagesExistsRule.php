@@ -14,20 +14,22 @@ class ProductImagesExistsRule implements ValidationRule
 {
     public function __construct(
         private int $productId,
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         Log::info('r', $value);
-        $images = collect($value)->filter(fn(array $image) => $image['id'] && $image['id'] !== null)
+        $images = collect($value)
+            ->filter(fn(array $image) => $image['id'] && $image['id'] !== null)
             ->pluck('id');
 
-        $images->each(function ($value) use($fail) {
+        foreach ($images as $image) {
             if (! Str::isUuid($value)) {
                 $fail('Invalid image id');
+
+                return;
             }
-        });
+        }
 
         $productImages = Product::query()
             ->where('id', $this->productId)

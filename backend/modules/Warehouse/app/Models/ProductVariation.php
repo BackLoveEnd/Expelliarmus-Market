@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Database\Factories\ProductVariationFactory;
 
 /**
@@ -24,7 +25,7 @@ use Modules\Warehouse\Database\Factories\ProductVariationFactory;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class ProductVariation extends Model implements DiscountRelationInterface
+class ProductVariation extends Model implements DiscountRelationInterface, VariationInterface
 {
     use HasFactory;
     use Slugger;

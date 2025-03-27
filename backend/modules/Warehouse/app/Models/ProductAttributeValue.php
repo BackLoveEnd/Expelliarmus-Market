@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Database\Factories\SingleAttributeFactory;
 
-class ProductAttributeValue extends Model implements DiscountRelationInterface
+class ProductAttributeValue extends Model implements DiscountRelationInterface, VariationInterface
 {
     use HasFactory;
 

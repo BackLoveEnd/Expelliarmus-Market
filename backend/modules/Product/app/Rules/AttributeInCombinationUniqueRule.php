@@ -15,6 +15,8 @@ class AttributeInCombinationUniqueRule implements ValidationRule
 
         if ($withoutIdAttr->uniqueStrict('id')->count() !== $withoutIdAttr->count()) {
             $fail("Attributes in each combination must be unique.");
+
+            return;
         }
 
         $attributes = $collection->map(fn($item) => mb_strtolower($item['name']));

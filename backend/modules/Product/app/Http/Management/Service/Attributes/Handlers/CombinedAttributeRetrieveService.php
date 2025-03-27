@@ -9,6 +9,7 @@ use Illuminate\Support\Collection as BaseCollection;
 use Modules\Product\Http\Management\Service\Attributes\Interfaces\ProductAttributeRetrieveInterface as RetrieveInterface;
 use Modules\Product\Http\Management\Service\Attributes\Interfaces\ProductAttributesRetrieveFormatterInterface as FormatterInterface;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Models\ProductAttribute;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
@@ -25,6 +26,25 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
         return $product->combinedAttributes()->with([
             'productAttributes' => fn($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
+    }
+
+    public function loadAttributesById(Product $product, int $variationId): VariationInterface
+    {
+        if (! empty($this->attributeCols)) {
+            return $product
+                ->combinedAttributes()
+                ->with([
+                    'productAttributes' => fn($query)
+                        => $query->select([...$this->attributeCols, 'type']),
+                ])
+                ->where('id', $variationId)
+                ->first($this->variationCols);
+        }
+
+        return $product
+            ->combinedAttributes()
+            ->where('id', $variationId)
+            ->first($this->variationCols);
     }
 
     public function getAttributesForProductCollection(Collection $products): Collection
