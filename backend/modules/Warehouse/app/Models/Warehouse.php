@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Builders\WarehouseBuilder;
 use Modules\Warehouse\Database\Factories\WarehouseFactory;
 use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 
@@ -70,6 +71,11 @@ class Warehouse extends Model
                 $warehouse->arrived_at = Carbon::now();
             }
         });
+    }
+    
+    public function newEloquentBuilder($query): WarehouseBuilder
+    {
+        return new WarehouseBuilder($query);
     }
 
     protected static function newFactory(): WarehouseFactory
