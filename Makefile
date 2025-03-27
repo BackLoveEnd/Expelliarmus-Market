@@ -1,5 +1,13 @@
 .DEFAULT_GOAL := help
 
+first-start-app: ## First application init
+	docker compose up -d --build
+	docker exec php composer install
+	docker exec npm npm install
+	docker exec php php artisan migrate:fresh --seed --storage-clean
+	docker exec php php artisan storage:link
+	docker exec -it npm npm run dev
+
 build: ## Build and run application
 	docker compose up -d --build
 

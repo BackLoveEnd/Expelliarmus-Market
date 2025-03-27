@@ -2,6 +2,7 @@
 
 namespace Modules\Warehouse\Jobs;
 
+use App\Services\Cache\CacheService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -44,19 +45,26 @@ class WarehouseDefaultProductAvailability implements ShouldQueue
 
                     $productsIds = $productsIds->implode(',');
 
-                    DB::update(
+                    $updatedProducts = DB::select(
                         "
-                       UPDATE warehouses w
-                       SET status = CASE 
-                            WHEN w.total_quantity > 0 
-                                THEN ".WarehouseProductStatusEnum::IN_STOCK->value."
-                            WHEN w.total_quantity <= 0 
-                                THEN ".WarehouseProductStatusEnum::NOT_AVAILABLE->value."
-                            ELSE w.status
-                       END 
-                       WHERE w.product_id IN (".$productsIds.") 
-                    ",
+                            UPDATE warehouses w
+                            SET status = CASE 
+                                WHEN w.total_quantity > 0 
+                                    THEN ".WarehouseProductStatusEnum::IN_STOCK->value."
+                                WHEN w.total_quantity <= 0 
+                                    THEN ".WarehouseProductStatusEnum::NOT_AVAILABLE->value."
+                                ELSE w.status
+                            END
+                            WHERE w.product_id IN ($productsIds)
+                            RETURNING w.product_id
+                        ",
                     );
+
+                    $configKey = config('product.cache.product-public');
+
+                    collect($updatedProducts)->each(function (int $productId) use ($configKey) {
+                        CacheService::forgetKey($configKey, $productId);
+                    });
                 });
         });
     }
