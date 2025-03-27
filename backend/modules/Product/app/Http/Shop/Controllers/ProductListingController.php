@@ -6,12 +6,14 @@ namespace Modules\Product\Http\Shop\Controllers;
 
 use App\Services\Cache\CacheService;
 use Illuminate\Http\JsonResponse;
+use Modules\Category\Models\Category;
 use Modules\Product\Http\Shop\Actions\GetExploredProductsAction;
+use Modules\Product\Http\Shop\Actions\GetRelatedToProductProductsAction;
 use Modules\Product\Http\Shop\Exceptions\FailedToLoadExploreProductsException;
 use Modules\Product\Http\Shop\Resources\ExploredProductsResource;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
-class HomePageProductsController
+class ProductListingController
 {
     public function __construct(private CacheService $cacheService) {}
 
@@ -38,4 +40,6 @@ class HomePageProductsController
 
         return ExploredProductsResource::collection($products);
     }
+
+    public function relatedToProduct(Category $category, GetRelatedToProductProductsAction $action) {}
 }
