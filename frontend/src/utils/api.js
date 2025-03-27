@@ -28,6 +28,11 @@ export default function api() {
             return response;
         },
         function (error) {
+            if (error.response?.status >= 500 && error.response?.status <= 599) {
+                window.location.href = '/500';
+                return Promise.reject(error);
+            }
+
             if (error.request?.status === 403) {
             }
 

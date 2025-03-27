@@ -1,5 +1,5 @@
 <template>
-  <span class="font-semibold text-3xl">{{ title }}</span>
+  <span class="font-semibold text-3xl max-w-lg">{{ title }}</span>
   <span class="text-xs">Article: {{ article }}</span>
   <div class="flex gap-x-4 items-center">
     <star-rating :rating="0" :review-number="0"></star-rating>

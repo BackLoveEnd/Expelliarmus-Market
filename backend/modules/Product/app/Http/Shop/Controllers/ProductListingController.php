@@ -10,6 +10,7 @@ use Modules\Category\Models\Category;
 use Modules\Product\Http\Shop\Actions\GetExploredProductsAction;
 use Modules\Product\Http\Shop\Actions\GetRelatedToProductProductsAction as RelatedProductsAction;
 use Modules\Product\Http\Shop\Exceptions\FailedToLoadExploreProductsException;
+use Modules\Product\Http\Shop\Exceptions\FailedToLoadRelatedProductsException;
 use Modules\Product\Http\Shop\Resources\ExploredProductsResource;
 use Modules\Product\Http\Shop\Resources\ProductsShopCardResource;
 use TiMacDonald\JsonApi\JsonApiResourceCollection as JsonApiResource;
@@ -42,6 +43,16 @@ class ProductListingController
         return ExploredProductsResource::collection($products);
     }
 
+    /**
+     * Retrieve related products for product by category.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Category  $category
+     * @param  RelatedProductsAction  $action
+     * @return JsonApiResource|JsonResponse
+     * @throws FailedToLoadRelatedProductsException
+     */
     public function relatedToProduct(Category $category, RelatedProductsAction $action): JsonApiResource|JsonResponse
     {
         $products = $this->cacheService->repo()->remember(

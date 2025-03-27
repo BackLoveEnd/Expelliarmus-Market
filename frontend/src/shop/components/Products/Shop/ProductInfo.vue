@@ -5,7 +5,7 @@ import PurchaseButton from "@/components/Product/Main/PurchaseButton.vue";
 import Description from "@/components/Product/Main/Description.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
-import {computed, reactive, ref} from "vue";
+import {computed, onBeforeUnmount, reactive, ref, watch} from "vue";
 import {ProductsShopService} from "@/services/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
@@ -59,6 +59,8 @@ const price = ref(0);
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
 
+const emit = defineEmits(["product-data"]);
+
 function toggleCartModal() {
   isCartModalOpen.value = !isCartModalOpen.value;
 }
@@ -89,13 +91,30 @@ async function getProduct() {
           {name: productInfo.brand?.attributes?.brand_name, url: "#"},
           {name: productInfo.product?.title, url: "#"},
         ]);
+
+        emit("product-data", {
+          product: productInfo?.product,
+          category: productInfo?.category?.attributes,
+          brand: productInfo?.brand?.attributes
+        });
       })
       .catch((e) => {
 
       });
 }
 
+watch(
+    () => [props.productId, props.productSlug],
+    async ([newProductId, newProductSlug], [oldProductId, oldProductSlug]) => {
+      if (newProductId !== oldProductId || newProductSlug !== oldProductSlug) {
+        await getProduct();
+      }
+    },
+);
+
 await getProduct();
+
+onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
 </script>
 
 <template>
