@@ -2,6 +2,7 @@
 
 namespace Modules\Warehouse\Jobs;
 
+use App\Services\Cache\CacheService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,7 +44,7 @@ class WarehouseCombinedProductAvailability implements ShouldQueue
 
                     $productsIds = $productsIds->implode(',');
 
-                    DB::update(
+                    $productUpdatedIds = DB::select(
                         "
                         UPDATE warehouses AS w
                         SET status = CASE
@@ -65,8 +66,15 @@ class WarehouseCombinedProductAvailability implements ShouldQueue
                         ) as pv
                         WHERE pv.product_id = w.product_id
                             AND w.product_id IN (".$productsIds.")
+                        RETURNING w.product_id
                     ",
                     );
+
+                    $configKey = config('product.cache.product-public');
+
+                    collect($productUpdatedIds)->each(function (int $productId) use ($configKey) {
+                        CacheService::forgetKey($configKey, $productId);
+                    });
                 });
         });
     }
