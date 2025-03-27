@@ -19,6 +19,10 @@ class WarehouseProductsTableResource extends JsonApiResource
                 'name' => $this->status->toString(),
                 'colorType' => $this->status->toColorType(),
             ],
+            'warehouse_status' => [
+                'name' => $this->warehouse->status->toString(),
+                'colorType' => $this->warehouse->status->toColorType(),
+            ],
             'totalQuantity' => $this->warehouse->total_quantity,
             'arrived_at' => $this->warehouse->arrived_at.' '.Carbon::now()->timezone,
         ];

@@ -21,7 +21,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
     public function getAttributes(Product $product): Collection
     {
         return $product->singleAttributes()->with([
-            'attribute' => fn($query) => $query->select(...$this->attributeCols),
+            'attribute' => fn($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
     }
 
@@ -34,39 +34,57 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         if (! empty($this->attributeCols)) {
             $relations['singleAttributes.attribute'] = fn($query)
                 => $query->select(
-                [...$this->attributeCols, 'attribute_id'],
+                [...$this->attributeCols, 'attribute_id', 'type'],
             );
         }
 
-        return $products->load($relations);
+        return $products->loadMissing($relations);
     }
 
     public function formatPreviewAttributes(Collection $attributes): BaseCollection
     {
         return $attributes
-            ->map(fn(ProductAttributeValue $attributeValue)
-                => [
-                'name' => $attributeValue->attribute->name,
-                'type' => [
-                    'id' => $attributeValue->attribute->type,
-                    'name' => $attributeValue->attribute->type->toTypes(),
-                ],
-                'attribute_view_type' => $attributeValue->attribute->view_type->toTypes(),
-                'value' => $attributeValue->value,
-                'price' => $attributeValue->price,
-            ])
+            ->map(function (ProductAttributeValue $attributeValue) {
+                $attributes = [
+                    'name' => $attributeValue->attribute->name,
+                    'value' => $attributeValue->value,
+                    'price' => $attributeValue->price,
+                ];
+
+                if ($attributeValue->attribute->type) {
+                    $attributes['type'] = [
+                        'id' => $attributeValue->attribute->type,
+                        'name' => $attributeValue->attribute->type->toTypes(),
+                    ];
+                }
+
+                if ($attributeValue->attribute->view_type) {
+                    $attributes['attribute_view_type'] = $attributeValue->attribute->view_type->toTypes();
+                }
+
+                return $attributes;
+            })
             ->groupBy('name')
-            ->map(fn($items)
-                => [
-                'name' => $items->first()['name'],
-                'type' => $items->first()['type'],
-                'attribute_view_type' => $items->first()['attribute_view_type'],
-                'data' => $items->map(fn($item)
-                    => [
-                    'value' => $item['value'],
-                    'price' => $item['price'],
-                ])->toArray(),
-            ])
+            ->map(function ($items) {
+                $attributes = [
+                    'name' => $items->first()['name'],
+                    'data' => $items->map(fn($item)
+                        => [
+                        'value' => $item['value'],
+                        'price' => $item['price'],
+                    ])->toArray(),
+                ];
+
+                if (array_key_exists('attribute_view_type', $items->first())) {
+                    $attributes['attribute_view_type'] = $items->first()['attribute_view_type'];
+                }
+
+                if (array_key_exists('type', $items->first())) {
+                    $attributes['type'] = $items->first()['type'];
+                }
+
+                return $attributes;
+            })
             ->collapse();
     }
 

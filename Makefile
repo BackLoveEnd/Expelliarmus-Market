@@ -1,13 +1,18 @@
-build:
+.DEFAULT_GOAL := help
+
+build: ## Build and run application
 	docker compose up -d --build
 
-start:
+start: ## Run application
 	docker compose up -d
 
-front-dev:
+stop-remove: ## Stop and clear docker
+	docker compose down -v
+
+front-dev: ## Frontend Dev Server
 	docker exec -it npm npm run dev
 
-full-rebuild:
+full-rebuild: ## Full re-install application
 	docker compose down -v
 	docker compose up -d --build
 	docker exec php composer install
@@ -16,5 +21,19 @@ full-rebuild:
 	docker exec php php artisan storage:unlink
 	docker exec php php artisan storage:link
 
-migrate-seed:
+migrate-seed: ## Run seeders
 	docker exec php php artisan migrate:fresh --seed --storage-clean
+
+frontend-dependencies-install: ## Install frontend dependencies
+	docker exec npm npm install
+
+backend-dependencies-install: ## Install backend dependencies
+	docker exec php composer install
+
+backend-cache-clean: ## Clean backend application cache
+	docker exec php php artisan cache:clean
+
+.PHONY: help
+help:
+	@echo "Available commands:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

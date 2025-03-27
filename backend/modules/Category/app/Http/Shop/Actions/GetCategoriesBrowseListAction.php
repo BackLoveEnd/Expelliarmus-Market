@@ -10,11 +10,12 @@ use Modules\Category\Models\Category;
 class GetCategoriesBrowseListAction
 {
 
-    public function handle(): Collection
+    public function handle(int $limit): Collection
     {
         return Category::query()
             ->whereIsRoot()
             ->whereNotNull('icon_url')
+            ->when($limit, fn($query) => $query->limit($limit))
             ->get([
                 'id',
                 'name',

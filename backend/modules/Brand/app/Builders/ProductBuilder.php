@@ -21,6 +21,21 @@ class ProductBuilder extends Builder
         return $this->where('status', ProductStatusEnum::NOT_PUBLISHED->value);
     }
 
+    public function whereWithoutVariations(): ProductBuilder
+    {
+        return $this->whereNull('with_attribute_combinations');
+    }
+
+    public function whereSingleVariation(): ProductBuilder
+    {
+        return $this->where('with_attribute_combinations', false);
+    }
+
+    public function whereCombinedVariation(): ProductBuilder
+    {
+        return $this->where('with_attribute_combinations', true);
+    }
+
     public function search(mixed $searchable): ProductBuilder
     {
         return $this

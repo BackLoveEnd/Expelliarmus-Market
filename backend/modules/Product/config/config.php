@@ -8,6 +8,7 @@ return [
         'product-images' => 'product:%s:images',
         'product-preview' => 'product:%s:preview',
         'products-explore' => 'products:explore',
+        'product-public' => 'products:%s:public',
     ],
     'retrieve' => [
         'by_category' => 6,
@@ -15,6 +16,9 @@ return [
         'discounted' => 16,
         'flash-sales' => 5,
         'explore' => 10,
+        'shop' => [
+            'default' => 12,
+        ],
     ],
     'image' => [
         'preview' => [

@@ -1,9 +1,9 @@
 <script setup>
 import SectionTitle from "@/components/Default/SectionTitle.vue";
-import CardSlider from "@/components/Card/CardSlider.vue";
 import CategoryCard from "@/components/Card/CategoryCard.vue";
 import {CategoriesShopService} from "@/services/CategoriesShopService.js";
 import {computed, ref} from "vue";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const categories = ref([]);
 
@@ -14,7 +14,7 @@ const categoriesCollapsed = computed(() => {
 });
 
 async function fetchCategories() {
-  await CategoriesShopService.getCategoriesBrowseList()
+  await CategoriesShopService.getCategoriesBrowseList(7)
       .then((response) => {
         categories.value = response?.data?.data ?? [];
 
@@ -29,21 +29,24 @@ await fetchCategories();
   <div v-if="categoriesCollapsed.length">
     <section-title :title="'Categories'"/>
     <div class="space-y-16">
-      <card-slider
-          :title="'Browse By Category'"
-          :items-to-show="7"
-          :width-between-items="224"
-          additional-classes="gap-8"
-          :items-length="totalItems"
-      >
+      <div class="flex justify-between">
         <category-card
             v-for="(category, index) in categoriesCollapsed"
             :key="index"
             :category-icon="category.icon"
             :category-name="category.name"
-            :link="'/shop/categories/' + category.slug"
+            :category-slug="category.slug"
         />
-      </card-slider>
+      </div>
+      <div class="flex justify-center">
+        <router-link
+            @click.prevent="useScrolling().scrollToTop()"
+            :to="{ name: 'categories-overview' }"
+            class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
+        >
+          Show More
+        </router-link>
+      </div>
       <div class="h-px bg-gray-300 border-0"></div>
     </div>
   </div>

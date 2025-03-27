@@ -57,6 +57,60 @@ final class DiscountedProductsService
         );
     }
 
+    public function loadDiscountForProduct(Product $product): Product
+    {
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->loadMissing('lastDiscount');
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->loadMissing('combinedAttributes.lastDiscount');
+        }
+
+        return $product->loadMissing('singleAttributes.lastDiscount');
+    }
+
+    public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
+    {
+        [$withoutVariationProducts, $withVariationProducts] = $products->partition(
+            fn(Product $product) => is_null($product->hasCombinedAttributes()),
+        );
+
+        $withoutVariationProducts = $withoutVariationProducts->load([
+            'discount' => fn($query)
+                => $query
+                ->where('discounts.status', DiscountStatusEnum::ACTIVE)
+                ->select($columns),
+        ]);
+
+        $withVariationProducts = $this->getLoadedDiscountedVariations($withVariationProducts, $columns);
+
+        return $withoutVariationProducts->merge($withVariationProducts);
+    }
+
+    private function getLoadedDiscountedVariations(Collection $unloadedVariations, array $columns): Collection
+    {
+        [$combinedVariationProducts, $singleVariationProducts] = $unloadedVariations->partition(
+            fn(Product $product) => $product->hasCombinedAttributes(),
+        );
+
+        $singleVariationProducts->loadMissing([
+            'singleAttributes.discount' => fn($query)
+                => $query
+                ->whereStatus(DiscountStatusEnum::ACTIVE)
+                ->select($columns),
+        ]);
+
+        $combinedVariationProducts->loadMissing([
+            'combinedAttributes.discount' => fn($query)
+                => $query
+                ->whereStatus(DiscountStatusEnum::ACTIVE)
+                ->select($columns),
+        ]);
+
+        return $singleVariationProducts->merge($combinedVariationProducts);
+    }
+
     private function uniqueDiscountsByProduct(Collection $discountedProducts): Collection
     {
         return $discountedProducts->unique(function (Discount $discount) {

@@ -81,7 +81,7 @@ export default [
         name: "content-arrivals",
     },
     {
-        path: "/:any(.*)*",
+        path: "/management/:any(.*)*",
         component: NotFound,
         name: "not-found",
     },

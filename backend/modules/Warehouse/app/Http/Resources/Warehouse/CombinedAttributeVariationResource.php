@@ -17,18 +17,23 @@ class CombinedAttributeVariationResource extends JsonApiResource
             'id' => $this->id,
             'sku' => $this->sku,
             'price' => $this->price,
-            'discount' => $this->lastDiscount?->isEmpty() ? null : DiscountBaseResource::make($this->lastDiscount->first()),
+            'discount' => $this->lastDiscount?->isEmpty() ? null : DiscountBaseResource::make(
+                $this->lastDiscount->first(),
+            ),
             'quantity' => $this->quantity,
             'attributes' => $this->productAttributes->map(function (ProductAttribute $attribute) {
                 $attributes = [
                     'id' => $attribute->pivot->attribute_id,
                     'value' => $attribute->pivot->value,
                     'name' => $attribute->name,
-                    'type' => [
+                ];
+
+                if ($attribute->type) {
+                    $attributes['type'] = [
                         'id' => $attribute->type->value,
                         'name' => $attribute->type->toTypes(),
-                    ],
-                ];
+                    ];
+                }
 
                 if ($attribute->view_type) {
                     $attributes['attribute_view_type'] = $attribute->view_type->value;

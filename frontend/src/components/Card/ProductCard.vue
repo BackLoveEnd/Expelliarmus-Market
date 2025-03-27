@@ -1,7 +1,8 @@
 <template>
   <router-link
+      @click.prevent="useScrolling().scrollToTop()"
       class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md p-3 cursor-pointer transition-all duration-200"
-      :to="`/shop/products/${product.slug}`"
+      :to="`/shop/products/${product.id}/${product.slug}`"
   >
     <div class="relative overflow-hidden">
       <img
@@ -10,7 +11,7 @@
           :alt="product.title"
       />
       <button
-          @click="addToWishlist"
+          @click.prevent="addToWishlist"
           :class="{ active: isInWishlist }"
           class="wishlist w-9 h-9 rounded-full flex items-center justify-center absolute top-3 right-3 bg-white"
       >
@@ -30,7 +31,7 @@
         </svg>
       </button>
       <button
-          @click="addToCart"
+          @click.prevent="addToCart"
           :class="{ 'bg-[#db4444]': isInCart, 'bg-black': !isInCart }"
           class="absolute bottom-0 left-0 w-full text-center py-2 text-white opacity-0 translate-y-full transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
       >
@@ -47,35 +48,22 @@
 
 <script setup>
 import StarRating from "@/components/Card/StarRating.vue";
-import {computed, inject, onUnmounted, ref} from "vue";
+import {computed} from "vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
+import {useAddToCart} from "@/composables/useAddToCart.js";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const props = defineProps({
   product: Object
 });
 
-const isInCart = ref(false);
+const {isInWishlist, addToWishlist} = useAddToWishlist();
 
-const emitter = inject("emitter");
-
-const {isInWishlist, addToWishlist} = useAddToWishlist(emitter);
-
-function addToCart() {
-  isInCart.value = !isInCart.value;
-
-  isInCart.value
-      ? emitter.emit("add-to-cart")
-      : emitter.emit("remove-from-cart");
-}
+const {isInCart, addToCart} = useAddToCart();
 
 const truncatedTitle = computed(() => {
   const title = props.product?.title || "";
   return title.length > 25 ? title.substring(0, 25) + "..." : title;
-});
-
-onUnmounted(() => {
-  emitter.off("add-to-cart");
-  emitter.off("remove-from-cart");
 });
 </script>
 

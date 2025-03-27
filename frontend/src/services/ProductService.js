@@ -7,7 +7,7 @@ export const ProductService = {
     async getProductPreview(id, slug) {
         return await api()
             .get(
-                `/management/products/${id}/${slug}?include=brand,category,specifications,variations`,
+                `/management/products/${id}/${slug}`,
             )
             .then((response) => {
                 const productAttr = response.data.data.attributes;
@@ -73,7 +73,7 @@ export const ProductService = {
     },
 
     async getProductsForEachRootCategory() {
-        return await api().get("/management/categories/products?include=products");
+        return await api().get(`/management/categories/products?include=products`);
     },
 
     async getAttributesForCategory(categoryId) {

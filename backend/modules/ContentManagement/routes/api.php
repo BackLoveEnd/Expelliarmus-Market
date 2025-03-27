@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\ContentManagement\Http\Controllers\NewArrivals\NewArrivalsContentController;
 use Modules\ContentManagement\Http\Controllers\Slider\SliderContentController;
 
-Route::prefix('management/content')->group(function () {
+Route::prefix('management/content')->withoutMiddleware(['throttle'])->group(function () {
     Route::prefix('slider')->controller(SliderContentController::class)->group(function () {
         Route::get('/', 'getAllSliderContent');
 

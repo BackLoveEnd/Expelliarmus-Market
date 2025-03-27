@@ -6,9 +6,12 @@ namespace Modules\Category\Http\Shop\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Modules\Category\Http\Shop\Actions\GetCategoriesBrowseListAction as BrowseAction;
 use Modules\Category\Http\Shop\Resources\CategoriesBrowseListResource;
-use TiMacDonald\JsonApi\JsonApiResourceCollection;
+use Modules\Category\Http\Shop\Resources\CategoriesChildResource;
+use Modules\Category\Models\Category;
+use TiMacDonald\JsonApi\JsonApiResourceCollection as JsonApiResponse;
 
 class ShopCategoryAccessController extends Controller
 {
@@ -18,19 +21,38 @@ class ShopCategoryAccessController extends Controller
      *
      * Usage place - Shop.
      *
-     * @param  \Modules\Category\Http\Shop\Actions\GetCategoriesBrowseListAction  $action
+     * @param  Request  $request
+     * @param  BrowseAction  $action
      *
-     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Illuminate\Http\JsonResponse
+     * @return JsonApiResponse|JsonResponse
      */
-    public function getCategoriesBrowseList(BrowseAction $action): JsonApiResourceCollection|JsonResponse
+    public function getCategoriesBrowseList(Request $request, BrowseAction $action): JsonApiResponse|JsonResponse
     {
-        $categories = $action->handle();
+        $categories = $action->handle((int)$request->query('limit'));
 
         if ($categories->isEmpty()) {
             return response()->json(['message' => 'Categories not found.'], 404);
         }
 
-        return CategoriesBrowseListResource::collection($action->handle());
+        return CategoriesBrowseListResource::collection($categories);
     }
 
+    /**
+     * Retrieve children of category.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Category  $category
+     * @return JsonApiResponse|JsonResponse
+     */
+    public function getChildrenOfCategory(Category $category): JsonApiResponse|JsonResponse
+    {
+        $children = $category->children->load(['parent:id,name,slug', 'children:id,parent_id']);
+
+        if ($children->isEmpty()) {
+            return response()->json(['message' => 'Children for requested category not found.'], 404);
+        }
+
+        return CategoriesChildResource::collection($children);
+    }
 }

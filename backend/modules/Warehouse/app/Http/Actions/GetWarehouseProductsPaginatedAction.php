@@ -9,6 +9,7 @@ use Illuminate\Database\QueryException;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Filters\ProductInStockFilter;
 use Modules\Warehouse\Filters\StatusFilter;
+use Modules\Warehouse\Filters\WarehouseStatusFilter;
 use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Sorts\ArrivedAtSort;
 use Modules\Warehouse\Sorts\TotalQuantitySort;
@@ -26,6 +27,7 @@ class GetWarehouseProductsPaginatedAction
                 ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->allowedFilters([
                     AllowedFilter::custom('status', new StatusFilter()),
+                    AllowedFilter::custom('warehouse_status', new WarehouseStatusFilter()),
                     AllowedFilter::custom('in_stock', new ProductInStockFilter()),
                     AllowedFilter::trashed(),
                 ])

@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Database\Factories\WarehouseFactory;
+use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 
 /**
  * @property int $id
  * @property int $product_id
  * @property int $total_quantity
  * @property float $default_price
+ * @property WarehouseProductStatusEnum $status
  * @property Carbon $arrived_at
  * @property Carbon $published_at
  */
@@ -30,6 +32,7 @@ class Warehouse extends Model
         'product_id',
         'total_quantity',
         'default_price',
+        'status',
     ];
 
     protected function casts(): array
@@ -37,6 +40,7 @@ class Warehouse extends Model
         return [
             'arrived_at' => 'datetime',
             'published_at' => 'datetime',
+            'status' => WarehouseProductStatusEnum::class,
         ];
     }
 
@@ -48,8 +52,13 @@ class Warehouse extends Model
     public function defaultPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
+    }
+
+    public function totalQuantity(): Attribute
+    {
+        return Attribute::set(fn($value) => max($value, 0));
     }
 
     protected static function boot(): void
