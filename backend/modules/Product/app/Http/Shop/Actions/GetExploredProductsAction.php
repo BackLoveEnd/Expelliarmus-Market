@@ -40,7 +40,7 @@ class GetExploredProductsAction
                 products: $this->getWarehouseInfo($products),
             );
         } catch (Throwable $e) {
-            throw new FailedToLoadExploreProductsException();
+            throw new FailedToLoadExploreProductsException($e->getMessage());
         }
     }
 
