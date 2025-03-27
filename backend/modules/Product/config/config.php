@@ -9,6 +9,7 @@ return [
         'product-preview' => 'product:%s:preview',
         'products-explore' => 'products:explore',
         'product-public' => 'products:%s:public',
+        'product-related-by-category' => 'products:categories:%s:related',
     ],
     'retrieve' => [
         'by_category' => 6,

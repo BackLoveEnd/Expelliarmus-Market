@@ -4,6 +4,7 @@ use Laravel\Sanctum\Sanctum;
 
 return [
 
+    'prefix' => 'api/sanctum',
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains
@@ -22,9 +23,9 @@ return [
             sprintf(
                 '%s%s',
                 'expelliarmus.com:8000',
-                Sanctum::currentApplicationUrlWithPort()
-            )
-        )
+                Sanctum::currentApplicationUrlWithPort(),
+            ),
+        ),
     ),
 
     /*
