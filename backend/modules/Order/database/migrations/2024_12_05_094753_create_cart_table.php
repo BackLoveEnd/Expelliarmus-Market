@@ -12,8 +12,13 @@ return new class extends Migration {
     {
         Schema::create('cart', function (Blueprint $table) {
             $table->uuid('cart_id')->unique();
-            $table->morphs('userable');
-            $table->foreignId('product_id')->constrained()->nullOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
+            $table->decimal('price_per_unit')->nullable();
+            $table->decimal('final_price')->nullable();
+            $table->json('discount');
+            $table->json('variation');
         });
     }
 

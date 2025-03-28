@@ -5,8 +5,8 @@ namespace Modules\User\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Order\Models\Cart;
@@ -66,9 +66,9 @@ class User extends Authenticatable implements UserInterface
         return $this->morphMany(Order::class, 'userable');
     }
 
-    public function cart(): MorphOne
+    public function cart(): HasOne
     {
-        return $this->morphOne(Cart::class, 'userable');
+        return $this->hasOne(Cart::class);
     }
 
     protected function casts(): array

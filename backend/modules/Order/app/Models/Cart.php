@@ -4,7 +4,8 @@ namespace Modules\Order\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\User\Models\User;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -15,13 +16,30 @@ class Cart extends Model
 {
     use HasFactory;
 
+    protected $table = 'cart';
+
+    public $incrementing = false;
+
     protected $fillable = [
-        'product_id'
+        'product_id',
+        'quantity',
+        'price_per_unit',
+        'final_price',
+        'discount',
+        'variation',
     ];
 
-    public function userable(): MorphTo
+    public function user(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(User::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'discount' => 'array',
+            'variation' => 'array',
+        ];
     }
 
     protected static function boot(): void

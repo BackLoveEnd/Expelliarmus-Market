@@ -8,5 +8,7 @@ Route::prefix('shop/user/cart')->group(function () {
         Route::get('/', 'getClientCart')->withoutMiddleware('throttle');
 
         Route::post('/', 'addProductToCart');
+
+        Route::delete('/', 'clearCart');
     });
 });

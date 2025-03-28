@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Modules\Order\Cart\Services;
 
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\DB;
 use Modules\Order\Cart\Dto\ProductCartDto;
+use Modules\Order\Cart\Dto\UserCartInfoDto;
 use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\Product\Models\Product;
-use Modules\User\Contracts\UserInterface;
+use Modules\User\Models\User;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\ProductVariation;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
@@ -26,19 +28,66 @@ class ClientCartService
         protected DiscountedProductsService $discountService,
     ) {}
 
-    public function getCart(?UserInterface $user) {}
-
-    public function addToCart(?UserInterface $user, ProductCartDto $dto)
+    public function getCart(?User $user): array
     {
-        $product = $dto->product;
+        if ($this->session->has('user.cart')) {
+            return $this->session->get('user.cart');
+        }
 
-        $this->ensureProductCanBeAddedToCart($product);
+        if ($user) {
+            $cart = $user->cart()->toBase()->get();
 
-        if (is_null($product->hasCombinedAttributes())) {
+            if ($cart->isNotEmpty()) {
+                $this->session->put('user.cart', $cart->toArray());
+            }
+        }
+
+        return $this->session->get('user.cart', []);
+    }
+
+    /**
+     * @param  User|null  $user
+     * @param  ProductCartDto  $dto
+     * @return void
+     * @throws ProductCannotBeAddedToCartException
+     */
+    public function addToCart(?User $user, ProductCartDto $dto): void
+    {
+        $this->ensureProductCanBeAddedToCart($dto->product);
+
+        if (is_null($dto->product->hasCombinedAttributes())) {
             $cartInfo = $this->prepareCartInfoForNonVariationProduct($dto);
+
+            $this->saveCartForUser($user, $cartInfo);
+
+            return;
         }
 
         $cartInfo = $this->prepareCartInfoForProductWithVariations($dto);
+
+        $this->saveCartForUser($user, $cartInfo);
+    }
+
+    public function removeFromCart(Product $product) {}
+
+    public function clearCart(?User $user): void
+    {
+        $user?->cart()->delete();
+
+        $this->session->forget('user.cart');
+    }
+
+    public function isCartEmpty(?User $user): bool
+    {
+        if ($user) {
+            if ($user->cart()->exists()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return ! $this->session->has('user.cart');
     }
 
     protected function ensureProductCanBeAddedToCart(Product $product): void
@@ -57,7 +106,44 @@ class ClientCartService
         return round($price * $quantity, 2);
     }
 
-    private function prepareCartInfoForProductWithVariations(ProductCartDto $dto)
+    protected function saveCartForUser(?User $user, UserCartInfoDto $cart): void
+    {
+        if (! $user) {
+            $this->session->push('user.cart', $cart->toBase());
+
+            return;
+        }
+
+        DB::transaction(function () use ($user, $cart) {
+            $user->cart()->create($cart->toArray());
+
+            $this->session->push('user.cart', $cart->toBase());
+        });
+    }
+
+    protected function loadDiscountIfExists(Product $product, int $requestedQuantity): ?array
+    {
+        $product = $this->discountService->loadLastActiveDiscountForProduct($product);
+
+        if ($this->discountService->productHasActiveDiscount($product)) {
+            $cartInfo['discount'] = [
+                'id' => $product->lastActiveDiscount->id,
+                'percentage' => $product->lastActiveDiscount->percentage,
+                'new_price' => $product->lastActiveDiscount->discount_price,
+                'final_price' => $this->countFinalPrice(
+                    $product->lastActiveDiscount->discount_price,
+                    $requestedQuantity,
+                ),
+                'end_date' => $product->lastActiveDiscount->end_date,
+            ];
+
+            return $cartInfo;
+        }
+
+        return null;
+    }
+
+    private function prepareCartInfoForProductWithVariations(ProductCartDto $dto): UserCartInfoDto
     {
         if ($dto->variationId === null) {
             throw new RuntimeException("Variation id must be set. ".__CLASS__);
@@ -76,16 +162,14 @@ class ClientCartService
             throw new ProductCannotBeAddedToCartException();
         }
 
-        $product = $this->discountService->loadLastActiveDiscountForProduct($product);
-
         $currentVariation = $product->getCurrentVariationRelation();
 
-        $cartInfo = [
+        return UserCartInfoDto::fromArray([
             'product_id' => $dto->product->id,
             'quantity' => $dto->quantity,
-            'warehouse' => $currentVariation?->price,
+            'price_per_unit' => $currentVariation?->price,
             'final_price' => $this->countFinalPrice($currentVariation?->price, $dto->quantity),
-            'discount' => null,
+            'discount' => $this->loadDiscountIfExists($product, $dto->quantity),
             'variation' => [
                 'id' => $dto->variationId,
                 'data' => $currentVariation instanceof ProductVariation
@@ -103,46 +187,22 @@ class ClientCartService
                         ],
                     ],
             ],
-        ];
-
-        if ($this->discountService->productHasActiveDiscount($product)) {
-            $cartInfo['discount'] = [
-                'id' => $product->lastActiveDiscount->id,
-                'percentage' => $product->lastActiveDiscount->percentage,
-                'new_price' => $product->lastActiveDiscount->discount_price,
-                'end_date' => $product->lastActiveDiscount->end_date,
-            ];
-        }
-
-        return $cartInfo;
+        ]);
     }
 
-    private function prepareCartInfoForNonVariationProduct(ProductCartDto $dto): array
+    private function prepareCartInfoForNonVariationProduct(ProductCartDto $dto): UserCartInfoDto
     {
         if (! $this->stockService->hasEnoughSuppliesForRequestedQuantity($dto->product, $dto->quantity)) {
             throw new ProductCannotBeAddedToCartException();
         }
 
-        $product = $this->discountService->loadLastActiveDiscountForProduct($dto->product);
-
-        $cartInfo = [
+        return UserCartInfoDto::fromArray([
             'product_id' => $dto->product->id,
             'quantity' => $dto->quantity,
-            'warehouse' => $product->warehouse->default_price,
+            'price_per_unit' => $dto->product->warehouse->default_price,
             'variation' => null,
-            'final_price' => $this->countFinalPrice($product->warehouse->defaultPrice, $dto->quantity),
-            'discount' => null,
-        ];
-
-        if ($this->discountService->productHasActiveDiscount($product)) {
-            $cartInfo['discount'] = [
-                'id' => $product->lastActiveDiscount->id,
-                'percentage' => $product->lastActiveDiscount->percentage,
-                'new_price' => $product->lastActiveDiscount->discount_price,
-                'end_date' => $product->lastActiveDiscount->end_date,
-            ];
-        }
-
-        return $cartInfo;
+            'final_price' => $this->countFinalPrice($dto->product->warehouse->default_price, $dto->quantity),
+            'discount' => $this->loadDiscountIfExists($dto->product, $dto->quantity),
+        ]);
     }
 }
