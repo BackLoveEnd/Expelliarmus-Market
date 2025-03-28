@@ -12,7 +12,6 @@ use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Order\Cart\Http\Requests\AddToCartRequest;
 use Modules\Order\Cart\Http\Resources\UserCartResource;
 use Modules\Order\Cart\Services\ClientCartService;
-use Modules\Product\Models\Product;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CartController extends Controller
@@ -59,7 +58,24 @@ class CartController extends Controller
         return response()->json(['message' => 'Product was added to cart.']);
     }
 
-    public function removeFromCart(Product $product) {}
+    /**
+     * Remove concrete product from user cart.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Request  $request
+     * @param  string  $id
+     * @return JsonResponse
+     */
+    public function removeFromCart(Request $request, string $id): JsonResponse
+    {
+        $this->service->removeFromCart(
+            user: $request->user(),
+            id: $id,
+        );
+
+        return response()->json(['message' => 'Done.']);
+    }
 
     /**
      * Clear all cart data.

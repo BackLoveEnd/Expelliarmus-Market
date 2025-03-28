@@ -10,5 +10,7 @@ Route::prefix('shop/user/cart')->group(function () {
         Route::post('/', 'addProductToCart');
 
         Route::delete('/', 'clearCart');
+
+        Route::delete('/{id}', 'removeFromCart');
     });
 });

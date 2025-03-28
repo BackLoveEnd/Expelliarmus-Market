@@ -17,10 +17,13 @@ use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\ProductVariation;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
 class ClientCartService
 {
+    protected string $cartSessionKey = 'user.cart';
+
     public function __construct(
         protected Session $session,
         protected WarehouseProductInfoService $warehouseService,
@@ -30,19 +33,19 @@ class ClientCartService
 
     public function getCart(?User $user): array
     {
-        if ($this->session->has('user.cart')) {
-            return $this->session->get('user.cart');
+        if ($this->session->has($this->cartSessionKey)) {
+            return $this->session->get($this->cartSessionKey);
         }
 
         if ($user) {
             $cart = $user->cart()->toBase()->get();
 
             if ($cart->isNotEmpty()) {
-                $this->session->put('user.cart', $cart->toArray());
+                $this->session->put($this->cartSessionKey, $cart->toArray());
             }
         }
 
-        return $this->session->get('user.cart', []);
+        return $this->session->get($this->cartSessionKey, []);
     }
 
     /**
@@ -68,26 +71,31 @@ class ClientCartService
         $this->saveCartForUser($user, $cartInfo);
     }
 
-    public function removeFromCart(Product $product) {}
+    public function removeFromCart(?User $user, string $id): void
+    {
+        $user?->cart()->delete($id);
+
+        $userCart = $this->session->get($this->cartSessionKey);
+
+        if ($userCart) {
+            $userCart = array_values(array_filter($userCart, static function (object $cartInfo) use ($id) {
+                return $cartInfo->id !== $id;
+            }));
+
+            $this->session->put($this->cartSessionKey, $userCart);
+        }
+    }
 
     public function clearCart(?User $user): void
     {
         $user?->cart()->delete();
 
-        $this->session->forget('user.cart');
+        $this->session->forget($this->cartSessionKey);
     }
 
     public function isCartEmpty(?User $user): bool
     {
-        if ($user) {
-            if ($user->cart()->exists()) {
-                return false;
-            }
-
-            return true;
-        }
-
-        return ! $this->session->has('user.cart');
+        return $user ? ! $user->cart()->exists() : ! $this->session->has($this->cartSessionKey);
     }
 
     protected function ensureProductCanBeAddedToCart(Product $product): void
@@ -109,15 +117,15 @@ class ClientCartService
     protected function saveCartForUser(?User $user, UserCartInfoDto $cart): void
     {
         if (! $user) {
-            $this->session->push('user.cart', $cart->toBase());
+            $this->session->push($this->cartSessionKey, $cart->setId(Uuid::uuid7()->toString())->toBase());
 
             return;
         }
 
         DB::transaction(function () use ($user, $cart) {
-            $user->cart()->create($cart->toArray());
+            $cartDb = $user->cart()->create($cart->toArray());
 
-            $this->session->push('user.cart', $cart->toBase());
+            $this->session->push($this->cartSessionKey, $cart->setId($cartDb->id)->toBase());
         });
     }
 

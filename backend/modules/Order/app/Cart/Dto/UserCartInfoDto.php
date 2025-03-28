@@ -13,6 +13,7 @@ final class UserCartInfoDto
         private float $finalPrice,
         private ?array $discount,
         private ?array $variation,
+        private ?string $id = null,
     ) {}
 
     public static function fromArray(array $data): UserCartInfoDto
@@ -30,6 +31,7 @@ final class UserCartInfoDto
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'product_id' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
             'price_per_unit' => $this->getPricePerUnit(),
@@ -52,6 +54,18 @@ final class UserCartInfoDto
     public function setProductId(int $product_id): void
     {
         $this->product_id = $product_id;
+    }
+
+    public function setId(string $id): UserCartInfoDto
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
     }
 
     public function getQuantity(): int

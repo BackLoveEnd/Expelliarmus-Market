@@ -11,7 +11,6 @@ class UserCartResource extends JsonApiResource
 {
     public function toAttributes(Request $request): array
     {
-        dd($this->resource);
         return [
             'product_id' => $this->product_id,
             'quantity' => $this->quantity,
@@ -24,7 +23,7 @@ class UserCartResource extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string)$this->product_id;
+        return $this->id;
     }
 
     public function toType(Request $request): string

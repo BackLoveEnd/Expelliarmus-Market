@@ -5,7 +5,7 @@ namespace Modules\User\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -38,10 +38,6 @@ class User extends Authenticatable implements UserInterface
 
     public $timestamps = false;
 
-    protected $primaryKey = 'user_id';
-
-    public $incrementing = false;
-
     protected $fillable = [
         'first_name',
         'last_name',
@@ -66,9 +62,9 @@ class User extends Authenticatable implements UserInterface
         return $this->morphMany(Order::class, 'userable');
     }
 
-    public function cart(): HasOne
+    public function cart(): HasMany
     {
-        return $this->hasOne(Cart::class);
+        return $this->hasMany(Cart::class);
     }
 
     protected function casts(): array

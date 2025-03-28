@@ -9,7 +9,12 @@ use Modules\User\Models\User;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @property string $cart_id
+ * @property string $id
+ * @property int $quantity
+ * @property float $price_per_unit
+ * @property float $final_price
+ * @property array $variation
+ * @property array $discount
  * @property int $product_id
  */
 class Cart extends Model
@@ -19,6 +24,8 @@ class Cart extends Model
     protected $table = 'cart';
 
     public $incrementing = false;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'product_id',
@@ -47,8 +54,8 @@ class Cart extends Model
         parent::boot();
 
         static::creating(function (Cart $cart) {
-            if ($cart->cart_id === null) {
-                $cart->cart_id = Uuid::uuid7()->toString();
+            if ($cart->id === null) {
+                $cart->id = Uuid::uuid7()->toString();
             }
         });
     }
