@@ -77,6 +77,14 @@ class ProductVariation extends Model implements DiscountRelationInterface, Varia
             ->orderByDesc('discounts.end_date');
     }
 
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
+            ->orderByDesc('discounts.end_date');
+    }
+
     public function variationsAttributesValues(): HasMany
     {
         return $this->hasMany(VariationAttributeValues::class, 'variation_id');

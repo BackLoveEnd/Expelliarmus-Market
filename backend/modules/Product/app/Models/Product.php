@@ -23,6 +23,7 @@ use Modules\Product\Database\Factories\ProductFactory;
 use Modules\Product\Observers\ProductObserver;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
@@ -128,6 +129,14 @@ class Product extends Model implements DiscountRelationInterface
             ->orderByDesc('discounts.end_date');
     }
 
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
+            ->orderByDesc('discounts.end_date');
+    }
+
     public function getDescriptionMarkdown(): string
     {
         return $this->main_description_markdown;
@@ -138,7 +147,7 @@ class Product extends Model implements DiscountRelationInterface
         return $this->main_description_html;
     }
 
-    public function getCurrentVariationRelation(): ?Collection
+    public function getCurrentVariationRelation(): Collection|VariationInterface|null
     {
         if (is_null($this->hasCombinedAttributes())) {
             return null;

@@ -70,6 +70,36 @@ final class DiscountedProductsService
         return $product->loadMissing('singleAttributes.lastDiscount');
     }
 
+    public function loadLastActiveDiscountForProduct(Product $product): Product
+    {
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->loadMissing('lastActiveDiscount');
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->loadMissing('combinedAttributes.lastActiveDiscount');
+        }
+
+        return $product->loadMissing('singleAttributes.lastActiveDiscount');
+    }
+
+    public function productHasActiveDiscount(Product $product): bool
+    {
+        $product = $this->loadLastActiveDiscountForProduct($product);
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->relationLoaded('lastActiveDiscounts')
+                && $product->lastActiveDiscount->isNotEmpty();
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->relationLoaded('combinedAttributes.lastActiveDiscount')
+                && $product->combinedAttributes->lastActiveDiscount->isNotEmpty();
+        }
+
+        return $product->relationLoaded('singleAttributes.lastActiveDiscount')
+            && $product->singleAttributes->lastActiveDiscount->isNotEmpty();
+    }
+
     public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(

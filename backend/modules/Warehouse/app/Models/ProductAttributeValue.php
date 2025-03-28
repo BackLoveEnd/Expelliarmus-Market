@@ -68,6 +68,14 @@ class ProductAttributeValue extends Model implements DiscountRelationInterface, 
             ->orderByDesc('discounts.end_date');
     }
 
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
+            ->orderByDesc('discounts.end_date');
+    }
+
     public function quantity(): Attribute
     {
         return Attribute::set(fn($value) => max($value, 0));

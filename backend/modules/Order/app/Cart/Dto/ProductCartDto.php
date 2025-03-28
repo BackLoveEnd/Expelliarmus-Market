@@ -18,7 +18,14 @@ final readonly class ProductCartDto
     public static function fromRequest(JsonApiFormRequest $request): ProductCartDto
     {
         return new self(
-            product: Product::query()->with('warehouse')->find($request->product_id),
+            product: Product::query()->with('warehouse')->find(
+                $request->product_id,
+                [
+                    'id',
+                    'with_attribute_combinations',
+                    'status',
+                ],
+            ),
             variationId: $request->variation_id,
             quantity: $request->quantity,
         );

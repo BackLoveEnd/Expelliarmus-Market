@@ -72,7 +72,7 @@ class WarehouseSingleProductAvailability implements ShouldQueue
 
                     $configKey = config('product.cache.product-public');
 
-                    collect($updatedProducts)->each(function (object $product) use ($configKey) {
+                    collect($productUpdatedIds)->each(function (object $product) use ($configKey) {
                         CacheService::forgetKey($configKey, $product->product_id);
                     });
                 });
