@@ -23,13 +23,13 @@ class DiscountedProductsController extends Controller
      *
      * @param  Request  $request
      *
-     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Illuminate\Http\JsonResponse
+     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getFlashSales(Request $request): JsonApiResourceCollection|JsonResponse
     {
         $flashSales = $this->service->getFlashSalesPaginated(
-            limit: (int) $request->query('limit', config('product.retrieve.flash-sales')),
-            offset: (int) $request->query('offset', 0),
+            limit: (int)$request->query('limit', config('product.retrieve.flash-sales')),
+            offset: (int)$request->query('offset', 0),
         );
 
         if ($flashSales->items->isEmpty()) {
