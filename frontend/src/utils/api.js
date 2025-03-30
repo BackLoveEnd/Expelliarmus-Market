@@ -1,5 +1,8 @@
 import axios from "axios";
 import {useAuthStore} from "@/stores/useAuthStore.js";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 export default function api() {
     const api = axios.create({
@@ -29,7 +32,7 @@ export default function api() {
         },
         function (error) {
             if (error.response?.status >= 500 && error.response?.status <= 599) {
-                window.location.href = '/500';
+                router.push({path: '/500', state: {redirected: true}});
                 return Promise.reject(error);
             }
 

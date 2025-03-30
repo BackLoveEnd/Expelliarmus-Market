@@ -5,10 +5,25 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 onMounted(() => {
-  if (router.currentRoute.value.fullPath === '/500') {
+  if (!history.state.redirected) {
+    router.push('/');
+  }
+
+  if (router.currentRoute.value.fullPath === "/500") {
+    let redirectCount = parseInt(sessionStorage.getItem("redirectCount")) || 0;
+
+    if (redirectCount >= 2) {
+      sessionStorage.removeItem("redirectCount");
+      return;
+    }
+
+    sessionStorage.setItem("redirectCount", redirectCount + 1);
+
     setTimeout(() => {
-      router.push('/');
+      router.push("/");
     }, 4000);
+  } else {
+    sessionStorage.removeItem("redirectCount");
   }
 });
 </script>

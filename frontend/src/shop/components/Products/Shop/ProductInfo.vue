@@ -13,6 +13,7 @@ import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsVi
 import CombinedVariationsViewer from "@/components/Product/Main/CombinedVariationsViewer.vue";
 import {useBreadCrumbStore} from "@/stores/useBreadCrumbStore.js";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   productId: Number | String,
@@ -47,6 +48,8 @@ const productInfo = reactive({
   variations: []
 });
 
+const router = useRouter();
+
 const breadcrumbStore = useBreadCrumbStore();
 
 const {isInWishlist, addToWishlist} = useAddToWishlist();
@@ -58,6 +61,12 @@ const quantity = ref(1);
 const price = ref(0);
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
+
+let selectedVariation = reactive({
+  id: null,
+  price: null,
+  discount: null
+});
 
 const emit = defineEmits(["product-data"]);
 
@@ -73,9 +82,17 @@ const imagesUrls = computed(() => {
   return productInfo.product?.images?.map((image) => image.image_url);
 });
 
-function updatePrice(variation) {
-  price.value = parseFloat(variation.price);
-}
+const handleSingleSelectedVariation = (variation) => {
+  setSelectedVariation(variation);
+
+  price.value = parseFloat(variation.attributes.price);
+};
+
+const handleCombinedSelectedVariation = (variation) => {
+  setSelectedVariation(variation);
+
+  price.value = parseFloat(variation.attributes.price);
+};
 
 async function getProduct() {
   await ProductsShopService.getProduct(props.productId, props.productSlug)
@@ -99,7 +116,9 @@ async function getProduct() {
         });
       })
       .catch((e) => {
-
+        if (e?.status === 404) {
+          router.push({name: "not-found"});
+        }
       });
 }
 
@@ -111,6 +130,12 @@ watch(
       }
     },
 );
+
+function setSelectedVariation(variation) {
+  selectedVariation.price = variation.attributes.price;
+  selectedVariation.id = variation.attributes.id;
+  selectedVariation.discount = variation.discount;
+}
 
 await getProduct();
 
@@ -126,7 +151,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
       <div class="flex justify-between">
         <product-photo-tabs :images="imagesUrls"/>
         <div class="flex flex-col justify-between gap-y-8 items-start min-w-[35%]">
-          <div class="flex flex-col gap-y-4 w-full">
+          <div class="flex flex-col gap-y-4 w-full" v-if="productInfo.product?.id">
             <description
                 :price="priceDependOnQuantity"
                 :price-per-unit="pricePerUnit"
@@ -142,12 +167,13 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
                 v-if="Array.isArray(productInfo?.previewVariations)"
                 :previewed-variations="productInfo?.previewVariations"
                 :variations="productInfo?.variations"
-                @variation-selected="updatePrice"
+                @selected-option="handleCombinedSelectedVariation"
             />
             <single-variations-viewer
                 v-else
                 :previewed-variation="productInfo?.previewVariations"
-                @selected-option="updatePrice"
+                :variations="productInfo?.variations"
+                @selected-option="handleSingleSelectedVariation"
             />
           </div>
           <div class="flex items-center gap-x-8">
@@ -246,7 +272,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
   </section>
   <section class="container mx-auto space-y-8 max-w-screen-2xl">
     <section-title title="Specifications"></section-title>
-    <article class="w-1/2">
+    <article class="w-1/2" v-if="productInfo.product?.specifications">
       <specs
           :grouped="productInfo.product?.specifications?.grouped"
           :separated="productInfo.product?.specifications?.separated"
