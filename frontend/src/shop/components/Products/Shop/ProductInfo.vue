@@ -82,16 +82,35 @@ const imagesUrls = computed(() => {
   return productInfo.product?.images?.map((image) => image.image_url);
 });
 
-const handleSingleSelectedVariation = (variation) => {
+const discountIfAvailable = computed(() => {
+  console.log(productInfo.product.discount);
+  if (productInfo?.product?.discount !== null) {
+    return {
+      old_price: productInfo?.product?.discount.old_price,
+      percentage: productInfo?.product?.discount.percentage,
+      end_at: productInfo?.product?.discount.end_at
+    };
+  }
+
+  if (selectedVariation.discount === null) {
+    return null;
+  }
+
+  return {
+    old_price: selectedVariation.discount.old_price,
+    percentage: selectedVariation.discount.percentage,
+    end_at: selectedVariation.discount.end_at
+  };
+});
+
+const handleSelectedVariation = (variation) => {
   setSelectedVariation(variation);
 
-  price.value = parseFloat(variation.attributes.price);
-};
-
-const handleCombinedSelectedVariation = (variation) => {
-  setSelectedVariation(variation);
-
-  price.value = parseFloat(variation.attributes.price);
+  if (selectedVariation.discount !== null) {
+    price.value = parseFloat(selectedVariation.discount.discount_price);
+  } else {
+    price.value = parseFloat(variation.attributes.price);
+  }
 };
 
 async function getProduct() {
@@ -108,6 +127,10 @@ async function getProduct() {
           {name: productInfo.brand?.attributes?.brand_name, url: "#"},
           {name: productInfo.product?.title, url: "#"},
         ]);
+
+        if (!isNaN(parseFloat(productInfo?.warehouse?.attributes.price))) {
+          price.value = productInfo?.warehouse?.attributes.price;
+        }
 
         emit("product-data", {
           product: productInfo?.product,
@@ -134,7 +157,7 @@ watch(
 function setSelectedVariation(variation) {
   selectedVariation.price = variation.attributes.price;
   selectedVariation.id = variation.attributes.id;
-  selectedVariation.discount = variation.discount;
+  selectedVariation.discount = variation.attributes.discount;
 }
 
 await getProduct();
@@ -155,6 +178,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
             <description
                 :price="priceDependOnQuantity"
                 :price-per-unit="pricePerUnit"
+                :discount="discountIfAvailable"
                 :title="productInfo.product?.title"
                 :title-desc="productInfo.product?.title_description"
                 :article="productInfo.product?.article"
@@ -167,13 +191,13 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
                 v-if="Array.isArray(productInfo?.previewVariations)"
                 :previewed-variations="productInfo?.previewVariations"
                 :variations="productInfo?.variations"
-                @selected-option="handleCombinedSelectedVariation"
+                @selected-option="handleSelectedVariation"
             />
             <single-variations-viewer
                 v-else
                 :previewed-variation="productInfo?.previewVariations"
                 :variations="productInfo?.variations"
-                @selected-option="handleSingleSelectedVariation"
+                @selected-option="handleSelectedVariation"
             />
           </div>
           <div class="flex items-center gap-x-8">
@@ -210,9 +234,9 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
               </button>
             </div>
           </div>
-          <div class="border border-gray-700 rounded-md w-full">
+          <div class="rounded-md w-full flex gap-x-4">
             <div
-                class="flex justify-start items-center border-b border-gray-700 py-4 px-8"
+                class="flex justify-start items-center border border-gray-700 py-4 px-8 rounded-md"
             >
               <div class="flex gap-x-6 items-center">
                 <svg
@@ -235,7 +259,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
                 </div>
               </div>
             </div>
-            <div class="flex justify-start items-center py-4 px-8">
+            <div class="flex justify-start items-center py-4 px-8 border border-gray-700 rounded-md">
               <div class="flex gap-x-6 items-center">
                 <svg
                     width="40"

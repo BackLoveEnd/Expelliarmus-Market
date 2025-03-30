@@ -8,7 +8,21 @@
   </div>
   <div class="space-y-8">
     <div class="flex items-center gap-x-4">
-      <span class="text-2xl font-normal">${{ price }}</span>
+      <div v-if="discount !== null" class="flex flex-col gap-y-2">
+        <div class="flex gap-x-4 items-center">
+          <span class="text-xl font-normal line-through decoration-red-500">${{ discount.old_price }}</span>
+          <span class="text-2xl font-semibold">${{ price }}</span>
+          <span class="text-base font-semibold">Deal <span
+              class="underline decoration-blue-500 underline-offset-2 decoration-2 text-blue-500">-{{
+              discount.percentage
+            }}</span>!</span>
+        </div>
+        <div class="text-sm flex items-center gap-x-2">
+          <i class="pi pi-clock"/>
+          <span>Until {{ new Date(discount.end_at).toLocaleString() }}</span>
+        </div>
+      </div>
+      <span class="text-2xl font-normal" v-else>${{ price }}</span>
       <span v-show="quantityChanged" class="text-sm"
       >Per unit: ${{ pricePerUnit }}</span
       >
@@ -32,6 +46,10 @@ const props = defineProps({
   price: {
     type: String,
     required: true,
+  },
+  discount: {
+    type: Object,
+    default: null
   },
   title: {
     type: String,

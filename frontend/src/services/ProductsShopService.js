@@ -37,6 +37,7 @@ export const ProductsShopService = {
                     title_description: productAttr.title_description,
                     images: productAttr.images,
                     specifications: productAttr.specifications,
+                    discount: productAttr.discount ?? null
                 };
 
                 if (productAttr.discount) {
