@@ -66,6 +66,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         return $attributes
             ->map(function (ProductAttributeValue $attributeValue) {
                 $attributes = [
+                    'id' => $attributeValue->id,
                     'name' => $attributeValue->attribute->name,
                     'value' => $attributeValue->value,
                     'price' => $attributeValue->price,
@@ -90,6 +91,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
                     'name' => $items->first()['name'],
                     'data' => $items->map(fn($item)
                         => [
+                        'id' => $item['id'],
                         'value' => $item['value'],
                         'price' => $item['price'],
                     ])->toArray(),
@@ -113,6 +115,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         return $attributes
             ->map(fn(ProductAttributeValue $attributeValue)
                 => [
+                'id' => $attributeValue->id,
                 'name' => $attributeValue->attribute->name,
                 'value' => $attributeValue->value,
                 'price' => $attributeValue->price,
@@ -123,6 +126,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
                 'name' => $items->first()['name'],
                 'data' => $items->map(fn($item)
                     => [
+                    'id' => $item['id'],
                     'value' => $item['value'],
                     'price' => $item['price'],
                 ])->toArray(),

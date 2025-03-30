@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigInteger('id')->unsigned()->generatedAs('START WITH 100000')->always();
+            $table->unsignedBigInteger('id')->unsigned()->generatedAs('START WITH 100000')->always();
             $table->uuid('user_id')->unique();
             $table->string('first_name');
             $table->string('last_name')->nullable();

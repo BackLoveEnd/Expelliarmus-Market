@@ -69,6 +69,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             ->flatMap(function (ProductVariation $variation) {
                 return $variation->productAttributes->map(function (ProductAttribute $attribute) {
                     $attributes = [
+                        'id' => $attribute->id,
                         'name' => $attribute->name,
                         'value' => $attribute->pivot->value,
                     ];
@@ -88,10 +89,14 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
                 });
             })
             ->groupBy('name')
-            ->map(function ($items) {
+            ->map(function (BaseCollection $items) {
                 $attributes = [
                     'name' => $items[0]['name'],
-                    'value' => $items->pluck('value')->unique()->values(),
+                    'data' => $items->map(fn(array $item)
+                        => [
+                        'id' => $item['id'],
+                        'value' => $item['value'],
+                    ]),
                 ];
 
                 if (array_key_exists('type', $items[0])) {

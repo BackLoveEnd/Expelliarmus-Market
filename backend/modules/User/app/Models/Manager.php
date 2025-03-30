@@ -26,10 +26,6 @@ class Manager extends Model implements UserInterface
     use HasFactory;
     use HasRoles;
 
-    protected $primaryKey = 'manager_id';
-
-    public $incrementing = false;
-
     public $timestamps = false;
 
     protected $fillable = [
