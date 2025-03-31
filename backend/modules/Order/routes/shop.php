@@ -9,6 +9,8 @@ Route::prefix('shop/user/cart')->group(function () {
 
         Route::post('/', 'addProductToCart');
 
+        Route::patch('/', 'updateProductsQuantity');
+
         Route::delete('/', 'clearCart');
 
         Route::delete('/{id}', 'removeFromCart');

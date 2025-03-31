@@ -32,7 +32,7 @@ class WarehouseStockService
 
         if ($product->hasCombinedAttributes()) {
             $this->ensureVariationRelationProvided($product, 'combinedAttributes');
-
+            
             return $product->combinedAttributes->quantity > $requestedQuantity;
         }
 

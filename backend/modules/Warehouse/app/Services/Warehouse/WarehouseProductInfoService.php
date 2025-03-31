@@ -56,7 +56,7 @@ class WarehouseProductInfoService
             fn(Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
-        $withoutVariationProducts = $withoutVariationProducts->load([
+        $withoutVariationProducts = $withoutVariationProducts->loadMissing([
             'warehouse' => fn($query) => $query->select($dto->warehouseCols),
         ]);
 

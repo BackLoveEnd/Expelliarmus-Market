@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Modules\Order\Cart\Services;
 
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Modules\Order\Cart\Dto\CartProductsQuantityDto;
 use Modules\Order\Cart\Dto\ProductCartDto;
 use Modules\Order\Cart\Dto\UserCartInfoDto;
 use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
@@ -69,6 +71,16 @@ class ClientCartService
         $cartInfo = $this->prepareCartInfoForProductWithVariations($dto);
 
         $this->saveCartForUser($user, $cartInfo);
+    }
+
+    public function updateProductsQuantities(?User $user, CartProductsQuantityDto $dto)
+    {
+        $this->ensureCanUpdateProductsQuantity($dto);
+
+        $cartsInSession = $this->getCart($user);
+
+        if ($user) {
+        }
     }
 
     public function removeFromCart(?User $user, string $id): void
@@ -151,6 +163,31 @@ class ClientCartService
         return null;
     }
 
+    protected function ensureCanUpdateProductsQuantity(CartProductsQuantityDto $dto)
+    {
+        $cartItems = $dto->cartItems;
+
+        $preparedProducts = $this->warehouseService->getWarehouseInfoAboutProducts(
+            products: new Collection($cartItems->pluck('product')),
+            dto: new FetchAttributesColumnsDto(
+                singleAttrCols: [['id', 'quantity'], []],
+                combinedAttrCols: [['id', 'quantity'], []],
+            ),
+        )->keyBy('id');
+
+        $updatedCartItems = $cartItems->map(function ($item) use ($preparedProducts) {
+            return [
+                'cart_id' => $item->cart_id,
+                'quantity' => $item->quantity,
+                'product' => $preparedProducts->get($item->product->id, $item->product),
+            ];
+        });
+        dd($updatedCartItems);
+        $updatedCartItems->each(function (array $item) {
+            $this->stockService->hasEnoughSuppliesForRequestedQuantity($item['product'], $item['quantity']);
+        });
+    }
+
     private function prepareCartInfoForProductWithVariations(ProductCartDto $dto): UserCartInfoDto
     {
         if ($dto->variationId === null) {
@@ -185,7 +222,7 @@ class ClientCartService
                 'data' => $currentVariation instanceof ProductVariation
                     ? $currentVariation->productAttributes->map(fn($item)
                         => [
-                        'name' => $item->name,
+                        'attribute_name' => $item->name,
                         'value' => $item->pivot->value,
                         'type' => $item->type->toTypes(),
                     ])
