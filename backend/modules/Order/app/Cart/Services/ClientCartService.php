@@ -174,6 +174,7 @@ class ClientCartService
 
         return UserCartInfoDto::fromArray([
             'product_id' => $dto->product->id,
+            'product_image' => $dto->product->preview_image,
             'quantity' => $dto->quantity,
             'price_per_unit' => $currentVariation?->price,
             'final_price' => $this->countFinalPrice($currentVariation?->price, $dto->quantity),
@@ -206,6 +207,7 @@ class ClientCartService
 
         return UserCartInfoDto::fromArray([
             'product_id' => $dto->product->id,
+            'product_image' => $dto->product->preview_image,
             'quantity' => $dto->quantity,
             'price_per_unit' => $dto->product->warehouse->default_price,
             'variation' => null,

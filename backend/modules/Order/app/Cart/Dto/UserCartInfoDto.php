@@ -9,6 +9,7 @@ final class UserCartInfoDto
     public function __construct(
         private int $product_id,
         private int $quantity,
+        private string $productImage,
         private float $pricePerUnit,
         private float $finalPrice,
         private ?array $discount,
@@ -21,6 +22,7 @@ final class UserCartInfoDto
         return new self(
             product_id: $data['product_id'],
             quantity: $data['quantity'],
+            productImage: $data['product_image'],
             pricePerUnit: $data['price_per_unit'],
             finalPrice: $data['final_price'],
             discount: $data['discount'] ?? null,
@@ -32,6 +34,7 @@ final class UserCartInfoDto
     {
         return [
             'id' => $this->id,
+            'product_image' => $this->productImage,
             'product_id' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
             'price_per_unit' => $this->getPricePerUnit(),
@@ -116,5 +119,15 @@ final class UserCartInfoDto
     public function setDiscount(?array $discount): void
     {
         $this->discount = $discount;
+    }
+
+    public function getProductImage(): string
+    {
+        return $this->productImage;
+    }
+
+    public function setProductImage(string $productImage): void
+    {
+        $this->productImage = $productImage;
     }
 }

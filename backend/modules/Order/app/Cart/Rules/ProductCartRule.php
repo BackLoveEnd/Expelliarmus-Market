@@ -9,13 +9,13 @@ use Modules\Product\Models\Product;
 class ProductCartRule implements ValidationRule
 {
     public function __construct(
-        private int $productId,
+        private int|string|null $productId,
     ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $product = Product::query()
-            ->where('id', $this->productId)
+            ->where('id', (int)$this->productId)
             ->firstOrFail(['id', 'with_attribute_combinations']);
 
         if (is_null($product->hasCombinedAttributes())) {

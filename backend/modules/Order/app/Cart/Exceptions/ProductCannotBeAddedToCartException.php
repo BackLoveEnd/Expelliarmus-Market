@@ -11,6 +11,6 @@ class ProductCannotBeAddedToCartException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => 'Product cannot be added to cart. Possibly not in stock.']);
+        return response()->json(['message' => 'Product cannot be added to cart. Possibly not in stock.'], 400);
     }
 }

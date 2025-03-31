@@ -24,6 +24,7 @@ final readonly class ProductCartDto
                     'id',
                     'with_attribute_combinations',
                     'status',
+                    'preview_image',
                 ],
             ),
             variationId: $request->variation_id,
