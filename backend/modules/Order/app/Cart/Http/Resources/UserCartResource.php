@@ -14,6 +14,7 @@ class UserCartResource extends JsonApiResource
         return [
             'product_id' => $this->product_id,
             'product_image' => $this->product_image,
+            'product_title' => $this->product_title,
             'quantity' => $this->quantity,
             'price_per_unit' => $this->price_per_unit,
             'final_price' => $this->final_price,

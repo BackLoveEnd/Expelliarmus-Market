@@ -10,6 +10,7 @@ final class UserCartInfoDto
         private int $product_id,
         private int $quantity,
         private string $productImage,
+        private string $productTitle,
         private float $pricePerUnit,
         private float $finalPrice,
         private ?array $discount,
@@ -23,6 +24,7 @@ final class UserCartInfoDto
             product_id: $data['product_id'],
             quantity: $data['quantity'],
             productImage: $data['product_image'],
+            productTitle: $data['product_title'],
             pricePerUnit: $data['price_per_unit'],
             finalPrice: $data['final_price'],
             discount: $data['discount'] ?? null,
@@ -35,6 +37,7 @@ final class UserCartInfoDto
         return [
             'id' => $this->id,
             'product_image' => $this->productImage,
+            'product_title' => $this->productTitle,
             'product_id' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
             'price_per_unit' => $this->getPricePerUnit(),
@@ -129,5 +132,15 @@ final class UserCartInfoDto
     public function setProductImage(string $productImage): void
     {
         $this->productImage = $productImage;
+    }
+
+    public function getProductTitle(): string
+    {
+        return $this->productTitle;
+    }
+
+    public function setProductTitle(string $productTitle): void
+    {
+        $this->productTitle = $productTitle;
     }
 }

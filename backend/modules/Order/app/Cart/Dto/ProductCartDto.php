@@ -22,6 +22,7 @@ final readonly class ProductCartDto
                 $request->product_id,
                 [
                     'id',
+                    'title',
                     'with_attribute_combinations',
                     'status',
                     'preview_image',
