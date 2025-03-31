@@ -4,13 +4,13 @@
         @click="handleButtonClick"
         :class="{
         'bg-white text-black underline underline-offset-4 decoration-2 decoration-dashed border border-gray-700 border-green-600 hover:text-green-600':
-          cartStore.isProductInCart(props.productInfo.product_id),
+          isInCart,
         'bg-[#db4444] border border-[#db4444] text-white hover:bg-red-900':
-          !cartStore.isProductInCart(props.productInfo.product_id),
+          !isInCart,
       }"
         class="px-8 py-3 text-center rounded-md"
     >
-      {{ cartStore.isProductInCart(props.productInfo.product_id) ? "Show Cart" : "Buy Now" }}
+      {{ isInCart ? "Show Cart" : "Buy Now" }}
     </button>
   </div>
 </template>
@@ -19,6 +19,7 @@
 import {useToastStore} from "@/stores/useToastStore.js";
 import {useCartStore} from "@/stores/useCartStore.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import {ref} from "vue";
 
 const props = defineProps({
   productInfo: Object
@@ -30,8 +31,10 @@ const toast = useToastStore();
 
 const cartStore = useCartStore();
 
+const isInCart = ref(cartStore.isProductInCart(props.productInfo.product_id));
+
 async function handleButtonClick() {
-  if (cartStore.isProductInCart(props.productInfo.product_id)) {
+  if (isInCart.value) {
     handleCartOpenModal();
   } else {
     await addToCart();
@@ -40,6 +43,7 @@ async function handleButtonClick() {
 
 async function addToCart() {
   await cartStore.addToCart(props.productInfo)
+      .then(() => isInCart.value = true)
       .catch((e) => {
         toast.showToast(e?.response?.data?.message, defaultErrorSettings);
       });

@@ -9,7 +9,11 @@
     >
       <section class="container mx-auto">
         <suspense>
-          <cart-overview @cart-empty="isCartEmpty = true"/>
+          <cart-overview
+              @cart-empty="isCartEmpty = true"
+              @total-price="handleTotalPrice"
+              @updated-product="handleUpdatedProduct"
+          />
           <template #fallback>
             <suspense-loader/>
           </template>
@@ -21,12 +25,24 @@
           >
             Continue Shopping
           </router-link>
-          <button
-              type="button"
-              class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
-          >
-            Update card
-          </button>
+          <div class="flex gap-x-4">
+            <button
+                type="button"
+                @click="clearCart"
+                class="px-12 py-4 bg-white border-2 border-gray-400 text-center hover:bg-gray-400 hover:text-white rounded-md"
+            >
+              Clear cart
+            </button>
+            <button
+                v-if="productsToUpdate.length > 0"
+                type="button"
+                @click="updateProducts"
+                v-tooltip.top="'You can skip this if you proceed to checkout, otherwise, update the cart to save changes.'"
+                class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
+            >
+              Update cart
+            </button>
+          </div>
         </div>
       </section>
       <section class="container mx-auto">
@@ -81,6 +97,10 @@ import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import {ref} from "vue";
 import CartOverview from "@/shop/components/Cart/CartOverview.vue";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
+import {useCartStore} from "@/stores/useCartStore.js";
+import {useToastStore} from "@/stores/useToastStore.js";
+import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 
 const links = ref([
   {url: "/", name: "Home"},
@@ -88,6 +108,45 @@ const links = ref([
 ]);
 
 const isCartEmpty = ref();
+
+const toast = useToastStore();
+
+const cartStore = useCartStore();
+
+const totalPrice = ref(0);
+
+const productsToUpdate = ref([]);
+
+const clearCart = async () => {
+  await cartStore.clearCart().then(() => {
+    isCartEmpty.value = true;
+    toast.showToast('Cart was cleared.', defaultSuccessSettings);
+  });
+};
+
+const handleTotalPrice = (value) => {
+  totalPrice.value = value;
+};
+
+const handleUpdatedProduct = (product) => {
+  const index = productsToUpdate.value.findIndex((item) => item.productId === product.productId);
+
+  if (index === -1) {
+    productsToUpdate.value.push(product);
+  } else {
+    productsToUpdate.value[index] = product;
+  }
+};
+
+const updateProducts = async () => {
+  await cartStore.updateQuantity(productsToUpdate.value)
+      .then(() => {
+        toast.showToast('Cart was updated.', defaultSuccessSettings);
+      })
+      .catch((e) => {
+        toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+      });
+};
 </script>
 
 <style scoped></style>

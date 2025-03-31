@@ -28,5 +28,24 @@ export const CartService = {
         const data = formatter.toJsonApi(productInfo, 'cart');
 
         return await api().post('/shop/user/cart', data);
+    },
+
+    async removeFromCart(cartId) {
+        return await api().delete(`/shop/user/cart/${cartId}`);
+    },
+
+    async clearCart() {
+        return await api().delete('/shop/user/cart');
+    },
+
+    async updateQuantityForProducts(products) {
+        const data = formatter.toJsonApi({
+            items: products.map((product) => ({
+                cart_id: product.id,
+                quantity: product.quantity
+            }))
+        }, 'cart');
+        console.log(data);
+        //return await api().patch('/shop/user/cart', data);
     }
 };

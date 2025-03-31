@@ -1,30 +1,45 @@
 <script setup>
-import {computed, ref, watch} from "vue";
 import {useCartStore} from "@/stores/useCartStore.js";
+import {computed, ref, watch} from "vue";
 
-const products = ref([]);
+const cartStore = useCartStore();
 
-const store = useCartStore();
+const emit = defineEmits(["total-price", "cart-empty", "updated-product"]);
 
-const emit = defineEmits(["total-price", "cart-empty"]);
+const isInitialLoad = ref(true);
+
+const totalPrice = computed(() => cartStore.totalPrice.toFixed(2));
 
 async function getCart() {
-  await store.fetchCart();
+  await cartStore.fetchCart()
+      .then(() => (isInitialLoad.value = true))
+      .catch((e) => {
+        if (e.status === 404) {
+          emit("cart-empty");
+        }
+      });
 }
 
-function removeProduct(id) {
-  const index = products.value.findIndex((item) => item.id === id);
-  if (index !== -1) {
-    products.value.splice(index, 1);
-  }
-}
+watch(
+    () => cartStore.cartItems.map((item) => item.quantity),
+    (newQuantities, oldQuantities) => {
+      if (isInitialLoad.value) {
+        isInitialLoad.value = false;
+        return;
+      }
 
-const totalPrice = computed(() => {
-  return subtotal.value.reduce((total, product) => total + product.subTotal, 0);
-});
+      newQuantities.forEach((newQty, index) => {
+        const oldQty = oldQuantities[index];
+        if (newQty !== oldQty) {
+          emit("updated-product", cartStore.cartItems[index]);
+        }
+      });
+    },
+    {deep: true}
+);
 
-watch((totalPrice), () => {
-  emit("total-price", totalPrice);
+watch(totalPrice, (newTotal) => {
+  emit("total-price", newTotal);
 });
 
 await getCart();
@@ -34,9 +49,7 @@ await getCart();
   <article class="flex flex-col gap-y-10">
     <table class="w-full border-separate border-spacing-y-10">
       <thead>
-      <tr
-          class="rounded-md shadow-[0px_1px_9px_0px_rgba(0,_0,_0,_0.1)] bg-white"
-      >
+      <tr class="rounded-md shadow-[0px_1px_9px_0px_rgba(0,_0,_0,_0.1)] bg-white">
         <th class="py-6 px-12 font-normal text-start">Product</th>
         <th class="py-6 px-12 font-normal">Option</th>
         <th class="py-6 px-12 font-normal">Price</th>
@@ -46,7 +59,7 @@ await getCart();
       </thead>
       <tbody class="text-center">
       <tr
-          v-for="(product, index) in products"
+          v-for="(product, index) in cartStore.cartItems"
           :key="product.productId"
           class="rounded-md shadow-[0px_1px_9px_0px_rgba(0,_0,_0,_0.1)] bg-white relative"
       >
@@ -57,9 +70,7 @@ await getCart();
                 :alt="product.productTitle"
                 class="max-w-14 max-h-14"
             />
-            <span class="text-base font-normal">{{
-                product.productTitle
-              }}</span>
+            <span class="text-base font-normal">{{ product.productTitle }}</span>
           </div>
         </td>
         <td class="py-6 px-12 font-normal">
@@ -80,14 +91,16 @@ await getCart();
                 type="number"
                 min="1"
                 class="w-14 h-12 border-2 border-gray-400 text-center rounded-md"
-                v-model="product.quantity"
+                v-model.number="product.quantity"
             />
           </div>
         </td>
-        <td class="py-6 px-12 font-normal">${{ (product.unitPrice * product.quantity).toFixed(2) }}</td>
+        <td class="py-6 px-12 font-normal">
+          ${{ (product.unitPrice * product.quantity).toFixed(2) }}
+        </td>
         <td>
           <button
-              @click="removeProduct(product.id)"
+              @click="cartStore.removeFromCart(product.id)"
               class="absolute -top-3 -right-3 text-white"
           >
             <svg
@@ -113,5 +126,4 @@ await getCart();
 </template>
 
 <style scoped>
-
 </style>

@@ -4,14 +4,13 @@ import {CartService} from "@/services/CartService.js";
 export const useCartStore = defineStore('cart', {
     state: () => ({
         cartItems: [],
-        totalItemsCount: 0
     }),
     getters: {
         totalPrice(state) {
-            return state.cartItems.reduce((sum, item) => sum + item.attributes.final_price, 0);
+            return state.cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
         },
         totalItems(state) {
-            return state.totalItemsCount === 0 ? state.cartItems.length : state.totalItemsCount + state.cartItems.length;
+            return state.cartItems.length;
         },
         isProductInCart: (state) => (productId) => {
             return state.cartItems.some((item) => Number(productId) === Number(item.productId));
@@ -30,8 +29,8 @@ export const useCartStore = defineStore('cart', {
 
         async addToCart(product) {
             await CartService.addToCart(product)
-                .then(() => {
-                    this.totalItemsCount += 1;
+                .then((response) => {
+                    this.cartItems.length += 1;
                 })
                 .catch((e) => {
                     if ([422, 400].includes(e.status)) {
@@ -42,16 +41,32 @@ export const useCartStore = defineStore('cart', {
                 });
         },
 
-        removeFromCart(productId) {
-
+        async removeFromCart(cartId) {
+            await CartService.removeFromCart(cartId)
+                .then(() => {
+                    this.cartItems = this.cartItems.filter((item) => item.id !== cartId);
+                })
+                .catch((e) => {
+                    console.error('Error removing from cart', e);
+                });
         },
 
-        updateQuantity(productId, quantity) {
-
+        async updateQuantity(products) {
+            await CartService.updateQuantityForProducts(products)
+                .catch((e) => {
+                    if ([422, 400].includes(e.status)) {
+                        throw e;
+                    } else {
+                        console.error('Failed to update products', e);
+                    }
+                });
         },
 
-        clearCart() {
-
+        async clearCart() {
+            return await CartService.clearCart()
+                .then(() => {
+                    this.cartItems = [];
+                });
         }
     }
 });
