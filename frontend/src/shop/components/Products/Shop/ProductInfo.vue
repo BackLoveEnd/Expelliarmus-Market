@@ -78,6 +78,14 @@ const priceDependOnQuantity = computed(() =>
     (price.value * quantity.value).toFixed(2),
 );
 
+const cartInfoSummarize = computed(() => {
+  return {
+    product_id: productInfo.product.id,
+    variation_id: selectedVariation.id ?? null,
+    quantity: quantity.value
+  };
+});
+
 const imagesUrls = computed(() => {
   return productInfo.product?.images?.map((image) => image.image_url);
 });
@@ -204,6 +212,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
             <quantity-adjuster v-model="quantity"/>
             <div>
               <purchase-button
+                  :product-info="cartInfoSummarize"
                   @open-cart-modal="toggleCartModal"
               ></purchase-button>
               <product-cart-modal

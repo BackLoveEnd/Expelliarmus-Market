@@ -35,9 +35,9 @@ final class UserCartInfoDto
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
-            'product_image' => $this->productImage,
-            'product_title' => $this->productTitle,
+            'id' => $this->getId(),
+            'product_image' => $this->getProductImage(),
+            'product_title' => $this->getProductTitle(),
             'product_id' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
             'price_per_unit' => $this->getPricePerUnit(),
