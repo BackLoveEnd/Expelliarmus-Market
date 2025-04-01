@@ -44,7 +44,7 @@ class ClientCartService
 
         if ($user) {
             $carts = $user
-                ->cart()->with('product:id,preview_image,title')
+                ->cart()->with('product:id,preview_image,title,slug')
                 ->get();
 
             if ($carts->isNotEmpty()) {
@@ -267,6 +267,7 @@ class ClientCartService
             'product_id' => $dto->product->id,
             'product_image' => $dto->product->preview_image,
             'product_title' => $dto->product->title,
+            'product_slug' => $dto->product->slug,
             'quantity' => $dto->quantity,
             'price_per_unit' => $currentVariation?->price,
             'final_price' => $this->countFinalPrice($currentVariation?->price, $dto->quantity),
@@ -301,6 +302,7 @@ class ClientCartService
             'product_id' => $dto->product->id,
             'product_image' => $dto->product->preview_image,
             'product_title' => $dto->product->title,
+            'product_slug' => $dto->product->slug,
             'quantity' => $dto->quantity,
             'price_per_unit' => $dto->product->warehouse->default_price,
             'variation' => null,

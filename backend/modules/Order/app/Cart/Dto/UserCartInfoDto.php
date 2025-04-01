@@ -14,6 +14,7 @@ final class UserCartInfoDto
         private int $quantity,
         private string $productImage,
         private string $productTitle,
+        private string $productSlug,
         private float $pricePerUnit,
         private float $finalPrice,
         private ?array $discount,
@@ -28,6 +29,7 @@ final class UserCartInfoDto
             quantity: $data['quantity'],
             productImage: $data['product_image'],
             productTitle: $data['product_title'],
+            productSlug: $data['product_slug'],
             pricePerUnit: $data['price_per_unit'],
             finalPrice: $data['final_price'],
             discount: $data['discount'] ?? null,
@@ -44,6 +46,7 @@ final class UserCartInfoDto
                 'id' => $cart->id,
                 'product_image' => $cart->product->preview_image,
                 'product_title' => $cart->product->title,
+                'product_slug' => $cart->product->slug,
                 'product_id' => $cart->product_id,
                 'quantity' => $cart->quantity,
                 'price_per_unit' => $cart->price_per_unit,
@@ -60,6 +63,7 @@ final class UserCartInfoDto
             'id' => $this->getId(),
             'product_image' => $this->getProductImage(),
             'product_title' => $this->getProductTitle(),
+            'product_slug' => $this->getProductSlug(),
             'product_id' => $this->getProductId(),
             'quantity' => $this->getQuantity(),
             'price_per_unit' => $this->getPricePerUnit(),
@@ -164,5 +168,15 @@ final class UserCartInfoDto
     public function setProductTitle(string $productTitle): void
     {
         $this->productTitle = $productTitle;
+    }
+
+    public function getProductSlug(): string
+    {
+        return $this->productSlug;
+    }
+
+    public function setProductSlug(string $productSlug): void
+    {
+        $this->productSlug = $productSlug;
     }
 }

@@ -19,7 +19,7 @@ final readonly class CartProductsQuantityDto
 
         if ($request->user()) {
             $products = Cart::query()
-                ->with('product:id,with_attribute_combinations,product_article')
+                ->with('product:id,with_attribute_combinations,product_article,slug')
                 ->whereIn('id', $cartItems->pluck('cart_id')->toArray())
                 ->get(['id', 'product_id', 'variation']);
         } else {
@@ -27,7 +27,7 @@ final readonly class CartProductsQuantityDto
                 ->whereIn('id', $cartItems->pluck('cart_id')->toArray());
 
             $productModels = Product::query()->whereIn('id', $products->pluck('product_id'))
-                ->get(['id', 'with_attribute_combinations', 'product_article']);
+                ->get(['id', 'with_attribute_combinations', 'product_article', 'slug']);
 
             $products = $products->map(function (object $productCart) use ($productModels) {
                 return (object)[
