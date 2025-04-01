@@ -10,7 +10,7 @@ import Colors from "@/components/Product/Main/Colors.vue";
 
 const defaultArrivals = [
   {
-    id: 1,
+    id: 0,
     image: "https://dummyimage.com/744x720/000/fff",
     title: "Title(1)",
     description: "Desc.1",
@@ -18,7 +18,7 @@ const defaultArrivals = [
     imgSize: "744x720"
   },
   {
-    id: 2,
+    id: 1,
     image: "https://dummyimage.com/744x336/000/fff",
     title: "Title(2)",
     description: "Desc.2",
@@ -26,7 +26,7 @@ const defaultArrivals = [
     imgSize: "744x336"
   },
   {
-    id: 3,
+    id: 2,
     image: "https://dummyimage.com/348x336/000/fff",
     title: "Title(3)",
     description: "Desc.3",
@@ -34,7 +34,7 @@ const defaultArrivals = [
     imgSize: "348x336"
   },
   {
-    id: 4,
+    id: 3,
     image: "https://dummyimage.com/348x336/000/fff",
     title: "Title(4)",
     description: "Desc.4",
@@ -78,24 +78,36 @@ const fetchArrivals = () => {
         saveToStorage();
       })
       .catch(error => {
-        console.error(error);
-      });
+        console.error("Fetch arrivals failed:", error);
+      })
 };
 
 const toast = useToastStore();
 
 const saveArrivals = () => {
-  const formattedData = arrivals.value.map(arrival => ({
-    position: arrival.id + 1,
-    arrival_url: arrival.link,
-    content: {
-      title: arrival.title,
-      body: arrival.description
-    },
-    file: arrival.image && typeof arrival.image === "string" && arrival.image.startsWith("data:image")
-        ? arrival.image
-        : undefined
-  }));
+  const formattedData = arrivals.value.map(arrival => {
+    // Проверяем, есть ли картинка или валидный URL
+    const hasValidImage = arrival.image && typeof arrival.image === "string" && arrival.image.startsWith("data:image");
+    const hasValidUrl = arrival.link && typeof arrival.link === "string" && arrival.link.length > 0;
+
+    if (!hasValidImage && !hasValidUrl) {
+      console.error("Invalid arrival data:", arrival);
+      return null; // Если данных недостаточно, пропускаем этот элемент
+    }
+
+    // Формируем данные для отправки
+    return {
+      position: arrival.id + 1,
+      arrival_url: arrival.link, // Передаем URL
+      content: {
+        title: arrival.title,
+        body: arrival.description
+      },
+      file: hasValidImage ? arrival.image : undefined // Передаем картинку, если она есть
+    };
+  }).filter(Boolean); // Убираем null элементы, если они есть
+
+  console.log("Formatted data before sending:", formattedData);
 
   ContentManagementService.uploadArrivalContent(formattedData)
       .then(() => {
@@ -104,9 +116,9 @@ const saveArrivals = () => {
       })
       .catch(error => {
         console.error(error);
-        toast.showToast("Arrivals saved successfully!", defaultSuccessSettings);
-        // toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
+        toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
       });
+
 };
 
 const deleteArrival = (arrivalId) => {
@@ -118,6 +130,7 @@ const deleteArrival = (arrivalId) => {
   selectedArrivalId.value = null;
 };
 
+/*
 const hideArrival = (arrivalId) => {
   const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
   if (index !== -1) {
@@ -133,6 +146,7 @@ const showArrival = (arrivalId) => {
     saveToStorage()
   }
 };
+*/
 
 
 const handleFileUpload = (event, id) => {
@@ -179,7 +193,7 @@ watch(arrivals, saveToStorage, { deep: true });
                     class="bg-gray-50 border text-gray-900 text-sm rounded-lg p-2.5">
               <option selected disabled>Choose arr-position</option>
               <option v-for="arrival in arrivals" :key="arrival.id" :value="arrival.id">
-                {{ arrival.id }}
+                {{ arrival.id + 1 }}
               </option>
             </select>
             <div v-if="selectedArrival">
@@ -194,9 +208,10 @@ watch(arrivals, saveToStorage, { deep: true });
                 {{ selectedArrival.imgSize }}).</p>
 
               <label for="card-title" class="block mt-4 mb-2 text-sm font-medium">Card title</label>
+              <div class="flex items-center gap-x-4 flex-wrap">
               <input type="text" id="card-title" v-model="selectedArrival.title"
                      class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
-
+              </div>
               <label for="card-description" class="block mt-4 mb-2 text-sm font-medium">Card description</label>
               <textarea id="card-description" v-model="selectedArrival.description" rows="4"
                         class="block p-2.5 w-full text-sm bg-gray-50 border rounded-lg"></textarea>
