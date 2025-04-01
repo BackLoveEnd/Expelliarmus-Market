@@ -9,11 +9,14 @@ use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Modules\User\Events\UserLogin;
+use Modules\User\Models\User;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -33,6 +36,18 @@ class FortifyServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(function ($notifiable, $token) {
             return URL::formatHostUsing(fn() => config('app.frontend_name'))
                 ->query('/reset-password/'.$token, ['email' => $notifiable->getEmailForPasswordReset()]);
+        });
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = User::query()->where('email', $request->email)->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                event(new UserLogin($user));
+
+                return $user;
+            }
+
+            return null;
         });
 
         Fortify::createUsersUsing(CreateNewUser::class);

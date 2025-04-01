@@ -14,7 +14,7 @@ use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Order\Cart\Http\Requests\AddToCartRequest;
 use Modules\Order\Cart\Http\Requests\UpdateProductsQuantityRequest;
 use Modules\Order\Cart\Http\Resources\UserCartResource;
-use Modules\Order\Cart\Services\ClientCartService;
+use Modules\Order\Cart\Services\Cart\ClientCartService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CartController extends Controller

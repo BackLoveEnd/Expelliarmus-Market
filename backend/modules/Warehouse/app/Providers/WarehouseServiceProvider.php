@@ -5,7 +5,7 @@ namespace Modules\Warehouse\Providers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use Modules\Order\Cart\Services\ClientCartService;
+use Modules\Order\Cart\Services\Cart\ClientCartService;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Warehouse\Http\Controllers\DiscountController;
 use Modules\Warehouse\Jobs\CancelExpiredDiscounts;

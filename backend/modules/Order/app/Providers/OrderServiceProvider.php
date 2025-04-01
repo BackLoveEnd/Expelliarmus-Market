@@ -4,7 +4,12 @@ namespace Modules\Order\Providers;
 
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\ServiceProvider;
-use Modules\Order\Cart\Services\ClientCartService;
+use Modules\Order\Cart\Services\Cart\AddingPossibilityProductToCartCheckerService;
+use Modules\Order\Cart\Services\Cart\CartDataPrepareService;
+use Modules\Order\Cart\Services\Cart\CartStorageService;
+use Modules\Order\Cart\Services\Cart\ClientCartService;
+use Modules\Order\Cart\Services\Cart\DiscountCartService;
+use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -28,14 +33,10 @@ class OrderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
+
         $this->app->register(RouteServiceProvider::class);
 
-        $this->app
-            ->when(ClientCartService::class)
-            ->needs(Session::class)
-            ->give(function ($app) {
-                return $app->make(Session::class);
-            });
+        $this->registerServicesForCart();
     }
 
     protected function registerCommands(): void
@@ -77,5 +78,29 @@ class OrderServiceProvider extends ServiceProvider
     public function provides(): array
     {
         return [];
+    }
+
+    protected function registerServicesForCart(): void
+    {
+        $this->app
+            ->when(CartStorageService::class)
+            ->needs(Session::class)
+            ->give(fn($app) => $app->make(Session::class));
+
+        $this->app
+            ->when([
+                AddingPossibilityProductToCartCheckerService::class,
+                CartDataPrepareService::class,
+            ])
+            ->needs(WarehouseStockService::class)
+            ->give(fn($app) => $app->make(WarehouseStockService::class));
+
+        $this->app
+            ->when([
+                ClientCartService::class,
+                CartDataPrepareService::class,
+            ])
+            ->needs(DiscountCartService::class)
+            ->give(fn($app) => $app->make(DiscountCartService::class));
     }
 }
