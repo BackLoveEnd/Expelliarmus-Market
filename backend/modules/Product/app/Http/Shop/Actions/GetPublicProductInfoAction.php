@@ -60,6 +60,7 @@ class GetPublicProductInfoAction
 
         return Product::query()
             ->where('id', $productId)
+            ->wherePublished()
             ->with([
                 'category:id,name,slug',
                 'brand:id,name,slug',

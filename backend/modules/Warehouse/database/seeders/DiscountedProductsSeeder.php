@@ -17,15 +17,15 @@ class DiscountedProductsSeeder extends Seeder
 
         collect(range(1, 3))->chunk($chunks)->each(function ($chunk) {
             $chunk->each(function () {
-                Discount::factory()->product(Product::factory()->withCombinedAttributes())->create();
+                Discount::factory()->product(Product::factory()->published()->withCombinedAttributes())->create();
             });
 
             $chunk->each(function () {
-                Discount::factory()->product(Product::factory()->withSingleAttributes())->create();
+                Discount::factory()->product(Product::factory()->published()->withSingleAttributes())->create();
             });
 
             $chunk->each(function () {
-                Discount::factory()->product(Product::factory()->withoutAttributes())->create();
+                Discount::factory()->product(Product::factory()->published()->withoutAttributes())->create();
             });
         });
     }

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Enums\DiscountStatusEnum;
+use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
@@ -21,24 +22,24 @@ final class DiscountedProductsService
         $discounts = Discount::query()
             ->with([
                 'discountable' => function (MorphTo $morphTo) {
-                    $columns = ['id', 'title', 'preview_image', 'product_article', 'slug'];
+                    $columns = ['id', 'title', 'preview_image', 'product_article', 'slug', 'status'];
 
                     $morphTo->morphWith([
                         ProductVariation::class => [
                             'product' => function ($query) use ($columns) {
-                                $query->select(...$columns);
+                                $query->whereStatus(ProductStatusEnum::PUBLISHED)->select(...$columns);
                             },
                         ],
                         ProductAttributeValue::class => [
                             'product' => function ($query) use ($columns) {
-                                $query->select(...$columns);
+                                $query->whereStatus(ProductStatusEnum::PUBLISHED)->select(...$columns);
                             },
                         ],
                     ]);
 
                     $morphTo->constrain([
                         Product::class => function ($query) use ($columns) {
-                            $query->select(...$columns);
+                            $query->whereStatus(ProductStatusEnum::PUBLISHED)->select(...$columns);
                         },
                     ]);
                 },
@@ -49,6 +50,8 @@ final class DiscountedProductsService
             ->offset($offset)
             ->get();
 
+        $discounts = $this->filterDiscountsWithoutProduct($discounts);
+        
         return new LimitOffsetDto(
             items: $this->uniqueDiscountsByProduct($discounts),
             total: Discount::query()->whereStatus(DiscountStatusEnum::ACTIVE)->count(),
@@ -68,6 +71,36 @@ final class DiscountedProductsService
         }
 
         return $product->loadMissing('singleAttributes.lastDiscount');
+    }
+
+    public function loadLastActiveDiscountForProduct(Product $product): Product
+    {
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->loadMissing('lastActiveDiscount');
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->loadMissing('combinedAttributes.lastActiveDiscount');
+        }
+
+        return $product->loadMissing('singleAttributes.lastActiveDiscount');
+    }
+
+    public function productHasActiveDiscount(Product $product): bool
+    {
+        $product = $this->loadLastActiveDiscountForProduct($product);
+        if (is_null($product->hasCombinedAttributes())) {
+            return $product->relationLoaded('lastActiveDiscounts')
+                && $product->lastActiveDiscount->isNotEmpty();
+        }
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->relationLoaded('combinedAttributes.lastActiveDiscount')
+                && $product->combinedAttributes->lastActiveDiscount->isNotEmpty();
+        }
+
+        return $product->relationLoaded('singleAttributes.lastActiveDiscount')
+            && $product->singleAttributes->lastActiveDiscount->isNotEmpty();
     }
 
     public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
@@ -120,4 +153,10 @@ final class DiscountedProductsService
         });
     }
 
+    private function filterDiscountsWithoutProduct(Collection $discountedProducts): Collection
+    {
+        return $discountedProducts->filter(function (Discount $discount) {
+            return ! is_null($discount->discountable?->product);
+        });
+    }
 }

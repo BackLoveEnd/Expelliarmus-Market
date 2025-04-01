@@ -2,7 +2,9 @@
 
 namespace Modules\Order\Providers;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\ServiceProvider;
+use Modules\Order\Cart\Services\ClientCartService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -27,6 +29,13 @@ class OrderServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+
+        $this->app
+            ->when(ClientCartService::class)
+            ->needs(Session::class)
+            ->give(function ($app) {
+                return $app->make(Session::class);
+            });
     }
 
     protected function registerCommands(): void

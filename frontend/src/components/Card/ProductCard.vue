@@ -11,7 +11,7 @@
           :alt="product.title"
       />
       <button
-          @click.prevent="addToWishlist"
+          @click.prevent.stop="addToWishlist"
           :class="{ active: isInWishlist }"
           class="wishlist w-9 h-9 rounded-full flex items-center justify-center absolute top-3 right-3 bg-white"
       >
@@ -30,13 +30,6 @@
           />
         </svg>
       </button>
-      <button
-          @click.prevent="addToCart"
-          :class="{ 'bg-[#db4444]': isInCart, 'bg-black': !isInCart }"
-          class="absolute bottom-0 left-0 w-full text-center py-2 text-white opacity-0 translate-y-full transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
-      >
-        {{ isInCart ? "Remove From Cart" : "Add To Cart" }}
-      </button>
     </div>
     <div class="flex flex-col space-y-2">
       <p class="font-medium">{{ truncatedTitle }}</p>
@@ -50,7 +43,6 @@
 import StarRating from "@/components/Card/StarRating.vue";
 import {computed} from "vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
-import {useAddToCart} from "@/composables/useAddToCart.js";
 import {useScrolling} from "@/composables/useScrolling.js";
 
 const props = defineProps({
@@ -58,8 +50,6 @@ const props = defineProps({
 });
 
 const {isInWishlist, addToWishlist} = useAddToWishlist();
-
-const {isInCart, addToCart} = useAddToCart();
 
 const truncatedTitle = computed(() => {
   const title = props.product?.title || "";

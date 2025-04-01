@@ -29,7 +29,7 @@ full-rebuild: ## Full re-install application
 	docker exec php php artisan storage:unlink
 	docker exec php php artisan storage:link
 
-migrate-seed: ## Run seeders
+migrate-seed: ## Run migration and seeders
 	docker exec php php artisan migrate:fresh --seed --storage-clean
 
 frontend-dependencies-install: ## Install frontend dependencies

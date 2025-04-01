@@ -11,11 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('managers', function (Blueprint $table) {
-            $table->uuid('manager_id')->primary();
+            $table->bigInteger('id')->generatedAs()->always();
+            $table->uuid('manager_id');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->primary('id');
             $table->boolean('is_super_manager')->default(false);
             $table->timestamp('created_at');
         });

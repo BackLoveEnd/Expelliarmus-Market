@@ -5,12 +5,16 @@ namespace Modules\Warehouse\Providers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Modules\Order\Cart\Services\ClientCartService;
+use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Warehouse\Http\Controllers\DiscountController;
 use Modules\Warehouse\Jobs\CancelExpiredDiscounts;
 use Modules\Warehouse\Jobs\WarehouseCombinedProductAvailability;
 use Modules\Warehouse\Jobs\WarehouseDefaultProductAvailability;
 use Modules\Warehouse\Jobs\WarehouseSingleProductAvailability;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
+use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
+use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -45,6 +49,13 @@ class WarehouseServiceProvider extends ServiceProvider
             ->needs(ProductDiscountServiceFactory::class)
             ->give(function (Application $app) {
                 return new ProductDiscountServiceFactory($app);
+            });
+
+        $this->app
+            ->when([ClientCartService::class, WarehouseStockService::class])
+            ->needs(WarehouseProductInfoService::class)
+            ->give(function (Application $app) {
+                return new WarehouseProductInfoService(new ProductAttributeService());
             });
     }
 

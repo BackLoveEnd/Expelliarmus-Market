@@ -9,6 +9,7 @@ use Illuminate\Support\Collection as BaseCollection;
 use Modules\Product\Http\Management\Service\Attributes\Interfaces\ProductAttributeRetrieveInterface as RetrieveInterface;
 use Modules\Product\Http\Management\Service\Attributes\Interfaces\ProductAttributesRetrieveFormatterInterface as FormatterInterface;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Models\ProductAttributeValue;
 
 class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInterface
@@ -23,6 +24,25 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         return $product->singleAttributes()->with([
             'attribute' => fn($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
+    }
+
+    public function loadAttributesById(Product $product, int $variationId): VariationInterface
+    {
+        if (! empty($this->attributeCols)) {
+            return
+                $product
+                    ->singleAttributes()
+                    ->with([
+                        'attribute' => fn($query) => $query->select([...$this->attributeCols, 'type']),
+                    ])
+                    ->where('id', $variationId)
+                    ->first($this->variationCols);
+        }
+
+        return $product
+            ->singleAttributes()
+            ->where('id', $variationId)
+            ->first($this->variationCols);
     }
 
     public function getAttributesForProductCollection(Collection $products): Collection
@@ -46,6 +66,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         return $attributes
             ->map(function (ProductAttributeValue $attributeValue) {
                 $attributes = [
+                    'id' => $attributeValue->id,
                     'name' => $attributeValue->attribute->name,
                     'value' => $attributeValue->value,
                     'price' => $attributeValue->price,
@@ -70,6 +91,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
                     'name' => $items->first()['name'],
                     'data' => $items->map(fn($item)
                         => [
+                        'id' => $item['id'],
                         'value' => $item['value'],
                         'price' => $item['price'],
                     ])->toArray(),
@@ -93,6 +115,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         return $attributes
             ->map(fn(ProductAttributeValue $attributeValue)
                 => [
+                'id' => $attributeValue->id,
                 'name' => $attributeValue->attribute->name,
                 'value' => $attributeValue->value,
                 'price' => $attributeValue->price,
@@ -103,6 +126,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
                 'name' => $items->first()['name'],
                 'data' => $items->map(fn($item)
                     => [
+                    'id' => $item['id'],
                     'value' => $item['value'],
                     'price' => $item['price'],
                 ])->toArray(),

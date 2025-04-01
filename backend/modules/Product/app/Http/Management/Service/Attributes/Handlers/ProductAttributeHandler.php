@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
 use Modules\Product\Http\Management\Service\Attributes\Interfaces\ProductAttributeRetrieveInterface;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Contracts\VariationInterface;
 use RuntimeException;
 
 class ProductAttributeHandler
@@ -25,6 +26,15 @@ class ProductAttributeHandler
         }
 
         return $this->retrieveStrategy->getAttributes($this->product);
+    }
+
+    public function loadAttributeById(int $variationId): VariationInterface
+    {
+        if (! $this->product) {
+            throw new RuntimeException('Product must be set');
+        }
+
+        return $this->retrieveStrategy->loadAttributesById($this->product, $variationId);
     }
 
     public function getAttributesForCollection(Collection $products): Collection

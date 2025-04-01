@@ -79,6 +79,11 @@ class Discount extends Model
         return $builder->where('discounts.status', DiscountStatusEnum::CANCELLED);
     }
 
+    public function scopeActive(Builder $builder): Builder
+    {
+        return $builder->where('discounts.status', DiscountStatusEnum::ACTIVE);
+    }
+
     public function cancelDiscount(): void
     {
         $this->status = DiscountStatusEnum::CANCELLED;
@@ -103,14 +108,14 @@ class Discount extends Model
     public function originalPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
     }
 
     public function discountPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float) $value, 2);
+            return round((float)$value, 2);
         });
     }
 

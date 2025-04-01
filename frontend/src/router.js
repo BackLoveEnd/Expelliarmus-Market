@@ -9,6 +9,7 @@ import ForgotPassword from "@/shop/views/Auth/Password/ForgotPassword.vue";
 import Layout from "@/shop/views/Auth/Password/Layout.vue";
 import ResetPassword from "@/shop/views/Auth/Password/ResetPassword.vue";
 import NotFound from "@/components/Default/NotFound.vue";
+import ServerError from "@/components/Default/ServerError.vue";
 
 const routes = [
     {
@@ -41,6 +42,10 @@ const routes = [
         path: "/management",
         component: ManagementApp,
         children: managementRoutes,
+    },
+    {
+        path: "/500",
+        component: ServerError,
     },
     {
         path: "/:any(.*)*",

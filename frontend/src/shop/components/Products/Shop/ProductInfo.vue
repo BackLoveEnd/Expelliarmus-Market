@@ -5,7 +5,7 @@ import PurchaseButton from "@/components/Product/Main/PurchaseButton.vue";
 import Description from "@/components/Product/Main/Description.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
-import {computed, reactive, ref} from "vue";
+import {computed, onBeforeUnmount, reactive, ref, watch} from "vue";
 import {ProductsShopService} from "@/services/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
@@ -13,6 +13,7 @@ import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsVi
 import CombinedVariationsViewer from "@/components/Product/Main/CombinedVariationsViewer.vue";
 import {useBreadCrumbStore} from "@/stores/useBreadCrumbStore.js";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
+import {useRouter} from "vue-router";
 
 const props = defineProps({
   productId: Number | String,
@@ -47,6 +48,8 @@ const productInfo = reactive({
   variations: []
 });
 
+const router = useRouter();
+
 const breadcrumbStore = useBreadCrumbStore();
 
 const {isInWishlist, addToWishlist} = useAddToWishlist();
@@ -59,6 +62,14 @@ const price = ref(0);
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
 
+let selectedVariation = reactive({
+  id: null,
+  price: null,
+  discount: null
+});
+
+const emit = defineEmits(["product-data"]);
+
 function toggleCartModal() {
   isCartModalOpen.value = !isCartModalOpen.value;
 }
@@ -67,13 +78,48 @@ const priceDependOnQuantity = computed(() =>
     (price.value * quantity.value).toFixed(2),
 );
 
+const cartInfoSummarize = computed(() => {
+  return {
+    product_id: productInfo.product.id,
+    variation_id: selectedVariation.id ?? null,
+    quantity: quantity.value
+  };
+});
+
 const imagesUrls = computed(() => {
   return productInfo.product?.images?.map((image) => image.image_url);
 });
 
-function updatePrice(variation) {
-  price.value = parseFloat(variation.price);
-}
+const discountIfAvailable = computed(() => {
+  console.log(productInfo.product.discount);
+  if (productInfo?.product?.discount !== null) {
+    return {
+      old_price: productInfo?.product?.discount.old_price,
+      percentage: productInfo?.product?.discount.percentage,
+      end_at: productInfo?.product?.discount.end_at
+    };
+  }
+
+  if (selectedVariation.discount === null) {
+    return null;
+  }
+
+  return {
+    old_price: selectedVariation.discount.old_price,
+    percentage: selectedVariation.discount.percentage,
+    end_at: selectedVariation.discount.end_at
+  };
+});
+
+const handleSelectedVariation = (variation) => {
+  setSelectedVariation(variation);
+
+  if (selectedVariation.discount !== null) {
+    price.value = parseFloat(selectedVariation.discount.discount_price);
+  } else {
+    price.value = parseFloat(variation.attributes.price);
+  }
+};
 
 async function getProduct() {
   await ProductsShopService.getProduct(props.productId, props.productSlug)
@@ -89,13 +135,42 @@ async function getProduct() {
           {name: productInfo.brand?.attributes?.brand_name, url: "#"},
           {name: productInfo.product?.title, url: "#"},
         ]);
+
+        if (!isNaN(parseFloat(productInfo?.warehouse?.attributes.price))) {
+          price.value = productInfo?.warehouse?.attributes.price;
+        }
+
+        emit("product-data", {
+          product: productInfo?.product,
+          category: productInfo?.category?.attributes,
+          brand: productInfo?.brand?.attributes
+        });
       })
       .catch((e) => {
-
+        if (e?.status === 404) {
+          router.push({name: "not-found"});
+        }
       });
 }
 
+watch(
+    () => [props.productId, props.productSlug],
+    async ([newProductId, newProductSlug], [oldProductId, oldProductSlug]) => {
+      if (newProductId !== oldProductId || newProductSlug !== oldProductSlug) {
+        await getProduct();
+      }
+    },
+);
+
+function setSelectedVariation(variation) {
+  selectedVariation.price = variation.attributes.price;
+  selectedVariation.id = variation.attributes.id;
+  selectedVariation.discount = variation.attributes.discount;
+}
+
 await getProduct();
+
+onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
 </script>
 
 <template>
@@ -107,10 +182,11 @@ await getProduct();
       <div class="flex justify-between">
         <product-photo-tabs :images="imagesUrls"/>
         <div class="flex flex-col justify-between gap-y-8 items-start min-w-[35%]">
-          <div class="flex flex-col gap-y-4 w-full">
+          <div class="flex flex-col gap-y-4 w-full" v-if="productInfo.product?.id">
             <description
                 :price="priceDependOnQuantity"
                 :price-per-unit="pricePerUnit"
+                :discount="discountIfAvailable"
                 :title="productInfo.product?.title"
                 :title-desc="productInfo.product?.title_description"
                 :article="productInfo.product?.article"
@@ -123,18 +199,20 @@ await getProduct();
                 v-if="Array.isArray(productInfo?.previewVariations)"
                 :previewed-variations="productInfo?.previewVariations"
                 :variations="productInfo?.variations"
-                @variation-selected="updatePrice"
+                @selected-option="handleSelectedVariation"
             />
             <single-variations-viewer
                 v-else
                 :previewed-variation="productInfo?.previewVariations"
-                @selected-option="updatePrice"
+                :variations="productInfo?.variations"
+                @selected-option="handleSelectedVariation"
             />
           </div>
           <div class="flex items-center gap-x-8">
             <quantity-adjuster v-model="quantity"/>
             <div>
               <purchase-button
+                  :product-info="cartInfoSummarize"
                   @open-cart-modal="toggleCartModal"
               ></purchase-button>
               <product-cart-modal
@@ -165,9 +243,9 @@ await getProduct();
               </button>
             </div>
           </div>
-          <div class="border border-gray-700 rounded-md w-full">
+          <div class="rounded-md w-full flex gap-x-4">
             <div
-                class="flex justify-start items-center border-b border-gray-700 py-4 px-8"
+                class="flex justify-start items-center border border-gray-700 py-4 px-8 rounded-md"
             >
               <div class="flex gap-x-6 items-center">
                 <svg
@@ -190,7 +268,7 @@ await getProduct();
                 </div>
               </div>
             </div>
-            <div class="flex justify-start items-center py-4 px-8">
+            <div class="flex justify-start items-center py-4 px-8 border border-gray-700 rounded-md">
               <div class="flex gap-x-6 items-center">
                 <svg
                     width="40"
@@ -227,7 +305,7 @@ await getProduct();
   </section>
   <section class="container mx-auto space-y-8 max-w-screen-2xl">
     <section-title title="Specifications"></section-title>
-    <article class="w-1/2">
+    <article class="w-1/2" v-if="productInfo.product?.specifications">
       <specs
           :grouped="productInfo.product?.specifications?.grouped"
           :separated="productInfo.product?.specifications?.separated"

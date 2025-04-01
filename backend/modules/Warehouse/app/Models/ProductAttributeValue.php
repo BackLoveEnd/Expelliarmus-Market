@@ -11,9 +11,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Database\Factories\SingleAttributeFactory;
 
-class ProductAttributeValue extends Model implements DiscountRelationInterface
+class ProductAttributeValue extends Model implements DiscountRelationInterface, VariationInterface
 {
     use HasFactory;
 
@@ -64,6 +65,14 @@ class ProductAttributeValue extends Model implements DiscountRelationInterface
             ->discount()
             ->notCancelled()
             ->whereDate('discounts.end_date', '>', now()->format('Y-m-d H:i:s'))
+            ->orderByDesc('discounts.end_date');
+    }
+
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
             ->orderByDesc('discounts.end_date');
     }
 

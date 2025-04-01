@@ -14,15 +14,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Modules\Brand\Builders\ProductBuilder;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
 use Modules\Order\Models\OrderLine;
+use Modules\Product\Builders\ProductBuilder;
 use Modules\Product\Casts\ProductArticleCast;
 use Modules\Product\Database\Factories\ProductFactory;
 use Modules\Product\Observers\ProductObserver;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 use Modules\Warehouse\Models\ProductAttributeValue;
@@ -44,6 +45,7 @@ use Modules\Warehouse\Models\Warehouse;
  * @property string $preview_image_source
  * @property Carbon $created_at
  * @property Carbon $published_at
+ * @property Warehouse $warehouse
  * @property ProductStatusEnum $status
  * @property bool|null $with_attribute_combinations
  * @method ProductBuilder wherePublished
@@ -127,6 +129,14 @@ class Product extends Model implements DiscountRelationInterface
             ->orderByDesc('discounts.end_date');
     }
 
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
+            ->orderByDesc('discounts.end_date');
+    }
+
     public function getDescriptionMarkdown(): string
     {
         return $this->main_description_markdown;
@@ -137,7 +147,7 @@ class Product extends Model implements DiscountRelationInterface
         return $this->main_description_html;
     }
 
-    public function getCurrentVariationRelation(): ?Collection
+    public function getCurrentVariationRelation(): Collection|VariationInterface|null
     {
         if (is_null($this->hasCombinedAttributes())) {
             return null;

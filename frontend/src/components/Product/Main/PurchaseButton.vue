@@ -1,14 +1,14 @@
 <template>
   <div>
     <button
-      @click="handleButtonClick"
-      :class="{
+        @click="handleButtonClick"
+        :class="{
         'bg-white text-black underline underline-offset-4 decoration-2 decoration-dashed border border-gray-700 border-green-600 hover:text-green-600':
           isInCart,
         'bg-[#db4444] border border-[#db4444] text-white hover:bg-red-900':
           !isInCart,
       }"
-      class="px-8 py-3 text-center rounded-md"
+        class="px-8 py-3 text-center rounded-md"
     >
       {{ isInCart ? "Show Cart" : "Buy Now" }}
     </button>
@@ -16,24 +16,37 @@
 </template>
 
 <script setup>
-import { inject, ref } from "vue";
+import {useToastStore} from "@/stores/useToastStore.js";
+import {useCartStore} from "@/stores/useCartStore.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import {ref} from "vue";
 
-const emitter = inject("emitter");
+const props = defineProps({
+  productInfo: Object
+});
+
 const emit = defineEmits(["open-cart-modal"]);
 
-const isInCart = ref(false);
+const toast = useToastStore();
 
-function handleButtonClick() {
+const cartStore = useCartStore();
+
+const isInCart = ref(cartStore.isProductInCart(props.productInfo.product_id));
+
+async function handleButtonClick() {
   if (isInCart.value) {
     handleCartOpenModal();
   } else {
-    addToCart();
+    await addToCart();
   }
 }
 
-function addToCart() {
-  isInCart.value = true;
-  emitter.emit("add-to-cart");
+async function addToCart() {
+  await cartStore.addToCart(props.productInfo)
+      .then(() => isInCart.value = true)
+      .catch((e) => {
+        toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+      });
 }
 
 function handleCartOpenModal() {

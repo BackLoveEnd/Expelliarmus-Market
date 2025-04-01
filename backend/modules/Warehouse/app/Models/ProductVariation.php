@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Modules\Product\Models\Product;
 use Modules\Product\Traits\Slugger;
 use Modules\Warehouse\Contracts\DiscountRelationInterface;
+use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Database\Factories\ProductVariationFactory;
 
 /**
@@ -24,7 +25,7 @@ use Modules\Warehouse\Database\Factories\ProductVariationFactory;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class ProductVariation extends Model implements DiscountRelationInterface
+class ProductVariation extends Model implements DiscountRelationInterface, VariationInterface
 {
     use HasFactory;
     use Slugger;
@@ -73,6 +74,14 @@ class ProductVariation extends Model implements DiscountRelationInterface
             ->discount()
             ->notCancelled()
             ->whereDate('discounts.end_date', '>', now()->format('Y-m-d H:i:s'))
+            ->orderByDesc('discounts.end_date');
+    }
+
+    public function lastActiveDiscount(): MorphMany
+    {
+        return $this
+            ->discount()
+            ->active()
             ->orderByDesc('discounts.end_date');
     }
 

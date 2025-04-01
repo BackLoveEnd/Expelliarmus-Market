@@ -11,6 +11,10 @@ export const ProductsShopService = {
         return api().get('/shop/home/products/explore');
     },
 
+    async getRelatedProduct(categorySlug) {
+        return api().get(`/shop/categories/${categorySlug}/products`);
+    },
+
     async getProductsShopCard(params) {
         const link = formatter.formatUrl(`/shop/products`, params);
 
@@ -33,6 +37,7 @@ export const ProductsShopService = {
                     title_description: productAttr.title_description,
                     images: productAttr.images,
                     specifications: productAttr.specifications,
+                    discount: productAttr.discount ?? null
                 };
 
                 if (productAttr.discount) {

@@ -6,10 +6,11 @@ namespace Modules\Warehouse\Services\Warehouse;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as BaseCollection;
-use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
+use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto as AttributesColsDto;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeHandler;
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Product\Models\Product;
+use RuntimeException;
 
 class WarehouseProductInfoService
 {
@@ -34,7 +35,7 @@ class WarehouseProductInfoService
 
         $product->productAttributes = $this->getProductAttributes(
             product: $product,
-            dto: new FetchAttributesColumnsDto(
+            dto: new AttributesColsDto(
                 singleAttrCols: [
                     ['id', 'price', 'attribute_id', 'value', 'quantity'],
                     ['id', 'name', 'type'],
@@ -49,13 +50,13 @@ class WarehouseProductInfoService
         return $product;
     }
 
-    public function getWarehouseInfoAboutProducts(Collection $products, FetchAttributesColumnsDto $dto): Collection
+    public function getWarehouseInfoAboutProducts(Collection $products, AttributesColsDto $dto): Collection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(
             fn(Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
-        $withoutVariationProducts = $withoutVariationProducts->load([
+        $withoutVariationProducts = $withoutVariationProducts->loadMissing([
             'warehouse' => fn($query) => $query->select($dto->warehouseCols),
         ]);
 
@@ -67,6 +68,47 @@ class WarehouseProductInfoService
         return $withoutVariationProducts
             ->merge($combinedVariationProducts)
             ->merge($singleVariationProducts);
+    }
+
+    public function getProductAttributes(Product $product, AttributesColsDto $dto): BaseCollection
+    {
+        $this->productAttributeService->setProduct($product);
+
+        if ($product->hasCombinedAttributes()) {
+            return $this->getCombinedAttributesProduct($dto->combinedAttrCols);
+        }
+
+        return $this->getSingleAttributesProduct($dto->singleAttrCols);
+    }
+
+    public function getProductAttributeById(Product $product, int $variationId, AttributesColsDto $dto): Product
+    {
+        if (is_null($product->hasCombinedAttributes())) {
+            throw new RuntimeException("Product $product->id does not have variation in ".__CLASS__);
+        }
+
+        $this->productAttributeService->setProduct($product);
+
+        if ($product->hasCombinedAttributes()) {
+            return $product->setRelation(
+                relation: 'combinedAttributes',
+                value: $this->productAttributeService
+                    ->setAttributesColumns(...$dto->combinedAttrCols)
+                    ->loadAttributeById($variationId),
+            );
+        }
+
+        return $product->setRelation(
+            relation: 'singleAttributes',
+            value: $product->singleAttributes = $this->productAttributeService
+                ->setAttributesColumns(...$dto->singleAttrCols)
+                ->loadAttributeById($variationId),
+        );
+    }
+
+    public function getAttributeServiceHandler(): ProductAttributeHandler
+    {
+        return $this->productAttributeService->getAttributeHandler();
     }
 
     private function loadProduct(int $productId): Product
@@ -89,22 +131,6 @@ class WarehouseProductInfoService
             ]);
     }
 
-    public function getProductAttributes(Product $product, FetchAttributesColumnsDto $dto): BaseCollection
-    {
-        $this->productAttributeService->setProduct($product);
-
-        if ($product->hasCombinedAttributes()) {
-            return $this->getCombinedAttributesProduct($dto->combinedAttrCols);
-        }
-
-        return $this->getSingleAttributesProduct($dto->singleAttrCols);
-    }
-
-    public function getAttributeServiceHandler(): ProductAttributeHandler
-    {
-        return $this->productAttributeService->getAttributeHandler();
-    }
-
     private function getSingleAttributesProduct(array $columns): Collection
     {
         return $this->productAttributeService
@@ -119,7 +145,7 @@ class WarehouseProductInfoService
             ->getAttributes();
     }
 
-    private function getLoadedVariations(Collection $unloadVariations, FetchAttributesColumnsDto $dto): array
+    private function getLoadedVariations(Collection $unloadVariations, AttributesColsDto $dto): array
     {
         [$combinedVariationProducts, $singleVariationProducts] = $unloadVariations->partition(
             fn(Product $product) => $product->hasCombinedAttributes(),
