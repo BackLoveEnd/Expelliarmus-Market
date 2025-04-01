@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Order\Cart\Dto;
 
+use Illuminate\Support\Collection;
+use Modules\Order\Models\Cart;
+
 final class UserCartInfoDto
 {
     public function __construct(
@@ -30,6 +33,25 @@ final class UserCartInfoDto
             discount: $data['discount'] ?? null,
             variation: $data['variation'] ?? null,
         );
+    }
+
+    public static function fromModels(Collection $carts): Collection
+    {
+        $carts->loadMissing('product');
+
+        return $carts->map(function (Cart $cart) {
+            return (object)[
+                'id' => $cart->id,
+                'product_image' => $cart->product->preview_image,
+                'product_title' => $cart->product->title,
+                'product_id' => $cart->product_id,
+                'quantity' => $cart->quantity,
+                'price_per_unit' => $cart->price_per_unit,
+                'final_price' => $cart->final_price,
+                'discount' => $cart->discount,
+                'variation' => $cart->variation,
+            ];
+        });
     }
 
     public function toArray(): array

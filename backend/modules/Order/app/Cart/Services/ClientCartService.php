@@ -43,10 +43,12 @@ class ClientCartService
         }
 
         if ($user) {
-            $cart = $user->cart()->toBase()->get();
+            $carts = $user
+                ->cart()->with('product:id,preview_image,title')
+                ->get();
 
-            if ($cart->isNotEmpty()) {
-                $this->session->put($this->cartSessionKey, $cart->toArray());
+            if ($carts->isNotEmpty()) {
+                $this->session->put($this->cartSessionKey, UserCartInfoDto::fromModels($carts)->toArray());
             }
         }
 
@@ -139,7 +141,7 @@ class ClientCartService
         BaseCollection $cartsInSession,
     ): BaseCollection {
         $updatedCart = $cartsInSession->map(function (object $cartItem) use ($dto) {
-            $matchingItem = $dto->cartItems->firstWhere('cart_id', $cartItem->id);
+            $matchingItem = $dto->cartItems->firstWhere('id', $cartItem->id);
 
             if ($matchingItem) {
                 $cartItem->quantity = $matchingItem->quantity;
@@ -161,8 +163,20 @@ class ClientCartService
         }
 
         DB::transaction(function () use ($user, $updatedCartInfo) {
+            $cartData = $updatedCartInfo->select([
+                'id',
+                'product_id',
+                'quantity',
+                'price_per_unit',
+                'final_price',
+                'discount',
+                'variation',
+            ]);
+
+            $cartData = $cartData->map(fn($item) => [...$item, 'user_id' => $user->id]);
+
             Cart::query()->where('user_id', $user->id)
-                ->upsert($updatedCartInfo->toArray(), 'cart_id', ['quantity', 'final_price']);
+                ->upsert($cartData->toArray(), 'id', ['quantity', 'final_price']);
         });
     }
 
@@ -307,7 +321,7 @@ class ClientCartService
 
         return $cartItems->map(fn($item)
             => [
-            'cart_id' => $item->cart_id,
+            'id' => $item->id,
             'quantity' => $item->quantity,
             'product' => $preparedProducts->get($item->product->id, $item->product),
             'variation' => $item->variation,

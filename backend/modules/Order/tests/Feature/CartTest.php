@@ -55,13 +55,15 @@ class CartTest extends TestCase
     {
         $product = Product::factory()->published()->withSingleAttributes();
 
-        $product->singleAttributes()->update(['quantity' => 0]);
+        $variation = $product->singleAttributes->first();
+
+        $variation->update(['quantity' => 0]);
 
         $response = $this->postJson('api/shop/user/cart', [
             'data' => [
                 'attributes' => [
                     'product_id' => $product->id,
-                    'variation_id' => null,
+                    'variation_id' => $variation->id,
                     'quantity' => 1,
                 ],
             ],
@@ -100,6 +102,8 @@ class CartTest extends TestCase
             (object)[
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
                 'quantity' => 2,
                 'price_per_unit' => $productVariation->price,
                 'final_price' => round($productVariation->price * 2, 2),
@@ -107,7 +111,7 @@ class CartTest extends TestCase
                     'id' => $productVariation->id,
                     'data' => $productVariation->productAttributes->map(fn($item)
                         => [
-                        'name' => $item->name,
+                        'attribute_name' => $item->name,
                         'value' => $item->pivot->value,
                         'type' => $item->type->toTypes(),
                     ]),
@@ -150,6 +154,8 @@ class CartTest extends TestCase
             (object)[
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
                 'quantity' => 3,
                 'price_per_unit' => $product->warehouse->default_price,
                 'final_price' => round($product->warehouse->default_price * 3, 2),
@@ -196,6 +202,8 @@ class CartTest extends TestCase
                     'type' => 'cart',
                     'attributes' => [
                         'product_id' => $product->id,
+                        'product_image' => $product->preview_image,
+                        'product_title' => $product->title,
                         'quantity' => 3,
                         'price_per_unit' => $product->warehouse->default_price,
                         'final_price' => round($product->warehouse->default_price * 3, 2),
@@ -208,6 +216,8 @@ class CartTest extends TestCase
                     'type' => 'cart',
                     'attributes' => [
                         'product_id' => $product->id,
+                        'product_image' => $product->preview_image,
+                        'product_title' => $product->title,
                         'quantity' => 1,
                         'price_per_unit' => $product->warehouse->default_price,
                         'final_price' => round($product->warehouse->default_price * 1, 2),
@@ -261,6 +271,8 @@ class CartTest extends TestCase
                     'type' => 'cart',
                     'attributes' => [
                         'product_id' => $product->id,
+                        'product_image' => $product->preview_image,
+                        'product_title' => $product->title,
                         'quantity' => 3,
                         'price_per_unit' => number_format($product->warehouse->default_price, 2, '.', ''),
                         'final_price' => number_format(round($product->warehouse->default_price * 3, 2), 2, '.', ''),
@@ -273,6 +285,8 @@ class CartTest extends TestCase
                     'type' => 'cart',
                     'attributes' => [
                         'product_id' => $product->id,
+                        'product_image' => $product->preview_image,
+                        'product_title' => $product->title,
                         'quantity' => 1,
                         'price_per_unit' => number_format($product->warehouse->default_price, 2, '.', ''),
                         'final_price' => number_format(round($product->warehouse->default_price * 1, 2), 2, '.', ''),
@@ -337,6 +351,8 @@ class CartTest extends TestCase
             (object)[
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
                 'quantity' => 1,
                 'price_per_unit' => $product->warehouse->default_price,
                 'final_price' => round($product->warehouse->default_price * 1, 2),
@@ -346,6 +362,8 @@ class CartTest extends TestCase
             (object)[
                 'id' => session('user.cart')[1]->id,
                 'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
                 'quantity' => 2,
                 'price_per_unit' => $product->warehouse->default_price,
                 'final_price' => round($product->warehouse->default_price * 2, 2),
@@ -360,12 +378,156 @@ class CartTest extends TestCase
             (object)[
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
                 'quantity' => 2,
                 'price_per_unit' => $product->warehouse->default_price,
                 'final_price' => round($product->warehouse->default_price * 2, 2),
                 'variation' => null,
                 'discount' => null,
             ],
+        ]);
+    }
+
+    public function test_can_update_quantities_in_cart_for_anonymous_user(): void
+    {
+        $product = Product::factory()->published()->withoutAttributes();
+
+        $product2 = Product::factory()->published()->withoutAttributes();
+
+        $product->loadMissing('warehouse');
+
+        $product2->loadMissing('warehouse');
+
+        $product->warehouse()->update(['status' => WarehouseProductStatusEnum::IN_STOCK]);
+
+        $product2->warehouse()->update(['status' => WarehouseProductStatusEnum::IN_STOCK]);
+
+        $user = User::factory()->create();
+
+        $response1 = $this->actingAs($user)->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product->id,
+                    'variation_id' => null,
+                    'quantity' => 1,
+                ],
+            ],
+        ]);
+
+        $response2 = $this->actingAs($user)->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product2->id,
+                    'variation_id' => null,
+                    'quantity' => 4,
+                ],
+            ],
+        ]);
+
+        $cart = session()->get('user.cart', []);
+
+        $updateResponse = $this
+            ->actingAs($user)
+            ->withSession(['user.cart' => $cart])
+            ->patchJson('api/shop/user/cart', [
+                'data' => [
+                    'attributes' => [
+                        'items' => [
+                            [
+                                'cart_id' => $cart[0]->id,
+                                'quantity' => 2,
+                            ],
+                            [
+                                'cart_id' => $cart[1]->id,
+                                'quantity' => 3,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $updateResponse->assertExactJson([
+            'message' => 'Cart was updated.',
+        ]);
+
+        $cart = session()->get('user.cart', []);
+
+        $updateResponse->assertSessionHas('user.cart', [
+            (object)[
+                'id' => $cart[0]->id,
+                'product_id' => $product->id,
+                'product_image' => $product->preview_image,
+                'product_title' => $product->title,
+                'quantity' => 2, // New quantity
+                'price_per_unit' => $product->warehouse->default_price,
+                'final_price' => round($product->warehouse->default_price * 2, 2), // New price
+                'variation' => null,
+                'discount' => null,
+            ],
+            (object)[
+                'id' => $cart[1]->id,
+                'product_id' => $product2->id,
+                'product_image' => $product2->preview_image,
+                'product_title' => $product2->title,
+                'quantity' => 3, // New quantity
+                'price_per_unit' => $product2->warehouse->default_price,
+                'final_price' => round($product2->warehouse->default_price * 3, 2), // New price
+                'variation' => null,
+                'discount' => null,
+            ],
+        ]);
+
+        foreach ($cart as $cartItem) {
+            $this->assertDatabaseHas('cart', [
+                'user_id' => $user->id,
+                'id' => $cartItem->id,
+                'quantity' => $cartItem->quantity,
+            ]);
+        }
+    }
+
+    public function test_cannot_update_quantities_if_has_not_enough_supplies(): void
+    {
+        $product = Product::factory()->published()->withCombinedAttributes();
+
+        $product->warehouse()->update(['status' => WarehouseProductStatusEnum::IN_STOCK]);
+
+        $variation = $product->combinedAttributes->first();
+
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson('api/shop/user/cart', [
+                'data' => [
+                    'attributes' => [
+                        'product_id' => $product->id,
+                        'variation_id' => $variation->id,
+                        'quantity' => 1,
+                    ],
+                ],
+            ]);
+
+        $variation->update(['quantity' => 0]);
+
+        $response2 = $this
+            ->actingAs($user)
+            ->patchJson('api/shop/user/cart', [
+                'data' => [
+                    'attributes' => [
+                        'items' => [
+                            [
+                                'cart_id' => session()->get('user.cart')[0]->id,
+                                'quantity' => 5,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $response2->assertExactJson([
+            'message' => "Product $product->product_article has not enough supplies for requested quantities.",
         ]);
     }
 }

@@ -20,7 +20,7 @@ final readonly class CartProductsQuantityDto
         if ($request->user()) {
             $products = Cart::query()
                 ->with('product:id,with_attribute_combinations,product_article')
-                ->whereIn('cart_id', $cartItems->pluck('cart_id')->toArray())
+                ->whereIn('id', $cartItems->pluck('cart_id')->toArray())
                 ->get(['id', 'product_id', 'variation']);
         } else {
             $products = collect($request->session()->get('user.cart', []))
@@ -42,10 +42,10 @@ final readonly class CartProductsQuantityDto
             $productCartItem = $products->firstWhere('id', $item['cart_id']);
 
             return (object)[
-                'cart_id' => $item['cart_id'],
+                'id' => $item['cart_id'],
                 'quantity' => $item['quantity'],
                 'product' => $productCartItem->product,
-                'variation' => $productCartItem->variation['id'],
+                'variation' => $productCartItem->variation['id'] ?? null,
             ];
         });
 
