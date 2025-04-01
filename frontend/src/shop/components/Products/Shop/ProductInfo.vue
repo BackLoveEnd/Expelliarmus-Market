@@ -181,7 +181,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
     <section class="container mx-auto">
       <div class="flex justify-between">
         <product-photo-tabs :images="imagesUrls"/>
-        <div class="flex flex-col justify-between gap-y-8 items-start min-w-[35%]">
+        <div class="flex flex-col  gap-y-8 items-start min-w-[35%]">
           <div class="flex flex-col gap-y-4 w-full" v-if="productInfo.product?.id">
             <description
                 :price="priceDependOnQuantity"
