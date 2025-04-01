@@ -205,18 +205,20 @@ class ClientCartService
         $product = $this->discountService->loadLastActiveDiscountForProduct($product);
 
         if ($this->discountService->productHasActiveDiscount($product)) {
-            $cartInfo['discount'] = [
-                'id' => $product->lastActiveDiscount->id,
-                'percentage' => $product->lastActiveDiscount->percentage,
-                'new_price' => $product->lastActiveDiscount->discount_price,
+            $currentRelation = $product->getCurrentVariationRelation();
+
+            $lastDiscount = $currentRelation->lastActiveDiscount->first();
+
+            return [
+                'id' => $lastDiscount->id,
+                'percentage' => $lastDiscount->percentage,
+                'new_price' => $lastDiscount->discount_price,
                 'final_price' => $this->countFinalPrice(
-                    $product->lastActiveDiscount->discount_price,
+                    $lastDiscount->discount_price,
                     $requestedQuantity,
                 ),
-                'end_date' => $product->lastActiveDiscount->end_date,
+                'end_date' => $lastDiscount->end_date,
             ];
-
-            return $cartInfo;
         }
 
         return null;

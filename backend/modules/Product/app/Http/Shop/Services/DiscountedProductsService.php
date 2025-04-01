@@ -51,7 +51,7 @@ final class DiscountedProductsService
             ->get();
 
         $discounts = $this->filterDiscountsWithoutProduct($discounts);
-        
+
         return new LimitOffsetDto(
             items: $this->uniqueDiscountsByProduct($discounts),
             total: Discount::query()->whereStatus(DiscountStatusEnum::ACTIVE)->count(),
@@ -89,18 +89,16 @@ final class DiscountedProductsService
     public function productHasActiveDiscount(Product $product): bool
     {
         $product = $this->loadLastActiveDiscountForProduct($product);
+
         if (is_null($product->hasCombinedAttributes())) {
-            return $product->relationLoaded('lastActiveDiscounts')
-                && $product->lastActiveDiscount->isNotEmpty();
+            return $product->lastActiveDiscount->isNotEmpty();
         }
 
         if ($product->hasCombinedAttributes()) {
-            return $product->relationLoaded('combinedAttributes.lastActiveDiscount')
-                && $product->combinedAttributes->lastActiveDiscount->isNotEmpty();
+            return $product->combinedAttributes->lastActiveDiscount->isNotEmpty();
         }
 
-        return $product->relationLoaded('singleAttributes.lastActiveDiscount')
-            && $product->singleAttributes->lastActiveDiscount->isNotEmpty();
+        return $product->singleAttributes->lastActiveDiscount->isNotEmpty();
     }
 
     public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
