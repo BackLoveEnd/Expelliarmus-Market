@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="flex flex-col space-y-2 p-3">
-      <p class="font-medium">{{ truncatedTitle }}</p>
+      <p class="font-medium">{{ truncator.truncateString(props.discountedProduct?.title, 20) }}</p>
       <div class="flex gap-3">
         <p class="font-semibold text-[#db4444]">{{ '$' + props.discountedProduct?.discount?.discount_price }}</p>
         <p class="font-medium text-[#808080] line-through">{{
@@ -59,9 +59,9 @@
 
 <script setup>
 import StarRating from "@/components/Card/StarRating.vue";
-import {computed} from "vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
 import {useScrolling} from "@/composables/useScrolling.js";
+import {useTruncator} from "@/composables/useTruncator.js";
 
 const props = defineProps({
   discountedProduct: Object
@@ -69,10 +69,7 @@ const props = defineProps({
 
 const {isInWishlist, addToWishlist} = useAddToWishlist();
 
-const truncatedTitle = computed(() => {
-  const title = props.discountedProduct?.title || "";
-  return title.length > 20 ? title.substring(0, 20) + "..." : title;
-});
+const truncator = useTruncator();
 </script>
 
 <style scoped>

@@ -32,7 +32,7 @@
       </button>
     </div>
     <div class="flex flex-col space-y-2">
-      <p class="font-medium">{{ truncatedTitle }}</p>
+      <p class="font-medium">{{ truncator.truncateString(product.title, 25) }}</p>
       <p class="font-medium">{{ '$' + product.price }}</p>
       <star-rating :rating="4" :review-number="50"/>
     </div>
@@ -41,9 +41,9 @@
 
 <script setup>
 import StarRating from "@/components/Card/StarRating.vue";
-import {computed} from "vue";
 import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
 import {useScrolling} from "@/composables/useScrolling.js";
+import {useTruncator} from "@/composables/useTruncator.js";
 
 const props = defineProps({
   product: Object
@@ -51,10 +51,7 @@ const props = defineProps({
 
 const {isInWishlist, addToWishlist} = useAddToWishlist();
 
-const truncatedTitle = computed(() => {
-  const title = props.product?.title || "";
-  return title.length > 25 ? title.substring(0, 25) + "..." : title;
-});
+const truncator = useTruncator();
 </script>
 
 <style scoped>

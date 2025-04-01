@@ -218,7 +218,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
               <product-cart-modal
                   :is-open="isCartModalOpen"
                   @close-cart-modal="toggleCartModal"
-              ></product-cart-modal>
+              />
             </div>
             <div>
               <button

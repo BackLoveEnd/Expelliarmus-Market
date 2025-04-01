@@ -1,14 +1,23 @@
 <script setup>
 import {useCartStore} from "@/stores/useCartStore.js";
 import {computed, ref, watch} from "vue";
+import {useTruncator} from "@/composables/useTruncator.js";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const cartStore = useCartStore();
 
 const emit = defineEmits(["total-price", "cart-empty", "updated-product"]);
 
+const truncator = useTruncator();
+
 const isInitialLoad = ref(true);
 
-const totalPrice = computed(() => cartStore.totalPrice.toFixed(2));
+const totalPrice = computed(() => {
+  return cartStore.cartItems.reduce((total, product) => {
+    const price = product.discount ? product.discount.new_price : product.unitPrice;
+    return total + price * product.quantity;
+  }, 0).toFixed(2);
+});
 
 async function getCart() {
   await cartStore.fetchCart()
@@ -34,6 +43,14 @@ watch(
           emit("updated-product", cartStore.cartItems[index]);
         }
       });
+    },
+    {deep: true}
+);
+
+watch(
+    () => cartStore.cartItems,
+    () => {
+      emit("total-price", totalPrice.value);
     },
     {deep: true}
 );
@@ -64,14 +81,17 @@ await getCart();
           class="rounded-md shadow-[0px_1px_9px_0px_rgba(0,_0,_0,_0.1)] bg-white relative"
       >
         <td class="py-6 px-12 font-normal text-start max-w-xs">
-          <div class="flex items-center gap-x-4">
+          <router-link
+              @click.prevent="useScrolling().scrollToTop()"
+              :to="{ name: 'product-page', params: { productId: product.productId, productSlug: product.productSlug}}"
+              class="flex items-center gap-x-4 underline text-blue-400 underline-offset-2">
             <img
                 :src="product.productImage"
                 :alt="product.productTitle"
                 class="max-w-14 max-h-14"
             />
-            <span class="text-base font-normal">{{ product.productTitle }}</span>
-          </div>
+            <span class="text-base font-normal">{{ truncator.truncateString(product.productTitle, 50) }}</span>
+          </router-link>
         </td>
         <td class="py-6 px-12 font-normal">
           <div class="flex flex-col items-center" v-if="product.variation !== null">
@@ -83,7 +103,14 @@ await getCart();
           <i class="pi pi-minus" v-else></i>
         </td>
         <td class="py-6 px-12 font-normal">
-          ${{ product.unitPrice.toFixed(2) }}
+          <div class="flex flex-col justify-center" v-if="product.discount">
+            <div class="space-x-2">
+              <span class="line-through decoration-red-500">${{ product.unitPrice.toFixed(2) }}</span>
+              <span class="font-semibold">${{ product.discount.new_price.toFixed(2) }}</span>
+            </div>
+            <span class="text-red-500">Sale -{{ product.discount.percentage }}</span>
+          </div>
+          <span v-else>${{ product.unitPrice.toFixed(2) }}</span>
         </td>
         <td class="py-6 px-12 font-normal">
           <div class="flex justify-center items-center">
@@ -96,27 +123,20 @@ await getCart();
           </div>
         </td>
         <td class="py-6 px-12 font-normal">
-          ${{ (product.unitPrice * product.quantity).toFixed(2) }}
+          <div class="flex gap-x-2 justify-center" v-if="product.discount">
+            <span class="line-through decoration-red-500">${{
+                (product.unitPrice * product.quantity).toFixed(2)
+              }}</span>
+            <span class="font-semibold">${{ (product.discount.new_price * product.quantity).toFixed(2) }}</span>
+          </div>
+          <span v-else>${{ (product.unitPrice * product.quantity).toFixed(2) }}</span>
         </td>
         <td>
           <button
               @click="cartStore.removeFromCart(product.id)"
               class="absolute -top-3 -right-3 text-white"
           >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="#db4444"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-7"
-            >
-              <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
+            <i class="pi pi-times-circle text-red-500"></i>
           </button>
         </td>
       </tr>
