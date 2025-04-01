@@ -6,11 +6,14 @@ namespace Modules\Order\Cart\Services;
 
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Facades\DB;
 use Modules\Order\Cart\Dto\CartProductsQuantityDto;
 use Modules\Order\Cart\Dto\ProductCartDto;
 use Modules\Order\Cart\Dto\UserCartInfoDto;
+use Modules\Order\Cart\Exceptions\HasNotEnoughSuppliesForUpdateException;
 use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
+use Modules\Order\Models\Cart;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\Product\Models\Product;
@@ -73,14 +76,24 @@ class ClientCartService
         $this->saveCartForUser($user, $cartInfo);
     }
 
-    public function updateProductsQuantities(?User $user, CartProductsQuantityDto $dto)
+    /**
+     * @throws HasNotEnoughSuppliesForUpdateException
+     */
+    public function updateProductsQuantities(?User $user, CartProductsQuantityDto $dto): void
     {
-        $this->ensureCanUpdateProductsQuantity($dto);
-
         $cartsInSession = $this->getCart($user);
 
-        if ($user) {
+        if (! $cartsInSession) {
+            return;
         }
+
+        $updatedCartItems = $this->prepareCartItemsBeforeUpdate($dto);
+
+        $this->ensureCanUpdateProductsQuantity($updatedCartItems);
+
+        $updatedCart = $this->updateQuantityInSession($dto, collect($cartsInSession));
+
+        $this->updateForAuthUser($user, $updatedCart);
     }
 
     public function removeFromCart(?User $user, string $id): void
@@ -119,6 +132,38 @@ class ClientCartService
         if (! $this->stockService->isPartiallyOrFullyInStock($product)) {
             throw new ProductCannotBeAddedToCartException();
         }
+    }
+
+    protected function updateQuantityInSession(
+        CartProductsQuantityDto $dto,
+        BaseCollection $cartsInSession,
+    ): BaseCollection {
+        $updatedCart = $cartsInSession->map(function (object $cartItem) use ($dto) {
+            $matchingItem = $dto->cartItems->firstWhere('cart_id', $cartItem->id);
+
+            if ($matchingItem) {
+                $cartItem->quantity = $matchingItem->quantity;
+                $cartItem->final_price = $this->countFinalPrice($cartItem->price_per_unit, $matchingItem->quantity);
+            }
+
+            return $cartItem;
+        });
+
+        $this->session->put($updatedCart->toArray());
+
+        return $updatedCart;
+    }
+
+    protected function updateForAuthUser(?User $user, BaseCollection $updatedCartInfo): void
+    {
+        if (! $user) {
+            return;
+        }
+
+        DB::transaction(function () use ($user, $updatedCartInfo) {
+            Cart::query()->where('user_id', $user->id)
+                ->upsert($updatedCartInfo->toArray(), 'cart_id', ['quantity', 'final_price']);
+        });
     }
 
     protected function countFinalPrice(float $price, int $quantity): float
@@ -163,28 +208,21 @@ class ClientCartService
         return null;
     }
 
-    protected function ensureCanUpdateProductsQuantity(CartProductsQuantityDto $dto)
+    protected function ensureCanUpdateProductsQuantity(BaseCollection $updatedCartItems): void
     {
-        $cartItems = $dto->cartItems;
-
-        $preparedProducts = $this->warehouseService->getWarehouseInfoAboutProducts(
-            products: new Collection($cartItems->pluck('product')),
-            dto: new FetchAttributesColumnsDto(
-                singleAttrCols: [['id', 'quantity'], []],
-                combinedAttrCols: [['id', 'quantity'], []],
-            ),
-        )->keyBy('id');
-
-        $updatedCartItems = $cartItems->map(function ($item) use ($preparedProducts) {
-            return [
-                'cart_id' => $item->cart_id,
-                'quantity' => $item->quantity,
-                'product' => $preparedProducts->get($item->product->id, $item->product),
-            ];
-        });
-        dd($updatedCartItems);
         $updatedCartItems->each(function (array $item) {
-            $this->stockService->hasEnoughSuppliesForRequestedQuantity($item['product'], $item['quantity']);
+            /**@var Product $product */
+            $product = $item['product'];
+
+            if ($product->hasCombinedAttributes()) {
+                $product->combinedAttributes = $product->combinedAttributes->firstWhere('id', $item['variation']);
+            } elseif ($product->hasCombinedAttributes() === false) {
+                $product->singleAttributes = $product->singleAttributes->firstWhere('id', $item['variation']);
+            }
+
+            if (! $this->stockService->hasEnoughSuppliesForRequestedQuantity($product, $item['quantity'])) {
+                throw HasNotEnoughSuppliesForUpdateException::fromProductArticle($product->product_article);
+            }
         });
     }
 
@@ -252,6 +290,27 @@ class ClientCartService
             'variation' => null,
             'final_price' => $this->countFinalPrice($dto->product->warehouse->default_price, $dto->quantity),
             'discount' => $this->loadDiscountIfExists($dto->product, $dto->quantity),
+        ]);
+    }
+
+    private function prepareCartItemsBeforeUpdate(CartProductsQuantityDto $dto): BaseCollection
+    {
+        $cartItems = $dto->cartItems;
+
+        $preparedProducts = $this->warehouseService->getWarehouseInfoAboutProducts(
+            products: new Collection($cartItems->pluck('product')),
+            dto: new FetchAttributesColumnsDto(
+                singleAttrCols: [['id', 'quantity'], []],
+                combinedAttrCols: [['id', 'quantity'], []],
+            ),
+        )->keyBy('id');
+
+        return $cartItems->map(fn($item)
+            => [
+            'cart_id' => $item->cart_id,
+            'quantity' => $item->quantity,
+            'product' => $preparedProducts->get($item->product->id, $item->product),
+            'variation' => $item->variation,
         ]);
     }
 }

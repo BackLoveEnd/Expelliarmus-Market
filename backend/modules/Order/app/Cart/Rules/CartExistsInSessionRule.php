@@ -16,24 +16,16 @@ class CartExistsInSessionRule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $cartItems = collect($value)->mapWithKeys(fn($item) => [$item['cart_id'] => $item['product_id']]);
+        $cartItemsId = collect($value)->pluck('cart_id');
 
-        $cartsInSession = collect($this->session->get('user.cart', []));
+        $cartsInSession = $this->session->get('user.cart', []);
 
-        $cartsInSessionData = $cartsInSession->mapWithKeys(fn($cart) => [$cart->id => $cart->product_id ?? null]);
+        $cartsInSessionIds = collect($cartsInSession)->pluck('id');
 
-        $missingIds = $cartItems->keys()->diff($cartsInSessionData->keys());
+        $missingIds = $cartItemsId->diff($cartsInSessionIds);
 
         if ($missingIds->isNotEmpty()) {
-            $fail('Some of the carts do not exist in session.');
-        }
-
-        $invalidPairs = $cartItems->filter(fn($productId, $cartId)
-            => ! isset($cartsInSessionData[$cartId]) || $cartsInSessionData[$cartId] !== $productId,
-        );
-
-        if ($invalidPairs->isNotEmpty()) {
-            $fail('Some cart item and product pairs do not match in session.');
+            $fail("Some of cart items are not exists.");
         }
     }
 }
