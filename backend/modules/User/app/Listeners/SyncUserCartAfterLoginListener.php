@@ -19,6 +19,10 @@ class SyncUserCartAfterLoginListener
     {
         try {
             $this->cartStorageService->syncSessionCartAfterLogin($event->user);
+
+            $this->cartStorageService->clearSessionCart();
+
+            $this->cartStorageService->getCart($event->user);
         } catch (Throwable $e) {
             Log::error('Failed to update cart', [$e->getMessage(), $e->getFile()]);
         }

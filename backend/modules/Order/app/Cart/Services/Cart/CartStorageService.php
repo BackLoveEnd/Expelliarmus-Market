@@ -133,6 +133,12 @@ class CartStorageService
     public function clearCart(?User $user): void
     {
         $user?->cart()->delete();
+
+        $this->clearSessionCart();
+    }
+
+    public function clearSessionCart(): void
+    {
         $this->session->forget($this->cartSessionKey);
     }
 

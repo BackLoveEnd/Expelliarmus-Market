@@ -102,11 +102,13 @@ import ToastLogin from "@/components/Default/Toasts/Auth/ToastLogin.vue";
 import loginToastSettings from "@/components/Default/Toasts/Auth/loginToastSettings.js";
 import {emailRule} from "@/utils/validationRules.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import {useCartStore} from "@/stores/useCartStore.js";
 
 const {scrollToTop} = useScrolling();
 const router = useRouter();
 const auth = useAuthStore();
 const toast = useToastStore();
+const cartStore = useCartStore();
 
 const schema = yup.object().shape({
   email: emailRule(yup),
@@ -124,9 +126,13 @@ function login() {
   auth
       .login(user)
       .then((response) => {
-        auth.fetchCurrentUser(true).then(() => {
-          useToastStore().showToast(ToastLogin, loginToastSettings);
-          router.push({name: "home"});
+        auth.fetchCurrentUser(true).then(async () => {
+          await cartStore.fetchCart().catch((e) => {
+          });
+
+          toast.showToast(ToastLogin, loginToastSettings);
+
+          await router.push({name: "home"});
         });
       })
       .catch((e) => {
