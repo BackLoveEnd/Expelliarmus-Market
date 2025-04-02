@@ -1,39 +1,44 @@
-<div style="text-align: center; font-size: 28px; margin-top: 2rem">EXPELLIARMUS-MARKET</div>
+<p align="center" style="font-size: 32px; margin-top: 2rem;">
+    <strong>EXPELLIARMUS-MARKET</strong>
+</p>
 
-<div style="text-align: center; font-size: 14px">Commercial shop for completing diploma works.</div>
+<p align="center" style="font-size: 14px;">
+    Commercial shop for completing diploma works.
+</p>
 
-<div style="display: flex; justify-content: center; margin-top: 2rem; gap: 1rem">
-<img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/Igarevv/Expelliarmus-Market/master"/>
-<img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Igarevv/Expelliarmus-Market"/>
-<img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Igarevv/Expelliarmus-Market">
+<p align="center" style="margin-top: 2rem;">
+    <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/Igarevv/Expelliarmus-Market/master"/>
+    <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Igarevv/Expelliarmus-Market"/>
+    <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Igarevv/Expelliarmus-Market"/>
+</p>
 
-</div>
+<p align="center" style="font-size: 20px; margin-top: 2rem;">
+    <strong>Built with the tools and technologies:</strong>
+</p>
 
-<div style="text-align: center; font-size: 24px; margin-top: 2rem">Built with the tools and technologies:</div>
-
-<div style="display: flex; justify-content: center; margin-top: 2rem; gap: 1rem">
-<a href="https://www.php.net/">
-<img alt="PHP" src="https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&amp;logo=php&amp;logoColor=white"/>
-</a>
-<a href="https://laravel.com/">
-<img alt="Laravel" src="https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&amp;logo=laravel&amp;logoColor=white"/>
-</a>
-<a href="https://vuejs.org/">
-<img alt="Vue.js" src="https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&amp;logo=vuedotjs&amp;logoColor=%234FC08D"/>
-</a>
-<a href="https://tailwindcss.com/">
-<img alt="TailwindCSS" src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&amp;logo=tailwind-css&amp;logoColor=white"/>
-</a>
-<a href="https://www.docker.com">
-<img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&amp;logo=docker&amp;logoColor=white"/>
-</a>
-<a href="https://redis.io/">
-<img alt="Redis" src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&amp;logo=redis&amp;logoColor=white"/>
-</a>
-<a href="https://www.postgresql.org/">
-<img alt="PostgreSQL" src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white"/>
-</a>
-</div>
+<p align="center" style="margin-top: 2rem;">
+    <a href="https://www.php.net/">
+        <img alt="PHP" src="https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white"/>
+    </a>
+    <a href="https://laravel.com/">
+        <img alt="Laravel" src="https://img.shields.io/badge/laravel-%23FF2D20.svg?style=for-the-badge&logo=laravel&logoColor=white"/>
+    </a>
+    <a href="https://vuejs.org/">
+        <img alt="Vue.js" src="https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D"/>
+    </a>
+    <a href="https://tailwindcss.com/">
+        <img alt="TailwindCSS" src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
+    </a>
+    <a href="https://www.docker.com">
+        <img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
+    </a>
+    <a href="https://redis.io/">
+        <img alt="Redis" src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white"/>
+    </a>
+    <a href="https://www.postgresql.org/">
+        <img alt="PostgreSQL" src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white"/>
+    </a>
+</p>
 
 ---
 
