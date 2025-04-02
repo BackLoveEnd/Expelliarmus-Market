@@ -4,7 +4,6 @@ import ProductCartModal from "@/components/Product/Cart/ProductCartModal.vue";
 import PurchaseButton from "@/components/Product/Main/PurchaseButton.vue";
 import Description from "@/components/Product/Main/Description.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
-import {useAddToWishlist} from "@/composables/useAddToWishlist.js";
 import {computed, onBeforeUnmount, reactive, ref, watch} from "vue";
 import {ProductsShopService} from "@/services/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
@@ -14,6 +13,7 @@ import CombinedVariationsViewer from "@/components/Product/Main/CombinedVariatio
 import {useBreadCrumbStore} from "@/stores/useBreadCrumbStore.js";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import {useRouter} from "vue-router";
+import {useWishlistToggler} from "@/composables/useWishlistToggler.js";
 
 const props = defineProps({
   productId: Number | String,
@@ -52,7 +52,7 @@ const router = useRouter();
 
 const breadcrumbStore = useBreadCrumbStore();
 
-const {isInWishlist, addToWishlist} = useAddToWishlist();
+const wishlist = useWishlistToggler(props.productId);
 
 const isCartModalOpen = ref(false);
 
@@ -222,24 +222,13 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
             </div>
             <div>
               <button
-                  @click="addToWishlist"
-                  :class="{ active: isInWishlist }"
-                  class="wishlist px-3 py-2 text-white text-center hover:bg-gray-200 border border-gray-700 rounded-md"
+                  @click="wishlist.toggleWishlist()"
+                  class="px-3 py-2 text-white text-center hover:bg-gray-200 border border-gray-700 rounded-md"
               >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-6 text-black"
-                >
-                  <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                  />
-                </svg>
+                <i
+                    class="pi text-gray-800 text-xl"
+                    :class="wishlist.isInWishlist() ? 'pi-heart-fill text-red-500' : 'pi-heart'">
+                </i>
               </button>
             </div>
           </div>
