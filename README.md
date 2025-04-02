@@ -1,5 +1,5 @@
 <p align="center" style="font-size: 32px; margin-top: 2rem;">
-    <strong>EXPELLIARMUS-MARKET</strong>
+    EXPELLIARMUS-MARKET
 </p>
 
 <p align="center" style="font-size: 14px;">
