@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Cart\Services\Cart;
 
 use Illuminate\Support\Collection;
+use Modules\Order\Cart\Exceptions\HasNotEnoughSuppliesForUpdateException;
 use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Product\Models\Product;
 use Modules\Warehouse\Enums\ProductStatusEnum;

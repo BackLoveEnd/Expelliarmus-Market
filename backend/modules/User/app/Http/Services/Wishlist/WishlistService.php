@@ -9,12 +9,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Models\Product;
+use Modules\User\Http\Exceptions\CannotAddNotPublishedProductToWishlistException;
 use Modules\User\Http\Exceptions\ProductDoesNotExistsInWishlistException;
 use Modules\User\Http\Exceptions\ProductIsAlreadyInWishlistException;
 use Modules\User\Models\User;
 use Modules\User\Models\Wishlist;
 use Modules\Warehouse\Enums\ProductStatusEnum;
-use Modules\Warehouse\Http\Exceptions\CannotAddDiscountToProductWithoutPriceException;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 
 class WishlistService
@@ -56,7 +56,7 @@ class WishlistService
     public function add(User $user, Product $product): void
     {
         if (! $product->status->is(ProductStatusEnum::PUBLISHED)) {
-            throw new CannotAddDiscountToProductWithoutPriceException();
+            throw new CannotAddNotPublishedProductToWishlistException();
         }
 
         if ($user->wishlist()->where('product_id', $product->id)->exists()) {

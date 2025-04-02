@@ -7,11 +7,11 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Support\ProductSlug;
+use Modules\User\Http\Exceptions\CannotAddNotPublishedProductToWishlistException;
 use Modules\User\Http\Exceptions\ProductDoesNotExistsInWishlistException;
 use Modules\User\Http\Exceptions\ProductIsAlreadyInWishlistException;
 use Modules\User\Http\Resources\UserWishlistResource;
 use Modules\User\Http\Services\Wishlist\WishlistService;
-use Modules\Warehouse\Http\Exceptions\CannotAddDiscountToProductWithoutPriceException;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class UserWishlistController
@@ -48,7 +48,7 @@ class UserWishlistController
      * @param  ProductSlug  $productBind
      * @return JsonResponse
      * @throws ProductIsAlreadyInWishlistException
-     * @throws CannotAddDiscountToProductWithoutPriceException
+     * @throws CannotAddNotPublishedProductToWishlistException
      */
     public function addProductToWishList(Request $request, ProductSlug $productBind): JsonResponse
     {

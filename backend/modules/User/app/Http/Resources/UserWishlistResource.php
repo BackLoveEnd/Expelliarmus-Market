@@ -15,6 +15,7 @@ class UserWishlistResource extends JsonApiResource
             'id' => $this->product->id,
             'title' => $this->product->title,
             'slug' => $this->product->slug,
+            'price' => $this->product->price,
             'preview_image' => $this->product->preview_image,
         ];
     }
