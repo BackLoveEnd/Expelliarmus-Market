@@ -14,6 +14,8 @@ Route::prefix('/shop')->withoutMiddleware(['throttle'])->group(function () {
     Route::controller(ProductListingController::class)->group(function () {
         Route::get('/home/products/explore', 'explore');
 
+        Route::get('/products/suggestions', 'suggestions');
+
         Route::get('/categories/{category:slug}/products', 'relatedToProduct');
     });
 

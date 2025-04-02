@@ -10,6 +10,7 @@ return [
         'products-explore' => 'products:explore',
         'product-public' => 'products:%s:public',
         'product-related-by-category' => 'products:categories:%s:related',
+        'products-suggestions' => 'products:suggestions',
     ],
     'retrieve' => [
         'by_category' => 6,
@@ -17,6 +18,7 @@ return [
         'discounted' => 16,
         'flash-sales' => 5,
         'explore' => 10,
+        'suggestions' => 5,
         'shop' => [
             'default' => 12,
         ],

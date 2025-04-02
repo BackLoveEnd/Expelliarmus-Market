@@ -43,7 +43,29 @@ class ProductListingController
         return ExploredProductsResource::collection($products);
     }
 
-    public function suggestions() {}
+    /**
+     * Retrieve suggestions.
+     *
+     * Usage place - Shop.
+     *
+     * @param  GetExploredProductsAction  $action
+     * @return JsonApiResource|JsonResponse
+     * @throws FailedToLoadExploreProductsException
+     */
+    public function suggestions(GetExploredProductsAction $action): JsonApiResource|JsonResponse
+    {
+        $products = $this->cacheService->repo()->remember(
+            key: $this->cacheService->key(config('product.cache.products-suggestions')),
+            ttl: now()->addDay(),
+            callback: fn() => $action->handle(config('product.retrieve.suggestions')),
+        );
+
+        if (! $products) {
+            return response()->json(['message' => 'Products not found.'], 404);
+        }
+
+        return ExploredProductsResource::collection($products);
+    }
 
     /**
      * Retrieve related products for product by category.
