@@ -6,9 +6,11 @@ namespace Modules\Order\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
+use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Product\Models\Product;
 use Modules\User\Models\User;
 use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
+use Ramsey\Uuid\Uuid;
 
 class CartTest extends TestCase
 {
@@ -279,8 +281,8 @@ class CartTest extends TestCase
                         'product_title' => $product->title,
                         'product_slug' => $product->slug,
                         'quantity' => 3,
-                        'price_per_unit' => number_format($product->warehouse->default_price, 2, '.', ''),
-                        'final_price' => number_format(round($product->warehouse->default_price * 3, 2), 2, '.', ''),
+                        'price_per_unit' => round($product->warehouse->default_price, 2),
+                        'final_price' => round($product->warehouse->default_price * 3, 2),
                         'variation' => null,
                         'discount' => null,
                     ],
@@ -294,8 +296,8 @@ class CartTest extends TestCase
                         'product_title' => $product->title,
                         'product_slug' => $product->slug,
                         'quantity' => 1,
-                        'price_per_unit' => number_format($product->warehouse->default_price, 2, '.', ''),
-                        'final_price' => number_format(round($product->warehouse->default_price * 1, 2), 2, '.', ''),
+                        'price_per_unit' => $product->warehouse->default_price,
+                        'final_price' => round($product->warehouse->default_price * 1, 2),
                         'variation' => null,
                         'discount' => null,
                     ],
@@ -539,6 +541,69 @@ class CartTest extends TestCase
 
         $response2->assertExactJson([
             'message' => "Product $product->product_article has not enough supplies for requested quantities.",
+        ]);
+    }
+
+    public function test_can_sync_session_with_db_cart_when_user_login()
+    {
+        $product = Product::factory()->published()->withoutAttributes();
+
+        $product2 = Product::factory()->published()->withSingleAttributes();
+
+        $sessionCart = [
+            (object)[
+                'id' => Uuid::uuid7()->toString(),
+                'product_id' => $product->id,
+                'product_title' => $product->title,
+                'product_image' => $product->preview_image,
+                'product_slug' => $product->slug,
+                'quantity' => 2,
+                'price_per_unit' => 100,
+                'final_price' => 200,
+                'discount' => null,
+                'variation' => null,
+            ],
+            (object)[
+                'id' => Uuid::uuid7()->toString(),
+                'product_id' => $product2->id,
+                'product_title' => $product2->title,
+                'product_image' => $product2->preview_image,
+                'product_slug' => $product2->slug,
+                'quantity' => 1,
+                'price_per_unit' => 150,
+                'final_price' => 150,
+                'discount' => null,
+                'variation' => json_encode(["id" => $product2->singleAttributes->first()->id]),
+            ],
+        ];
+
+        session()->put('user.cart', $sessionCart);
+
+        $user = User::factory()->create();
+
+        $existCart = $user->cart()->create([
+            'product_id' => $product2->id,
+            'quantity' => 1,
+            'price_per_unit' => 150,
+            'final_price' => 150,
+            'discount' => null,
+            'variation' => json_encode(["id" => $product2->singleAttributes->first()->id]),
+        ]);
+
+        $cartStorage = new CartStorageService(session()->driver());
+
+        $cartStorage->syncSessionCartAfterLogin($user);
+
+        $this->assertDatabaseHas('cart', [
+            'user_id' => $user->id,
+            'product_id' => $product2->id,
+            'id' => $existCart->id,
+        ]);
+
+        $this->assertDatabaseHas('cart', [
+            'user_id' => $user->id,
+            'product_id' => $product->id,
+            'id' => $sessionCart[0]->id,
         ]);
     }
 }
