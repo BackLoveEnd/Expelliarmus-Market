@@ -1,9 +1,9 @@
-<p align="center" style="font-size: 32px; margin-top: 2rem;">
-    EXPELLIARMUS-MARKET
-</p>
+&nbsp;
+<h1 align="center">EXPELLIARMUS MARKET</h1>
+&nbsp;
 
 <p align="center" style="font-size: 14px;">
-    Commercial shop for completing diploma works.
+    E-Commerce application for diploma project.
 </p>
 
 <p align="center" style="margin-top: 2rem;">
@@ -12,6 +12,7 @@
     <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/Igarevv/Expelliarmus-Market"/>
 </p>
 
+&nbsp;
 <p align="center" style="font-size: 20px; margin-top: 2rem;">
     <strong>Built with the tools and technologies:</strong>
 </p>
@@ -40,7 +41,7 @@
     </a>
 </p>
 
----
+&nbsp;
 
 ## Table of Contents
 
@@ -52,8 +53,7 @@
 - [Modules](#modules)
 - [Screenshots](#screenshots)
 
----
-
+&nbsp;
 ## Overview
 
 Expelliarmus-Market is an e-commerce web application that allows businesses to create, manage, and scale online stores
@@ -68,7 +68,7 @@ with ease.
 - 🔐 **Robust User Management**: Improves security and authentication.
 - 📦 **Dynamic Product Management**: Efficient handling of inventory and discounts.
 
----
+&nbsp;
 
 ## Getting Started
 
@@ -124,7 +124,7 @@ Backend application tests can be run using this command:
 make backend-tests
 ````
 
----
+&nbsp;
 
 ## Modules
 
@@ -178,7 +178,7 @@ e-commerce platform efficiently. Below is an overview of the core modules and th
 - **📊 Statistics**  
   Provides various statistics to improve user experience.
 
----
+&nbsp;
 
 ## Screenshots
 
