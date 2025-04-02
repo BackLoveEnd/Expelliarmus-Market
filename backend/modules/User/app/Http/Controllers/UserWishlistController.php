@@ -20,6 +20,14 @@ class UserWishlistController
         private WishlistService $wishlistService,
     ) {}
 
+    /**
+     * Retrieve user wishlist.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Request  $request
+     * @return JsonApiResourceCollection|JsonResponse
+     */
     public function getUserWishlist(Request $request): JsonApiResourceCollection|JsonResponse
     {
         $wishlist = $this->wishlistService->get($request->user());
@@ -34,7 +42,7 @@ class UserWishlistController
                     'total' => $wishlist->total(),
                 ],
                 'links' => [
-                    'next' => $wishlist->nextPageUrl(),
+                    'next_page_number' => $wishlist->hasMorePages() ? $wishlist->currentPage() + 1 : null,
                 ],
             ]);
     }
@@ -80,6 +88,14 @@ class UserWishlistController
         return response()->json(['message' => 'Product was removed from wishlist.']);
     }
 
+    /**
+     * Clear all user wishlist.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function clearWishlist(Request $request): JsonResponse
     {
         if ($this->wishlistService->clearAll($request->user())) {

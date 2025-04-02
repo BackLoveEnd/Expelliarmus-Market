@@ -43,6 +43,8 @@ class ProductListingController
         return ExploredProductsResource::collection($products);
     }
 
+    public function suggestions() {}
+
     /**
      * Retrieve related products for product by category.
      *
