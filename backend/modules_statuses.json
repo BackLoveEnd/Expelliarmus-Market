@@ -6,6 +6,5 @@
   "Category": true,
   "Brand": true,
   "ContentManagement": true,
-  "Statistics": true,
-  "Service": true
+  "Statistics": true
 }
