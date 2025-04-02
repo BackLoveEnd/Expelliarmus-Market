@@ -11,6 +11,10 @@ export const ProductsShopService = {
         return api().get('/shop/home/products/explore');
     },
 
+    async getSuggestions() {
+        return await api().get('/shop/products/suggestions');
+    },
+
     async getRelatedProduct(categorySlug) {
         return api().get(`/shop/categories/${categorySlug}/products`);
     },
