@@ -46,38 +46,35 @@ export const ContentManagementService = {
     }
 
     const form = new FormData();
-    console.log("Raw data before filtering:", data);
-    data = data.filter(arrival => arrival.arrival_url);
 
     data.forEach((arrival, index) => {
+      if (!arrival.exists_image_url || arrival.exists_image_url.trim() === "") {
+        arrival.exists_image_url = null;
+      }
+
       const hasValidExistsImageUrl =
-          arrival.exists_image_url && typeof arrival.exists_image_url === 'string' && arrival.exists_image_url.startsWith("http://api.expelliarmus.com:8080/storage/content/arrivals");
+          arrival.exists_image_url && typeof arrival.exists_image_url === 'string' && arrival.exists_image_url.startsWith("http://expelliarmus.com:8080/storage/content/arrivals");
 
-      const file = arrival.image && arrival.image.startsWith("data:image")
-          ? dataURItoFile(arrival.image, `arrival-${index}.jpg`)
+      const file = arrival.file && arrival.file.startsWith("data:image")
+          ? dataURItoFile(arrival.file, `arrival-${index}.jpg`)
           : null;
-
       if (!hasValidExistsImageUrl && !file) {
-        console.error(`Error: the ${index+1}st element does not have file or exists_image_url`);
         return;
       }
 
       if (file) form.append(`arrivals[${index}][file]`, file);
-
+      const content= {
+        title: arrival.title,
+        description: arrival.description
+      }
       form.append(`arrivals[${index}][position]`, arrival.position ?? index + 1);
-      form.append(`arrivals[${index}][arrival_id]`, arrival.arrival_id ?? null);
+      form.append(`arrivals[${index}][arrival_id]`, arrival.index ?? null);
       form.append(`arrivals[${index}][exists_image_url]`, hasValidExistsImageUrl ? arrival.exists_image_url : "");
-      form.append(`arrivals[${index}][arrival_url]`, arrival.link);
-
-      const content = {};
-      if (arrival.title) content.title = arrival.title;
-      if (arrival.description) content.body = arrival.description;
-
-      form.append(`arrivals[${index}][content]`, JSON.stringify(content));
+      form.append(`arrivals[${index}][arrival_url]`, arrival.arrival_url ?? "");
+      form.append(`arrivals[${index}][content]`, arrival.content ?? "");
     });
 
-
-    console.log("Sent data:", [...form.entries()]);
+    console.log("Sent data (as FormData):", [...form.entries()]);
 
     return await api().post("/management/content/new-arrivals", form, {
       headers: {

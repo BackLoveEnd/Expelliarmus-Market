@@ -8,6 +8,7 @@ import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErr
 import {useToastStore} from "@/stores/useToastStore.js";
 import Colors from "@/components/Product/Main/Colors.vue";
 
+const toast = useToastStore();
 const defaultArrivals = [
   {
     id: 0,
@@ -82,32 +83,28 @@ const fetchArrivals = () => {
       })
 };
 
-const toast = useToastStore();
 
 const saveArrivals = () => {
   const formattedData = arrivals.value.map(arrival => {
-    // Проверяем, есть ли картинка или валидный URL
     const hasValidImage = arrival.image && typeof arrival.image === "string" && arrival.image.startsWith("data:image");
     const hasValidUrl = arrival.link && typeof arrival.link === "string" && arrival.link.length > 0;
 
     if (!hasValidImage && !hasValidUrl) {
       console.error("Invalid arrival data:", arrival);
-      return null; // Если данных недостаточно, пропускаем этот элемент
+      return null;
     }
 
-    // Формируем данные для отправки
     return {
       position: arrival.id + 1,
-      arrival_url: arrival.link, // Передаем URL
+      arrival_url: arrival.link || "http://expelliarmus.com/",
+      exists_image_url: arrival.image.startsWith("http") ? arrival.image : "",
       content: {
         title: arrival.title,
         body: arrival.description
       },
-      file: hasValidImage ? arrival.image : undefined // Передаем картинку, если она есть
+      file: hasValidImage ? arrival.image : undefined
     };
-  }).filter(Boolean); // Убираем null элементы, если они есть
-
-  console.log("Formatted data before sending:", formattedData);
+  }).filter(Boolean);
 
   ContentManagementService.uploadArrivalContent(formattedData)
       .then(() => {
@@ -176,7 +173,7 @@ const handleFileUpload = (event, id) => {
   reader.readAsDataURL(file);
 };
 
-onMounted(loadFromStorage);
+onMounted(fetchArrivals);
 
 watch(arrivals, saveToStorage, { deep: true });
 </script>

@@ -3,6 +3,7 @@ import {onMounted, ref} from "vue";
 import {CategoryService} from "@/services/CategoryService.js";
 import {MegaMenu} from "primevue";
 
+
 const items = ref([]);
 
 onMounted(async () => {
@@ -35,6 +36,7 @@ const transformCategories = (categories) => {
 
 <template>
   <MegaMenu :model="items" orientation="vertical">
+
     <template #item="{ item }">
       <router-link v-slot="{ href, navigate }" :to="item.route" custom>
         <a :href="href" @click="navigate">
