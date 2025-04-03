@@ -1,65 +1,64 @@
 <script setup>
-import {useCartStore} from "@/stores/useCartStore.js";
-import {computed, ref, watch} from "vue";
-import {useTruncator} from "@/composables/useTruncator.js";
-import {useScrolling} from "@/composables/useScrolling.js";
+import { useCartStore } from '@/stores/useCartStore.js'
+import { computed, ref, watch } from 'vue'
+import { useTruncator } from '@/composables/useTruncator.js'
+import { useScrolling } from '@/composables/useScrolling.js'
 
-const cartStore = useCartStore();
+const cartStore = useCartStore()
 
-const emit = defineEmits(["total-price", "cart-empty", "updated-product"]);
+const emit = defineEmits(['total-price', 'updated-product'])
 
-const truncator = useTruncator();
+const truncator = useTruncator()
 
-const isInitialLoad = ref(true);
+const isInitialLoad = ref(true)
 
 const totalPrice = computed(() => {
   return cartStore.cartItems.reduce((total, product) => {
-    const price = product.discount ? product.discount.new_price : product.unitPrice;
-    return total + price * product.quantity;
-  }, 0).toFixed(2);
-});
+    const price = product.discount ? product.discount.new_price : product.unitPrice
+    return total + price * product.quantity
+  }, 0).toFixed(2)
+})
 
-async function getCart() {
+async function getCart () {
   await cartStore.fetchCart()
       .then(() => (isInitialLoad.value = true))
       .catch((e) => {
         if (e.status === 404) {
-          emit("cart-empty");
         }
-      });
+      })
 }
 
 watch(
     () => cartStore.cartItems.map((item) => item.quantity),
     (newQuantities, oldQuantities) => {
       if (isInitialLoad.value) {
-        isInitialLoad.value = false;
-        return;
+        isInitialLoad.value = false
+        return
       }
 
       newQuantities.forEach((newQty, index) => {
-        const oldQty = oldQuantities[index];
+        const oldQty = oldQuantities[index]
         if (newQty !== oldQty) {
-          emit("updated-product", cartStore.cartItems[index]);
+          emit('updated-product', cartStore.cartItems[index])
         }
-      });
+      })
     },
-    {deep: true}
-);
+    { deep: true }
+)
 
 watch(
     () => cartStore.cartItems,
     () => {
-      emit("total-price", totalPrice.value);
+      emit('total-price', totalPrice.value)
     },
-    {deep: true}
-);
+    { deep: true }
+)
 
 watch(totalPrice, (newTotal) => {
-  emit("total-price", newTotal);
-});
+  emit('total-price', newTotal)
+})
 
-await getCart();
+await getCart()
 </script>
 
 <template>

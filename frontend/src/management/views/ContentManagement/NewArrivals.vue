@@ -1,182 +1,151 @@
 <script setup>
-import {computed, ref, watch, onMounted} from "vue";
-import {ContentManagementService} from "@/services/ContentManagementService";
-import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
-import Description from "@/components/Product/Arrival/Description.vue";
-import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
-import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
-import {useToastStore} from "@/stores/useToastStore.js";
-import Colors from "@/components/Product/Main/Colors.vue";
+import { onMounted, ref, watch } from 'vue'
+import { ContentManagementService } from '@/services/ContentManagementService'
+import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js'
+import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js'
+import { useToastStore } from '@/stores/useToastStore.js'
+import Description from '@/components/Product/Arrival/Description.vue'
+import DefaultContainer from '@/management/components/Main/DefaultContainer.vue'
+import DefaultArrivalsPlaceholder from '@/management/components/ContentManagement/DefaultArrivalsPlaceholder.vue'
 
-const toast = useToastStore();
-const defaultArrivals = [
+/*const defaultArrivals = [
   {
     id: 0,
-    image: "https://dummyimage.com/744x720/000/fff",
-    title: "Title(1)",
-    description: "Desc.1",
-    link: "",
-    imgSize: "744x720"
+    image: 'https://dummyimage.com/744x720/000/fff',
+    title: 'Title(1)',
+    description: 'Desc.1',
+    link: '',
+    imgSize: '744x720'
   },
   {
     id: 1,
-    image: "https://dummyimage.com/744x336/000/fff",
-    title: "Title(2)",
-    description: "Desc.2",
-    link: "",
-    imgSize: "744x336"
+    image: 'https://dummyimage.com/744x336/000/fff',
+    title: 'Title(2)',
+    description: 'Desc.2',
+    link: '',
+    imgSize: '744x336'
   },
   {
     id: 2,
-    image: "https://dummyimage.com/348x336/000/fff",
-    title: "Title(3)",
-    description: "Desc.3",
-    link: "",
-    imgSize: "348x336"
+    image: 'https://dummyimage.com/348x336/000/fff',
+    title: 'Title(3)',
+    description: 'Desc.3',
+    link: '',
+    imgSize: '348x336'
   },
   {
     id: 3,
-    image: "https://dummyimage.com/348x336/000/fff",
-    title: "Title(4)",
-    description: "Desc.4",
-    link: "",
-    imgSize: "348x336"
+    image: 'https://dummyimage.com/348x336/000/fff',
+    title: 'Title(4)',
+    description: 'Desc.4',
+    link: '',
+    imgSize: '348x336'
   }
-]
-const arrivals = ref([...defaultArrivals]);
-const selectedArrivalId = ref(null);
+]*/
+/*
+const arrivals = ref([...defaultArrivals])
+*/
+const arrivals = ref({})
+const selectedArrivalId = ref(null)
 
-const selectedArrival = computed(() =>
-    arrivals.value.find(arrival => arrival.id === selectedArrivalId.value)
-);
+let selectedArrival = ref({})
 
-const loadFromStorage = () => {
-  const savedData = localStorage.getItem("arrivals");
-  if (savedData) {
-    arrivals.value = JSON.parse(savedData);
-  } else {
-    fetchArrivals();
-  }
-};
-
-const saveToStorage = () => {
-  localStorage.setItem("arrivals", JSON.stringify(arrivals.value));
-};
-
-const fetchArrivals = () => {
-  ContentManagementService.getAllArrivals()
+const fetchArrivals = async () => {
+  await ContentManagementService.getAllArrivals()
       .then(response => {
-        if (response.data.length) {
-          arrivals.value = response.data.map((arrival, index) => ({
-            id: index,
-            image: arrival.exists_image_url || `https://dummyimage.com/${arrival.imgSize}/000/fff`,
-              title: arrival.content?.title || "",
-              description: arrival.content?.body || "",
-              link: arrival.link || "",
-              imgSize: arrival.imgSize
-        }));
-        }
-        saveToStorage();
+        arrivals.value = Object.fromEntries(
+            response.data.data.map(({ attributes, ...rest }) => [attributes.position, { attributes, ...rest }])
+        )
       })
       .catch(error => {
-        console.error("Fetch arrivals failed:", error);
+        console.error(error)
       })
-};
+}
 
+const toast = useToastStore()
 
 const saveArrivals = () => {
-  const formattedData = arrivals.value.map(arrival => {
-    const hasValidImage = arrival.image && typeof arrival.image === "string" && arrival.image.startsWith("data:image");
-    const hasValidUrl = arrival.link && typeof arrival.link === "string" && arrival.link.length > 0;
-
-    if (!hasValidImage && !hasValidUrl) {
-      console.error("Invalid arrival data:", arrival);
-      return null;
-    }
-
-    return {
-      position: arrival.id + 1,
-      arrival_url: arrival.link || "http://expelliarmus.com/",
-      exists_image_url: arrival.image.startsWith("http") ? arrival.image : "",
-      content: {
-        title: arrival.title,
-        body: arrival.description
-      },
-      file: hasValidImage ? arrival.image : undefined
-    };
-  }).filter(Boolean);
-
-  ContentManagementService.uploadArrivalContent(formattedData)
+  ContentManagementService.uploadArrivalContent(arrivals.value)
       .then(() => {
-        toast.showToast("Arrivals saved successfully!", defaultSuccessSettings);
-        saveToStorage();
+        toast.showToast('Arrivals saved successfully!', defaultSuccessSettings)
       })
       .catch(error => {
-        console.error(error);
-        toast.showToast("Unknown error. Try again or contact us.", defaultErrorSettings);
-      });
+        console.error(error)
+        toast.showToast('Unknown error. Try again or contact us.', defaultErrorSettings)
+      })
+}
 
-};
-
-const deleteArrival = (arrivalId) => {
-  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
-  if (index !== -1) {
-    arrivals.value[index] = { ...defaultArrivals[index] };
-    saveToStorage();
+function imageSizeByPosition (position) {
+  if (position === 1) {
+    return '744x720'
   }
-  selectedArrivalId.value = null;
-};
 
-/*
-const hideArrival = (arrivalId) => {
-  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
-  if (index !== -1) {
-    arrivals.value[index].hidden = true;
-    saveToStorage()
+  if (position === 2) {
+    return '744x336'
   }
-};
 
-const showArrival = (arrivalId) => {
-  const index = arrivals.value.findIndex(arrival => arrival.id === arrivalId);
-  if (index !== -1) {
-    arrivals.value[index].hidden = false;
-    saveToStorage()
-  }
-};
-*/
-
+  return '348x336'
+}
 
 const handleFileUpload = (event, id) => {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]
+  if (!file) return
 
-  const reader = new FileReader();
+  const reader = new FileReader()
   reader.onload = (e) => {
-    const index = arrivals.value.findIndex(arrival => arrival.id === id);
-    if (index === -1) return;
 
-    const img = new Image();
-    img.src = e.target.result;
+    if (!arrivals.value.hasOwnProperty(id)) return
+
+    const img = new Image()
+    img.src = e.target.result
     img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
 
-      const [width, height] = arrivals.value[index].imgSize.split("x").map(Number);
-      canvas.width = width;
-      canvas.height = height;
+      const [width, height] = imageSizeByPosition(id).split('x').map(Number)
+      canvas.width = width
+      canvas.height = height
 
-      ctx.drawImage(img, 0, 0, width, height);
-      arrivals.value[index].image = canvas.toDataURL("image/jpeg", 1);
-      saveToStorage();
-    };
-  };
-  reader.readAsDataURL(file);
-};
+      ctx.drawImage(img, 0, 0, width, height)
 
-onMounted(fetchArrivals);
+      arrivals.value[id].attributes.image_url = canvas.toDataURL('image/jpeg', 1)
+      console.log(arrivals.value)
+    }
+  }
+  reader.readAsDataURL(file)
+}
+onMounted(fetchArrivals)
 
-watch(arrivals, saveToStorage, { deep: true });
+watch(arrivals, { deep: true })
+watch(
+    selectedArrivalId,
+    (newSelectedId) => {
+      if (typeof arrivals.value[newSelectedId] !== 'undefined') {
+        selectedArrival.value = arrivals.value[newSelectedId]
+      } else {
+        selectedArrival.value = {
+          attributes: {
+            position: newSelectedId,
+            content: {
+              title: 'Default Title',
+              body: 'Default Description',
+            },
+            arrival_url: '',
+            image_url: `https://dummyimage.com/${imageSizeByPosition(newSelectedId)}/000/fff`,
+          },
+        }
+      }
+    }
+)
+watch(
+    selectedArrival,
+    (newSelectedArrival) => {
+      arrivals.value[newSelectedArrival.attributes.position] = newSelectedArrival
+    },
+    { deep: true }
+)
 </script>
+
 <template>
   <default-container>
     <div class="my-14 space-y-8">
@@ -188,12 +157,12 @@ watch(arrivals, saveToStorage, { deep: true });
             <label for="arrivalsId" class="block mb-2 text-m font-semibold">Select an option</label>
             <select v-model="selectedArrivalId" id="arrivalsId"
                     class="bg-gray-50 border text-gray-900 text-sm rounded-lg p-2.5">
-              <option selected disabled>Choose arr-position</option>
-              <option v-for="arrival in arrivals" :key="arrival.id" :value="arrival.id">
-                {{ arrival.id + 1 }}
+              <option selected="true" disabled="disabled">Choose arrival position</option>
+              <option v-for="arrival in 4" :key="arrival" :value="arrival">
+                {{ arrival }}
               </option>
             </select>
-            <div v-if="selectedArrival">
+            <div v-if="selectedArrival.attributes">
               <label class="block mt-4 mb-2 text-medium font-medium">Upload file</label>
               <input type="file"
                      class="block text-sm border rounded-lg cursor-pointer"
@@ -201,20 +170,21 @@ watch(arrivals, saveToStorage, { deep: true });
               />
 
 
-              <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX.
-                {{ selectedArrival.imgSize }}).</p>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">
+                SVG, PNG, JPG or GIF (MAX. {{ imageSizeByPosition(selectedArrivalId) }}).
+              </p>
 
               <label for="card-title" class="block mt-4 mb-2 text-sm font-medium">Card title</label>
               <div class="flex items-center gap-x-4 flex-wrap">
-              <input type="text" id="card-title" v-model="selectedArrival.title"
-                     class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
+                <input type="text" id="card-title" v-model="selectedArrival.attributes.content.title"
+                       class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
               </div>
               <label for="card-description" class="block mt-4 mb-2 text-sm font-medium">Card description</label>
-              <textarea id="card-description" v-model="selectedArrival.description" rows="4"
+              <textarea id="card-description" v-model="selectedArrival.attributes.content.body" rows="4"
                         class="block p-2.5 w-full text-sm bg-gray-50 border rounded-lg"></textarea>
 
               <label for="card-link" class="block mt-4 mb-2 text-sm font-medium">Product link</label>
-              <input type="text" id="card-link" v-model="selectedArrival.link"
+              <input type="text" id="card-link" v-model="selectedArrival.attributes.arrival_url"
                      class="bg-gray-50 border text-sm rounded-lg p-2.5"/>
 
             </div>
@@ -236,39 +206,86 @@ watch(arrivals, saveToStorage, { deep: true });
                     @click="hideArrival(selectedArrivalId)"
                     class="bg-gray-500 text-white px-3 py-1 rounded"
                     disabled
-            >Hide</button>
+            >Hide
+            </button>
           </div>
         </div>
 
       </section>
       <hr/>
-      <section class="container mx-auto space-y-4">
+      <section
+          class="container mx-auto space-y-4"
+          v-if="Object.keys(arrivals).length > 0"
+      >
         <h2 class="text-xl font-semibold text-center">Arrivals Preview</h2>
         <div class="grid grid-cols-2 gap-12">
-          <div class="relative">
+          <div class="relative" v-if="arrivals.hasOwnProperty(1)">
             <h2 class="text-l font-semibold text-center">Position-1</h2>
-            <img class="w-full" :src="arrivals[0].image" alt="First arrival"/>
-            <Description :description="arrivals[0].description" :name="arrivals[0].title"/>
+            <img class="w-full" :src="arrivals[1].attributes.image_url" alt="First arrival"/>
+            <Description
+                :description="arrivals[1].attributes.content.body"
+                :name="arrivals[1].attributes.content.title"
+                :link="arrivals[1].attributes.arrival_url"/>
           </div>
-          <div class="grid grid-cols-2 grid-rows-2 gap-6 ">
-            <div class="col-span-2 h-full relative">
+          <div class="relative" v-else>
+            <default-arrivals-placeholder
+                :content="{title: 'Default Title', body: 'Default Desc', url: '#'}"
+                :position="1"
+                :image="'https://dummyimage.com/744x720/000/fff'"
+            />
+          </div>
+          <div class="grid grid-cols-2 grid-rows-2 gap-6">
+            <div class="col-span-2 h-full relative" v-if="arrivals.hasOwnProperty(2)">
               <h2 class="text-l font-semibold text-center">Position-2</h2>
-              <img :src="arrivals[1].image" alt="Second arrival"/>
-              <Description :description="arrivals[1].description" :name="arrivals[1].title"/>
+              <img :src="arrivals[2].attributes.image_url" alt="Second arrival"/>
+              <Description
+                  :description="arrivals[2].attributes.content.body"
+                  :name="arrivals[2].attributes.content.title"
+                  :link="arrivals[2].attributes.arrival_url"/>
             </div>
-            <div class="h-full relative">
+            <div v-else class="col-span-2 h-full relative">
+              <default-arrivals-placeholder
+                  :content="{title: 'Default Title', body: 'Default Desc', url: '#'}"
+                  :position="2"
+                  :image="'https://dummyimage.com/744x336/000/fff'"
+              />
+            </div>
+            <div class="h-full relative" v-if="arrivals.hasOwnProperty(3)">
               <h2 class="text-l font-semibold text-center">Position-3</h2>
-              <img :src="arrivals[2].image" alt="Third arrival"/>
-              <Description :description="arrivals[2].description" :name="arrivals[2].title"/>
+              <img :src="arrivals[3].attributes.image_url" alt="Third arrival"/>
+              <Description
+                  :description="arrivals[3].attributes.content.body"
+                  :name="arrivals[3].attributes.content.title"
+                  :link="arrivals[3].attributes.arrival_url"/>
             </div>
-            <div class="h-full relative">
+            <div v-else class="h-full relative">
+              <default-arrivals-placeholder
+                  :content="{title: 'Default Title', body: 'Default Desc', url: '#'}"
+                  :position="3"
+                  :image="'https://dummyimage.com/348x336/000/fff'"
+              />
+            </div>
+            <div class="h-full relative" v-if="arrivals.hasOwnProperty(4)">
               <h2 class="text-l font-semibold text-center">Position-4</h2>
-              <img :src="arrivals[3].image" alt="Fourth arrival"/>
-              <Description :description="arrivals[3].description" :name="arrivals[3].title"/>
+              <img :src="arrivals[4].attributes.image_url" alt="Fourth arrival"/>
+              <Description
+                  :description="arrivals[4].attributes.content.body"
+                  :name="arrivals[4].attributes.content.title"
+                  :link="arrivals[4].attributes.arrival_url"/>
+            </div>
+            <div v-else class="h-full relative">
+              <default-arrivals-placeholder
+                  :content="{title: 'Default Title', body: 'Default Desc', url: '#'}"
+                  :position="4"
+                  :image="'https://dummyimage.com/348x336/000/fff'"
+              />
             </div>
           </div>
         </div>
       </section>
+      <div class="container mx-auto space-y-4" v-else>
+        <p>Нема ничего</p>
+      </div>
     </div>
   </default-container>
 </template>

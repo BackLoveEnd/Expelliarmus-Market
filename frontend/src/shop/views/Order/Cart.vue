@@ -4,13 +4,12 @@
       <bread-crumbs :links="links"></bread-crumbs>
     </section>
     <div
-        v-if="! isCartEmpty"
+        v-if="cartStore.totalItems > 0"
         class="space-y-20 first-of-type:mt-20 last-of-type:mb-20"
     >
       <section class="container mx-auto">
         <suspense>
           <cart-overview
-              @cart-empty="isCartEmpty = true"
               @total-price="handleTotalPrice"
               @updated-product="handleUpdatedProduct"
           />
@@ -93,62 +92,61 @@
 </template>
 
 <script setup>
-import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
-import {ref} from "vue";
-import CartOverview from "@/shop/components/Cart/CartOverview.vue";
-import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
-import {useCartStore} from "@/stores/useCartStore.js";
-import {useToastStore} from "@/stores/useToastStore.js";
-import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
-import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
+import BreadCrumbs from '@/components/Default/BreadCrumbs.vue'
+import { ref } from 'vue'
+import CartOverview from '@/shop/components/Cart/CartOverview.vue'
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
+import { useCartStore } from '@/stores/useCartStore.js'
+import { useToastStore } from '@/stores/useToastStore.js'
+import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js'
+import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js'
 
 const links = ref([
-  {url: "/", name: "Home"},
-  {url: "/cart", name: "Cart"},
-]);
+  { url: '/', name: 'Home' },
+  { url: '/cart', name: 'Cart' },
+])
 
-const isCartEmpty = ref();
+const toast = useToastStore()
 
-const toast = useToastStore();
+const cartStore = useCartStore()
 
-const cartStore = useCartStore();
+const totalPrice = ref(0)
 
-const totalPrice = ref(0);
-
-const productsToUpdate = ref([]);
+const productsToUpdate = ref([])
 
 const clearCart = async () => {
   await cartStore.clearCart().then(() => {
-    isCartEmpty.value = true;
-    toast.showToast('Cart was cleared.', defaultSuccessSettings);
-  });
-};
+    toast.showToast('Cart was cleared.', defaultSuccessSettings)
+  })
+}
 
 const handleTotalPrice = (value) => {
-  totalPrice.value = value;
-};
+  totalPrice.value = value
+}
 
 const handleUpdatedProduct = (product) => {
-  const index = productsToUpdate.value.findIndex((item) => item.productId === product.productId);
+  const index = productsToUpdate.value.findIndex((item) => item.productId === product.productId)
 
   if (index === -1) {
-    productsToUpdate.value.push(product);
+    productsToUpdate.value.push(product)
   } else {
-    productsToUpdate.value[index] = product;
+    productsToUpdate.value[index] = product
   }
-};
+}
 
 const updateProducts = async () => {
   await cartStore.updateQuantity(productsToUpdate.value)
       .then(() => {
-        toast.showToast('Cart was updated.', defaultSuccessSettings);
+        toast.showToast('Cart was updated.', defaultSuccessSettings)
 
-        productsToUpdate.value = [];
+        productsToUpdate.value = []
       })
       .catch((e) => {
-        toast.showToast(e?.response?.data?.message, defaultErrorSettings);
-      });
-};
+        toast.showToast(e?.response?.data?.message, defaultErrorSettings)
+      })
+}
+
+
 </script>
 
 <style scoped></style>

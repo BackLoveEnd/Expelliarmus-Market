@@ -13,7 +13,7 @@
       <label
           :for="'color-' + index"
           :style="{ backgroundColor: color.value, borderColor: color.value }"
-          class="relative flex items-center justify-center p-1 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-white w-6 h-6 cursor-pointer border-2 rounded-full overflow-hidden"
+          class="relative flex items-center justify-center p-1 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-white w-6 h-6 cursor-pointer border-2 border-gray-200 rounded-full overflow-hidden"
       >
         <span
             :style="{ backgroundColor: color.value }"
