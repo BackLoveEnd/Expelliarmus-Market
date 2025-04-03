@@ -1,24 +1,24 @@
 <script setup>
-import WishlistProductCard from "@/components/Card/WishlistProductCard.vue";
-import {useWishlistStore} from "@/stores/useWishlistStore.js";
-import {ref} from "vue";
+import WishlistProductCard from '@/components/Card/WishlistProductCard.vue'
+import { useWishlistStore } from '@/stores/useWishlistStore.js'
+import { ref } from 'vue'
 
-const wishlistStore = useWishlistStore();
+const wishlistStore = useWishlistStore()
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 
-async function getWishlist() {
+async function getWishlist () {
   await wishlistStore.fetchWishlist()
       .then(() => {
 
       })
       .catch((e) => {
 
-      });
+      })
 }
 
-async function loadMore() {
-  isLoading.value = true;
+async function loadMore () {
+  isLoading.value = true
 
   await wishlistStore.fetchMoreWishlist()
       .then(() => {
@@ -27,10 +27,10 @@ async function loadMore() {
       .catch((e) => {
 
       })
-      .finally(() => isLoading.value = false);
+      .finally(() => isLoading.value = false)
 }
 
-await getWishlist();
+await getWishlist()
 </script>
 
 <template>
@@ -55,10 +55,10 @@ await getWishlist();
             <span class="font-semibold text-[#374151]">Load more</span>
           </button>
         </div>
-        <div v-else class="flex flex-col items-center gap-y-2">
-          <i class="pi pi-check text-green-500 text-3xl"></i>
-          <span class="text-[#374151] text-sm font-semibold">That all.</span>
-        </div>
+        <!--        <div v-else class="flex flex-col items-center gap-y-2">
+                            <i class="pi pi-check text-green-500 text-3xl"></i>
+                  <span class="text-[#374151] text-sm font-semibold">That all.</span>
+                </div>-->
       </div>
     </div>
     <div v-else class="my-20">
