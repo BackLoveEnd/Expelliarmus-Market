@@ -32,9 +32,13 @@ let product = reactive({
 });
 
 const previewVariations = ref();
+
 const category = ref({});
+
 const brand = ref({});
+
 const specifications = ref([]);
+
 const variations = ref([]);
 
 const links = ref([]);
@@ -42,6 +46,12 @@ const links = ref([]);
 const quantity = ref(1);
 
 const price = ref(0);
+
+let selectedVariation = reactive({
+  id: null,
+  price: null,
+  discount: null
+});
 
 const priceDependOnQuantity = computed(() =>
     (price.value * quantity.value).toFixed(2),
@@ -53,8 +63,20 @@ const imagesUrls = computed(() => {
   return product.images.map((image) => image.image_url);
 });
 
-function updatePrice(variation) {
-  price.value = parseFloat(variation.price);
+const handleSelectedVariation = (variation) => {
+  setSelectedVariation(variation);
+
+  if (selectedVariation.discount !== null) {
+    price.value = parseFloat(selectedVariation.discount.discount_price);
+  } else {
+    price.value = parseFloat(variation.attributes.price);
+  }
+};
+
+function setSelectedVariation(variation) {
+  selectedVariation.price = variation.attributes.price;
+  selectedVariation.id = variation.attributes.id;
+  selectedVariation.discount = variation.attributes.discount;
 }
 
 async function getProduct() {
@@ -110,12 +132,13 @@ await getProduct();
                 v-if="Array.isArray(previewVariations)"
                 :previewed-variations="previewVariations"
                 :variations="variations"
-                @variation-selected="updatePrice"
+                @selected-option="handleSelectedVariation"
             />
             <single-variations-viewer
                 v-else
+                :variations="variations"
                 :previewed-variation="previewVariations"
-                @selected-option="updatePrice"
+                @selected-option="handleSelectedVariation"
             />
           </div>
         </div>
