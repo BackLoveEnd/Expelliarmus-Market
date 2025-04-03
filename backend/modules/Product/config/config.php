@@ -20,7 +20,7 @@ return [
         'explore' => 10,
         'suggestions' => 5,
         'shop' => [
-            'default' => 12,
+            'default' => 20,
         ],
     ],
     'image' => [

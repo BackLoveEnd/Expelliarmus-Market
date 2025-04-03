@@ -20,7 +20,7 @@ class RetrieveProductsService
         private DiscountedProductsService $discountedService,
     ) {}
 
-    public function getProducts(): LengthAwarePaginator
+    public function getProducts(int $retrieveNum): LengthAwarePaginator
     {
         $this->retriever->filtersConnector->defineFilters([
             AllowedFilter::custom('category', new CategoryFilter()),
@@ -28,7 +28,7 @@ class RetrieveProductsService
 
         $this->retriever->sortsConnector->defineSorts([]);
 
-        $products = $this->retriever->retrieve([
+        $products = $this->retriever->retrieve($retrieveNum, [
             'id',
             'slug',
             'title',
