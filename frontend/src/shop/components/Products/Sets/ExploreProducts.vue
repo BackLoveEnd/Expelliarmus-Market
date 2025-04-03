@@ -35,7 +35,7 @@ await getProducts();
       </div>
       <div class="flex justify-center">
         <router-link
-            to="#"
+            :to="{ name: 'all-products'}"
             class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
         >
           View More Products
