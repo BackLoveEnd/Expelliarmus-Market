@@ -1,10 +1,10 @@
 {
-    "Order": true,
-    "User": true,
-    "Product": true,
-    "Warehouse": true,
-    "Category": true,
-    "Brand": true,
-    "ContentManagement": true,
-    "Statistics": true
+  "Order": true,
+  "User": true,
+  "Product": true,
+  "Warehouse": true,
+  "Category": true,
+  "Brand": true,
+  "ContentManagement": true,
+  "Statistics": true
 }

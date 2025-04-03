@@ -16,11 +16,9 @@ class UpdateProductsQuantityRequest extends JsonApiFormRequest
             'items' => [
                 'required',
                 'array',
-                $this->user() ? new CartExistsInDbRule() : new CartExistsInSessionRule($this->session()),
+                $this->user() ? new CartExistsInDbRule($this->user()) : new CartExistsInSessionRule($this->session()),
             ],
             'items.*.cart_id' => ['required', 'uuid'],
-            'items.*.product_id' => ['required', 'integer'],
-            'items.*.variation_id' => ['required', '']
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ];
     }

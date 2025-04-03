@@ -12,6 +12,7 @@ export const CartService = {
                     productId: cart.attributes.product_id,
                     productImage: cart.attributes.product_image,
                     productTitle: cart.attributes.product_title,
+                    productSlug: cart.attributes.product_slug,
                     quantity: cart.attributes.quantity,
                     unitPrice: cart.attributes.price_per_unit,
                     finalPrice: cart.attributes.final_price,
@@ -45,7 +46,7 @@ export const CartService = {
                 quantity: product.quantity
             }))
         }, 'cart');
-        console.log(data);
-        //return await api().patch('/shop/user/cart', data);
+
+        return await api().patch('/shop/user/cart', data);
     }
 };

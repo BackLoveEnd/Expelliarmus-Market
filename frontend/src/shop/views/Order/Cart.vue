@@ -142,6 +142,8 @@ const updateProducts = async () => {
   await cartStore.updateQuantity(productsToUpdate.value)
       .then(() => {
         toast.showToast('Cart was updated.', defaultSuccessSettings);
+
+        productsToUpdate.value = [];
       })
       .catch((e) => {
         toast.showToast(e?.response?.data?.message, defaultErrorSettings);

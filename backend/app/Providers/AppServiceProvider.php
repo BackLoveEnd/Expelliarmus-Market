@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Services\Cache\CacheService;
-use Clockwork\Support\Laravel\ClockworkServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
@@ -17,10 +16,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->hasDebugModeEnabled() && ! $this->app->isProduction()) {
-            $this->app->register(ClockworkServiceProvider::class);
-        }
-
         $this->app->singleton(CacheService::class, function (Application $app) {
             return new CacheService($app->get('cache.store'));
         });

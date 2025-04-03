@@ -67,6 +67,11 @@ class User extends Authenticatable implements UserInterface
         return $this->hasMany(Cart::class);
     }
 
+    public function wishlist(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
     protected function casts(): array
     {
         return [

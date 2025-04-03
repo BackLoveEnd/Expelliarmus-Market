@@ -6,6 +6,8 @@ namespace Modules\Order\Cart\Dto;
 
 use Illuminate\Support\Collection;
 use Modules\Order\Cart\Http\Requests\UpdateProductsQuantityRequest;
+use Modules\Order\Models\Cart;
+use Modules\Product\Models\Product;
 
 final readonly class CartProductsQuantityDto
 {
@@ -15,23 +17,35 @@ final readonly class CartProductsQuantityDto
     {
         $cartItems = collect($request->items);
 
-        $productIds = $cartItems->pluck('product_id')->unique();
+        if ($request->user()) {
+            $products = Cart::query()
+                ->with('product:id,with_attribute_combinations,product_article,slug')
+                ->whereIn('id', $cartItems->pluck('cart_id')->toArray())
+                ->get(['id', 'product_id', 'variation']);
+        } else {
+            $products = collect($request->session()->get('user.cart', []))
+                ->whereIn('id', $cartItems->pluck('cart_id')->toArray());
 
-        /*$products = Product::query()
-            ->whereIn('id', $productIds)
-            ->get(['id', 'with_attribute_combinations'])
-            ->keyBy('id');
+            $productModels = Product::query()->whereIn('id', $products->pluck('product_id'))
+                ->get(['id', 'with_attribute_combinations', 'product_article', 'slug']);
 
-        $cartItems = Cart::query()
-            ->with('product:id,with_attribute_combination')
-            ->whereIn('id', $cartItems->pluck('cart_id'))
-            ->get();*/
+            $products = $products->map(function (object $productCart) use ($productModels) {
+                return (object)[
+                    'id' => $productCart->id,
+                    'product' => $productModels->firstWhere('id', $productCart->product_id),
+                    'variation' => $productCart->variation,
+                ];
+            });
+        }
 
         $cartItemsWithProducts = $cartItems->map(function ($item) use ($products) {
+            $productCartItem = $products->firstWhere('id', $item['cart_id']);
+
             return (object)[
-                'cart_id' => $item['cart_id'],
+                'id' => $item['cart_id'],
                 'quantity' => $item['quantity'],
-                'product' => $products->get($item['product_id']),
+                'product' => $productCartItem->product,
+                'variation' => $productCartItem->variation['id'] ?? null,
             ];
         });
 

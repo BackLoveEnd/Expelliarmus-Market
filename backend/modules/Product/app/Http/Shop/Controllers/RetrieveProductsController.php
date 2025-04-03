@@ -24,7 +24,7 @@ class RetrieveProductsController extends Controller
      */
     public function index(): JsonApiResourceCollection
     {
-        $products = $this->productsService->getProducts();
+        $products = $this->productsService->getProducts(config('product.retrieve.shop.default'));
 
         return ProductsShopCardResource::collection($products->items())
             ->additional([

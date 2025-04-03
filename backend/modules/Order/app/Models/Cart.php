@@ -2,9 +2,11 @@
 
 namespace Modules\Order\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Product\Models\Product;
 use Modules\User\Models\User;
 use Ramsey\Uuid\Uuid;
 
@@ -39,6 +41,25 @@ class Cart extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function pricePerUnit(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            return round((float)$value, 2);
+        });
+    }
+
+    public function finalPrice(): Attribute
+    {
+        return Attribute::get(function ($value) {
+            return round((float)$value, 2);
+        });
     }
 
     protected function casts(): array

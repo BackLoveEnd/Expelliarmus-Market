@@ -17,10 +17,17 @@ class RouteServiceProvider extends ServiceProvider
     public function map(): void
     {
         $this->mapApiRoutes();
+
+        $this->mapShopRoutes();
     }
 
     protected function mapApiRoutes(): void
     {
         Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name, '/routes/api.php'));
+    }
+
+    protected function mapShopRoutes(): void
+    {
+        Route::middleware('api')->prefix('api')->name('shop.')->group(module_path($this->name, '/routes/shop.php'));
     }
 }

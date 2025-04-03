@@ -10,6 +10,7 @@ import CheckOut from "@/shop/views/Order/Checkout.vue";
 import Product from "@/shop/views/Product/Product.vue";
 import CategoriesBrowse from "@/shop/views/Shop/CategoriesBrowse.vue";
 import CategoriesOverview from "@/shop/views/Shop/CategoriesOverview.vue";
+import AllProducts from "@/shop/views/Product/AllProducts.vue";
 
 export default [
     {
@@ -33,6 +34,11 @@ export default [
         },
     },
     {
+        path: "/shop/products",
+        component: AllProducts,
+        name: "all-products"
+    },
+    {
         path: "/shop/categories",
         component: CategoriesOverview,
         name: "categories-overview"
@@ -40,7 +46,7 @@ export default [
     {
         path: "/shop/categories/:categorySlug",
         name: "categories-browse",
-        props: ({name: null}),
+        props: true,
         component: CategoriesBrowse,
     },
     {

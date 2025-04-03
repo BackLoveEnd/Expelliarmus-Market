@@ -6,7 +6,7 @@ first-start-app: ## First application init
 	docker exec npm npm install
 	docker exec php php artisan migrate:fresh --seed --storage-clean
 	docker exec php php artisan storage:link
-	docker exec -it npm npm run dev
+	docker exec php php artisan key:generate
 
 build: ## Build and run application
 	docker compose up -d --build
@@ -19,6 +19,9 @@ stop-remove: ## Stop and clear docker
 
 front-dev: ## Frontend Dev Server
 	docker exec -it npm npm run dev
+
+front-build: ## Build Frontend
+	docker exec -it npm npm run build
 
 full-rebuild: ## Full re-install application
 	docker compose down -v
@@ -40,6 +43,9 @@ backend-dependencies-install: ## Install backend dependencies
 
 backend-cache-clean: ## Clean backend application cache
 	docker exec php php artisan cache:clean
+
+backend-tests: ## Run backend tests.
+	docker exec php php artisan test
 
 .PHONY: help
 help:

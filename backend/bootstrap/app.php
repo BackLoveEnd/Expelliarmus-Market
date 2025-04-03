@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\BootstrapExceptionsHelper;
+use App\Http\Middleware\AcceptApplicationJsonMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->throttleApi();
 
+        $middleware->append(AcceptApplicationJsonMiddleware::class);
+
         $middleware->alias([
             'include' => AppendIncludeRelationships::class,
         ]);
@@ -27,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 throw new AlreadyAuthenticatedException();
             }
+
             return '/';
         });
     })

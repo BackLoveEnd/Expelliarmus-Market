@@ -8,39 +8,32 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
 use Modules\Order\Models\Cart;
+use Modules\User\Models\User;
 
 class CartExistsInDbRule implements ValidationRule
 {
+    public function __construct(
+        private ?User $user,
+    ) {}
+
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $cartItems = collect($value)->mapWithKeys(fn($item) => [$item['cart_id'] => $item['product_id']]);
+        $cartItems = collect($value)->pluck('cart_id');
 
-        foreach ($cartItems as $cartId => $productId) {
+        foreach ($cartItems as $cartId) {
             if (! Str::isUuid($cartId)) {
                 $fail('Invalid cart ID.');
                 return;
             }
-
-            if (! is_int($productId)) {
-                $fail('Invalid product ID.');
-            }
         }
 
-        $cartsInDb = Cart::query()
-            ->whereIn('cart_id', $cartItems->keys()->toArray())
-            ->get(['cart_id', 'product_id'])
-            ->mapWithKeys(fn($cart) => [$cart->cart_id => $cart->product_id]);
+        $cartsInDbCount = Cart::query()
+            ->where('user_id', $this->user->id)
+            ->whereIn('id', $cartItems->toArray())
+            ->count();
 
-        if ($cartsInDb->count() !== $cartItems->count()) {
-            $fail('Some carts do not exist.');
-        }
-
-        $invalidPairs = $cartItems->filter(fn($productId, $cartId)
-            => ! isset($cartsInDb[$cartId]) || $cartsInDb[$cartId] !== $productId,
-        );
-
-        if ($invalidPairs->isNotEmpty()) {
-            $fail('Some cart item and product pairs do not match.');
+        if ($cartsInDbCount !== $cartItems->count()) {
+            $fail("Some of cart items are not exists.");
         }
     }
 }

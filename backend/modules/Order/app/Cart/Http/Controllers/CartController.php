@@ -9,11 +9,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Order\Cart\Dto\CartProductsQuantityDto;
 use Modules\Order\Cart\Dto\ProductCartDto;
+use Modules\Order\Cart\Exceptions\HasNotEnoughSuppliesForUpdateException;
 use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Order\Cart\Http\Requests\AddToCartRequest;
 use Modules\Order\Cart\Http\Requests\UpdateProductsQuantityRequest;
 use Modules\Order\Cart\Http\Resources\UserCartResource;
-use Modules\Order\Cart\Services\ClientCartService;
+use Modules\Order\Cart\Services\Cart\ClientCartService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CartController extends Controller
@@ -60,12 +61,23 @@ class CartController extends Controller
         return response()->json(['message' => 'Product was added to cart.']);
     }
 
-    public function updateProductsQuantity(UpdateProductsQuantityRequest $request)
+    /**
+     * Update quantities for products in cart.
+     *
+     * Usage place - Shop.
+     *
+     * @param  UpdateProductsQuantityRequest  $request
+     * @return JsonResponse
+     * @throws HasNotEnoughSuppliesForUpdateException
+     */
+    public function updateProductsQuantity(UpdateProductsQuantityRequest $request): JsonResponse
     {
         $this->service->updateProductsQuantities(
             user: $request->user(),
             dto: CartProductsQuantityDto::fromRequest($request),
         );
+
+        return response()->json(['message' => 'Cart was updated.']);
     }
 
     /**
