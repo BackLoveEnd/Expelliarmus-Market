@@ -54,6 +54,7 @@
 - [Screenshots](#screenshots)
 
 &nbsp;
+
 ## Overview
 
 Expelliarmus-Market is an e-commerce web application that allows businesses to create, manage, and scale online stores
@@ -85,6 +86,18 @@ Then, in backend directory, you will find the [
 
 And finally, in frontend directory of the project, you will find [
 `.env.example`](https://github.com/Igarevv/Expelliarmus-Market/blob/master/frontend/.env-example) file.
+
+By default, URL of api is - **api.expelliarmus.com:8080** and frontend **expelliarmus.com:3000** (dev mode) and
+**expelliarmus.com:8000** (build mode).
+
+You will need to set local domain name in
+your [system hosts file](https://stackoverflow.com/questions/18200785/setting-up-local-domain-in-linux):
+
+````
+172.0.0.1 expelliarmus.com
+
+172.0.0.1 api.expelliarmus.com
+````
 
 ### Installation
 
@@ -177,6 +190,9 @@ e-commerce platform efficiently. Below is an overview of the core modules and th
 
 - **📊 Statistics**  
   Provides various statistics to improve user experience.
+
+API documentation
+available [here](https://documenter.getpostman.com/view/31662162/2sB2cSg3Ya#f83d1771-4c59-4db9-bebb-28b27e34b457).
 
 &nbsp;
 
