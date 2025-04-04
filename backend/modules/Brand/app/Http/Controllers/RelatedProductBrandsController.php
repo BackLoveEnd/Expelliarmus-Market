@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Brand\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Modules\Brand\Http\Actions\GetProductBrandsByCategoryAction as BrandsProductsAction;
+use Modules\Brand\Http\Resources\BrandResource;
+use Modules\Category\Models\Category;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use TiMacDonald\JsonApi\JsonApiResourceCollection;
+
+class RelatedProductBrandsController extends Controller
+{
+
+    /**
+     * Retrieve brands for products by products categories.
+     *
+     * Usage place - Shop.
+     *
+     * @param  \Modules\Category\Models\Category  $category
+     * @param  \Modules\Brand\Http\Actions\GetProductBrandsByCategoryAction  $action
+     *
+     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getProductBrandsByCategory(
+        Category $category,
+        BrandsProductsAction $action
+    ): JsonApiResourceCollection|JsonResponse {
+        $brands = $action->handle($category);
+
+        if ($brands->isEmpty()) {
+            return response()->json(['message' => 'Brands not found.'], 404);
+        }
+
+        return BrandResource::collection($brands);
+    }
+
+}
