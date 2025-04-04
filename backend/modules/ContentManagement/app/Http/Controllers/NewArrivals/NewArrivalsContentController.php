@@ -42,11 +42,17 @@ class NewArrivalsContentController extends Controller
      *
      * Usage - Admin section.
      *
-     * @return JsonApiResourceCollection
+     * @return JsonApiResourceCollection|JsonResponse
      */
-    public function getNewArrivals(): JsonApiResourceCollection
+    public function getNewArrivals(): JsonApiResourceCollection|JsonResponse
     {
-        return NewArrivalsContentResource::collection($this->service->getArrivals());
+        $arrivals = $this->service->getArrivals();
+
+        if ($arrivals->isEmpty()) {
+            return response()->json(['message' => 'No arrivals found.'], 404);
+        }
+
+        return NewArrivalsContentResource::collection($arrivals);
     }
 
     /**

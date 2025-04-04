@@ -1,99 +1,99 @@
-import api from '@/utils/api.js'
+import api from '@/utils/api.js';
 
 export const ContentManagementService = {
-  async getAllSlides () {
-    return await api().get('/management/content/slider')
-  },
+    async getAllSlides() {
+        return await api().get('/management/content/slider');
+    },
 
-  async uploadSliderContent (data) {
-    const form = new FormData()
+    async uploadSliderContent(data) {
+        const form = new FormData();
 
-    data.forEach((slide, index) => {
-      form.append(`images[${index}][image]`, slide.image ?? '')
-      form.append(`images[${index}][slide_id]`, slide.slide_id ?? '')
-      form.append(`images[${index}][image_url]`, slide.image_url ?? '')
-      form.append(`images[${index}][order]`, slide.order)
-      form.append(`images[${index}][content_url]`, slide.content_url)
-    })
+        data.forEach((slide, index) => {
+            form.append(`images[${index}][image]`, slide.image ?? '');
+            form.append(`images[${index}][slide_id]`, slide.slide_id ?? '');
+            form.append(`images[${index}][image_url]`, slide.image_url ?? '');
+            form.append(`images[${index}][order]`, slide.order);
+            form.append(`images[${index}][content_url]`, slide.content_url);
+        });
 
-    return await api().post('/management/content/slider', form, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-  },
+        return await api().post('/management/content/slider', form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
 
-  async deleteSlide (slideId) {
-    return api().delete(`/management/content/slider/slides/${slideId}`)
-  },
+    async deleteSlide(slideId) {
+        return api().delete(`/management/content/slider/slides/${slideId}`);
+    },
 
-  async getAllArrivals () {
-    return await api().get('/management/content/new-arrivals')
-  },
+    async getAllArrivals() {
+        return await api().get('/management/content/new-arrivals');
+    },
 
-  async uploadArrivalContent (data) {
-    function dataURItoFile (dataURI, filename) {
-      const arr = dataURI.split(',')
-      const mime = arr[0].match(/:(.*?);/)[1]
-      const bstr = atob(arr[1])
-      let n = bstr.length
-      const u8arr = new Uint8Array(n)
+    async uploadArrivalContent(data) {
+        console.log(data);
 
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
-      }
+        function dataURItoFile(dataURI, filename) {
+            const arr = dataURI.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
 
-      return new File([u8arr], filename, { type: mime })
-    }
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
 
-    const form = new FormData()
+            return new File([u8arr], filename, {type: mime});
+        }
 
-    data.forEach((arrival, index) => {
-      const hasValidExistsImageUrl =
-        arrival.exists_image_url &&
-        arrival.exists_image_url.startsWith('http://api.expelliarmus.com:8080/storage/content/arrivals')
+        const form = new FormData();
 
-      const file = arrival.image.startsWith('data:image')
-        ? dataURItoFile(arrival.image, `arrival-${index}.jpg`)
-        : null
+        data.forEach((arrival, index) => {
+            const hasValidExistsImageUrl =
+                arrival.image_url &&
+                arrival.image_url.startsWith('http://api.expelliarmus.com:8080/storage/content/arrivals');
 
-      if (!hasValidExistsImageUrl && !file) {
-        console.error(`Error: the ${index + 1}st element does not neither file, neither exists_image_url`)
-        return
-      }
+            const file = arrival.image_url.startsWith('data:image')
+                ? dataURItoFile(arrival.image_url, `arrival-${index}.jpg`)
+                : null;
 
-      if (file) form.append(`arrivals[${index}][file]`, file)
+            if (!hasValidExistsImageUrl && !file) {
+                console.error(`Error: the ${index + 1}st element does not neither file, neither exists_image_url`);
+                return;
+            }
 
-      form.append(`arrivals[${index}][position]`, arrival.position ?? index + 1)
+            if (file) form.append(`arrivals[${index}][file]`, file);
 
-      if (arrival.arrival_id) form.append(`arrivals[${index}][arrival_id]`, arrival.arrival_id)
-      if (hasValidExistsImageUrl) form.append(`arrivals[${index}][exists_image_url]`, arrival.exists_image_url)
+            form.append(`arrivals[${index}][position]`, arrival.position ?? index + 1);
 
-      const isValidUrl =
-        arrival.link &&
-        (arrival.link.startsWith('http://expelliarmus.com') || arrival.link.startsWith('https://expelliarmus.com'))
+            if (arrival.id) form.append(`arrivals[${index}][arrival_id]`, arrival.id);
+            if (hasValidExistsImageUrl) form.append(`arrivals[${index}][exists_image_url]`, arrival.image_url);
 
-      if (isValidUrl) {
-        form.append(`arrivals[${index}][arrival_url]`, arrival.link)
-      } else {
-        console.error(`Error: the ${index}st element not valid arrival_url`)
-        return
-      }
+            const isValidUrl =
+                arrival.arrival_url &&
+                (arrival.arrival_url.startsWith('http://expelliarmus.com') || arrival.arrival_url.startsWith('https://expelliarmus.com'));
 
-      if (arrival.title) form.append(`arrivals[${index}][content][title]`, arrival.title)
-      if (arrival.description) form.append(`arrivals[${index}][content][body]`, arrival.description)
-    })
+            if (isValidUrl) {
+                form.append(`arrivals[${index}][arrival_url]`, arrival.arrival_url);
+            } else {
+                console.error(`Error: the ${index}st element not valid arrival_url`);
+                return;
+            }
 
-    console.log('Sent data:', [...form.entries()])
+            if (arrival.content.title) form.append(`arrivals[${index}][content][title]`, arrival.content.title);
+            if (arrival.content.body) form.append(`arrivals[${index}][content][body]`, arrival.content.body);
+        });
 
-    return await api().post('/management/content/new-arrivals', form, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-  },
+        return await api().post('/management/content/new-arrivals', form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
 
-  async deleteArrival (arrivalId) {
-    return api().delete(`/management/content/new-arrivals/${arrivalId}`)
-  },
-}
+    async deleteArrivalContent(arrivalId) {
+        return api().delete(`/management/content/new-arrivals/${arrivalId}`);
+    },
+};

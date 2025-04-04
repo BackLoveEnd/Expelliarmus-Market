@@ -47,13 +47,12 @@
 
     <!-- NEW ARRIVAL SECTION -->
     <section class="container mx-auto">
-      <section-title :title="'Featured'"/>
-      <div class="flex justify-between mb-10">
-        <p class="text-4xl font-semibold">New Arrival</p>
-      </div>
-      <div class="max-h-720">
+      <suspense>
         <new-arrivals/>
-      </div>
+        <template #fallback>
+          <suspense-loader/>
+        </template>
+      </suspense>
     </section>
 
     <!-- LAST SECTION -->
@@ -127,7 +126,6 @@
 
 <script setup>
 import CategoryCarouselSection from "@/components/Card/CategoryCarouselSection.vue";
-import SectionTitle from "@/components/Default/SectionTitle.vue";
 import NewArrivals from "@/components/Product/Arrival/NewArrivals.vue";
 import Guarantee from "@/components/Default/Guarantee.vue";
 import {inject, onMounted} from "vue";
@@ -141,6 +139,7 @@ import CategoriesBrowseList from "@/shop/components/Categories/CategoriesBrowseL
 import CategoriesSkeleton from "@/management/components/Categories/CategoriesSkeleton.vue";
 import ExploreProducts from "@/shop/components/Products/Sets/ExploreProducts.vue";
 import TopSellers from "@/shop/components/Products/Sets/TopSellers.vue";
+import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 
 const emitter = inject("emitter");
 const toast = useToast();
