@@ -1,17 +1,16 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import {CategoryService} from "@/services/CategoryService.js";
-import {MegaMenu} from "primevue";
+import { onMounted, ref } from 'vue'
+import { CategoryService } from '@/services/CategoryService.js'
+import { MegaMenu } from 'primevue'
 
-
-const items = ref([]);
+const items = ref([])
 
 onMounted(async () => {
   await CategoryService.getCategoriesTree()
       .then((response) => {
-        items.value = transformCategories(response?.data.data);
-      });
-});
+        items.value = transformCategories(response?.data.data)
+      })
+})
 
 const transformCategories = (categories) => {
   return categories.map(category => ({
@@ -29,13 +28,13 @@ const transformCategories = (categories) => {
               : []
         }))]
         : []
-  }));
-};
+  }))
+}
 
 </script>
 
 <template>
-  <MegaMenu :model="items" orientation="vertical">
+  <MegaMenu :model="items" orientation="vertical" scroll-height="25rem">
 
     <template #item="{ item }">
       <router-link v-slot="{ href, navigate }" :to="item.route" custom>
