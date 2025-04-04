@@ -17,9 +17,8 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 class NewArrivalsContentController extends Controller
 {
     public function __construct(
-        private NewArrivalsContentService $service
-    ) {
-    }
+        private NewArrivalsContentService $service,
+    ) {}
 
     /**
      * Upload new arrivals.
@@ -32,7 +31,7 @@ class NewArrivalsContentController extends Controller
     public function uploadNewArrivals(NewArrivalsUploadRequest $request): JsonResponse
     {
         $this->service->saveArrivals(
-            ArrivalContentDto::collection($request->arrivals)
+            ArrivalContentDto::collection($request->arrivals),
         );
 
         return response()->json(['message' => 'New arrivals uploaded successfully.']);

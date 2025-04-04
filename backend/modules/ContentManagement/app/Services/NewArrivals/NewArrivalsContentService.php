@@ -18,9 +18,8 @@ use Throwable;
 class NewArrivalsContentService
 {
     public function __construct(
-        protected NewArrivalsStorage $storage
-    ) {
-    }
+        protected NewArrivalsStorage $storage,
+    ) {}
 
     public function getArrivals(): EloquentCollection
     {
@@ -30,7 +29,7 @@ class NewArrivalsContentService
                 'image_url',
                 'arrival_url',
                 'content',
-                'position'
+                'position',
             ]);
     }
 
@@ -103,14 +102,14 @@ class NewArrivalsContentService
                 'arrival_url' => $dto->arrivalUrl,
                 'content' => $dto->content->toJson(),
                 'image_url' => '"content_sliders"."image_url"',
-                'image_source' => '"content_sliders"."image_source"'
+                'image_source' => '"content_sliders"."image_source"',
             ];
         });
 
         NewArrival::query()->upsert(
             values: $slidesMapped->toArray(),
             uniqueBy: ['arrival_id'],
-            update: ['arrival_url', 'position', 'content']
+            update: ['arrival_url', 'position', 'content'],
         );
     }
 
@@ -125,7 +124,7 @@ class NewArrivalsContentService
         NewArrival::query()->upsert(
             values: $this->prepareArrivalsContentImages($arrivals)->toArray(),
             uniqueBy: ['arrival_id'],
-            update: ['image_url', 'image_source', 'arrival_url', 'position', 'content']
+            update: ['image_url', 'image_source', 'arrival_url', 'position', 'content'],
         );
     }
 
@@ -135,7 +134,7 @@ class NewArrivalsContentService
             return [
                 ...$dto->toArray(),
                 'arrival_id' => $dto->arrivalId ?? Uuid::uuid7()->toString(),
-                'image_url' => $this->storage->getImageUrl($dto->file->hashName())
+                'image_url' => $this->storage->getImageUrl($dto->file->hashName()),
             ];
         });
     }
@@ -157,7 +156,7 @@ class NewArrivalsContentService
     protected function getArrivalsThatWannaBeChanged(Collection $arrivals): Collection
     {
         return $arrivals->filter(function (ArrivalContentDto $dto) {
-            return $dto->file !== null && $dto->arrivalId !== null;
+            return $dto->arrivalId !== null;
         });
     }
 }

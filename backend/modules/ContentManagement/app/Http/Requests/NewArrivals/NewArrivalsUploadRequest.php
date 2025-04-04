@@ -17,7 +17,7 @@ class NewArrivalsUploadRequest extends FormRequest
             'arrivals.*.exists_image_url' => [
                 'nullable',
                 'url',
-                new OnlySpecificStorageUrlRule(url('/storage/content/arrivals')),
+                new OnlySpecificStorageUrlRule(config('app.url').'/storage/content/arrivals'),
             ],
             'arrivals.*.arrival_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_name'))],
             'arrivals.*.position' => ['required', 'integer', 'between:1,4'],

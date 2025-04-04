@@ -9,9 +9,8 @@ use Illuminate\Support\Str;
 class OnlySpecificStorageUrlRule implements ValidationRule
 {
     public function __construct(
-        private string $storageUrl
-    ) {
-    }
+        private string $storageUrl,
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
