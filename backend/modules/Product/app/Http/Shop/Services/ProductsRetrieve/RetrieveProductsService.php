@@ -14,6 +14,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 
 class RetrieveProductsService
 {
+
     public function __construct(
         private ProductsRetriever $retriever,
         private WarehouseProductInfoService $warehouseService,
@@ -24,6 +25,7 @@ class RetrieveProductsService
     {
         $this->retriever->filtersConnector->defineFilters([
             AllowedFilter::custom('category', new CategoryFilter()),
+            AllowedFilter::exact('brand', 'brand_id'),
         ]);
 
         $this->retriever->sortsConnector->defineSorts([]);
@@ -53,4 +55,5 @@ class RetrieveProductsService
             ),
         );
     }
+
 }

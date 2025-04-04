@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Modules\Product\Http\Shop\Services\ProductsRetrieve;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Modules\Product\Models\Product;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductsRetriever
 {
+
     public function __construct(
         public readonly FiltersConnector $filtersConnector,
         public readonly SortsConnector $sortsConnector,
     ) {}
 
-    public function retrieve(int $retrieveNum, array $columns = ['*'])
+    public function retrieve(int $retrieveNum, array $columns = ['*']): LengthAwarePaginator
     {
         return QueryBuilder::for(Product::class)
             ->allowedFilters($this->filtersConnector->filters())
@@ -25,4 +27,5 @@ class ProductsRetriever
                 'with_attribute_combinations',
             ]);
     }
+
 }

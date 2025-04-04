@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Shop\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Modules\Product\Http\Shop\Resources\ProductsShopCardResource;
 use Modules\Product\Http\Shop\Services\ProductsRetrieve\RetrieveProductsService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveProductsController extends Controller
 {
+
     public function __construct(
         private RetrieveProductsService $productsService,
     ) {}
@@ -20,11 +22,15 @@ class RetrieveProductsController extends Controller
      *
      * Usage place - Shop.
      *
-     * @return JsonApiResourceCollection
+     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Illuminate\Http\JsonResponse
      */
-    public function index(): JsonApiResourceCollection
+    public function index(): JsonApiResourceCollection|JsonResponse
     {
         $products = $this->productsService->getProducts(config('product.retrieve.shop.default'));
+
+        if (collect($products->items())->isEmpty()) {
+            return response()->json(['message' => 'Products not found.'], 404);
+        }
 
         return ProductsShopCardResource::collection($products->items())
             ->additional([
@@ -37,4 +43,5 @@ class RetrieveProductsController extends Controller
                 ],
             ]);
     }
+
 }
