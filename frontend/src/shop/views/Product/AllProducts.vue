@@ -48,11 +48,16 @@
           <h2 id="products-heading" class="sr-only">Products</h2>
 
           <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
-            <filters @selected-filters=""/>
+            <filters @selected-filters="handleSelectedFilters"/>
 
             <!-- Product grid -->
             <div class="lg:col-span-3">
-              <products-fetcher :filters="selectedFilters"/>
+              <suspense>
+                <products-fetcher :filters="selectedFilters"/>
+                <template #fallback>
+                  <suspense-loader/>
+                </template>
+              </suspense>
             </div>
           </div>
         </section>
@@ -66,6 +71,7 @@ import {ref} from 'vue';
 import {Menu, MenuButton, MenuItem, MenuItems,} from '@headlessui/vue';
 import Filters from "@/shop/components/Products/AllProducts/Filters.vue";
 import ProductsFetcher from "@/shop/components/Products/AllProducts/ProductsFetcher.vue";
+import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 
 const selectedFilters = ref([]);
 
@@ -78,6 +84,6 @@ const sortOptions = [
 ];
 
 const handleSelectedFilters = (filters) => {
-  selectedFilters.value = filters;
+  selectedFilters.value = filters.value;
 };
 </script>
