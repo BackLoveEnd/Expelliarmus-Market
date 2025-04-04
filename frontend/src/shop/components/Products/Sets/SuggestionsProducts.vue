@@ -11,7 +11,7 @@ const productsCollapsed = computed(() => {
 });
 
 async function getSuggestions() {
-  await ProductsShopService.getExploredProducts()
+  await ProductsShopService.getSuggestions()
       .then((response) => {
         products.value = response?.data?.data;
       })

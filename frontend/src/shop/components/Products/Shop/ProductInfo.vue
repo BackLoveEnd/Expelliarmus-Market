@@ -52,7 +52,11 @@ const router = useRouter();
 
 const breadcrumbStore = useBreadCrumbStore();
 
-const wishlist = useWishlistToggler(props.productId);
+const wishlist = useWishlistToggler({
+  title: 'Title',
+  id: props.productId,
+  slug: props.productSlug
+});
 
 const isCartModalOpen = ref(false);
 

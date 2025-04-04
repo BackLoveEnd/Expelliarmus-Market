@@ -56,7 +56,11 @@ const props = defineProps({
   discountedProduct: Object
 });
 
-const wishlist = useWishlistToggler(props.discountedProduct.id);
+const wishlist = useWishlistToggler({
+  title: props.discountedProduct.title,
+  id: props.discountedProduct.id,
+  slug: props.discountedProduct.slug
+});
 
 const truncator = useTruncator();
 </script>

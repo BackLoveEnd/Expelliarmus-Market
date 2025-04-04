@@ -9,7 +9,7 @@ export const useWishlistStore = defineStore('wishlist', {
     }),
     getters: {
         isProductInWishlist: (state) => (productId) => {
-            return state.wishlistItems.some((item) => item.id === productId);
+            return state.wishlistItems.some((item) => Number(item.id) === productId);
         }
     },
     actions: {
@@ -42,11 +42,12 @@ export const useWishlistStore = defineStore('wishlist', {
                 });
         },
 
-        async addToWishlist(productId) {
-            await WishlistService.addProductToWishlist(productId)
+        async addToWishlist(product) {
+            await WishlistService.addProductToWishlist(Number(product.id))
                 .then(() => {
-                    this.totalItems += 1;
-                    this.wishlistItems.push({id: productId});
+                    ++this.totalItems;
+
+                    this.wishlistItems.push({...product});
                 })
                 .catch((e) => {
                     if ([400, 409, 401, 429].includes(e?.status)) {
