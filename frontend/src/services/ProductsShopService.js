@@ -25,6 +25,10 @@ export const ProductsShopService = {
         return api().get(link);
     },
 
+    async getMinMaxPrices() {
+        return api().get('/shop/products/staff/prices-range');
+    },
+
     async getProduct(productId, productSlug) {
         return await api()
             .get(

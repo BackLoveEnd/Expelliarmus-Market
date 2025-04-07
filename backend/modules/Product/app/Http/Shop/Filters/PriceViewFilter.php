@@ -16,13 +16,7 @@ class PriceViewFilter implements Filter
 
             $maxPrice = (float)$value[1];
 
-            if ($minPrice !== 0.0) {
-                $query->where('product_min_prices.min_price', '>=', $minPrice);
-            }
-
-            if ($maxPrice !== 0.0) {
-                $query->where('product_min_prices.min_price', '<=', $maxPrice);
-            }
+            $query->whereBetween('product_min_prices.min_price', [$minPrice, $maxPrice]);
         }
     }
 }

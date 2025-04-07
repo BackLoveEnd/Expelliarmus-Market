@@ -69,7 +69,7 @@
 <script setup>
 import {ref} from 'vue';
 import {Menu, MenuButton, MenuItem, MenuItems,} from '@headlessui/vue';
-import Filters from "@/shop/components/Products/AllProducts/Filters.vue";
+import Filters from "@/shop/components/Products/AllProducts/Filters/Filters.vue";
 import ProductsFetcher from "@/shop/components/Products/AllProducts/ProductsFetcher.vue";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 

@@ -1,9 +1,13 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import {useScrolling} from "@/composables/useScrolling.js";
 import {BrandsService} from "@/services/BrandsService.js";
+import CategoryFilter from "@/shop/components/Products/AllProducts/Filters/CategoryFilter.vue";
+import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import BrandFilter from "@/shop/components/Products/AllProducts/Filters/BrandFilter.vue";
+import PriceFilter from "@/shop/components/Products/AllProducts/Filters/PriceFilter.vue";
+import {ProductsShopService} from "@/services/ProductsShopService.js";
 
 const selectedFilters = ref([]);
 
@@ -30,27 +34,6 @@ async function getRootCategories() {
     });
   } catch (error) {
     console.error("Ошибка загрузки категорий:", error);
-  }
-}
-
-async function getSubCategories(categoryName, categorySlug) {
-  if (subCategories.value.findIndex((sub) => sub.name === categoryName) !== -1) return;
-
-  try {
-    const response = await CategoriesShopService.getChildrenForCategory(categorySlug);
-    subCategories.value.push({
-      name: categoryName,
-      slug: categorySlug,
-      items: response?.data?.data?.map(sub => ({
-        id: sub.id,
-        name: sub.attributes.name,
-        slug: sub.attributes.slug,
-      }))
-    });
-  } catch (error) {
-    if (error?.status === 404) {
-
-    }
   }
 }
 
@@ -88,42 +71,69 @@ async function getBrands(categoryId, categoryName) {
         }
       })
       .catch((e) => {
+      });
+}
+
+async function getPriceMinMax() {
+  await ProductsShopService.getMinMaxPrices()
+      .then((response) => {
+        const minPrice = response?.data?.data?.attributes?.min_price;
+        const maxPrice = response?.data?.data?.attributes?.max_price;
+
+        if (minPrice === 0 && maxPrice === 0) {
+          return;
+        }
+
+        filters.value.push({
+          name: "Price",
+          items: [
+            {
+              label: "Price",
+              value: [minPrice, maxPrice],
+            }
+          ]
+        });
       })
+      .catch((e) => {
+      });
 }
 
 async function toggleCategory(category) {
-  category.checked = !category.checked;
-
   if (category.checked) {
     toggleFilter("category", category.id);
-
-    await getSubCategories(category.label, category.slug);
 
     await getBrands(category.id, category.label);
   } else {
     removeFilterValue("category", category.id);
-    subCategories.value = subCategories.value.filter(sub => sub.slug !== category.slug);
 
-    const brandSection = filters.value.find(section => section.name === "Brand");
+    const brandSectionIndex = filters.value.findIndex(section => section.name === "Brand");
 
-    if (brandSection) {
+    if (brandSectionIndex !== -1) {
+      const brandSection = filters.value[brandSectionIndex];
+
       brandSection.items = brandSection.items.filter(item => item.categoryId !== category.id);
+
+      if (brandSection.items.length === 0) {
+        filters.value.splice(brandSectionIndex, 1);
+      }
     }
   }
 }
 
 async function toggleBrand(brand) {
-  console.log(brand)
-  brand.checked = !brand.checked;
-
   if (brand.checked) {
     toggleFilter("brand", brand.id);
   } else {
     removeFilterValue("brand", brand.id);
   }
-
-  console.log(selectedFilters.value)
 }
+
+async function togglePrice(event) {
+  selectedFilters.value = selectedFilters.value.filter((filter) => filter.name !== 'price');
+
+  toggleFilter('price', event);
+}
+
 
 function toggleFilter(filterName, value) {
   const index = selectedFilters.value.findIndex((filter) => filter.name === filterName);
@@ -156,7 +166,11 @@ watch(() => selectedFilters, (newValue) => {
   deep: true
 });
 
-onMounted(getRootCategories);
+onMounted(async () => {
+  await getPriceMinMax();
+
+  await getRootCategories();
+});
 </script>
 
 <template>
@@ -192,53 +206,16 @@ onMounted(getRootCategories);
       <DisclosurePanel class="pt-6">
         <div
             class="space-y-4 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+          <template v-if="section.name === 'Price'">
+            <price-filter v-model="section.items[0].value" @update:modelValue="togglePrice"/>
+          </template>
+
           <template v-if="section.name === 'Category'">
-            <div v-for="(item, itemIdx) in section.items" :key="item.id" class="flex gap-3">
-              <div class="flex h-5 shrink-0 items-center">
-                <div class="group grid size-4 grid-cols-1">
-                  <input :id="`filter-${index}-${itemIdx}`" :value="item.id"
-                         type="checkbox" :checked="item.checked"
-                         @change="toggleCategory(item)"
-                         class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100"/>
-                  <svg
-                      class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                      viewBox="0 0 14 14" fill="none">
-                    <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2"
-                          stroke-linecap="round" stroke-linejoin="round"/>
-                    <path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2"
-                          stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-              <label :for="`filter-${index}-${itemIdx}`" class="text-sm text-gray-600">{{ item.label }}</label>
-            </div>
+            <category-filter :filter-section="section" :section-index="index" @category-selected="toggleCategory"/>
           </template>
 
           <template v-if="section.name === 'Brand'">
-            <div v-for="(brandCategory, brandIdx) in section.items" :key="brandIdx" class="space-y-2">
-              <span class="font-semibold block">{{ brandCategory.categoryName }}</span>
-              <div v-for="(brand, brandItemIdx) in brandCategory.brands" :key="brand.id" class="flex gap-3 ml-4">
-                <div class="flex h-5 shrink-0 items-center">
-                  <div class="group grid size-4 grid-cols-1">
-                    <input :id="`brand-${brandIdx}-${brandItemIdx}`" :value="brand.id"
-                           type="checkbox" :checked="brand.checked"
-                           @change="toggleBrand(brand)"
-                           class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100"/>
-                    <svg
-                        class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                        viewBox="0 0 14 14" fill="none">
-                      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round"/>
-                      <path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
-                <label :for="`brand-${brandIdx}-${brandItemIdx}`" class="text-sm text-gray-600">{{
-                    brand.label
-                  }}</label>
-              </div>
-            </div>
+            <brand-filter :filter-section="section" @brand-selected="toggleBrand"/>
           </template>
         </div>
       </DisclosurePanel>
