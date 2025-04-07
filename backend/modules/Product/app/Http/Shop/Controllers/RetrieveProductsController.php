@@ -22,7 +22,7 @@ class RetrieveProductsController extends Controller
      *
      * Usage place - Shop.
      *
-     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Illuminate\Http\JsonResponse
+     * @return JsonApiResourceCollection|JsonResponse
      */
     public function index(): JsonApiResourceCollection|JsonResponse
     {
