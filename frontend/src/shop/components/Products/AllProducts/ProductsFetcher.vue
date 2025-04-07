@@ -9,26 +9,26 @@ const props = defineProps({
   filters: {
     type: Array,
     default: []
+  },
+  sort: {
+    type: Object,
+    default: () => ({field: 'price', direction: 'asc'})
   }
 });
 
 const filtersMapped = ref({});
-
 const products = ref([]);
-
 const totalProducts = ref(0);
-
 const nextPage = ref(null);
-
 const isLoading = ref(false);
 
 async function getProducts(page = 1) {
   const params = {
     filter: filtersMapped.value,
-    page: page
+    page: page,
   };
 
-  console.log(params)
+  console.log(params);
 
   isLoading.value = true;
 
@@ -57,13 +57,15 @@ async function getProducts(page = 1) {
         totalProducts.value = response?.data?.meta?.total;
 
         nextPage.value = response?.data?.links?.next_page;
+
+        sortProducts();
       })
       .catch((e) => {
         if (e?.status === 404) {
           unsetProductsData();
         }
       })
-      .finally(() => isLoading.value = false)
+      .finally(() => isLoading.value = false);
 }
 
 const browseMore = async () => {
@@ -82,25 +84,44 @@ watch(
         }, {});
 
         unsetProductsData();
-
         await getProducts();
       } else {
         filtersMapped.value = {};
-
-        unsetProductsData()
-
+        unsetProductsData();
         await getProducts();
       }
     },
     {deep: true, immediate: true}
 );
 
+watch(
+    () => props.sort,
+    async () => {
+      sortProducts();
+    },
+    {deep: true}
+);
+
 function unsetProductsData() {
   products.value = [];
-
   nextPage.value = null;
-
   totalProducts.value = 0;
+}
+
+function sortProducts() {
+  const {field, direction} = props.sort;
+
+  if (field && products.value.length > 0) {
+    products.value.sort((a, b) => {
+      if (a[field] < b[field]) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (a[field] > b[field]) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  }
 }
 
 await getProducts();

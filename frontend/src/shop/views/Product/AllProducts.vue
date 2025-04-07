@@ -26,10 +26,14 @@
                     class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white ring-1 shadow-2xl ring-black/5 focus:outline-hidden">
                   <div class="py-1">
                     <MenuItem v-for="option in sortOptions" :key="option.name" v-slot="{ active }">
-                      <a :href="option.href"
-                         :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm']">{{
+                      <button
+                          type="button"
+                          @click="handleSortChange(option)"
+                          :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100 outline-hidden' : '', 'block px-4 py-2 text-sm']">
+                        {{
                           option.name
-                        }}</a>
+                        }}
+                      </button>
                     </MenuItem>
                   </div>
                 </MenuItems>
@@ -53,7 +57,7 @@
             <!-- Product grid -->
             <div class="lg:col-span-3">
               <suspense>
-                <products-fetcher :filters="selectedFilters"/>
+                <products-fetcher :filters="selectedFilters" :sort="selectedSort"/>
                 <template #fallback>
                   <suspense-loader/>
                 </template>
@@ -74,16 +78,23 @@ import ProductsFetcher from "@/shop/components/Products/AllProducts/ProductsFetc
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 
 const selectedFilters = ref([]);
+const selectedSort = ref({});
 
 const sortOptions = [
-  {name: 'Most Popular', href: '#', current: true},
-  {name: 'Best Rating', href: '#', current: false},
-  {name: 'Newest', href: '#', current: false},
-  {name: 'Price: Low to High', href: '#', current: false},
-  {name: 'Price: High to Low', href: '#', current: false},
+  {name: 'Price: Low to High', field: 'price', current: false, direction: 'asc'},
+  {name: 'Price: High to Low', field: 'price', current: false, direction: 'desc'},
 ];
 
 const handleSelectedFilters = (filters) => {
   selectedFilters.value = filters.value;
+};
+
+const handleSortChange = (option) => {
+  sortOptions.forEach(opt => opt.current = false);
+  option.current = true;
+  selectedSort.value = {
+    field: option.field,
+    direction: option.direction
+  };
 };
 </script>

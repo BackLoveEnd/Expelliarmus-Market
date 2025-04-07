@@ -12,6 +12,7 @@ use Modules\Product\Http\Shop\Filters\PriceViewFilter;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class RetrieveProductsService
 {
@@ -30,7 +31,9 @@ class RetrieveProductsService
             AllowedFilter::custom('price', new PriceViewFilter()),
         ]);
 
-        $this->retriever->sortsConnector->defineSorts([]);
+        $this->retriever->sortsConnector->defineSorts([
+            AllowedSort::field('price', 'product_min_prices.min_price'),
+        ]);
 
         $products = $this->retriever->retrieve($retrieveNum, [
             'id',
