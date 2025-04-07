@@ -2,6 +2,7 @@
 
 namespace Modules\Warehouse\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,7 @@ use Modules\Category\Models\Category;
 use Modules\Warehouse\Database\Factories\ProductAttributeFactory;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
+use Modules\Warehouse\Observers\ProductAttributeObserver;
 
 /**
  * @property string $name
@@ -18,6 +20,7 @@ use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
  * @property ProductAttributeViewTypeEnum $view_type
  * @property bool $required
  */
+#[ObservedBy(ProductAttributeObserver::class)]
 class ProductAttribute extends Model
 {
     use HasFactory;
@@ -31,15 +34,20 @@ class ProductAttribute extends Model
         'type',
         'required',
         'view_type',
-        'category_id'
+        'category_id',
     ];
 
     protected function casts(): array
     {
         return [
             'type' => ProductAttributeTypeEnum::class,
-            'view_type' => ProductAttributeViewTypeEnum::class
+            'view_type' => ProductAttributeViewTypeEnum::class,
         ];
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function singleAttributeValues(): HasMany
@@ -49,13 +57,19 @@ class ProductAttribute extends Model
 
     public function productVariations(): BelongsToMany
     {
-        return $this->belongsToMany(
-            ProductVariation::class,
-            'variation_attribute_values',
-            'attribute_id',
-            'variation_id'
-        )
+        return $this
+            ->belongsToMany(
+                ProductVariation::class,
+                'variation_attribute_values',
+                'attribute_id',
+                'variation_id',
+            )
             ->withPivot('value');
+    }
+
+    public function combinedPivotAttributesValues(): HasMany
+    {
+        return $this->hasMany(VariationAttributeValues::class, 'attribute_id');
     }
 
     public function hasUsageInProductsWithSingleAttributes(): bool
@@ -74,11 +88,6 @@ class ProductAttribute extends Model
         }
 
         return $this->productVariations()->count() > 0;
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
     }
 
     protected static function newFactory(): ProductAttributeFactory

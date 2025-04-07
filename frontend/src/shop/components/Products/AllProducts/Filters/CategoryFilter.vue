@@ -9,7 +9,7 @@ const props = defineProps({
 
 const subCategories = ref([]);
 
-const emit = defineEmits(["category-selected"]);
+const emit = defineEmits(["category-selected", "sub-categories"]);
 
 async function getSubCategories(categoryName, categorySlug) {
   if (subCategories.value.findIndex((sub) => sub.name === categoryName) !== -1) return;
@@ -25,6 +25,8 @@ async function getSubCategories(categoryName, categorySlug) {
         slug: sub.attributes.slug,
       }))
     });
+
+    emit("sub-categories", subCategories);
   } catch (error) {
     if (error?.status === 404) {
 

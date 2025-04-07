@@ -134,6 +134,9 @@ async function togglePrice(event) {
   toggleFilter('price', event);
 }
 
+const getSubCategories = (value) => {
+  subCategories.value = value.value;
+};
 
 function toggleFilter(filterName, value) {
   const index = selectedFilters.value.findIndex((filter) => filter.name === filterName);
@@ -211,7 +214,12 @@ onMounted(async () => {
           </template>
 
           <template v-if="section.name === 'Category'">
-            <category-filter :filter-section="section" :section-index="index" @category-selected="toggleCategory"/>
+            <category-filter
+                :filter-section="section"
+                :section-index="index"
+                @category-selected="toggleCategory"
+                @sub-categories="getSubCategories"
+            />
           </template>
 
           <template v-if="section.name === 'Brand'">

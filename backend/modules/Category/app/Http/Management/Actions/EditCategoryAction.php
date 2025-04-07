@@ -24,7 +24,7 @@ class EditCategoryAction
 
     private function saveAttributes(Category $category, ?array $newAttributes = null): void
     {
-        if ( ! $newAttributes) {
+        if (! $newAttributes) {
             return;
         }
 
@@ -33,7 +33,7 @@ class EditCategoryAction
             ->map(fn($name) => mb_strtolower($name));
 
         $diffAttributes = collect($newAttributes)->filter(function (array $attribute) use (
-            $existingAttributes
+            $existingAttributes,
         ) {
             return ! $existingAttributes->contains(mb_strtolower($attribute['name']));
         });
