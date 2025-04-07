@@ -11,7 +11,10 @@ return new class extends Migration {
     {
         DB::statement(
             "CREATE VIEW product_min_prices AS
-                   SELECT p.id as product_id, COALESCE(MIN(price),0) as min_price
+                   SELECT 
+                        p.id as product_id, 
+                        COALESCE(MIN(price),0) as min_price,
+                        COALESCE(MAX(price),0) as max_price
                    FROM (
                         SELECT product_id, price FROM product_variations
                         UNION ALL

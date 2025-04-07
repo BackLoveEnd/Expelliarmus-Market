@@ -21,6 +21,8 @@ Route::prefix('/shop')->withoutMiddleware(['throttle'])->group(function () {
 
     Route::get('/products', [RetrieveProductsController::class, 'index']);
 
+    Route::get('/products/staff/prices-range', [RetrieveProductsController::class, 'getMinMaxProductsPrice']);
+
     Route::get('/products/{productBind}/{slug?}', RetrieveProductController::class)
         ->middleware(['include:category,warehouse,brand,variations'])
         ->whereNumber('productBind');
