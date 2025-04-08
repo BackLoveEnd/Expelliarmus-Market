@@ -11,5 +11,9 @@ export const CategoriesShopService = {
 
     async getRootCategories() {
         return await api().get('/management/categories/root');
+    },
+
+    async getOptionAttributesForCategory(categorySlug) {
+        return await api().get(`/shop/categories/${categorySlug}/attributes`);
     }
 };

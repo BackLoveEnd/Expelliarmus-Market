@@ -1,3 +1,5 @@
+import {isObject} from "@vueuse/core";
+
 export function useJsonApiFormatter() {
     function toJsonApi(data, type, relationships = {}) {
         const result = {
@@ -100,7 +102,13 @@ export function useJsonApiFormatter() {
 
         if (params?.filter) {
             Object.keys(params.filter).forEach((key) => {
-                queryParams.push(`filter[${key}]=${params.filter[key]}`);
+                if (isObject(params.filter[key])) {
+                    Object.keys(params.filter[key]).forEach((subKey) => {
+                        queryParams.push(`filter[${key}][${subKey}]=${params.filter[key][subKey]}`);
+                    });
+                } else {
+                    queryParams.push(`filter[${key}]=${params.filter[key]}`);
+                }
             });
         }
 

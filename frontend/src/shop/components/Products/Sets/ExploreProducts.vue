@@ -3,6 +3,7 @@ import SectionTitle from "@/components/Default/SectionTitle.vue";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import {computed, ref} from "vue";
 import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const products = ref([]);
 
@@ -35,6 +36,7 @@ await getProducts();
       </div>
       <div class="flex justify-center">
         <router-link
+            @click.prevent="useScrolling().scrollToTop()"
             :to="{ name: 'all-products'}"
             class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
         >
