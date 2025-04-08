@@ -8,6 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Modules\Product\Http\Management\Service\Attributes\Dto\FetchAttributesColumnsDto;
 use Modules\Product\Http\Shop\Filters\CategoryFilter;
+use Modules\Product\Http\Shop\Filters\OptionsAttributesFilter;
 use Modules\Product\Http\Shop\Filters\PriceViewFilter;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
@@ -29,6 +30,7 @@ class RetrieveProductsService
             AllowedFilter::custom('category', new CategoryFilter()),
             AllowedFilter::exact('brand', 'brand_id'),
             AllowedFilter::custom('price', new PriceViewFilter()),
+            AllowedFilter::custom('options', new OptionsAttributesFilter()),
         ]);
 
         $this->retriever->sortsConnector->defineSorts([
@@ -36,10 +38,10 @@ class RetrieveProductsService
         ]);
 
         $products = $this->retriever->retrieve($retrieveNum, [
-            'id',
-            'slug',
-            'title',
-            'preview_image',
+            'products.id',
+            'products.slug',
+            'products.title',
+            'products.preview_image',
         ]);
 
         return $products->setCollection(

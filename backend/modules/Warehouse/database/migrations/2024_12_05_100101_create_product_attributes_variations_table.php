@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->foreignId('attribute_id')->nullable()->constrained('product_attributes')->nullOnDelete();
             $table->string('value');
             $table->unique(['variation_id', 'attribute_id']);
+            //$table->index(['attribute_id', 'value', 'variation_id'], 'variation_attribute_values_index');
         });
     }
 

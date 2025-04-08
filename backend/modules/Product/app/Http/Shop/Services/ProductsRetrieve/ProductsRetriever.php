@@ -26,8 +26,8 @@ class ProductsRetriever
             ->whereStatus(ProductStatusEnum::PUBLISHED)
             ->paginate($retrieveNum, [
                 ...$columns,
-                'category_id',
-                'with_attribute_combinations',
+                'products.category_id',
+                'products.with_attribute_combinations',
                 'product_min_prices.min_price',
             ]);
     }
