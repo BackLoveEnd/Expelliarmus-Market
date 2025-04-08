@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Brand\Http\Controllers\BrandLogoController;
 use Modules\Brand\Http\Controllers\ManipulationBrandController;
 use Modules\Brand\Http\Controllers\RelatedProductBrandsController;
 use Modules\Brand\Http\Controllers\RetrieveBrandsController;
@@ -15,7 +16,13 @@ Route::prefix('management/brands')->group(function () {
 
         Route::delete('/{brand}', 'delete')->whereNumber('brand');
     });
+
+    Route::controller(BrandLogoController::class)->group(function () {
+        Route::post('/logo/{brand}', 'upload')->whereNumber('brand');
+    });
 });
 
-Route::get('/shop/products/categories/{category}/brands',
-    [RelatedProductBrandsController::class, 'getProductBrandsByCategory']);
+Route::get(
+    '/shop/products/categories/{category}/brands',
+    [RelatedProductBrandsController::class, 'getProductBrandsByCategory'],
+);

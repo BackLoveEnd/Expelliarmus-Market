@@ -16,7 +16,8 @@ use Modules\Product\Models\Product;
  * @property string $name
  * @property string $slug
  * @property string $description
- * @property string $logo
+ * @property string $logo_url
+ * @property string $logo_source
  */
 #[ObservedBy(BrandObserver::class)]
 class Brand extends Model
@@ -28,7 +29,8 @@ class Brand extends Model
     protected $fillable = [
         'name',
         'description',
-        'logo'
+        'logo_url',
+        'logo_source',
     ];
 
     public function products(): HasMany
@@ -43,6 +45,15 @@ class Brand extends Model
         }
 
         return $this->products()->count() > 0;
+    }
+
+    public function saveLogo(string $url, string $source): void
+    {
+        $this->logo_url = $url;
+
+        $this->logo_source = $source;
+
+        $this->save();
     }
 
     protected static function newFactory(): BrandFactory
