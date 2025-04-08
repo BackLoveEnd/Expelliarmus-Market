@@ -1,7 +1,7 @@
 <script setup>
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import CategoryCard from "@/components/Card/CategoryCard.vue";
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
 import {computed, ref} from "vue";
 import {useScrolling} from "@/composables/useScrolling.js";
 

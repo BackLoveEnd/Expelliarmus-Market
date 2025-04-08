@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import ProductsSkeleton from "@/management/components/Product/Other/ProductsSkeleton.vue";
 import ProductCard from "@/management/components/Product/Other/ProductCard.vue";

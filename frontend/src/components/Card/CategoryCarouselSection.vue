@@ -15,7 +15,7 @@
 import {computed, onMounted, ref} from "vue";
 import Slider from "@/components/Default/Slider.vue";
 import MainCategoriesMenu from "@/shop/components/Categories/MainCategoriesMenu.vue";
-import {ContentManagementService} from "@/services/ContentManagementService.js";
+import {ContentManagementService} from "@/services/Different/ContentManagementService.js";
 
 const images = ref([]);
 

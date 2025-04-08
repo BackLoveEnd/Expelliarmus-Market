@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
-import { WarehouseService } from "@/services/WarehouseService";
-import { AutoComplete } from "primevue";
+import {ref} from "vue";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
+import {AutoComplete} from "primevue";
 
 const searchable = ref(null);
 const suggestions = ref([]);
@@ -14,12 +14,12 @@ const search = async (event) => {
     }
 
     await WarehouseService.searchProduct(searchable.value)
-      .then((response) => {
-        suggestions.value = response?.data?.data;
-      })
-      .catch((e) => {
-        suggestions.value = [];
-      });
+        .then((response) => {
+          suggestions.value = response?.data?.data;
+        })
+        .catch((e) => {
+          suggestions.value = [];
+        });
   }, 300);
 };
 
@@ -35,17 +35,17 @@ const handleProductSelection = (value) => {
 <template>
   <div class="flex flex-col gap-y-4 text-center items-center w-full">
     <label class="font-semibold"
-      >Search for product to get warehouse info.</label
+    >Search for product to get warehouse info.</label
     >
     <AutoComplete
-      class="!w-1/2"
-      v-model="searchable"
-      option-label="attributes.title"
-      :suggestions="suggestions"
-      empty-search-message="No products found."
-      @complete="search"
-      @update:model-value="handleProductSelection"
-      placeholder="Title, brand, article..."
+        class="!w-1/2"
+        v-model="searchable"
+        option-label="attributes.title"
+        :suggestions="suggestions"
+        empty-search-message="No products found."
+        @complete="search"
+        @update:model-value="handleProductSelection"
+        placeholder="Title, brand, article..."
     >
       <template #option="slotProps">
         <div class="flex items-center justify-between">

@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref} from "vue";
-import {CategoryService} from "@/services/CategoryService.js";
+import {CategoryService} from "@/services/Category/CategoryService.js";
 import {MegaMenu} from "primevue";
 
 

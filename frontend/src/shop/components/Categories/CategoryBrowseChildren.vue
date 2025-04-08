@@ -1,6 +1,6 @@
 <script setup>
 import {ref, watch} from "vue";
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
 import {useRoute, useRouter} from "vue-router";
 import {useBreadCrumbStore} from "@/stores/useBreadCrumbStore.js";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";

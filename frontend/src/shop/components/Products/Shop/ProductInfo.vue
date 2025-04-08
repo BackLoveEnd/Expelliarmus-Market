@@ -5,7 +5,7 @@ import PurchaseButton from "@/components/Product/Main/PurchaseButton.vue";
 import Description from "@/components/Product/Main/Description.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
 import {computed, onBeforeUnmount, reactive, ref, watch} from "vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
 import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsViewer.vue";

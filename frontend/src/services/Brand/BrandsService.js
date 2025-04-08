@@ -1,4 +1,4 @@
-import api from "@/utils/api";
+import api from "@/utils/api.js";
 import {useJsonApiFormatter} from "@/composables/useJsonApiFormatter.js";
 
 export const BrandsService = {
@@ -24,11 +24,23 @@ export const BrandsService = {
         );
     },
 
+    async uploadImage(image, brandId) {
+        const data = new FormData();
+
+        data.append('image', image);
+
+        return await api().post(`/management/brands/logo/${brandId}`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+    },
+
     async deleteBrand(id) {
         return await api().delete(`/management/brands/${id}`);
     },
 
     async getProductBrandsByCategory(categoryId) {
-        return await api().get(`/shop/products/categories/${categoryId}/brands`)
+        return await api().get(`/shop/products/categories/${categoryId}/brands`);
     }
 };

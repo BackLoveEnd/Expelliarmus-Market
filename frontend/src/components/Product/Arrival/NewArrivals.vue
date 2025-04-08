@@ -49,7 +49,7 @@
 <script setup>
 import Description from "@/components/Product/Arrival/Description.vue";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
-import {ContentManagementService} from "@/services/ContentManagementService.js";
+import {ContentManagementService} from "@/services/Different/ContentManagementService.js";
 import {ref} from "vue";
 
 const arrivals = ref({});

@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import {useScrolling} from "@/composables/useScrolling.js";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 import Tag from "primevue/tag";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
