@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Product\Http\Shop\Controllers\DiscountedProductsController;
+use Modules\Product\Http\Shop\Controllers\MinMaxPricesProductController;
 use Modules\Product\Http\Shop\Controllers\ProductListingController;
 use Modules\Product\Http\Shop\Controllers\RetrieveProductController;
 use Modules\Product\Http\Shop\Controllers\RetrieveProductsController;
@@ -21,7 +22,11 @@ Route::prefix('/shop')->withoutMiddleware(['throttle'])->group(function () {
 
     Route::get('/products', [RetrieveProductsController::class, 'index']);
 
-    Route::get('/products/staff/prices-range', [RetrieveProductsController::class, 'getMinMaxProductsPrice']);
+    Route::controller(MinMaxPricesProductController::class)->group(function () {
+        Route::get('/products/staff/prices-range', 'getMinMaxProductsPrice');
+
+        Route::get('/products/categories/{category:slug}/staff/prices-range', 'getMinMaxProductsPriceForCategory');
+    });
 
     Route::get('/products/{productBind}/{slug?}', RetrieveProductController::class)
         ->middleware(['include:category,warehouse,brand,variations'])

@@ -6,7 +6,6 @@ namespace Modules\Product\Http\Shop\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Modules\Product\Http\Shop\Actions\GetMinMaxProductsPriceAction;
 use Modules\Product\Http\Shop\Resources\ProductsShopCardResource;
 use Modules\Product\Http\Shop\Services\ProductsRetrieve\RetrieveProductsService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
@@ -43,28 +42,5 @@ class RetrieveProductsController extends Controller
                     'per_page' => $products->perPage(),
                 ],
             ]);
-    }
-
-    /**
-     * Retrieve min and max prices of all products.
-     *
-     * Usage place - Shop.
-     *
-     * @param  GetMinMaxProductsPriceAction  $action
-     * @return JsonResponse
-     */
-    public function getMinMaxProductsPrice(GetMinMaxProductsPriceAction $action): JsonResponse
-    {
-        $prices = $action->handle();
-
-        return response()->json([
-            'data' => [
-                'type' => 'staff',
-                'attributes' => [
-                    'min_price' => $prices?->min_price ?? 0,
-                    'max_price' => $prices?->max_price ?? 0,
-                ],
-            ],
-        ]);
     }
 }
