@@ -14,6 +14,7 @@ class CategoryAttributesValuesResource extends JsonApiResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'type' => $this->type,
             'values' => $this->values,
         ];
     }

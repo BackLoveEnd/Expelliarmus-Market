@@ -64,13 +64,15 @@ async function getOptionAttributesForCategory(categorySlug) {
         response?.data?.data?.forEach((attr) => {
           const attrName = attr.attributes.name;
           const attrId = attr.attributes.id;
+          const attrType = attr.attributes.type;
 
           const attrItems = attr.attributes.values.map((val) => ({
             label: val,
             value: val,
             checked: false,
             attrId: attrId,
-            attrName: attrName
+            attrName: attrName,
+            attrType: attrType
           }));
 
           filters.value.push({
@@ -145,7 +147,7 @@ watch(
     () => props.categorySlug,
     async (newCategorySlug) => {
       filters.value = [];
-      
+
       await getPriceMinMax(newCategorySlug);
       await getBrands(newCategorySlug);
       await getOptionAttributesForCategory(newCategorySlug);
@@ -199,15 +201,17 @@ watch(
             </div>
           </template>
           <template v-if="section.name !== 'Price' && section.name !== 'Brand'">
-            <div v-for="(item, itemIdx) in section.items" :key="itemIdx" class="flex gap-3">
+            <div v-for="(item, itemIdx) in section.items" :key="itemIdx" class="flex gap-3 items-center">
               <div class="flex h-5 shrink-0 items-center">
                 <div class="group grid size-4 grid-cols-1">
-                  <input :id="`filter-${index}-${itemIdx}`"
-                         :value="item.value"
-                         type="checkbox"
-                         :checked="item.checked"
-                         @change="toggleOption(section.name, item)"
-                         class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"/>
+                  <input
+                      :id="`filter-${index}-${itemIdx}`"
+                      :value="item.value"
+                      type="checkbox"
+                      :checked="item.checked"
+                      @change="toggleOption(section.name, item)"
+                      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  />
                   <svg
                       class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
                       viewBox="0 0 14 14" fill="none">
@@ -216,7 +220,10 @@ watch(
                   </svg>
                 </div>
               </div>
-              <label :for="`filter-${index}-${itemIdx}`" class="text-sm text-gray-600">
+              <div class="w-6 h-4 rounded border" :style="{ backgroundColor: item.value }"
+                   v-if="item.attrType === 'color'">
+              </div>
+              <label :for="`filter-${index}-${itemIdx}`" class="text-sm text-gray-600" v-else>
                 {{ item.label }}
               </label>
             </div>

@@ -104,10 +104,10 @@ export function useJsonApiFormatter() {
             Object.keys(params.filter).forEach((key) => {
                 if (isObject(params.filter[key])) {
                     Object.keys(params.filter[key]).forEach((subKey) => {
-                        queryParams.push(`filter[${key}][${subKey}]=${params.filter[key][subKey]}`);
+                        queryParams.push(`filter[${key}][${subKey}]=${encodeURIComponent(params.filter[key][subKey])}`);
                     });
                 } else {
-                    queryParams.push(`filter[${key}]=${params.filter[key]}`);
+                    queryParams.push(`filter[${key}]=${encodeURIComponent(params.filter[key])}`);
                 }
             });
         }

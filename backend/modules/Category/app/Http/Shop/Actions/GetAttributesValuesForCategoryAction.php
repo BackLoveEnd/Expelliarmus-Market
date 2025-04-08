@@ -51,6 +51,7 @@ class GetAttributesValuesForCategoryAction
                 return (object)[
                     'id' => $attribute->id,
                     'name' => $attribute->name,
+                    'type' => $attribute->type->toTypes(),
                     'values' => $attributes,
                 ];
             })
