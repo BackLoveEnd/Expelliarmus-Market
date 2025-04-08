@@ -19,6 +19,9 @@ async function fetchCategories() {
         categories.value = response?.data?.data ?? [];
 
         totalItems.value = categories.value.length;
+      })
+      .catch((e) => {
+
       });
 }
 
