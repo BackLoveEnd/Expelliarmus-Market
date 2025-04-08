@@ -69,7 +69,8 @@ const pricePerUnit = computed(() => price.value.toFixed(2));
 let selectedVariation = reactive({
   id: null,
   price: null,
-  discount: null
+  discount: null,
+  availability: null
 });
 
 const emit = defineEmits(["product-data"]);
@@ -95,7 +96,6 @@ const imagesUrls = computed(() => {
 });
 
 const discountIfAvailable = computed(() => {
-  console.log(productInfo.product.discount);
   if (productInfo?.product?.discount !== null) {
     return {
       old_price: productInfo?.product?.discount.old_price,
@@ -170,6 +170,7 @@ function setSelectedVariation(variation) {
   selectedVariation.price = variation.attributes.price;
   selectedVariation.id = variation.attributes.id;
   selectedVariation.discount = variation.attributes.discount;
+  selectedVariation.availability = variation.attributes.availability;
 }
 
 await getProduct();
@@ -194,7 +195,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
                 :title="productInfo.product?.title"
                 :title-desc="productInfo.product?.title_description"
                 :article="productInfo.product?.article"
-                :status="productInfo.warehouse?.attributes?.status"
+                :status="selectedVariation?.availability ?? productInfo?.warehouse?.status"
             >
             </description>
           </div>
