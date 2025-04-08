@@ -4,7 +4,7 @@
   <div class="flex gap-x-4 items-center">
     <star-rating :rating="0" :review-number="0"></star-rating>
     <div class="border-l-2 border-gray-300 h-full"></div>
-    <span class="text-green-500 text-sm">{{ status }}</span>
+    <span :class="getStatusColor(status?.color)" class="text-sm">{{ status?.label }}</span>
   </div>
   <div class="space-y-8">
     <div class="flex items-center gap-x-4">
@@ -63,7 +63,7 @@ const props = defineProps({
     required: true,
   },
   status: {
-    type: String
+    type: Object
   }
 });
 
@@ -72,6 +72,17 @@ const quantityChanged = ref(false);
 watch([() => props.price, () => props.pricePerUnit], () => {
   quantityChanged.value = props.price !== props.pricePerUnit;
 });
+
+function getStatusColor(colorType) {
+  switch (colorType) {
+    case "success":
+      return "text-green-500";
+    case "danger":
+      return "text-red-500";
+    default:
+      return "text-gray-500";
+  }
+}
 </script>
 
 <style scoped></style>

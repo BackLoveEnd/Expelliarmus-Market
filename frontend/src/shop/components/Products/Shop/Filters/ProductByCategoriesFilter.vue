@@ -1,10 +1,10 @@
 <script setup>
 import {ref, watch} from "vue";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
-import {BrandsService} from "@/services/BrandsService.js";
+import {BrandsService} from "@/services/Brand/BrandsService.js";
 import PriceFilter from "@/shop/components/Products/AllProducts/Filters/PriceFilter.vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
 
 const props = defineProps({
   categorySlug: String

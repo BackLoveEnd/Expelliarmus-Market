@@ -135,7 +135,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
 import Select from "primevue/select";
-import {WarehouseService} from "@/services/WarehouseService.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 
 const products = ref([]);
 const totalRecords = ref(0);

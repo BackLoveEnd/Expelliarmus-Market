@@ -14,7 +14,7 @@ Route::prefix('management')->group(function () {
     Route::prefix('warehouse')->group(function () {
         Route::prefix('products')->group(function () {
             Route::get('/', [WarehouseController::class, 'searchProductBySearchable'])
-                ->withoutMiddleware(['throttle']);
+                ->withoutMiddleware(['throttle:api']);
 
             Route::get('/{productBind}', [WarehouseController::class, 'getWarehouseProductInfo'])
                 ->whereNumber('productBind');
@@ -32,7 +32,7 @@ Route::prefix('management')->group(function () {
         });
 
         Route::get('/table', [WarehouseController::class, 'getProductPaginated'])
-            ->withoutMiddleware(['throttle']);
+            ->withoutMiddleware(['throttle:api']);
     });
 
     Route::prefix('discounts')->group(function () {

@@ -15,6 +15,7 @@ class GetLimitOffsetPaginatedBrandsAction
         $brands = QueryBuilder::for(Brand::class)
             ->offset($offset)
             ->limit($limit)
+            ->orderBy('id')
             ->get($columns);
 
         return new LimitOffsetDto(

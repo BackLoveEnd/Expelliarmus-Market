@@ -16,7 +16,8 @@ class BrandFactory extends Factory
     {
         return [
             'name' => fake()->unique()->company(),
-            'description' => fake()->paragraph()
+            'description' => fake()->paragraph(),
+            'logo_url' => url('/storage/brands/'.config('brand.default_logo')),
         ];
     }
 }

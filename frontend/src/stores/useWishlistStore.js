@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {WishlistService} from "@/services/WishlistService.js";
+import {WishlistService} from "@/services/User/WishlistService.js";
 
 export const useWishlistStore = defineStore('wishlist', {
     state: () => ({

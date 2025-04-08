@@ -2,7 +2,7 @@
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import {computed, ref} from "vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import {useScrolling} from "@/composables/useScrolling.js";
 
 const products = ref([]);

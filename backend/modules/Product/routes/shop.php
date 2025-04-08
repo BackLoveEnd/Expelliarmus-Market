@@ -7,7 +7,7 @@ use Modules\Product\Http\Shop\Controllers\ProductListingController;
 use Modules\Product\Http\Shop\Controllers\RetrieveProductController;
 use Modules\Product\Http\Shop\Controllers\RetrieveProductsController;
 
-Route::prefix('/shop')->withoutMiddleware(['throttle'])->group(function () {
+Route::prefix('/shop')->withoutMiddleware(['throttle:api'])->group(function () {
     Route::controller(DiscountedProductsController::class)->group(function () {
         Route::get('/home/products/flash-sales', 'getFlashSales');
     });

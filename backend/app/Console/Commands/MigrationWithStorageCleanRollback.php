@@ -17,6 +17,8 @@ class MigrationWithStorageCleanRollback extends RollbackCommand
 
             MigrationStorageCleanHelper::cleanArrivalsContentStorage();
 
+            MigrationStorageCleanHelper::cleanBrandsLogo();
+
             $this->info('Storage cleaned successfully.');
         }
 

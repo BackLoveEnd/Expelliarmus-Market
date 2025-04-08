@@ -5,7 +5,7 @@ use Modules\Order\Cart\Http\Controllers\CartController;
 
 Route::prefix('shop/user/cart')->group(function () {
     Route::controller(CartController::class)->group(function () {
-        Route::get('/', 'getClientCart')->withoutMiddleware('throttle');
+        Route::get('/', 'getClientCart')->withoutMiddleware('throttle:api');
 
         Route::post('/', 'addProductToCart');
 

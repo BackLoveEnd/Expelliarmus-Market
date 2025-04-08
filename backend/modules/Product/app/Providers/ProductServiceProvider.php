@@ -2,8 +2,8 @@
 
 namespace Modules\Product\Providers;
 
-use File;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
@@ -13,7 +13,6 @@ use Modules\Product\Storages\ProductImages\S3ProductImagesStorage;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Storage;
 
 class ProductServiceProvider extends ServiceProvider
 {
@@ -37,14 +36,14 @@ class ProductServiceProvider extends ServiceProvider
             $this->app->singleton(ProductImagesStorageInterface::class, function (Application $app) {
                 return new LocalProductImagesStorage(
                     new ImageManager(Driver::class),
-                    Storage::disk('public_products_images')
+                    Storage::disk('public_products_images'),
                 );
             });
         } elseif (config('filesystems.provider') === 's3') {
             $this->app->singleton(ProductImagesStorageInterface::class, function (Application $app) {
                 return new S3ProductImagesStorage(
                     new ImageManager(Driver::class),
-                    Storage::disk('s3')
+                    Storage::disk('s3'),
                 );
             });
         }

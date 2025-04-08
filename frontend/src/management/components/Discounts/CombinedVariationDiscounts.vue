@@ -3,7 +3,7 @@ import {ref} from "vue";
 import Select from "primevue/select";
 import DiscountInfoViewer from "@/management/components/Discounts/DiscountInfoViewer.vue";
 import DiscountForm from "@/management/components/Discounts/DiscountForm.vue";
-import {WarehouseService} from "@/services/WarehouseService.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import {formatInTimeZone} from "date-fns-tz";
@@ -145,7 +145,7 @@ function formatDate(date) {
       <div class="flex flex-col gap-y-4 text-sm">
         <div class="flex justify-between">
           <p class="font-semibold">Price: {{
-              "$" + (selectedVariation?.discount?.discount_price ?? selectedVariation.price)
+            "$" + (selectedVariation?.discount?.discount_price ?? selectedVariation.price)
             }}</p>
           <p class="font-semibold">
             Total quantity: {{ selectedVariation.quantity }} unit(s)

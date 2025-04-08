@@ -1,12 +1,13 @@
 <?php
 
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
 use Modules\ContentManagement\Http\Controllers\NewArrivals\NewArrivalsContentController;
 use Modules\ContentManagement\Http\Controllers\Slider\SliderContentController;
 
-Route::prefix('management/content')->withoutMiddleware(['throttle'])->group(function () {
+Route::prefix('management/content')->group(function () {
     Route::prefix('slider')->controller(SliderContentController::class)->group(function () {
-        Route::get('/', 'getAllSliderContent');
+        Route::get('/', 'getAllSliderContent')->withoutMiddleware(ThrottleRequests::class);
 
         Route::post('/', 'upload');
 
@@ -15,7 +16,7 @@ Route::prefix('management/content')->withoutMiddleware(['throttle'])->group(func
     });
 
     Route::prefix('new-arrivals')->controller(NewArrivalsContentController::class)->group(function () {
-        Route::get('/', 'getNewArrivals');
+        Route::get('/', 'getNewArrivals')->withoutMiddleware('throttle:api');
 
         Route::post('/', 'uploadNewArrivals');
 

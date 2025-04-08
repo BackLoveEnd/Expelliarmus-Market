@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import {CartService} from "@/services/CartService.js";
+import {CartService} from "@/services/User/CartService.js";
 
 export const useCartStore = defineStore('cart', {
     state: () => ({

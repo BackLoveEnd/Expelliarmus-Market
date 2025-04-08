@@ -161,6 +161,7 @@ class ProductFactory extends Factory
     {
         return Brand::query()->firstOrCreate([
             'name' => 'Seed Test Brand',
+            'logo_url' => url('storage/brands/'.config('brand.default_logo')),
         ]);
     }
 

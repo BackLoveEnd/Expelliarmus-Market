@@ -1,6 +1,6 @@
 <script setup>
 import DefaultModal from "@/management/components/Main/DefaultModal.vue";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import {useToastStore} from "@/stores/useToastStore.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";

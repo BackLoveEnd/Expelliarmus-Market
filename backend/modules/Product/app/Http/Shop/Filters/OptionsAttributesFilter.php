@@ -23,13 +23,13 @@ class OptionsAttributesFilter implements Filter
             ->where(function ($query) use ($value) {
                 foreach ($value as $attributeId => $values) {
                     $query
-                        ->orWhere(function (Builder $subQ) use ($attributeId, $values) {
-                            $subQ
+                        ->orWhere(function ($query) use ($attributeId, $values) {
+                            $query
                                 ->where('pav.attribute_id', $attributeId)
                                 ->whereIn('pav.value', (array)$values);
                         })
-                        ->orWhere(function (Builder $subQ) use ($attributeId, $values) {
-                            $subQ
+                        ->orWhere(function ($query) use ($attributeId, $values) {
+                            $query
                                 ->where('vav.attribute_id', $attributeId)
                                 ->whereIn('vav.value', (array)$values);
                         });

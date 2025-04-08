@@ -1,5 +1,5 @@
 <script setup>
-import {StatisticsService} from "@/services/StatisticsService.js";
+import {StatisticsService} from "@/services/Different/StatisticsService.js";
 import {onMounted, reactive, ref} from "vue";
 
 const statistics = reactive({

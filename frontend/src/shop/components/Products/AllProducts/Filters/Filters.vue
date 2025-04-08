@@ -2,12 +2,12 @@
 import {onMounted, ref, watch} from "vue";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import {useScrolling} from "@/composables/useScrolling.js";
-import {BrandsService} from "@/services/BrandsService.js";
+import {BrandsService} from "@/services/Brand/BrandsService.js";
 import CategoryFilter from "@/shop/components/Products/AllProducts/Filters/CategoryFilter.vue";
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
 import BrandFilter from "@/shop/components/Products/AllProducts/Filters/BrandFilter.vue";
 import PriceFilter from "@/shop/components/Products/AllProducts/Filters/PriceFilter.vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 
 const selectedFilters = ref([]);
 

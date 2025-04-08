@@ -12,6 +12,7 @@ class GetPagePaginatedBrandsAction
     public function handle(array $columns, int $defaultBrandsShowNumber): array
     {
         $brands = QueryBuilder::for(Brand::class)
+            ->orderBy('id')
             ->paginate($defaultBrandsShowNumber, $columns);
 
         return [

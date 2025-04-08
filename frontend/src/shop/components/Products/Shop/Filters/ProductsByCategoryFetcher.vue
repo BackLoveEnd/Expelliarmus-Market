@@ -2,7 +2,7 @@
 import ProductDiscountCard from "@/components/Card/ProductDiscountCard.vue";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import {ref, watch} from "vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 
 const props = defineProps({

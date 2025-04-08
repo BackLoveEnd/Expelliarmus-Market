@@ -5,7 +5,7 @@ import Specs from "@/components/Product/Main/Specs.vue";
 import ProductPhotoTabs from "@/shop/views/Product/ProductPhotoTabs.vue";
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import {computed, reactive, ref} from "vue";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsViewer.vue";
 import CombinedVariationsViewer from "@/components/Product/Main/CombinedVariationsViewer.vue";
 import {useRouter} from "vue-router";

@@ -15,7 +15,8 @@ class BrandsPaginatedResource extends JsonApiResource
             'id' => $this->id,
             'brand_name' => $this->name,
             'slug' => $this->slug,
-            'description' => $this->description
+            'description' => $this->description,
+            'logo' => $this->logo_url,
         ];
     }
 }
