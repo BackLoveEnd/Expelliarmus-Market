@@ -42,14 +42,18 @@ class RetrieveBrandsController extends Controller
         return $this->wantsPagePaginatedBrands();
     }
 
-    private function wantsPagePaginatedBrands(): JsonApiResourceCollection
+    private function wantsPagePaginatedBrands(): JsonApiResourceCollection|JsonResponse
     {
         $brands = (new GetPagePaginatedBrandsAction())->handle($this->columns, $this->defaultBrandsShowNumber);
+
+        if (! $brands['items']) {
+            return response()->json(['message' => 'Brands not found.'], 404);
+        }
 
         return BrandsPaginatedResource::collection($brands['items'])->additional($brands['additional']);
     }
 
-    private function wantsLimitOffsetPaginatedBrands(): JsonApiResourceCollection
+    private function wantsLimitOffsetPaginatedBrands(): JsonApiResourceCollection|JsonResponse
     {
         $brands = (new GetLimitOffsetPaginatedBrandsAction())
             ->handle(
@@ -57,6 +61,10 @@ class RetrieveBrandsController extends Controller
                 limit: (int)$this->request->query('limit', $this->defaultBrandsShowNumber),
                 offset: (int)$this->request->query('offset', 0),
             );
+
+        if ($brands->items->isEmpty()) {
+            return response()->json(['message' => 'Brands not found.'], 404);
+        }
 
         return BrandsPaginatedResource::collection($brands->items)->additional($brands->wrapMeta());
     }
