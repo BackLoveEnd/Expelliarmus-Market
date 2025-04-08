@@ -5,7 +5,7 @@ use Modules\User\Http\Controllers\UserWishlistController;
 
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::controller(UserWishlistController::class)->prefix('/wishlist')->group(function () {
-        Route::get('/', 'getUserWishlist')->withoutMiddleware('throttle');
+        Route::get('/', 'getUserWishlist')->withoutMiddleware('throttle:api');
 
         Route::post('/products/{productBind}', 'addProductToWishList')
             ->whereNumber('productBind');
