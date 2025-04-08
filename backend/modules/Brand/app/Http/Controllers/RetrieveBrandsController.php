@@ -21,7 +21,7 @@ class RetrieveBrandsController extends Controller
 
     public function __construct(private Config $config, private Request $request)
     {
-        $this->columns = ['id', 'name', 'slug', 'description'];
+        $this->columns = ['id', 'name', 'slug', 'description', 'logo_url'];
 
         $this->defaultBrandsShowNumber = $this->config->get('brand.max_brands_show_number');
     }

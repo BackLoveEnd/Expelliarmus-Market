@@ -23,7 +23,7 @@ class MigrationStorageCleanHelper
     {
         $files = Storage::disk('public_content')->files('slider');
 
-        $except = ['.gitignore', '.gitkeep', 'default_slide.png'];
+        $except = ['.gitignore', '.gitkeep', config('contentmanagement.default.slider.image')];
 
         foreach ($files as $file) {
             if (! in_array(str_replace('slider/', '', $file), $except, true)) {
@@ -40,6 +40,19 @@ class MigrationStorageCleanHelper
 
         foreach ($files as $file) {
             if (! in_array(str_replace('arrivals/', '', $file), $except, true)) {
+                Storage::disk('public_content')->delete($file);
+            }
+        }
+    }
+
+    public static function cleanBrandsLogo(): void
+    {
+        $files = Storage::disk('public_brands_images')->files();
+
+        $except = ['.gitignore', '.gitkeep', config('brands.default_logo')];
+
+        foreach ($files as $file) {
+            if (! in_array($file, $except, true)) {
                 Storage::disk('public_content')->delete($file);
             }
         }
