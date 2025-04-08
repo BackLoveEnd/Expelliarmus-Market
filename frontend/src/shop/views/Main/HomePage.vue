@@ -25,6 +25,15 @@
       </suspense>
     </section>
 
+    <section class="container mx-auto">
+      <suspense>
+        <brands-browse-list/>
+        <template #fallback>
+          <suspense-loader/>
+        </template>
+      </suspense>
+    </section>
+
     <!-- TOP SELLERS -->
     <section class="container mx-auto">
       <suspense>
@@ -140,6 +149,7 @@ import CategoriesSkeleton from "@/management/components/Categories/CategoriesSke
 import ExploreProducts from "@/shop/components/Products/Sets/ExploreProducts.vue";
 import TopSellers from "@/shop/components/Products/Sets/TopSellers.vue";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
+import BrandsBrowseList from "@/shop/components/Brands/BrandsBrowseList.vue";
 
 const emitter = inject("emitter");
 const toast = useToast();

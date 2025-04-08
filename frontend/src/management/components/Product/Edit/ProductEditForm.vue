@@ -14,7 +14,7 @@ import SingleAttributeValueGenerator
   from "@/management/components/Product/AttributeGenerator/Single/SingleAttributeValueGenerator.vue";
 import CombinedAttributeValueGenerator
   from "@/management/components/Product/AttributeGenerator/Combined/CombinedAttributeValueGenerator.vue";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import defaultWarningSettings from "@/components/Default/Toasts/Default/defaultWarningSettings.js";
 import {useRouter} from "vue-router";

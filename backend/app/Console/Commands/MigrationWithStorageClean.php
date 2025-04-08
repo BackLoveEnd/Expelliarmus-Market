@@ -27,6 +27,8 @@ class MigrationWithStorageClean extends MigrateCommand
 
             MigrationStorageCleanHelper::cleanArrivalsContentStorage();
 
+            MigrationStorageCleanHelper::cleanBrandsLogo();
+
             $this->info('Storage cleaned successfully.');
         }
 

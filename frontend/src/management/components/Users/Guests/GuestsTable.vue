@@ -71,7 +71,7 @@
 import {computed, reactive, ref} from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import {RegularCustomersService} from "@/services/RegularCustomersService.js";
+import {RegularCustomersService} from "@/services/User/RegularCustomersService.js";
 import {useClipboard} from "@vueuse/core";
 
 const guests = ref([]);

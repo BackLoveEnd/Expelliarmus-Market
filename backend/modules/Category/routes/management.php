@@ -15,7 +15,7 @@ Route::prefix('management')->group(function () {
         });
 
         Route::controller(CategoryController::class)->group(function () {
-            Route::get('/', 'index')->withoutMiddleware(['throttle']);
+            Route::get('/', 'index')->withoutMiddleware(['throttle:api']);
 
             Route::get('/root', 'rootCategories');
 

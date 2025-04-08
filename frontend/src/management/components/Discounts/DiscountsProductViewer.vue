@@ -1,5 +1,5 @@
 <script setup>
-import {WarehouseService} from "@/services/WarehouseService.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 import {computed, reactive, ref, watch} from "vue";
 import {statusColors} from "@/utils/statusColors.js";
 import CombinedVariationDiscounts from "@/management/components/Discounts/CombinedVariationDiscounts.vue";

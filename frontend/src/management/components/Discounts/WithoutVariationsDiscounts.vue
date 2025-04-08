@@ -3,7 +3,7 @@ import DiscountInfoViewer from "@/management/components/Discounts/DiscountInfoVi
 import DiscountForm from "@/management/components/Discounts/DiscountForm.vue";
 import {useToastStore} from "@/stores/useToastStore.js";
 import {formatInTimeZone} from "date-fns-tz";
-import {WarehouseService} from "@/services/WarehouseService.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import {ref} from "vue";

@@ -1,5 +1,5 @@
 <script setup>
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import ProductCard from "@/components/Card/ProductCard.vue";
 import {ref, watch} from "vue";
 import ProductDiscountCard from "@/components/Card/ProductDiscountCard.vue";

@@ -1,7 +1,7 @@
 <script setup>
 import {reactive, ref} from "vue";
 import MultiSelect from "primevue/multiselect";
-import {WarehouseService} from "@/services/WarehouseService.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 import Select from "primevue/select";
 import Tag from "primevue/tag";
 

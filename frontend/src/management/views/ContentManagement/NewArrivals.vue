@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref, watch} from 'vue';
-import {ContentManagementService} from '@/services/ContentManagementService';
+import {ContentManagementService} from '@/services/Different/ContentManagementService.js';
 import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js';
 import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js';
 import {useToastStore} from '@/stores/useToastStore.js';

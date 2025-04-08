@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from "vue";
-import {WarehouseService} from "@/services/WarehouseService";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
 import {AutoComplete} from "primevue";
 
 const searchable = ref(null);

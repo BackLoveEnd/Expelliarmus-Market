@@ -55,6 +55,14 @@ return [
             'throw' => false,
         ],
 
+        'public_brands_images' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/brands'),
+            'url' => env('APP_URL').'/storage/brands',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'public_content' => [
             'driver' => 'local',
             'root' => storage_path('app/public/content'),
