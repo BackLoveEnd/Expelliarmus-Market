@@ -10,8 +10,7 @@ Route::prefix('shop')->withoutMiddleware(['throttle'])->group(function () {
     Route::get('/categories/{category:slug}/children', [ShopCategoryAccessController::class, 'getChildrenOfCategory']);
 
     Route::get(
-        '/categories/{category}/attributes',
+        '/categories/{categorySlug}/attributes',
         [CategoryOptionAttributesController::class, 'getOptionAttributesForCategory'],
-    )
-        ->whereNumber('category');
+    );
 });

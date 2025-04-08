@@ -11,15 +11,13 @@ use Modules\Warehouse\Models\ProductAttribute;
 
 class GetAttributesValuesForCategoryAction
 {
-    public function handle(int $categoryId): BaseCollection
+    public function handle(Category $category): BaseCollection
     {
-        $category = Category::query()
-            ->with([
-                'productAttributes:id,name,category_id,type',
-                'productAttributes.singleAttributeValues:id,attribute_id,value,id',
-                'productAttributes.combinedPivotAttributesValues:id,attribute_id,value,id',
-            ])
-            ->findOrFail($categoryId);
+        $category->loadMissing([
+            'productAttributes:id,name,category_id,type',
+            'productAttributes.singleAttributeValues:id,attribute_id,value,id',
+            'productAttributes.combinedPivotAttributesValues:id,attribute_id,value,id',
+        ]);
 
         return $this->mapAttributes($category->productAttributes);
     }

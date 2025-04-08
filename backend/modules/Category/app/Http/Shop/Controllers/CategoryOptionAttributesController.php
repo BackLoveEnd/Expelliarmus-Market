@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Services\Cache\CacheService;
 use Modules\Category\Http\Shop\Actions\GetAttributesValuesForCategoryAction as GetAttributesAction;
 use Modules\Category\Http\Shop\Resources\CategoryAttributesValuesResource;
+use Modules\Category\Models\Category;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CategoryOptionAttributesController extends Controller
@@ -21,19 +23,25 @@ class CategoryOptionAttributesController extends Controller
      *
      * Usage place - Shop.
      *
-     * @param  int  $categoryId
+     * @param  string  $categorySlug
      * @param  GetAttributesAction  $action
-     * @return JsonApiResourceCollection
+     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getOptionAttributesForCategory(
-        int $categoryId,
+        string $categorySlug,
         GetAttributesAction $action,
-    ): JsonApiResourceCollection {
+    ): JsonApiResourceCollection|JsonResponse {
+        $category = Category::query()->whereSlug($categorySlug)->firstOrFail();
+
         $attributes = $this->cacheService->repo()->remember(
-            key: $this->cacheService->key("category:%s:attributes", $categoryId),
+            key: $this->cacheService->key("category:%s:attributes", $category->id),
             ttl: now()->addWeek(),
-            callback: fn() => $action->handle($categoryId),
+            callback: fn() => $action->handle($category),
         );
+
+        if ($attributes->isEmpty()) {
+            return response()->json(['message' => 'No options attributes found.'], 404);
+        }
 
         return CategoryAttributesValuesResource::collection($attributes);
     }

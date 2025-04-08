@@ -12,9 +12,15 @@ use Modules\Warehouse\Enums\ProductStatusEnum;
 class GetProductBrandsByCategoryAction
 {
 
-    public function handle(Category $category): Collection
+    public function handle(int|string $category): Collection
     {
-        $categoryIds = $category->descendantsAndSelf($category)->pluck('id');
+        if (is_numeric($category)) {
+            $categoryModel = Category::query()->findOrFail($category);
+        } else {
+            $categoryModel = Category::query()->whereSlug($category)->firstOrFail();
+        }
+
+        $categoryIds = $categoryModel->descendantsAndSelf($categoryModel)->pluck('id');
 
         return Brand::query()
             ->whereHas('products', function ($query) use ($categoryIds) {
