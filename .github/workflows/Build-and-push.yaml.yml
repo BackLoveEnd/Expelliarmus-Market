@@ -1,1 +1,53 @@
+name: Docker compose CI and push
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.run_id }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: First start app
+        run: make first-start-app
+
+      - name: Start frontend dev server
+        run: make front-dev
+
+      - name: Build with Docker Compose
+        run: docker-compose -f docker-compose.yml build
+
+      - name: Build Docker image
+        run: docker compose -f compose.yaml up -d --build
+
+      - name: Push Docker images to GHCR
+        run: docker compose -f compose.yaml push
+
+    env:
+      PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+
 
