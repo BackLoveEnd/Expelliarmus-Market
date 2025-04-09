@@ -45,7 +45,7 @@ onUnmounted(() => {
         <suspense-loader/>
       </template>
     </suspense>
-    <suspense>
+    <suspense v-if="brandInfo.id">
       <products-by-brand :brand-slug="route.params.brandSlug" :brand-id="brandInfo.id"/>
       <template #fallback>
         <suspense-loader/>

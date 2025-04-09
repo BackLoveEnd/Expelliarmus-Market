@@ -101,7 +101,7 @@ watch(() => props.brandId, async (newBrand) => {
 
     await getProducts();
   }
-}, {deep: true, immediate: true});
+}, {deep: true});
 </script>
 
 <template>

@@ -91,7 +91,7 @@ watch(
         await getProducts();
       }
     },
-    {deep: true, immediate: true}
+    {deep: true}
 );
 
 watch(
