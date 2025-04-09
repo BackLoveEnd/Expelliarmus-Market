@@ -12,10 +12,14 @@ let brandInfo = reactive({});
 
 const breadCrumbStore = useBreadCrumbStore();
 
+const emit = defineEmits(["brand-info"]);
+
 async function getBrand() {
   await BrandsService.getBrandInfo(props.brandSlug)
       .then((response) => {
-        brandInfo = response?.data?.data?.attributes;
+        brandInfo = ({...response?.data?.data?.attributes, id: response?.data?.data?.id});
+
+        emit("brand-info", brandInfo);
 
         breadCrumbStore.addBreadcrumb({
               name: brandInfo.brand_name, url: `/shop/brands/${brandInfo.slug}`

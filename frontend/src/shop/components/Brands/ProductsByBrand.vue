@@ -5,7 +5,8 @@ import ProductsByBrandFetcher from "@/shop/components/Products/Shop/Filters/Prod
 import {ref} from "vue";
 
 const props = defineProps({
-  brandSlug: String
+  brandSlug: String,
+  brandId: Number | String
 });
 
 const selectedFilters = ref([]);
@@ -28,7 +29,7 @@ const productsExists = ref(true);
         />
         <div class="lg:col-span-3">
           <suspense>
-            <products-by-brand-fetcher/>
+            <products-by-brand-fetcher :selected-filters="selectedFilters" :brand-id="brandId"/>
             <template #fallback>
               <suspense-loader/>
             </template>

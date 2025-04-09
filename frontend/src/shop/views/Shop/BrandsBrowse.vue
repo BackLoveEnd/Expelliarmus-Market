@@ -1,6 +1,6 @@
 <script setup>
 import {useBreadCrumbStore} from "@/stores/useBreadCrumbStore.js";
-import {onMounted, onUnmounted} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import ProductsByBrand from "@/shop/components/Brands/ProductsByBrand.vue";
 import BrandInfoOverview from "@/shop/components/Brands/BrandInfoOverview.vue";
@@ -9,6 +9,12 @@ import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 const breadCrumbStore = useBreadCrumbStore();
 
 const route = useRoute();
+
+const brandInfo = ref({});
+
+const handleBrandInfo = (brand) => {
+  brandInfo.value = brand;
+};
 
 onMounted(() => {
   const savedBreadcrumbs = localStorage.getItem('breadcrumb');
@@ -34,13 +40,13 @@ onUnmounted(() => {
 <template>
   <main class="container mx-auto my-10 space-y-10">
     <suspense>
-      <brand-info-overview :brand-slug="route.params.brandSlug"/>
+      <brand-info-overview :brand-slug="route.params.brandSlug" @brand-info="handleBrandInfo"/>
       <template #fallback>
         <suspense-loader/>
       </template>
     </suspense>
     <suspense>
-      <products-by-brand :brand-slug="route.params.brandSlug"/>
+      <products-by-brand :brand-slug="route.params.brandSlug" :brand-id="brandInfo.id"/>
       <template #fallback>
         <suspense-loader/>
       </template>
