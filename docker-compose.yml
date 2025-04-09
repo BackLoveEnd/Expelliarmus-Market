@@ -68,8 +68,6 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
       - .docker/db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    env_file:
-      - .env
     healthcheck:
       test: [ "CMD-SHELL", "is_ready" ]
       timeout: 5s
