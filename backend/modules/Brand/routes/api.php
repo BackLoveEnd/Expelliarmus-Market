@@ -9,6 +9,8 @@ use Modules\Brand\Http\Controllers\RetrieveBrandsController;
 Route::prefix('management/brands')->group(function () {
     Route::get('/', [RetrieveBrandsController::class, 'getPaginated'])->withoutMiddleware('throttle:api');
 
+    Route::get('/{brandId}', [RetrieveBrandsController::class, 'getBrandInfo'])->withoutMiddleware('throttle:api');
+
     Route::controller(ManipulationBrandController::class)->group(function () {
         Route::post('/', 'create');
 
@@ -29,4 +31,7 @@ Route::get(
     ->withoutMiddleware('throttle:api');
 
 Route::get('/shop/brands/browse-list', [RetrieveBrandsController::class, 'getPaginated'])
+    ->withoutMiddleware('throttle:api');
+
+Route::get('/shop/brands/{brandId}', [RetrieveBrandsController::class, 'getBrandInfo'])
     ->withoutMiddleware('throttle:api');

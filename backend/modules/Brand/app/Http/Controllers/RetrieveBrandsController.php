@@ -10,7 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Brand\Http\Actions\GetLimitOffsetPaginatedBrandsAction;
 use Modules\Brand\Http\Actions\GetPagePaginatedBrandsAction;
+use Modules\Brand\Http\Resources\BrandResource;
 use Modules\Brand\Http\Resources\BrandsPaginatedResource;
+use Modules\Brand\Models\Brand;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveBrandsController extends Controller
@@ -40,6 +42,27 @@ class RetrieveBrandsController extends Controller
         }
 
         return $this->wantsPagePaginatedBrands();
+    }
+
+    /**
+     * Retrieve brand by ID or slug.
+     *
+     * Usage place - Admin section|Shop.
+     *
+     * @param  string|int  $brandId
+     * @return BrandResource
+     */
+    public function getBrandInfo(string|int $brandId): BrandResource
+    {
+        $brand = Brand::query()
+            ->when(
+                value: is_numeric($brandId),
+                callback: fn($query) => $query->where('id', $brandId),
+                default: fn($query) => $query->where('slug', $brandId),
+            )
+            ->firstOrFail();
+
+        return BrandResource::make($brand);
     }
 
     private function wantsPagePaginatedBrands(): JsonApiResourceCollection|JsonResponse
