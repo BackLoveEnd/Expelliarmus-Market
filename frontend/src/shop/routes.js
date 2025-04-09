@@ -12,6 +12,7 @@ import CategoriesBrowse from "@/shop/views/Shop/CategoriesBrowse.vue";
 import CategoriesOverview from "@/shop/views/Shop/CategoriesOverview.vue";
 import AllProducts from "@/shop/views/Product/AllProducts.vue";
 import BrandsOverview from "@/shop/views/Shop/BrandsOverview.vue";
+import BrandsBrowse from "@/shop/views/Shop/BrandsBrowse.vue";
 
 export default [
     {
@@ -48,6 +49,11 @@ export default [
         path: '/shop/brands',
         component: BrandsOverview,
         name: "brands-overview",
+    },
+    {
+        path: '/shop/brands/:brandSlug',
+        component: BrandsBrowse,
+        name: 'brands-browse',
     },
     {
         path: "/shop/categories/:categorySlug",

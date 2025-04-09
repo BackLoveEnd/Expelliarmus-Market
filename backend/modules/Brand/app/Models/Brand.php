@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 use Modules\Brand\Database\Factories\BrandFactory;
 use Modules\Brand\Observers\BrandObserver;
+use Modules\Category\Models\Category;
 use Modules\Product\Models\Product;
 
 /**
@@ -36,6 +38,18 @@ class Brand extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function categories(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Category::class,
+            Product::class,
+            'brand_id',
+            'id',
+            'id',
+            'category_id',
+        )->distinct();
     }
 
     public function hasProducts(): bool

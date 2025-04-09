@@ -1,27 +1,29 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
-import {useScrolling} from "@/composables/useScrolling.js";
-import {BrandsService} from "@/services/Brand/BrandsService.js";
-import CategoryFilter from "@/shop/components/Products/AllProducts/Filters/CategoryFilter.vue";
-import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
-import BrandFilter from "@/shop/components/Products/AllProducts/Filters/BrandFilter.vue";
 import PriceFilter from "@/shop/components/Products/AllProducts/Filters/PriceFilter.vue";
 import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
+import CategoryFilter from "@/shop/components/Products/AllProducts/Filters/CategoryFilter.vue";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
+import {useScrolling} from "@/composables/useScrolling.js";
+
+const props = defineProps({
+  brandSlug: String
+});
 
 const selectedFilters = ref([]);
 
+const filters = ref([]);
+
 const subCategories = ref([]);
 
-const filters = ref([]);
+const emit = defineEmits(["selected-filters", "categories-not-found"]);
 
 const scrolling = useScrolling();
 
-const emit = defineEmits(["selected-filters"]);
-
-async function getRootCategories() {
+async function getCategoriesForBrand(brandSlug) {
   try {
-    const response = await CategoriesShopService.getRootCategories();
+    const response = await CategoriesShopService.getCategoriesForBrand(brandSlug);
     filters.value.push({
       name: 'Category',
       items: response?.data?.data?.map(category => ({
@@ -33,49 +35,14 @@ async function getRootCategories() {
       }))
     });
   } catch (error) {
-
+    if (error?.status === 404) {
+      emit("categories-not-found");
+    }
   }
 }
 
-async function getBrands(categoryId, categoryName) {
-  await BrandsService.getProductBrandsByCategory(categoryId)
-      .then((response) => {
-        const brands = response?.data?.data?.map((brand) => ({
-          id: brand.id,
-          label: brand.attributes.brand_name,
-          value: brand.id,
-          checked: false,
-          slug: brand.attributes.slug
-        }));
-
-        let brandSection = filters.value.find(section => section.name === "Brand");
-
-        if (!brandSection) {
-          brandSection = {
-            name: "Brand",
-            items: []
-          };
-          filters.value.push(brandSection);
-        }
-
-        const existingCategory = brandSection.items.find(item => item.categoryId === categoryId);
-
-        if (existingCategory) {
-          existingCategory.brands = [...existingCategory.brands, ...brands];
-        } else {
-          brandSection.items.push({
-            categoryId,
-            categoryName,
-            brands
-          });
-        }
-      })
-      .catch((e) => {
-      });
-}
-
-async function getPriceMinMax() {
-  await ProductsShopService.getMinMaxPrices()
+async function getPriceMinMax(brandSlug) {
+  await ProductsShopService.getMinMaxPricesForBrand(brandSlug)
       .then((response) => {
         const minPrice = response?.data?.data?.attributes?.min_price;
         const maxPrice = response?.data?.data?.attributes?.max_price;
@@ -98,54 +65,29 @@ async function getPriceMinMax() {
       });
 }
 
-async function toggleCategory(category) {
-  if (category.checked) {
-    toggleFilter("category", category.id);
-
-    await getBrands(category.id, category.label);
-  } else {
-    removeFilterValue("category", category.id);
-
-    subCategories.value = subCategories.value.filter(sub => sub.slug !== category.slug);
-
-    const brandSectionIndex = filters.value.findIndex(section => section.name === "Brand");
-
-    if (brandSectionIndex !== -1) {
-      const brandSection = filters.value[brandSectionIndex];
-
-      brandSection.items = brandSection.items.filter(item => item.categoryId !== category.id);
-
-      if (brandSection.items.length === 0) {
-        filters.value.splice(brandSectionIndex, 1);
-      }
-    }
-  }
-}
-
-async function toggleBrand(brand) {
-  if (brand.checked) {
-    toggleFilter("brand", brand.id);
-  } else {
-    removeFilterValue("brand", brand.id);
-  }
-}
-
 async function togglePrice(event) {
   selectedFilters.value = selectedFilters.value.filter((filter) => filter.name !== 'price');
 
   toggleFilter('price', event);
 }
 
-const getSubCategories = (value) => {
-  subCategories.value = value.value;
-};
+async function toggleCategory(category) {
+  if (category.checked) {
+    toggleFilter("category", category.id);
+  } else {
+    removeFilterValue("category", category.id);
 
-function toggleFilter(filterName, value) {
+    subCategories.value = subCategories.value.filter(sub => sub.slug !== category.slug);
+  }
+}
+
+function toggleFilter(filterName, value, extra) {
   const index = selectedFilters.value.findIndex((filter) => filter.name === filterName);
 
   if (index === -1) {
     selectedFilters.value.push({
       name: filterName,
+      ...extra,
       value: [value]
     });
   } else {
@@ -165,17 +107,28 @@ function removeFilterValue(filterName, value) {
   }
 }
 
+const getSubCategories = (value) => {
+  subCategories.value = value.value;
+};
+
 watch(() => selectedFilters, (newValue) => {
   emit("selected-filters", (newValue));
 }, {
   deep: true
 });
 
-onMounted(async () => {
-  await getPriceMinMax();
+watch(
+    () => props.brandSlug,
+    (brandSlug) => {
+      filters.value = [];
 
-  await getRootCategories();
-});
+      getPriceMinMax(brandSlug);
+
+      getCategoriesForBrand(brandSlug);
+    },
+    {immediate: true}
+);
+
 </script>
 
 <template>
@@ -223,14 +176,8 @@ onMounted(async () => {
                 @sub-categories="getSubCategories"
             />
           </template>
-
-          <template v-if="section.name === 'Brand'">
-            <brand-filter :filter-section="section" @brand-selected="toggleBrand"/>
-          </template>
         </div>
       </DisclosurePanel>
     </Disclosure>
   </form>
 </template>
-
-
