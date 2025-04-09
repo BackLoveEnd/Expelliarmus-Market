@@ -33,7 +33,7 @@ async function getRootCategories() {
       }))
     });
   } catch (error) {
-    console.error("Ошибка загрузки категорий:", error);
+
   }
 }
 

@@ -33,6 +33,10 @@ export const ProductsShopService = {
         return api().get(`/shop/products/categories/${categorySlug}/staff/prices-range`);
     },
 
+    async getMinMaxPricesForBrand(brandSlug) {
+        return api().get(`/shop/products/brands/${brandSlug}/staff/prices-range`);
+    },
+
     async getProduct(productId, productSlug) {
         return await api()
             .get(

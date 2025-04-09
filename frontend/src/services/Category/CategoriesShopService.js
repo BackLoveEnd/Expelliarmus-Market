@@ -15,5 +15,9 @@ export const CategoriesShopService = {
 
     async getOptionAttributesForCategory(categorySlug) {
         return await api().get(`/shop/categories/${categorySlug}/attributes`);
+    },
+
+    async getCategoriesForBrand(brandSlug) {
+        return await api().get(`/shop/brands/${brandSlug}/categories`);
     }
 };

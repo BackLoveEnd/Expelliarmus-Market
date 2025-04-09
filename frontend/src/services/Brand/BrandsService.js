@@ -24,6 +24,10 @@ export const BrandsService = {
         );
     },
 
+    async getBrandInfo(id) {
+        return await api().get(`/shop/brands/${id}`);
+    },
+
     async uploadImage(image, brandId) {
         const data = new FormData();
 

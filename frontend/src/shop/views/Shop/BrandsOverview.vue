@@ -52,7 +52,7 @@ onMounted(async () => await getBrands());
           <router-link
               v-for="(brand, index) in brands"
               @click.prevent="useScrolling().scrollToTop()"
-              :to="{ name: '', params: { brandSlug: brand.slug } }"
+              :to="{ name: 'brands-browse', params: { brandSlug: brand.slug } }"
               class="card w-48 h-40 border-2 border-gray-300 rounded-md flex flex-col justify-center items-center gap-y-4 transition-all duration-300"
           >
             <div class="flex items-center justify-center">
