@@ -53,7 +53,7 @@ class MigrationStorageCleanHelper
 
         foreach ($files as $file) {
             if (! in_array($file, $except, true)) {
-                Storage::disk('public_content')->delete($file);
+                Storage::disk('public_brands_images')->delete($file);
             }
         }
     }
