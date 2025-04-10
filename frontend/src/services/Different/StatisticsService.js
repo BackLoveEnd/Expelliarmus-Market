@@ -1,7 +1,7 @@
-import api from "@/utils/api.js";
+import managerApi from "@/utils/managerApi.js";
 
 export const StatisticsService = {
     async getStatisticForManagerHome() {
-        return await api().get("/management/statistics/general-home");
+        return await managerApi().get("/statistics/general-home");
     }
 };

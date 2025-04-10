@@ -17,6 +17,7 @@ export default [
     {
         path: "",
         component: Home,
+        name: "manager-home",
     },
     {
         path: "products/create",
