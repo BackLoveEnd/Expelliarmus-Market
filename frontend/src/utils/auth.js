@@ -1,4 +1,5 @@
 import api from "@/utils/api.js";
+import managerApi from "@/utils/managerApi.js";
 
 export const login = async (data, manager) => {
     if (manager) {
@@ -16,7 +17,7 @@ export const login = async (data, manager) => {
 
 export const logout = async (manager) => {
     if (manager) {
-        return api().post("/management/managers/auth/logout");
+        return managerApi().post("/managers/auth/logout");
     }
 
     return api().post("/logout");
