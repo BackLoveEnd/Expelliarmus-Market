@@ -1,14 +1,15 @@
 <?php
 
-namespace Modules\User\Models;
+namespace Modules\Manager\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Modules\Manager\Observers\ManagerObserver;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\ManagerFactory;
-use Modules\User\Observers\ManagerObserver;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -21,10 +22,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon $created_at
  */
 #[ObservedBy(ManagerObserver::class)]
-class Manager extends Model implements UserInterface
+class Manager extends Authenticatable implements UserInterface
 {
     use HasFactory;
     use HasRoles;
+    use Notifiable;
 
     public $timestamps = false;
 
