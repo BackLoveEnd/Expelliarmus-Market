@@ -9,4 +9,6 @@ enum RolesEnum: string
     case GUEST = 'guest';
 
     case MANAGER = 'manager';
+
+    case SUPER_MANAGER = 'super_manager';
 }

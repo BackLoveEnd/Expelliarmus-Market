@@ -1,13 +1,14 @@
 import api from "@/utils/api.js";
 import {useJsonApiFormatter} from "@/composables/useJsonApiFormatter.js";
+import managerApi from "@/utils/managerApi.js";
 
 const formatter = useJsonApiFormatter();
 
 export const ProductService = {
     async getProductPreview(id, slug) {
-        return await api()
+        return await managerApi()
             .get(
-                `/management/products/${id}/${slug}`,
+                `/products/${id}/${slug}`,
             )
             .then((response) => {
                 const productAttr = response.data.data.attributes;
@@ -46,7 +47,7 @@ export const ProductService = {
             relationships,
         );
 
-        return await api().post("/management/products/create", data);
+        return await managerApi().post("/products/create", data);
     },
 
     async uploadImagesForProduct(productId, images, previewImage) {
@@ -61,8 +62,8 @@ export const ProductService = {
             formData.append("preview_image", previewImage.file);
         }
 
-        return await api().post(
-            "/management/products/" + productId + "/images",
+        return await managerApi().post(
+            "/products/" + productId + "/images",
             formData,
             {
                 headers: {
@@ -73,18 +74,18 @@ export const ProductService = {
     },
 
     async getProductsForEachRootCategory() {
-        return await api().get(`/management/categories/products?include=products`);
+        return await managerApi().get(`/categories/products?include=products`);
     },
 
     async getAttributesForCategory(categoryId) {
-        return await api().get(
-            "/management/categories/" + categoryId + "/attributes",
+        return await managerApi().get(
+            "/categories/" + categoryId + "/attributes",
         );
     },
 
     async getProductSpecificationsByCategory(categoryId) {
-        return await api().get(
-            `/management/product-specifications/category/${categoryId}`,
+        return await managerApi().get(
+            `/product-specifications/category/${categoryId}`,
         );
     },
 
@@ -93,9 +94,9 @@ export const ProductService = {
     },
 
     async getProductStaffInfo(productId) {
-        return await api()
+        return await managerApi()
             .get(
-                `/management/products/${productId}/staff?include=warehouse,variations`,
+                `/products/${productId}/staff?include=warehouse,variations`,
             )
             .then((response) => {
                 const productAttr = response.data.data.attributes;
@@ -147,7 +148,7 @@ export const ProductService = {
             relationships,
         );
 
-        return await api().put(`/management/products/${productData.id}`, data);
+        return await managerApi().put(`/products/${productData.id}`, data);
     },
 
     async editProductImages(product, images, previewImage) {
@@ -163,8 +164,8 @@ export const ProductService = {
             formData.append("preview_image", previewImage.file);
         }
 
-        return await api().post(
-            "/management/products/" + product.id + "/images/edit",
+        return await managerApi().post(
+            "/products/" + product.id + "/images/edit",
             formData,
             {
                 headers: {
@@ -175,27 +176,27 @@ export const ProductService = {
     },
 
     async moveToTrash(productId) {
-        return await api().delete(`/management/products/${productId}/trash`);
+        return await managerApi().delete(`/products/${productId}/trash`);
     },
 
     async publishProduct(productId) {
-        return await api().post(`/management/products/${productId}/publish`);
+        return await managerApi().post(`/products/${productId}/publish`);
     },
 
     async unPublishProduct(productId) {
-        return await api().post(`/management/products/${productId}/unpublish`);
+        return await managerApi().post(`/products/${productId}/unpublish`);
     },
 
     async trashedProducts(params) {
-        const url = formatter.formatUrl("/management/products/trashed", params);
-        return await api().get(url);
+        const url = formatter.formatUrl("/products/trashed", params);
+        return await managerApi().get(url);
     },
 
     async restoreProduct(productId) {
-        return await api().post(`/management/products/${productId}/restore`);
+        return await managerApi().post(`/products/${productId}/restore`);
     },
 
     async forceDelete(productId) {
-        return await api().delete(`/management/products/${productId}`);
+        return await managerApi().delete(`/products/${productId}`);
     }
 };

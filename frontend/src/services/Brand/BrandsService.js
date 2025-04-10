@@ -1,5 +1,6 @@
 import api from "@/utils/api.js";
 import {useJsonApiFormatter} from "@/composables/useJsonApiFormatter.js";
+import managerApi from "@/utils/managerApi.js";
 
 export const BrandsService = {
     async fetchBrands(url) {
@@ -7,8 +8,8 @@ export const BrandsService = {
     },
 
     async createBrand(data) {
-        return await api().post(
-            "/management/brands",
+        return await managerApi().post(
+            "/brands",
             useJsonApiFormatter().toJsonApi(data, "brands"),
         );
     },
@@ -18,8 +19,8 @@ export const BrandsService = {
             name: data.brand_name,
             description: data.description,
         };
-        return await api().put(
-            `/management/brands/${data.id}`,
+        return await managerApi().put(
+            `/brands/${data.id}`,
             useJsonApiFormatter().toJsonApi(formattedData, "brands"),
         );
     },
@@ -33,7 +34,7 @@ export const BrandsService = {
 
         data.append('image', image);
 
-        return await api().post(`/management/brands/logo/${brandId}`, data, {
+        return await managerApi().post(`/brands/logo/${brandId}`, data, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             }
@@ -41,7 +42,7 @@ export const BrandsService = {
     },
 
     async deleteBrand(id) {
-        return await api().delete(`/management/brands/${id}`);
+        return await managerApi().delete(`/brands/${id}`);
     },
 
     async getProductBrandsByCategory(categoryId) {
