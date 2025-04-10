@@ -35,6 +35,9 @@ full-rebuild: ## Full re-install application
 migrate-seed: ## Run migration and seeders
 	docker exec php php artisan migrate:fresh --seed --storage-clean
 
+super-manager: ## Create or retrieve test super manager
+	docker exec php php artisan management:create-super-manager
+
 frontend-dependencies-install: ## Install frontend dependencies
 	docker exec npm npm install
 

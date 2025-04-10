@@ -48,6 +48,12 @@ class Manager extends Authenticatable implements UserInterface
         ];
     }
 
+    public function makeSuperManager(): void
+    {
+        $this->is_super_manager = true;
+        $this->save();
+    }
+
     public function isSuperManager(): bool
     {
         return $this->is_super_manager;

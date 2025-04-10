@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\GetSuperManagerCommand;
 use App\Helpers\BootstrapExceptionsHelper;
 use App\Http\Middleware\AcceptApplicationJsonMiddleware;
 use Illuminate\Foundation\Application;
@@ -38,6 +39,9 @@ return Application::configure(basePath: dirname(__DIR__))
             return '/';
         });
     })
+    ->withCommands([
+        GetSuperManagerCommand::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         BootstrapExceptionsHelper::init($exceptions)
             ->defineRenderable()
