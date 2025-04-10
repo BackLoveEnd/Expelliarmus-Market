@@ -25,6 +25,7 @@
       </suspense>
     </section>
 
+    <!-- BRANDS SLIDER -->
     <section class="container mx-auto">
       <suspense>
         <brands-browse-list/>
