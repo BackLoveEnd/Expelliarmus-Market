@@ -123,6 +123,14 @@ Build mode:
 make front-build
 ````
 
+Additionally, you can create a **test super manager** to get access to the manager panel:
+
+````
+make super-manager
+````
+
+Manager login page available on **/management/manager/auth** URL.
+
 For more commands see:
 
 ````
