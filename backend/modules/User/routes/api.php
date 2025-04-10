@@ -7,8 +7,6 @@ use Modules\User\Http\Controllers\GuestsController;
 use Modules\User\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/current-user', [UserController::class, 'user'])->middleware('auth:sanctum');
-
     Route::put('/user/profile-information', [ProfileInformationController::class, 'update'])
         ->middleware([config('fortify.auth_middleware', 'auth').':'.config('fortify.guard')])
         ->name('user-profile-information.update');
@@ -23,3 +21,5 @@ Route::prefix('management/users')->group(function () {
 
     Route::get('/guests', [GuestsController::class, 'getGuests']);
 });
+
+Route::get('/current-user', [UserController::class, 'user']);

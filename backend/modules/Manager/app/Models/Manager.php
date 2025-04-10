@@ -53,6 +53,11 @@ class Manager extends Authenticatable implements UserInterface
         return $this->is_super_manager;
     }
 
+    public function fullName(): string
+    {
+        return $this->last_name.' '.$this->first_name;
+    }
+
     protected static function newFactory(): ManagerFactory
     {
         return ManagerFactory::new();

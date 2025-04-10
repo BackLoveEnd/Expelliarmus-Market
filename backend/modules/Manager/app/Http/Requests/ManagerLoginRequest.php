@@ -2,25 +2,16 @@
 
 namespace Modules\Manager\Http\Requests;
 
-use App\Services\Validators\JsonApiFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ManagerLoginRequest extends JsonApiFormRequest
+class ManagerLoginRequest extends FormRequest
 {
-
-    public function jsonApiAttributeRules(): array
+    public function rules(): array
     {
         return [
             'email' => ['required', 'email', Rule::exists('managers', 'email')],
             'password' => ['required', 'string'],
-        ];
-    }
-
-    public function jsonApiCustomAttributes(): array
-    {
-        return [
-            'email' => 'email',
-            'password' => 'password',
         ];
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthManagerMiddleware
 {
-    public function handle(Request $request, Closure $next, ?string $onlyFor)
+    public function handle(Request $request, Closure $next, ?string $onlyFor = null)
     {
         if (! auth('manager')->check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
