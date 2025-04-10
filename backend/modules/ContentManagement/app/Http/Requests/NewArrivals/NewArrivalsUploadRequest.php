@@ -19,7 +19,7 @@ class NewArrivalsUploadRequest extends FormRequest
                 'url',
                 new OnlySpecificStorageUrlRule(config('app.url').'/storage/content/arrivals'),
             ],
-            'arrivals.*.arrival_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_name'))],
+            'arrivals.*.arrival_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_url'))],
             'arrivals.*.position' => ['required', 'integer', 'between:1,4'],
             'arrivals.*.content' => ['required', 'array'],
             'arrivals.*.content.title' => ['required', 'string', 'max:255'],

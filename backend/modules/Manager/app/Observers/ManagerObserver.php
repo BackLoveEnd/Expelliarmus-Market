@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\User\Observers;
+namespace Modules\Manager\Observers;
 
 use Carbon\Carbon;
-use Modules\User\Models\Manager;
+use Modules\Manager\Models\Manager;
 use Ramsey\Uuid\Uuid;
 
 class ManagerObserver

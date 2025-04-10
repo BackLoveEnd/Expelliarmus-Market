@@ -49,7 +49,7 @@ class MigrationStorageCleanHelper
     {
         $files = Storage::disk('public_brands_images')->files();
 
-        $except = ['.gitignore', '.gitkeep', config('brands.default_logo')];
+        $except = ['.gitignore', '.gitkeep', config('brand.default_logo')];
 
         foreach ($files as $file) {
             if (! in_array($file, $except, true)) {

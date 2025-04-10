@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Manager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\User\Models\Manager;
+use Modules\Manager\Models\Manager;
 
 class ManagerSeeder extends Seeder
 {
