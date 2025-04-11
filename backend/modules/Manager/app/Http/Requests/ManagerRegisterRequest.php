@@ -2,26 +2,17 @@
 
 namespace Modules\Manager\Http\Requests;
 
-use App\Services\Validators\JsonApiFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ManagerRegisterRequest extends JsonApiFormRequest
+class ManagerRegisterRequest extends FormRequest
 {
-    public function jsonApiAttributeRules(): array
+    public function rules(): array
     {
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('managers', 'email')],
-        ];
-    }
-
-    public function jsonApiCustomAttributes(): array
-    {
-        return [
-            'first_name' => 'first name',
-            'last_name' => 'last name',
-            'email' => 'email',
         ];
     }
 }

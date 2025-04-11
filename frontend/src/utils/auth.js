@@ -33,7 +33,7 @@ export const register = async (user) => {
 };
 
 export const managerRegister = async (manager) => {
-    return api().post("/management/managers/auth/register", {
+    return managerApi().post("/managers/auth/register", {
         first_name: manager.first_name,
         last_name: manager.last_name,
         email: manager.email,

@@ -29,6 +29,7 @@
               class="menu-item"
           >
             <router-link
+                v-show="!link.onlyForSuperManager || auth.isSuperManager"
                 :to="link.url"
                 @click.capture="menuItemClick(close)"
                 :class="[
@@ -57,8 +58,11 @@
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {defineProps, ref} from "vue";
 import {useScrolling} from "@/composables/useScrolling.js";
+import {useAuthStore} from "@/stores/useAuthStore.js";
 
 const isOpen = ref(false);
+
+const auth = useAuthStore();
 
 const props = defineProps({
   links: {

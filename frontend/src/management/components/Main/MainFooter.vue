@@ -118,8 +118,9 @@ const productLinks = ref([
 ]);
 
 const clientLinks = ref([
-  {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified"},
-  {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user"}
+  {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified", onlyForSuperManager: false},
+  {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user", onlyForSuperManager: false},
+  {url: "/management/managers", name: "Managers", svg: "pi pi-user-edit", onlyForSuperManager: true}
 ]);
 
 const warehouseLinks = ref([
