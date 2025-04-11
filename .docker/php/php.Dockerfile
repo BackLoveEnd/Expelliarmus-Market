@@ -50,9 +50,10 @@ ENV GID=${GID}
 
 WORKDIR /var/www/expelliarmus/backend
 
-# Install dependencies for PHP (without dev packages)
+# Install dependencies for PHP (без dev-пакетов)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     imagemagick \
+    libpq5 \
     && rm -rf /var/lib/apt/lists/*
 
 # Coppy build files from the builder stage
