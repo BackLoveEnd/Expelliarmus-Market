@@ -24,7 +24,7 @@ class GetSuperManagerCommand extends Command
 
         $this->info('Your test super manager:');
 
-        $this->table(['Email', 'Password'], [[$manager->email, 'superpassword']]);
+        $this->table(['Email', 'Password'], [[$manager->email, 'manager123']]);
 
         $this->newLine();
     }
