@@ -1,4 +1,5 @@
 import api from "@/utils/api.js";
+import managerApi from "@/utils/managerApi.js";
 
 export const CategoriesShopService = {
     async getCategoriesBrowseList(limit = null) {
@@ -10,7 +11,7 @@ export const CategoriesShopService = {
     },
 
     async getRootCategories() {
-        return await api().get('/management/categories/root');
+        return await managerApi().get('/categories/root');
     },
 
     async getOptionAttributesForCategory(categorySlug) {

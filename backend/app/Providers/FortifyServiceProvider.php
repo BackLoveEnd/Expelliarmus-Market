@@ -34,8 +34,11 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ResetPassword::createUrlUsing(function ($notifiable, $token) {
-            return URL::formatHostUsing(fn() => config('app.frontend_name'))
-                ->query('/reset-password/'.$token, ['email' => $notifiable->getEmailForPasswordReset()]);
+            return URL::formatHostUsing(fn() => config('app.frontend_url'))
+                ->query(
+                    '/authentication/help/reset-password/'.$token,
+                    ['email' => $notifiable->getEmailForPasswordReset()],
+                );
         });
 
         Fortify::authenticateUsing(function (Request $request) {

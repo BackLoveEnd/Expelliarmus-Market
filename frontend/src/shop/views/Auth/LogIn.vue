@@ -88,6 +88,34 @@
       </div>
     </div>
   </main>
+  <default-modal :is-active="showModalToReAuth" max-width="max-w-lg">
+    <template #modalHeading>
+      <span>Attention!</span>
+    </template>
+    <template #modalBody>
+      <p class="text-center">
+        You are currently logged in as Manager. Do you want to re-authenticate as customer?
+      </p>
+    </template>
+    <template #modalFooter>
+      <div class="flex justify-between">
+        <button
+            type="button"
+            @click="showModalToReAuth = false"
+            class="px-4 py-2 bg-gray-400 text-gray-800 rounded-md hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+        <button
+            type="button"
+            @click="loginAsCustomer"
+            class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          Yes
+        </button>
+      </div>
+    </template>
+  </default-modal>
 </template>
 
 <script setup>
@@ -103,12 +131,15 @@ import loginToastSettings from "@/components/Default/Toasts/Auth/loginToastSetti
 import {emailRule} from "@/utils/validationRules.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 import {useCartStore} from "@/stores/useCartStore.js";
+import DefaultModal from "@/management/components/Main/DefaultModal.vue";
 
 const {scrollToTop} = useScrolling();
 const router = useRouter();
 const auth = useAuthStore();
 const toast = useToastStore();
 const cartStore = useCartStore();
+
+const showModalToReAuth = ref(false);
 
 const schema = yup.object().shape({
   email: emailRule(yup),
@@ -140,10 +171,18 @@ function login() {
           loginError.value = e.response.data.errors.email[0];
         }
 
+        if (e?.status === 403) {
+          showModalToReAuth.value = true;
+        }
+
         if (e?.status === 429) {
           toast.showToast('Too many requests. Please, wait.', defaultErrorSettings);
         }
       });
+}
+
+function loginAsCustomer() {
+  auth.logout(true).then(() => login());
 }
 
 function clearError() {

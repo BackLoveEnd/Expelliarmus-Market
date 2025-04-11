@@ -13,8 +13,9 @@ Route::prefix('api')->group(function () {
         ->middleware(
             array_filter([
                 'guest',
+                'guest.manager',
                 $limiter ? 'throttle:'.$limiter : null,
-            ])
+            ]),
         )->name('login.store');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])

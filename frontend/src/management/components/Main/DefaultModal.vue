@@ -43,9 +43,7 @@
                   <slot name="modalBody"></slot>
                 </div>
 
-                <div class="flex justify-end">
-                  <slot name="modalFooter"></slot>
-                </div>
+                <slot name="modalFooter"></slot>
               </DialogPanel>
             </TransitionChild>
           </div>
@@ -70,7 +68,7 @@ const props = defineProps({
   },
   spaceBetweenTemplates: {
     type: String,
-    default: "space-y-2"
+    default: "space-y-4"
   }
 });
 

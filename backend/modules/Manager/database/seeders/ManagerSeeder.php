@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Modules\User\Database\Seeders;
+namespace Modules\Manager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\User\Models\Manager;
+use Modules\Manager\Models\Manager;
+use Modules\User\Enums\RolesEnum;
 
 class ManagerSeeder extends Seeder
 {
@@ -14,9 +15,7 @@ class ManagerSeeder extends Seeder
         Manager::query()->truncate();
 
         Manager::factory(4)->create()->each(function (Manager $manager) {
-            $manager->assignRole('manager');
+            $manager->assignRole(RolesEnum::MANAGER);
         });
-
-        Manager::factory()->superManager()->create()->assignRole('manager');
     }
 }

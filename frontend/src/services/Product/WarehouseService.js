@@ -1,19 +1,19 @@
-import api from "@/utils/api.js";
 import {useJsonApiFormatter} from "@/composables/useJsonApiFormatter.js";
+import managerApi from "@/utils/managerApi.js";
 
 const formatter = useJsonApiFormatter();
 
 export const WarehouseService = {
     async searchProduct(searchable) {
-        return await api().get(
-            `/management/warehouse/products?search=${searchable}`,
+        return await managerApi().get(
+            `/warehouse/products?search=${searchable}`,
         );
     },
 
     async getProduct(productId) {
-        return await api()
+        return await managerApi()
             .get(
-                `/management/warehouse/products/${productId}?include=warehouse,category,brand,variations`,
+                `/warehouse/products/${productId}?include=warehouse,category,brand,variations`,
             )
             .then((response) => {
                 const productAttr = response.data.data.attributes;
@@ -43,13 +43,13 @@ export const WarehouseService = {
     },
 
     async getProductsTable(params) {
-        const url = formatter.formatUrl("/management/warehouse/table", params, 'with');
+        const url = formatter.formatUrl("/warehouse/table", params, 'with');
 
-        return await api().get(url);
+        return await managerApi().get(url);
     },
 
     async getDiscountedProduct(productId) {
-        return await api().get(`management/discounts/products/${productId}?include=warehouse,variations,brand,category`)
+        return await managerApi().get(`/discounts/products/${productId}?include=warehouse,variations,brand,category`)
             .then((response) => {
                 const productAttr = response.data.data.attributes;
 
@@ -79,25 +79,25 @@ export const WarehouseService = {
     },
 
     async addDiscount(productId, discountInfo) {
-        return await api().post(
-            `/management/warehouse/products/${productId}/discounts`,
+        return await managerApi().post(
+            `/warehouse/products/${productId}/discounts`,
             formatter.toJsonApi(discountInfo, 'discounts')
         );
     },
 
     async updateDiscount(productId, discountId, discountInfo) {
-        return await api().put(
-            `/management/warehouse/products/${productId}/discounts/${discountId}`,
+        return await managerApi().put(
+            `/warehouse/products/${productId}/discounts/${discountId}`,
             formatter.toJsonApi(discountInfo, 'discounts')
         );
     },
 
     async cancelDiscount(productId, discountId) {
-        return await api().delete(`/management/warehouse/products/${productId}/discounts/${discountId}`);
+        return await managerApi().delete(`/warehouse/products/${productId}/discounts/${discountId}`);
     },
 
     async discountedProducts(params) {
-        const url = formatter.formatUrl("/management/warehouse/products/discounted", params);
-        return await api().get(url);
+        const url = formatter.formatUrl("/warehouse/products/discounted", params);
+        return await managerApi().get(url);
     },
 };

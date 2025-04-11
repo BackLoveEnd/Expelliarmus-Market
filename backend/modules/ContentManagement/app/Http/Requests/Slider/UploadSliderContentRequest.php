@@ -16,7 +16,7 @@ class UploadSliderContentRequest extends FormRequest
             'images.*.order' => ['required', 'integer'],
             'images.*.image' => ['nullable', 'image', 'required_without:images.*.image_url'],
             'images.*.image_url' => ['nullable', 'url', new OnlySpecificStorageUrlRule(url('/storage/content/slider'))],
-            'images.*.content_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_name'))]
+            'images.*.content_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_url'))],
         ];
     }
 
@@ -26,7 +26,7 @@ class UploadSliderContentRequest extends FormRequest
             'image.*.order' => 'image order',
             'images.*.image' => 'image',
             'images.*.image_url' => 'image url',
-            'images.*.content_url' => 'content url'
+            'images.*.content_url' => 'content url',
         ];
     }
 

@@ -1,4 +1,5 @@
 import api from '@/utils/api.js';
+import managerApi from "@/utils/managerApi.js";
 
 export const ContentManagementService = {
     async getAllSlides() {
@@ -16,7 +17,7 @@ export const ContentManagementService = {
             form.append(`images[${index}][content_url]`, slide.content_url);
         });
 
-        return await api().post('/management/content/slider', form, {
+        return await managerApi().post('/content/slider', form, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -24,7 +25,7 @@ export const ContentManagementService = {
     },
 
     async deleteSlide(slideId) {
-        return api().delete(`/management/content/slider/slides/${slideId}`);
+        return managerApi().delete(`/content/slider/slides/${slideId}`);
     },
 
     async getAllArrivals() {
@@ -86,7 +87,7 @@ export const ContentManagementService = {
             if (arrival.content.body) form.append(`arrivals[${index}][content][body]`, arrival.content.body);
         });
 
-        return await api().post('/management/content/new-arrivals', form, {
+        return await managerApi().post('/content/new-arrivals', form, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -94,6 +95,6 @@ export const ContentManagementService = {
     },
 
     async deleteArrivalContent(arrivalId) {
-        return api().delete(`/management/content/new-arrivals/${arrivalId}`);
+        return managerApi().delete(`/content/new-arrivals/${arrivalId}`);
     },
 };

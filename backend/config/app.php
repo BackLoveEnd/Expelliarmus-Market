@@ -15,7 +15,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    'frontend_name' => env('FRONTEND_URL', 'localhost:8000'),
+    'frontend_url' => env('FRONTEND_URL', 'localhost:8000'),
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -102,7 +102,7 @@ return [
 
     'previous_keys' => [
         ...array_filter(
-            explode(',', env('APP_PREVIOUS_KEYS', ''))
+            explode(',', env('APP_PREVIOUS_KEYS', '')),
         ),
     ],
 
