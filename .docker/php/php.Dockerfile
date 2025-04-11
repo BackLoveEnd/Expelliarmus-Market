@@ -11,8 +11,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libicu-dev \
     libpng-dev \
     libzip-dev \
-    libfreetype6-dev \
-    libjpeg-dev \
     g++ \
     curl \
     zip \
@@ -24,11 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql pgsql opcache \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install intl \
-    && docker-php-ext-configure gd --with-freetype=/usr/include/freetype2 --with-jpeg \
-    && docker-php-ext-install gd
+    && docker-php-ext-install intl
 
-# Install imagich
+# Install imagick
 RUN git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick \
     && cd /tmp/imagick && phpize && ./configure && make && make install \
     && docker-php-ext-enable imagick \
@@ -54,9 +50,11 @@ WORKDIR /var/www/expelliarmus/backend
 RUN apt-get update && apt-get install -y --no-install-recommends \
     imagemagick \
     libpq5 \
+    git \
+    unzip \
+    zip \
     && rm -rf /var/lib/apt/lists/*
-
-# Coppy build files from the builder stage
+# Copy build files from the builder stage
 COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 COPY --from=builder /usr/local/include/php/ext /usr/local/include/php/ext
