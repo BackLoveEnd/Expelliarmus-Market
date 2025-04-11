@@ -100,6 +100,13 @@ router.beforeEach(async (to, from, next) => {
         });
     }
 
+    if (to.meta.onlySuperManager) {
+        if (!auth.isSuperManager) {
+            return next({name: "managers-home"});
+        }
+        return next();
+    }
+
     next();
 });
 
