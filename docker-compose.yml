@@ -9,12 +9,13 @@ services:
         - GID=${GID:-1000}
 
     container_name: php
-    user: "0:0" #Test
+    user: "0:0"
     ports:
       - "9000:9000"
     volumes:
       - ./backend:/var/www/expelliarmus/backend
       - .docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./.env:/var/www/expelliarmus/.env
     networks:
       - expelliarmus
     depends_on:

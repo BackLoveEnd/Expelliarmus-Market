@@ -12,6 +12,13 @@ use Modules\Manager\Http\Middleware\GuestManagerMiddleware;
 use Modules\Product\Http\Middleware\AppendIncludeRelationships;
 use Modules\User\Http\Exceptions\AlreadyAuthenticatedException;
 
+$app = new Application(
+    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
+);
+
+// Загружаем переменные окружения из файла .env в корне проекта
+$app->loadEnvironmentFrom(base_path('.env'));
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
