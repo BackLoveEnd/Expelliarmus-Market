@@ -34,8 +34,8 @@ jobs:
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-          DB_HOST: postgres
-          DB_CONNECTION: pgsql
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_CONNECTION: ${{ vars.DB_CONNECTIONT }}
           APP_KEY: ${{ secrets.APP_KEY }}
           
         run: |
