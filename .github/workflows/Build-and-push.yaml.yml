@@ -65,8 +65,9 @@ jobs:
         run: |
             cp .env ./backend/
             ls -a ./backend/
-      #- name: First start app
-      #  run: make first-start-app
+
+      - name: First start app
+        run: make first-start-app
 
       #- name: Start frontend dev server
       #  run: make front-dev
