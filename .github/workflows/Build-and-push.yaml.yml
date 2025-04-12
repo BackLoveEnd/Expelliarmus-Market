@@ -75,8 +75,16 @@ jobs:
       - name: Install NPM Dependencies
         run: docker exec npm npm install
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "⏳ Waiting for PostgreSQL..."
+          for i in {1..12}; do
+            docker exec php php artisan migrate:status && break || sleep 5
+          done
+      
       - name: Run Migrations and Seed Database
         run: docker exec php php artisan migrate:fresh --seed --storage-clean
+      
 
       - name: Create Storage Link
         run: docker exec php php artisan storage:link
