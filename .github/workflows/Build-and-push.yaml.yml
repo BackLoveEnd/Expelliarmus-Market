@@ -50,21 +50,21 @@ jobs:
           
       - name: Copy .env to backend folder
         run: cp .env ./backend/
+             cat .env
+      #- name: First start app
+      #  run: make first-start-app
 
-      - name: First start app
-        run: make first-start-app
+      #- name: Start frontend dev server
+      #  run: make front-dev
 
-      - name: Start frontend dev server
-        run: make front-dev
+      #- name: Build with Docker Compose
+      #  run: docker-compose -f docker-compose.yml build
 
-      - name: Build with Docker Compose
-        run: docker-compose -f docker-compose.yml build
+      #- name: Build Docker image
+      #  run: docker compose -f compose.yaml up -d --build
 
-      - name: Build Docker image
-        run: docker compose -f compose.yaml up -d --build
-
-      - name: Push Docker images to GHCR
-        run: docker compose -f compose.yaml push
+      #- name: Push Docker images to GHCR
+       # run: docker compose -f compose.yaml push
 
     
 
