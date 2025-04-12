@@ -49,8 +49,7 @@ jobs:
           cat .env
           
       - name: Copy .env to backend folder
-        run: cp .env ./backend/
-             cat .env
+        run: ls -a
       #- name: First start app
       #  run: make first-start-app
 
