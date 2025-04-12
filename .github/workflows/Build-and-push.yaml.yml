@@ -66,9 +66,23 @@ jobs:
             cp .env ./backend/
             ls -a ./backend/
 
-      - name: First start app
-        run: make first-start-app
+      - name: Start Docker Compose
+        run: docker compose up -d --build
 
+      - name: Install Composer Dependencies
+        run: docker exec php composer install
+
+      - name: Install NPM Dependencies
+        run: docker exec npm npm install
+
+      - name: Run Migrations and Seed Database
+        run: docker exec php php artisan migrate:fresh --seed --storage-clean
+
+      - name: Create Storage Link
+        run: docker exec php php artisan storage:link
+
+      - name: Generate Application Key
+        run: docker exec php php artisan key:generate
       #- name: Start frontend dev server
       #  run: make front-dev
 
