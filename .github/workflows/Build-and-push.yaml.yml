@@ -27,7 +27,27 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
+      - name: Setting Environment
+        env:
+          PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          
+        run: |
+          cp .env.example .env
 
+          sed -i "s/^DB_DATABASE=.*/DB_DATABASE=${DB_DATABASE}/" .env
+          sed -i "s/^DB_USERNAME=.*/DB_USERNAME=${DB_USERNAME}/" .env
+          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD}/" .env
+          sed -i "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=${REDIS_PASSWORD}/" .env
+          sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
+          
+          echo "Updated .env:"
+          cat .env
+          
       - name: First start app
         run: make first-start-app
 
@@ -43,11 +63,6 @@ jobs:
       - name: Push Docker images to GHCR
         run: docker compose -f compose.yaml push
 
-    env:
-      PROJECT_NAME: ${{ vars.PROJECT_NAME }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_DATABASE: ${{ secrets.DB_DATABASE }}
-      DB_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
-      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+    
 
 
