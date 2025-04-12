@@ -48,9 +48,23 @@ jobs:
           echo "Updated .env:"
           cat .env
           
-      - name: Copy .env to backend folder
-        run: cp .env ./backend/
-             cat .env
+      - name: Debug current directory
+        run: |
+          pwd
+          ls -a
+        
+      - name: Verify .env file exists
+        run: |
+            if [ ! -f .env ]; then
+              echo ".env file does not exist!"
+              exit 1
+            fi
+        
+      - name: Copy .env to backend
+        working-directory: ${{ github.workspace }}
+        run: |
+            cp .env ./backend/
+            ls -a ./backend/
       #- name: First start app
       #  run: make first-start-app
 
