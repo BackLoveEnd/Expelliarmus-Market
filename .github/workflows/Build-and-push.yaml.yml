@@ -44,10 +44,13 @@ jobs:
           sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD}/" .env
           sed -i "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=${REDIS_PASSWORD}/" .env
           sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
-          
+
           echo "Updated .env:"
           cat .env
           
+      - name: Copy .env to backend folder
+        run: cp .env ./backend/
+
       - name: First start app
         run: make first-start-app
 
