@@ -36,7 +36,7 @@ Route::prefix('management')->group(function () {
             Route::get('/trashed', 'getTrashed')->middleware('auth.manager');
 
             Route::post('/{product}/restore', 'restore')
-                ->middleware('auth.restore')
+                ->middleware('auth.manager')
                 ->whereNumber('product')
                 ->withTrashed();
 

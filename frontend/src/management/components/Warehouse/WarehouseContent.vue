@@ -92,7 +92,7 @@ async function moveToTrash() {
       .catch((e) => {
         if (e.response?.status === 403) {
           toast.showToast(e.response?.data?.message, defaultWarningSettings);
-        } else {
+        } else if (e.response?.status > 500) {
           toast.showToast("Unknown error. Please try again or contact us.", defaultErrorSettings);
         }
         isDeleteModalOpen.value = false;

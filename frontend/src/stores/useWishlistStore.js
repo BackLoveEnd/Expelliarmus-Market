@@ -44,7 +44,7 @@ export const useWishlistStore = defineStore('wishlist', {
 
         async addToWishlist(product) {
             await WishlistService.addProductToWishlist(Number(product.id))
-                .then(() => {
+                .then((response) => {
                     ++this.totalItems;
 
                     this.wishlistItems.push({...product});

@@ -34,11 +34,11 @@ const forceDelete = async () => {
           toast.showToast(e.response?.data?.message, defaultErrorSettings);
 
           closeModal();
-        } else {
+        } else if (e.response?.status > 500) {
           toast.showToast("Unknown error. Please, try again or contact us.", defaultErrorSettings);
-
-          closeModal();
         }
+
+        closeModal();
       });
 };
 </script>
