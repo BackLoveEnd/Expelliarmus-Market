@@ -15,7 +15,7 @@ class ManagerSeeder extends Seeder
         Manager::query()->truncate();
 
         Manager::factory(4)->create()->each(function (Manager $manager) {
-            $manager->assignRole(RolesEnum::MANAGER);
+            $manager->assignRole(RolesEnum::MANAGER->toString());
         });
     }
 }

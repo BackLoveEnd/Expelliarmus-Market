@@ -39,6 +39,7 @@ class BrandServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
 
         // Change when using a different storage
         $this->app->singleton(BrandLogoStorageInterface::class, function ($app) {
