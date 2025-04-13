@@ -79,6 +79,7 @@ class CategoryController extends Controller
      * @param  GetCategoryAttributesAction  $action
      *
      * @return JsonResponse
+     * @throws AuthorizationException
      */
     public function getAllAttributesForCategory(
         Category $category,

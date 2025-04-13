@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\ContentManagement\Http\Controllers\NewArrivals;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Modules\ContentManagement\Http\Dto\NewArrivals\ArrivalContentDto;
 use Modules\ContentManagement\Http\Exceptions\FailedToDeleteArrivalException;
@@ -62,10 +63,12 @@ class NewArrivalsContentController extends Controller
      *
      * @param  NewArrival  $arrival
      * @return JsonResponse
-     * @throws FailedToDeleteArrivalException
+     * @throws FailedToDeleteArrivalException|AuthorizationException
      */
     public function deleteArrival(NewArrival $arrival): JsonResponse
     {
+        $this->authorize('manage', NewArrival::class);
+
         $this->service->deleteArrival($arrival);
 
         return response()->json(['message' => 'Arrival deleted successfully.']);
