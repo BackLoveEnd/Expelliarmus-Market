@@ -38,6 +38,7 @@ class ManagerServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
 
         $this->app->singleton(ManagerAuthRepositoryInterface::class, ManagerAuthRepository::class);
     }

@@ -4,9 +4,15 @@ namespace Modules\Manager\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Modules\User\Enums\RolesEnum;
 
 class ManagerRegisterRequest extends FormRequest
 {
+    public function authorize()
+    {
+        return $this->user(RolesEnum::MANAGER->toString())?->isSuperManager();
+    }
+
     public function rules(): array
     {
         return [
