@@ -13,6 +13,7 @@ use Modules\Warehouse\Http\Exceptions\InvalidFilterSortParamException;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductInfoResource;
 use Modules\Warehouse\Http\Resources\Warehouse\WarehouseProductsTableResource;
+use Modules\Warehouse\Models\Warehouse;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
@@ -20,7 +21,9 @@ class WarehouseController extends Controller
 {
     public function __construct(
         private WarehouseProductInfoService $warehouseService,
-    ) {}
+    ) {
+        $this->authorize('view', Warehouse::class);
+    }
 
     /**
      * Search product by article, title, brand. Retrieve only info to show it in autocomplete.

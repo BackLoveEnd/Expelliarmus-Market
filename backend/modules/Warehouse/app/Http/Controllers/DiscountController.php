@@ -13,13 +13,16 @@ use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Http\Requests\AddDiscountToProductRequest;
 use Modules\Warehouse\Http\Requests\EditDiscountRequest;
 use Modules\Warehouse\Models\Discount;
+use Modules\Warehouse\Models\Warehouse;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 
 class DiscountController extends Controller
 {
     public function __construct(
         private ProductDiscountServiceFactory $discountService,
-    ) {}
+    ) {
+        $this->authorize('manage', Warehouse::class);
+    }
 
     /**
      * Add discount to product.

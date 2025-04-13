@@ -46,6 +46,7 @@ class UserPermissionSeeder extends Seeder
             'show_products',
             'show_content_management',
             'show_warehouse',
+            'manage_warehouse',
         ];
 
         $superManagerPermissions = [
