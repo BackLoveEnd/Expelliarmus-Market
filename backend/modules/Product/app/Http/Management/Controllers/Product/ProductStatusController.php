@@ -25,6 +25,8 @@ class ProductStatusController extends Controller
      */
     public function publish(Product $product): JsonResponse
     {
+        $this->authorize('publish', Product::class);
+
         $this->statusService->publish($product);
 
         return response()->json(['message' => 'Product was successfully published.']);
@@ -41,6 +43,8 @@ class ProductStatusController extends Controller
      */
     public function unPublish(Product $product): JsonResponse
     {
+        $this->authorize('publish', Product::class);
+        
         $this->statusService->unPublish($product);
 
         return response()->json(['message' => 'Product was successfully unpublished.']);

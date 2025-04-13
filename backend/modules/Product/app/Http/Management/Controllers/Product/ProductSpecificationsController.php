@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Modules\Category\Models\Category;
 use Modules\Product\Http\Management\Actions\ProductSpecifications\GetSpecificationsByCategoryAction as GetSpecsAction;
 use Modules\Product\Http\Management\Resources\ProductSpecifications\ProductSpecsResource;
+use Modules\Product\Models\Product;
 
 class ProductSpecificationsController extends Controller
 {
@@ -21,9 +23,12 @@ class ProductSpecificationsController extends Controller
      * @param  Category  $category
      * @param  GetSpecsAction  $action
      * @return ProductSpecsResource|JsonResponse
+     * @throws AuthorizationException
      */
     public function getSpecsByCategory(Category $category, GetSpecsAction $action): ProductSpecsResource|JsonResponse
     {
+        $this->authorize('view', Product::class);
+
         $specsViewDto = $action->handle($category);
 
         if ($specsViewDto->isEmpty()) {

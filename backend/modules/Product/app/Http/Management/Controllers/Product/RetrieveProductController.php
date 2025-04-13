@@ -6,6 +6,7 @@ namespace Modules\Product\Http\Management\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use App\Services\Cache\CacheService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Modules\Category\Models\Category;
 use Modules\Product\Http\Management\Actions\Product\Retrieve\GetPreviewProductInformationAction;
@@ -17,6 +18,7 @@ use Modules\Product\Http\Management\Resources\Product\ProductsPreviewByCategory 
 use Modules\Product\Http\Management\Resources\Product\ProductsPreviewByRootCategories;
 use Modules\Product\Http\Management\Resources\Product\ProductStaffInfoResource;
 use Modules\Product\Http\Management\Support\ProductSlug;
+use Modules\Product\Models\Product;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveProductController extends Controller
@@ -32,9 +34,12 @@ class RetrieveProductController extends Controller
      *
      * @param  RootCategoryProducts  $action
      * @return JsonApiResourceCollection
+     * @throws AuthorizationException
      */
     public function getProductsByRootCategories(RootCategoryProducts $action): JsonApiResourceCollection
     {
+        $this->authorize('view', Product::class);
+
         return ProductsPreviewByRootCategories::collection($action->handle());
     }
 
@@ -47,9 +52,12 @@ class RetrieveProductController extends Controller
      * @param  Category  $category
      * @param  CategoryProducts  $action
      * @return JsonResponse|Resource
+     * @throws AuthorizationException
      */
     public function getProductsByCategory(Category $category, CategoryProducts $action): JsonResponse|Resource
     {
+        $this->authorize('view', Product::class);
+
         $productsByCategory = $action->handle($category);
 
         if ($productsByCategory->products->isEmpty()) {
@@ -67,9 +75,12 @@ class RetrieveProductController extends Controller
      * @param  ProductSlug  $productSlug
      * @param  GetPreviewProductInformationAction  $action
      * @return ProductPreviewResource
+     * @throws AuthorizationException
      */
     public function show(ProductSlug $productSlug, GetPreviewProductInformationAction $action): ProductPreviewResource
     {
+        $this->authorize('view', Product::class);
+
         $product = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(
                 configKey: config('product.cache.product-preview'),
@@ -92,9 +103,12 @@ class RetrieveProductController extends Controller
      * @param  ProductSlug  $productBind
      * @param  ProductStaffInfo  $action
      * @return ProductStaffInfoResource
+     * @throws AuthorizationException
      */
     public function getProductStaffInfo(ProductSlug $productBind, ProductStaffInfo $action): ProductStaffInfoResource
     {
+        $this->authorize('view', Product::class);
+
         return ProductStaffInfoResource::make($action->handle($productBind->getProductId()));
     }
 }

@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
+use Modules\Product\Models\Product;
 use Modules\Product\Rules\ProductImagesExistsRule;
 use Modules\Product\Rules\ProductImagesStorageUrlRule;
+use Modules\User\Enums\RolesEnum;
 
 class ProductEditImageRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', Product::class);
+    }
+
     public function rules(): array
     {
         return [
@@ -28,7 +34,7 @@ class ProductEditImageRequest extends FormRequest
             'preview_image' => 'preview image',
             'images' => 'images set',
             'images.*.image' => 'image',
-            'images.*.order' => 'image order'
+            'images.*.order' => 'image order',
         ];
     }
 }

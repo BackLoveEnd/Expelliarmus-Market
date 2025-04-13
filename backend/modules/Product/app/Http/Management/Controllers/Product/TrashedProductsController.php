@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Product\Http\Management\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Product\Http\Management\Actions\Product\Edit\MoveProductToTrashAction;
@@ -29,10 +30,12 @@ class TrashedProductsController extends Controller
      *
      * @param  Request  $request
      * @return JsonApiResourceCollection|JsonResponse
-     * @throws InvalidFilterSortParamException
+     * @throws InvalidFilterSortParamException|AuthorizationException
      */
     public function getTrashed(Request $request): JsonApiResourceCollection|JsonResponse
     {
+        $this->authorize('view', Product::class);
+
         $products = $this->trashedService->getAll();
 
         if ($products->isEmpty()) {
@@ -63,9 +66,12 @@ class TrashedProductsController extends Controller
      * @param  MoveProductToTrashAction  $action
      * @return JsonResponse
      * @throws CannotTrashPublishedProductException
+     * @throws AuthorizationException
      */
     public function moveToTrash(Product $product, MoveProductToTrashAction $action): JsonResponse
     {
+        $this->authorize('lightDelete', Product::class);
+
         if ($product->trashed() || $product->status->is(Status::TRASHED)) {
             return response()->json(['message' => 'Product is already in trash.'], 409);
         }
@@ -83,9 +89,12 @@ class TrashedProductsController extends Controller
      * @param  Product  $product
      * @return JsonResponse
      * @throws CannotRestoreNotTrashedProductException
+     * @throws AuthorizationException
      */
     public function restore(Product $product): JsonResponse
     {
+        $this->authorize('manage', Product::class);
+
         $this->trashedService->restore($product);
 
         return response()->json([
@@ -101,9 +110,12 @@ class TrashedProductsController extends Controller
      * @param  Product  $product
      * @return JsonResponse
      * @throws CannotDeleteNotTrashedProduct
+     * @throws AuthorizationException
      */
     public function deleteForever(Product $product): JsonResponse
     {
+        $this->authorize('forceDelete', Product::class);
+
         $this->trashedService->deleteForever($product);
 
         return response()->json(['message' => 'Product was successfully deleted.']);

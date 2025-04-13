@@ -9,8 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Order\Cart\Dto\CartProductsQuantityDto;
 use Modules\Order\Cart\Dto\ProductCartDto;
-use Modules\Order\Cart\Exceptions\HasNotEnoughSuppliesForUpdateException;
-use Modules\Order\Cart\Exceptions\ProductCannotBeAddedToCartException;
 use Modules\Order\Cart\Http\Requests\AddToCartRequest;
 use Modules\Order\Cart\Http\Requests\UpdateProductsQuantityRequest;
 use Modules\Order\Cart\Http\Resources\UserCartResource;
@@ -49,7 +47,6 @@ class CartController extends Controller
      *
      * @param  AddToCartRequest  $request
      * @return JsonResponse
-     * @throws ProductCannotBeAddedToCartException
      */
     public function addProductToCart(AddToCartRequest $request): JsonResponse
     {
@@ -68,7 +65,6 @@ class CartController extends Controller
      *
      * @param  UpdateProductsQuantityRequest  $request
      * @return JsonResponse
-     * @throws HasNotEnoughSuppliesForUpdateException
      */
     public function updateProductsQuantity(UpdateProductsQuantityRequest $request): JsonResponse
     {

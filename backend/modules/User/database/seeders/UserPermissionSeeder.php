@@ -35,8 +35,7 @@ class UserPermissionSeeder extends Seeder
         $managerPermissions = [
             'manage_categories',
             'manage_brands',
-            'create_product',
-            'edit_product',
+            'manage_product',
             'publish_product',
             'trash_product',
             'delete_product',
@@ -44,10 +43,9 @@ class UserPermissionSeeder extends Seeder
             'show_users',
             'show_categories',
             'show_brands',
-            'show_product_list',
+            'show_products',
             'show_content_management',
             'show_warehouse',
-            'show_product_trash',
         ];
 
         $superManagerPermissions = [
