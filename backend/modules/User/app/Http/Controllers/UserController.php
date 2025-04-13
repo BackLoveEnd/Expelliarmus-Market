@@ -4,10 +4,12 @@ namespace Modules\User\Http\Controllers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Manager\Http\Resources\ManagerResource;
+use Modules\Manager\Models\Manager;
 use Modules\User\Http\Actions\RegularUsers\GetRegularCustomersAction;
 use Modules\User\Http\Resources\UserResource;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
@@ -61,9 +63,12 @@ class UserController extends Controller
      * @param  Request  $request
      * @param  GetRegularCustomersAction  $action
      * @return JsonApiResourceCollection
+     * @throws AuthorizationException
      */
     public function getRegularCustomers(Request $request, GetRegularCustomersAction $action): JsonApiResourceCollection
     {
+        $this->authorize('viewUsers', Manager::class);
+
         $users = $action->handle(
             limit: (int)$request->query('limit', config('user.retrieve.users-table')),
             offset: (int)$request->query('offset'),
