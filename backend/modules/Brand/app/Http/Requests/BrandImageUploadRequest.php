@@ -12,7 +12,7 @@ class BrandImageUploadRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user(RolesEnum::MANAGER)?->can('view', Brand::class);
+        return $this->user(RolesEnum::MANAGER->toString())?->can('view', Brand::class);
     }
 
     public function rules(): array

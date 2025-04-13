@@ -15,7 +15,7 @@ class AuthManagerMiddleware
         }
 
         if ($onlyFor === 'super-manager' && ! $request->user('manager')?->isSuperManager()) {
-            return response()->json(['message' => 'Unauthorized.'], 403);
+            return response()->json(['message' => 'Access denied. Only for main manager.'], 403);
         }
 
         Auth::shouldUse('manager');

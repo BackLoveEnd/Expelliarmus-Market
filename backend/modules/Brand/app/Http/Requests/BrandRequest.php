@@ -11,7 +11,7 @@ class BrandRequest extends JsonApiFormRequest
 {
     public function authorize(): bool
     {
-        return $this->user(RolesEnum::MANAGER)?->can('manage', Brand::class);
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', Brand::class);
     }
 
     public function jsonApiAttributeRules(): array

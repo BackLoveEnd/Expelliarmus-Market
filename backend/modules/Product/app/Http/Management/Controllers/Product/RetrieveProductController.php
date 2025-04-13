@@ -63,6 +63,7 @@ class RetrieveProductController extends Controller
      * Show product data on preview page.
      *
      * Usage place - Admin section.
+     *
      * @param  ProductSlug  $productSlug
      * @param  GetPreviewProductInformationAction  $action
      * @return ProductPreviewResource
