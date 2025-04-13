@@ -62,7 +62,7 @@ class UserPermissionSeeder extends Seeder
         ];
 
         foreach ($managersPermissions as $permission) {
-            Permission::query()->create(['name' => $permission, 'guard_name' => RolesEnum::MANAGER->value]);
+            Permission::query()->create(['name' => $permission, 'guard_name' => RolesEnum::MANAGER->toString()]);
         }
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -73,7 +73,7 @@ class UserPermissionSeeder extends Seeder
         $guestUser = Role::create(['name' => 'guest']);
         $guestUser->givePermissionTo($guestUser);
 
-        $manager = Role::create(['name' => 'manager', 'guard_name' => RolesEnum::MANAGER->value]);
+        $manager = Role::create(['name' => 'manager', 'guard_name' => RolesEnum::MANAGER->toString()]);
         $manager->givePermissionTo($managerPermissions);
     }
 }

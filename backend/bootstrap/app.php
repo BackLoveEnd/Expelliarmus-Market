@@ -3,6 +3,7 @@
 use App\Console\Commands\GetSuperManagerCommand;
 use App\Helpers\BootstrapExceptionsHelper;
 use App\Http\Middleware\AcceptApplicationJsonMiddleware;
+use App\Http\Middleware\RoleAccessMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'include' => AppendIncludeRelationships::class,
             'auth.manager' => AuthManagerMiddleware::class,
             'guest.manager' => GuestManagerMiddleware::class,
+            'role' => RoleAccessMiddleware::class,
         ]);
 
         $middleware->redirectUsersTo(function (Request $request) {
