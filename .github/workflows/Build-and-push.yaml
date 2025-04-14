@@ -105,8 +105,7 @@ jobs:
       #  run: docker exec php php artisan key:generate
       
       - name: First-start-app
-        run: 
-          sudo make first-start-app
+        run: make first-start-app
 
       #- name: Start frontend dev server
       #  run: docker exec -i npm npm run dev
