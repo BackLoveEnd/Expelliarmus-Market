@@ -14,10 +14,16 @@ use Modules\Warehouse\Http\Actions\SearchForProductToAddDiscount;
 use Modules\Warehouse\Http\Resources\Discount\DiscountedProductResource;
 use Modules\Warehouse\Http\Resources\Discount\ProductWarehouseDiscountsResource;
 use Modules\Warehouse\Http\Resources\Warehouse\SearchedProductsSetResource;
+use Modules\Warehouse\Models\Warehouse;
 use TiMacDonald\JsonApi\JsonApiResourceCollection as Resource;
 
 class RetrieveDiscountController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorize('view', Warehouse::class);
+    }
+
     /**
      * Search for products that are available for a discount.
      *

@@ -35,8 +35,7 @@ class UserPermissionSeeder extends Seeder
         $managerPermissions = [
             'manage_categories',
             'manage_brands',
-            'create_product',
-            'edit_product',
+            'manage_product',
             'publish_product',
             'trash_product',
             'delete_product',
@@ -44,10 +43,10 @@ class UserPermissionSeeder extends Seeder
             'show_users',
             'show_categories',
             'show_brands',
-            'show_product_list',
+            'show_products',
             'show_content_management',
             'show_warehouse',
-            'show_product_trash',
+            'manage_warehouse',
         ];
 
         $superManagerPermissions = [
@@ -62,7 +61,7 @@ class UserPermissionSeeder extends Seeder
         ];
 
         foreach ($managersPermissions as $permission) {
-            Permission::query()->create(['name' => $permission, 'guard_name' => RolesEnum::MANAGER->value]);
+            Permission::query()->create(['name' => $permission, 'guard_name' => RolesEnum::MANAGER->toString()]);
         }
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -73,7 +72,7 @@ class UserPermissionSeeder extends Seeder
         $guestUser = Role::create(['name' => 'guest']);
         $guestUser->givePermissionTo($guestUser);
 
-        $manager = Role::create(['name' => 'manager', 'guard_name' => RolesEnum::MANAGER->value]);
+        $manager = Role::create(['name' => 'manager', 'guard_name' => RolesEnum::MANAGER->toString()]);
         $manager->givePermissionTo($managerPermissions);
     }
 }

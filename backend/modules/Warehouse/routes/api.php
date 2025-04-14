@@ -7,12 +7,12 @@ use Modules\Warehouse\Http\Controllers\WarehouseController;
 use Modules\Warehouse\Models\ProductAttribute;
 
 Route::prefix('management')->group(function () {
-    Route::get('/available-product-attributes', function () {
+    Route::get('/available-product-attributes', static function () {
         return ProductAttribute::query()->get(['id', 'name', 'type']);
     });
 
     Route::prefix('warehouse')->group(function () {
-        Route::prefix('products')->group(function () {
+        Route::prefix('products')->middleware('auth.manager')->group(function () {
             Route::get('/', [WarehouseController::class, 'searchProductBySearchable'])
                 ->withoutMiddleware(['throttle:api']);
 
@@ -32,10 +32,11 @@ Route::prefix('management')->group(function () {
         });
 
         Route::get('/table', [WarehouseController::class, 'getProductPaginated'])
+            ->middleware('auth.manager')
             ->withoutMiddleware(['throttle:api']);
     });
 
-    Route::prefix('discounts')->group(function () {
+    Route::prefix('discounts')->middleware('auth.manager')->group(function () {
         Route::controller(RetrieveDiscountController::class)->group(function () {
             Route::get('/products-available-for-discount', 'search');
 

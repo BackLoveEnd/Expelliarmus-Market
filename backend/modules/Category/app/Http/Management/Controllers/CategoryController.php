@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Category\Http\Management\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Modules\Category\Http\Management\Actions\DeleteCategoryAttributeAction as DeleteAction;
@@ -53,9 +54,12 @@ class CategoryController extends Controller
      * Usage place - Admin section.
      *
      * @return JsonApiResourceCollection|JsonResponse
+     * @throws AuthorizationException
      */
     public function rootCategories(): JsonApiResourceCollection|JsonResponse
     {
+        $this->authorize('view', Category::class);
+
         $categories = Category::onlyRoot();
 
         if ($categories->isEmpty()) {
@@ -75,11 +79,14 @@ class CategoryController extends Controller
      * @param  GetCategoryAttributesAction  $action
      *
      * @return JsonResponse
+     * @throws AuthorizationException
      */
     public function getAllAttributesForCategory(
         Category $category,
-        GetCategoryAttributesAction $action
+        GetCategoryAttributesAction $action,
     ): JsonResponse {
+        $this->authorize('view', Category::class);
+
         $attributes = $action->handle($category);
 
         if ($attributes->isEmpty()) {
@@ -103,7 +110,7 @@ class CategoryController extends Controller
      */
     public function create(
         CreateCategoryRequest $request,
-        SaveCategoryWithAttributesAction $action
+        SaveCategoryWithAttributesAction $action,
     ): JsonResponse {
         $categoryAttributes = CreateCategoryDto::fromRequest($request);
 
@@ -147,10 +154,12 @@ class CategoryController extends Controller
      * @param  CategoryIconService  $categoryIconService
      *
      * @return JsonResponse
-     * @throws FailedToDeleteCategoryException
+     * @throws FailedToDeleteCategoryException|AuthorizationException
      */
     public function delete(Category $category, CategoryIconService $categoryIconService): JsonResponse
     {
+        $this->authorize('manage', Category::class);
+
         if ($category->hasProducts()) {
             throw FailedToDeleteCategoryException::categoryHasProducts();
         }
@@ -180,7 +189,7 @@ class CategoryController extends Controller
     public function deleteAttribute(
         Category $category,
         Attribute $attribute,
-        DeleteAction $action
+        DeleteAction $action,
     ): JsonResponse {
         $action->handle($category, $attribute);
 

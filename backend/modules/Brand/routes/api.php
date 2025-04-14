@@ -6,7 +6,7 @@ use Modules\Brand\Http\Controllers\ManipulationBrandController;
 use Modules\Brand\Http\Controllers\RelatedProductBrandsController;
 use Modules\Brand\Http\Controllers\RetrieveBrandsController;
 
-Route::prefix('management/brands')->group(function () {
+Route::prefix('management/brands')->middleware(['auth.manager', 'role:manager'])->group(function () {
     Route::get('/', [RetrieveBrandsController::class, 'getPaginated'])->withoutMiddleware('throttle:api');
 
     Route::get('/{brandId}', [RetrieveBrandsController::class, 'getBrandInfo'])->withoutMiddleware('throttle:api');

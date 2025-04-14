@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Brand\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Modules\Brand\Http\Exceptions\FailedToDeleteBrandException;
 use Modules\Brand\Http\Requests\BrandRequest;
@@ -25,7 +26,7 @@ class ManipulationBrandController extends Controller
     {
         $brand = Brand::query()->create([
             'name' => $request->name,
-            'description' => $request->description
+            'description' => $request->description,
         ]);
 
         return new BrandResource($brand);
@@ -48,8 +49,8 @@ class ManipulationBrandController extends Controller
             return response()->json([
                 'message' => 'Brand was updated.',
                 'data' => [
-                    'slug' => $brand->slug
-                ]
+                    'slug' => $brand->slug,
+                ],
             ]);
         }
 
@@ -63,10 +64,12 @@ class ManipulationBrandController extends Controller
      *
      * @param  Brand  $brand
      * @return JsonResponse
-     * @throws FailedToDeleteBrandException
+     * @throws FailedToDeleteBrandException|AuthorizationException
      */
     public function delete(Brand $brand): JsonResponse
     {
+        $this->authorize('manage', Brand::class);
+
         if ($brand->hasProducts()) {
             throw FailedToDeleteBrandException::brandHasProducts();
         }

@@ -18,10 +18,10 @@ class RelatedProductBrandsController extends Controller
      *
      * Usage place - Shop.
      *
-     * @param  \Modules\Category\Models\Category  $category
-     * @param  \Modules\Brand\Http\Actions\GetProductBrandsByCategoryAction  $action
+     * @param  string|int  $category
+     * @param  BrandsProductsAction  $action
      *
-     * @return \TiMacDonald\JsonApi\JsonApiResourceCollection|\Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getProductBrandsByCategory(
         string|int $category,

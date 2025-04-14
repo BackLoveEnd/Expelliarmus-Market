@@ -3,12 +3,19 @@
 namespace Modules\ContentManagement\Http\Requests\NewArrivals;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\ContentManagement\Models\NewArrival;
 use Modules\ContentManagement\Rules\NewArrivalsExistsRule;
 use Modules\ContentManagement\Rules\OnlySpecificDomainRule;
 use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
+use Modules\User\Enums\RolesEnum;
 
 class NewArrivalsUploadRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', NewArrival::class);
+    }
+
     public function rules(): array
     {
         return [
@@ -39,10 +46,5 @@ class NewArrivalsUploadRequest extends FormRequest
             'arrivals.*.content.*.body' => 'body',
             'arrivals.*.content.color' => 'color',
         ];
-    }
-
-    public function authorize(): bool
-    {
-        return true;
     }
 }

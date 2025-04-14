@@ -7,6 +7,7 @@ namespace App\Helpers;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -14,9 +15,8 @@ use Throwable;
 final readonly class BootstrapExceptionsHelper
 {
     public function __construct(
-        private Exceptions $exceptions
-    ) {
-    }
+        private Exceptions $exceptions,
+    ) {}
 
     public static function init(Exceptions $exceptions): BootstrapExceptionsHelper
     {
@@ -35,6 +35,7 @@ final readonly class BootstrapExceptionsHelper
         $this->renderNotFound();
         $this->renderMethodNotAllowed();
         $this->renderUnhandleDatabaseException();
+        $this->renderAccessDenied();
 
         return $this;
     }
@@ -55,8 +56,19 @@ final readonly class BootstrapExceptionsHelper
         $this->exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'message' => 'Record not found.'
+                    'message' => 'Record not found.',
                 ], 404);
+            }
+        });
+    }
+
+    private function renderAccessDenied(): void
+    {
+        $this->exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ], 403);
             }
         });
     }
@@ -65,7 +77,7 @@ final readonly class BootstrapExceptionsHelper
     {
         $this->exceptions->render(function (MethodNotAllowedHttpException $e, Request $request) {
             return response()->json([
-                'message' => 'Method not allowed'
+                'message' => 'Method not allowed',
             ], 405);
         });
     }
@@ -75,7 +87,7 @@ final readonly class BootstrapExceptionsHelper
         $this->exceptions->render(function (QueryException $e, Request $request) {
             if (! app()->environment('local')) {
                 return response()->json([
-                    'message' => 'Database internal error. Please contact us.'
+                    'message' => 'Database internal error. Please contact us.',
                 ], 500);
             }
         });

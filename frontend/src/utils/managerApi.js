@@ -1,6 +1,8 @@
 import axios from "axios";
 import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useRouter} from "vue-router";
+import {useToastStore} from "@/stores/useToastStore.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 
 const router = useRouter();
 
@@ -44,7 +46,8 @@ export default function managerApi() {
                 return Promise.reject(error);
             }
 
-            if (error.request?.status === 403) {
+            if (error.response?.status === 403) {
+                useToastStore().showToast(error?.response?.data?.message, defaultErrorSettings);
             }
 
             if ([401, 419].includes(error.request?.status)) {

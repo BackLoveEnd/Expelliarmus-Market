@@ -2,9 +2,9 @@ import axios from "axios";
 import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useRouter} from "vue-router";
 
-export default function api() {
-    const router = useRouter();
+const router = useRouter();
 
+export default function api() {
     const api = axios.create({
         baseURL: `/api`,
         withCredentials: true,
@@ -45,10 +45,6 @@ export default function api() {
             if ([401, 419].includes(error.response?.status)) {
                 if (authStore.isManager || authStore.isSuperManager) {
                     return Promise.reject(error);
-                }
-
-                if (authStore.isSessionVerified === false) {
-                    router.push({name: "login"});
                 }
 
                 authStore.forgetUser();

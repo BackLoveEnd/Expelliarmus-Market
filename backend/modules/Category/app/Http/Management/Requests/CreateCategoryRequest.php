@@ -4,16 +4,17 @@ namespace Modules\Category\Http\Management\Requests;
 
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Validation\Rule;
+use Modules\Category\Models\Category;
 use Modules\Category\Rules\CreateSubCategoryRule;
 use Modules\Category\Rules\UniqueRootCategoryRule;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CreateCategoryRequest extends JsonApiRelationsFormRequest
 {
-
     public function authorize(): bool
     {
-        return true;
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', Category::class);
     }
 
     public function jsonApiAttributeRules(): array

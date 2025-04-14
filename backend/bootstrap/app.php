@@ -3,6 +3,7 @@
 use App\Console\Commands\GetSuperManagerCommand;
 use App\Helpers\BootstrapExceptionsHelper;
 use App\Http\Middleware\AcceptApplicationJsonMiddleware;
+use App\Http\Middleware\RoleAccessMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,6 +12,7 @@ use Modules\Manager\Http\Middleware\AuthManagerMiddleware;
 use Modules\Manager\Http\Middleware\GuestManagerMiddleware;
 use Modules\Product\Http\Middleware\AppendIncludeRelationships;
 use Modules\User\Http\Exceptions\AlreadyAuthenticatedException;
+use Modules\User\Http\Middleware\GuestOrUserMiddleware;
 
 $app = new Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
@@ -36,6 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'include' => AppendIncludeRelationships::class,
             'auth.manager' => AuthManagerMiddleware::class,
             'guest.manager' => GuestManagerMiddleware::class,
+            'role' => RoleAccessMiddleware::class,
+            'customer' => GuestOrUserMiddleware::class,
         ]);
 
         $middleware->redirectUsersTo(function (Request $request) {

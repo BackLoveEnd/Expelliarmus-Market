@@ -23,7 +23,7 @@ class ManagerAuthRepository implements ManagerAuthRepositoryInterface
                 'email' => $managerRegisterDto->email,
             ]);
 
-            $manager->assignRole(RolesEnum::MANAGER);
+            $manager->assignRole(RolesEnum::MANAGER->toString());
 
             return $manager;
         });

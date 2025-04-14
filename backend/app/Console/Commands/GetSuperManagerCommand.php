@@ -36,7 +36,7 @@ class GetSuperManagerCommand extends Command
                 return Manager::query()->where('is_super_manager', true)->first();
             }
 
-            return Manager::factory()->superManager()->create()->assignRole(RolesEnum::MANAGER);
+            return Manager::factory()->superManager()->create()->assignRole(RolesEnum::MANAGER->toString());
         });
     }
 }
