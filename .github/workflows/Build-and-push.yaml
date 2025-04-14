@@ -69,8 +69,15 @@ jobs:
         run: |
             cp .env ./backend/
             ls -a ./backend/
-            cp .env ./frontend/
-            ls -a ./frontend/
+            
+      - name: Setting frontend env
+        run : |
+          cp .env.front.example .env
+          echo "Updated .env:"
+          cat .env
+          cp .env ./frontend/
+          ls -a ./frontend/
+
       #- name: Start Docker Compose
       #  run: docker compose up -d --build
 
@@ -101,8 +108,7 @@ jobs:
         run: make first-start-app
 
       - name: Start frontend dev server
-        run: make front-dev
-      
+        run: docker exec -i npm npm run dev
       #- name: Build with Docker Compose
       #  run: docker-compose -f docker-compose.yml build
 
