@@ -73,9 +73,9 @@ jobs:
       - name: Setting frontend env
         run : |
           cp .env.front.example ./frontend/
-          cp .env.front.example .env
+          mv ./frontend/.env.front.example ./frontend/.env
           echo "Updated .env:"
-          cat .env
+          cat ./frontend/.env
           ls -a ./frontend/
 
       #- name: Start Docker Compose
