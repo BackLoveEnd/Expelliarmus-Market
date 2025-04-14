@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Feature;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Modules\Brand\Database\Seeders\BrandDatabaseSeeder;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
+use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
+use Modules\User\Database\Seeders\UserPermissionSeeder;
+use Modules\User\Enums\RolesEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class BrandManipulationTest extends TestCase
@@ -20,20 +21,24 @@ class BrandManipulationTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([BrandDatabaseSeeder::class]);
+        $this->seed([BrandDatabaseSeeder::class, UserPermissionSeeder::class]);
     }
 
     public function test_can_create_brand(): void
     {
-        $response = $this->postJson('api/management/brands', [
-            'data' => [
-                'type' => 'brands',
-                'attributes' => [
-                    'name' => 'Test Brand 1',
-                    'description' => null
-                ]
-            ]
-        ]);
+        $manager = Manager::factory()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson('api/management/brands', [
+                'data' => [
+                    'type' => 'brands',
+                    'attributes' => [
+                        'name' => 'Test Brand 1',
+                        'description' => null,
+                    ],
+                ],
+            ]);
 
         $response->assertJsonPath('data.attributes.brand_name', 'Test Brand 1');
     }
@@ -42,15 +47,19 @@ class BrandManipulationTest extends TestCase
     {
         $brand = Brand::query()->first();
 
-        $response = $this->putJson("api/management/brands/$brand->id", [
-            'data' => [
-                'type' => 'brands',
-                'attributes' => [
-                    'name' => 'Test Brand 2',
-                    'description' => null
-                ]
-            ]
-        ]);
+        $manager = Manager::factory()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->putJson("api/management/brands/$brand->id", [
+                'data' => [
+                    'type' => 'brands',
+                    'attributes' => [
+                        'name' => 'Test Brand 2',
+                        'description' => null,
+                    ],
+                ],
+            ]);
 
         $brand->refresh();
 
@@ -61,16 +70,20 @@ class BrandManipulationTest extends TestCase
     {
         $brand = Brand::query()->first();
 
-        $this->delete("api/management/brands/{$brand->id}");
+        $manager = Manager::factory()->create();
+
+        $this->actingAs($manager, RolesEnum::MANAGER->toString())->delete("api/management/brands/{$brand->id}");
 
         $this->assertDatabaseMissing('brands', [
-            'id' => $brand->id
+            'id' => $brand->id,
         ]);
     }
 
     public function test_throw_error_if_brand_has_products(): void
     {
         $brand = Brand::query()->create(['name' => 'Test Brand 3']);
+
+        $manager = Manager::factory()->create();
 
         $product = Product::query()->create([
             'title' => 'test123',
@@ -81,9 +94,12 @@ class BrandManipulationTest extends TestCase
             'product_article' => 'test123',
         ]);
 
-        $response = $this->delete("api/management/brands/{$brand->id}");
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->delete("api/management/brands/{$brand->id}");
 
-        $response->assertStatus(Response::HTTP_CONFLICT)
+        $response
+            ->assertStatus(Response::HTTP_CONFLICT)
             ->assertExactJson(['message' => 'Failed to delete brand: brand has products.']);
     }
 }
