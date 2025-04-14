@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\ContentManagement\Http\Controllers\NewArrivals;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Modules\ContentManagement\Http\Dto\NewArrivals\ArrivalContentDto;
 use Modules\ContentManagement\Http\Exceptions\FailedToDeleteArrivalException;
@@ -17,9 +18,8 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 class NewArrivalsContentController extends Controller
 {
     public function __construct(
-        private NewArrivalsContentService $service
-    ) {
-    }
+        private NewArrivalsContentService $service,
+    ) {}
 
     /**
      * Upload new arrivals.
@@ -32,7 +32,7 @@ class NewArrivalsContentController extends Controller
     public function uploadNewArrivals(NewArrivalsUploadRequest $request): JsonResponse
     {
         $this->service->saveArrivals(
-            ArrivalContentDto::collection($request->arrivals)
+            ArrivalContentDto::collection($request->arrivals),
         );
 
         return response()->json(['message' => 'New arrivals uploaded successfully.']);
@@ -43,11 +43,17 @@ class NewArrivalsContentController extends Controller
      *
      * Usage - Admin section.
      *
-     * @return JsonApiResourceCollection
+     * @return JsonApiResourceCollection|JsonResponse
      */
-    public function getNewArrivals(): JsonApiResourceCollection
+    public function getNewArrivals(): JsonApiResourceCollection|JsonResponse
     {
-        return NewArrivalsContentResource::collection($this->service->getArrivals());
+        $arrivals = $this->service->getArrivals();
+
+        if ($arrivals->isEmpty()) {
+            return response()->json(['message' => 'No arrivals found.'], 404);
+        }
+
+        return NewArrivalsContentResource::collection($arrivals);
     }
 
     /**
@@ -57,10 +63,12 @@ class NewArrivalsContentController extends Controller
      *
      * @param  NewArrival  $arrival
      * @return JsonResponse
-     * @throws FailedToDeleteArrivalException
+     * @throws FailedToDeleteArrivalException|AuthorizationException
      */
     public function deleteArrival(NewArrival $arrival): JsonResponse
     {
+        $this->authorize('manage', NewArrival::class);
+
         $this->service->deleteArrival($arrival);
 
         return response()->json(['message' => 'Arrival deleted successfully.']);

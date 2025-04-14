@@ -44,6 +44,8 @@ class WarehouseServiceProvider extends ServiceProvider
 
         $this->app->register(RouteServiceProvider::class);
 
+        $this->app->register(AuthServiceProvider::class);
+
         $this->app
             ->when(DiscountController::class)
             ->needs(ProductDiscountServiceFactory::class)

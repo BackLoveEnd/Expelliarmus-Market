@@ -1,7 +1,7 @@
 <script setup>
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import {computed, ref} from "vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import ProductCard from "@/components/Card/ProductCard.vue";
 
 const products = ref([]);
@@ -11,7 +11,7 @@ const productsCollapsed = computed(() => {
 });
 
 async function getSuggestions() {
-  await ProductsShopService.getExploredProducts()
+  await ProductsShopService.getSuggestions()
       .then((response) => {
         products.value = response?.data?.data;
       })

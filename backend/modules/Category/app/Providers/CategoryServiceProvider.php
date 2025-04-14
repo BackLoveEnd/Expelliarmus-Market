@@ -36,6 +36,7 @@ class CategoryServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
     }
 
     /**
@@ -113,7 +114,7 @@ class CategoryServiceProvider extends ServiceProvider
 
         $componentNamespace = $this->module_namespace(
             $this->name,
-            $this->app_path(config('modules.paths.generator.component-class.path'))
+            $this->app_path(config('modules.paths.generator.component-class.path')),
         );
         Blade::componentNamespace($componentNamespace, $this->nameLower);
     }

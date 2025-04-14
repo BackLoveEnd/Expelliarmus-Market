@@ -28,10 +28,13 @@ class ManipulationProductController extends Controller
      *
      * @param  ProductCreateRequest  $request
      * @param  CreateProductFactoryAction  $factory
+     *
      * @return JsonResponse
      */
-    public function store(ProductCreateRequest $request, CreateProductFactoryAction $factory): JsonResponse
-    {
+    public function store(
+        ProductCreateRequest $request,
+        CreateProductFactoryAction $factory
+    ): JsonResponse {
         $product = $factory->createAction($request)->handle(
             new CreateProduct(),
             new CreateProductInWarehouse(),
@@ -54,10 +57,14 @@ class ManipulationProductController extends Controller
      * @param  ProductEditRequest  $request
      * @param  Product  $product
      * @param  EditProductFactoryAction  $factory
+     *
      * @return JsonResponse
      */
-    public function edit(ProductEditRequest $request, Product $product, EditProductFactoryAction $factory): JsonResponse
-    {
+    public function edit(
+        ProductEditRequest $request,
+        Product $product,
+        EditProductFactoryAction $factory
+    ): JsonResponse {
         if ($product->status->is(Status::PUBLISHED) || $product->status->is(Status::TRASHED)) {
             return response()->json([
                 'message' => 'Editing published or trashed product is not allowed.',
@@ -71,4 +78,5 @@ class ManipulationProductController extends Controller
 
         return response()->json(['Product was updated successfully.']);
     }
+
 }

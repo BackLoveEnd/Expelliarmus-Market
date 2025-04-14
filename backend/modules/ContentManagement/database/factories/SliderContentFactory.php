@@ -21,7 +21,7 @@ class SliderContentFactory extends Factory
             'image_url' => url('/storage/content/slider/'.$defaultSlider),
             'image_source' => $defaultSlider,
             'order' => fake()->numberBetween(1, 5000),
-            'content_url' => config('app.frontend_name')
+            'content_url' => config('app.frontend_url'),
         ];
     }
 }

@@ -80,21 +80,8 @@
             class="flex-shrink-0 content mb-4 md:mb-0 flex gap-x-4 items-center"
         >
           <dark-mode></dark-mode>
-          <button class="flex items-center gap-x-2">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-            >
-              <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75"
-              />
-            </svg>
+          <button class="flex items-center gap-x-2" @click="handleLogout">
+            <i class="pi pi-sign-out"></i>
             Log Out
           </button>
         </div>
@@ -107,11 +94,16 @@
 import CustomMenu from "@/components/Default/Menu.vue";
 import DarkMode from "@/management/components/Main/DarkMode.vue";
 import {onMounted, onUnmounted, ref} from "vue";
-import {onBeforeRouteUpdate} from "vue-router";
+import {onBeforeRouteUpdate, useRouter} from "vue-router";
+import {useAuthStore} from "@/stores/useAuthStore.js";
 
 const isContentVisible = ref(false);
 
 const isMenuOpen = ref(false);
+
+const router = useRouter();
+
+const auth = useAuthStore();
 
 const contentLinks = ref([
   {url: "/management/content/slider", name: "Slider", svg: 'pi pi-sliders-h'},
@@ -126,8 +118,9 @@ const productLinks = ref([
 ]);
 
 const clientLinks = ref([
-  {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified"},
-  {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user"}
+  {url: "/management/clients/regular", name: "Regular Customers", svg: "pi pi-verified", onlyForSuperManager: false},
+  {url: "/management/clients/guests", name: "Guests", svg: "pi pi-user", onlyForSuperManager: false},
+  {url: "/management/managers", name: "Managers", svg: "pi pi-user-edit", onlyForSuperManager: true}
 ]);
 
 const warehouseLinks = ref([
@@ -151,6 +144,12 @@ const handleMenuEnter = () => {
 
 const handleMenuLeave = () => {
   isMenuOpen.value = false;
+};
+
+const handleLogout = async () => {
+  await auth.logout(true);
+  await router.push({name: "manager-login"});
+  router.go(0);
 };
 
 onMounted(() => {

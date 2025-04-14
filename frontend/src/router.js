@@ -10,6 +10,7 @@ import Layout from "@/shop/views/Auth/Password/Layout.vue";
 import ResetPassword from "@/shop/views/Auth/Password/ResetPassword.vue";
 import NotFound from "@/components/Default/NotFound.vue";
 import ServerError from "@/components/Default/ServerError.vue";
+import AuthManagement from "@/management/views/Manager/AuthManagement.vue";
 
 const routes = [
     {
@@ -39,9 +40,23 @@ const routes = [
         children: shopRoutes,
     },
     {
+        path: "/management/manager/auth",
+        component: AuthManagement,
+        name: "manager-login",
+        meta: {
+            guest: true
+        },
+        params: (route) => ({
+            email: route.query.email
+        })
+    },
+    {
         path: "/management",
         component: ManagementApp,
         children: managementRoutes,
+        meta: {
+            requiresManagerAuth: true,
+        }
     },
     {
         path: "/500",
@@ -63,17 +78,33 @@ router.beforeEach(async (to, from, next) => {
     start();
     const auth = useAuthStore();
 
-    if (to.meta.guest && auth.isAuthenticated) {
+    if (to.meta.requiresManagerAuth) {
+        return await auth.fetchCurrentUser().then(() => {
+            if (!auth.isManager && !auth.isSuperManager) {
+                return next({name: "home"});
+            }
+            return next();
+        });
+    }
+
+    if (to.meta.guest && auth.isRegularUser) {
         return next({name: "home"});
     }
 
     if (to.meta.requiresAuth) {
-        return auth.fetchCurrentUser().then(() => {
-            if (!auth.isAuthenticated) {
+        return await auth.fetchCurrentUser().then(() => {
+            if (!auth.isRegularUser) {
                 return next({name: "login"});
             }
             return next();
         });
+    }
+
+    if (to.meta.onlySuperManager) {
+        if (!auth.isSuperManager) {
+            return next({name: "managers-home"});
+        }
+        return next();
     }
 
     next();

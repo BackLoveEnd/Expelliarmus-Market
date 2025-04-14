@@ -12,11 +12,13 @@ import TrashedProducts from "@/management/views/Product/TrashedProducts.vue";
 import Users from "@/management/views/Users/Users.vue";
 import Guests from "@/management/views/Users/Guests.vue";
 import Discounts from "@/management/views/Warehouse/Discounts.vue";
+import Managers from "@/management/views/Manager/Managers.vue";
 
 export default [
     {
         path: "",
         component: Home,
+        name: "manager-home",
     },
     {
         path: "products/create",
@@ -79,6 +81,14 @@ export default [
         path: "content/new-arrivals",
         component: NewArrivals,
         name: "content-arrivals",
+    },
+    {
+        path: "managers",
+        component: Managers,
+        name: "managers",
+        meta: {
+            onlySuperManager: true
+        }
     },
     {
         path: "/management/:any(.*)*",

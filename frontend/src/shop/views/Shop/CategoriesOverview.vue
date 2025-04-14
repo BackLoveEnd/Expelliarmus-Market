@@ -1,5 +1,5 @@
 <script setup>
-import {CategoriesShopService} from "@/services/CategoriesShopService.js";
+import {CategoriesShopService} from "@/services/Category/CategoriesShopService.js";
 import {onMounted, ref} from "vue";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 

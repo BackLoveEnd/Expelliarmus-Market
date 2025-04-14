@@ -3,12 +3,19 @@
 namespace Modules\ContentManagement\Http\Requests\NewArrivals;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\ContentManagement\Models\NewArrival;
 use Modules\ContentManagement\Rules\NewArrivalsExistsRule;
 use Modules\ContentManagement\Rules\OnlySpecificDomainRule;
 use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
+use Modules\User\Enums\RolesEnum;
 
 class NewArrivalsUploadRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', NewArrival::class);
+    }
+
     public function rules(): array
     {
         return [
@@ -17,9 +24,9 @@ class NewArrivalsUploadRequest extends FormRequest
             'arrivals.*.exists_image_url' => [
                 'nullable',
                 'url',
-                new OnlySpecificStorageUrlRule(url('/storage/content/arrivals')),
+                new OnlySpecificStorageUrlRule(config('app.url').'/storage/content/arrivals'),
             ],
-            'arrivals.*.arrival_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_name'))],
+            'arrivals.*.arrival_url' => ['required', 'url', new OnlySpecificDomainRule(config('app.frontend_url'))],
             'arrivals.*.position' => ['required', 'integer', 'between:1,4'],
             'arrivals.*.content' => ['required', 'array'],
             'arrivals.*.content.title' => ['required', 'string', 'max:255'],
@@ -39,10 +46,5 @@ class NewArrivalsUploadRequest extends FormRequest
             'arrivals.*.content.*.body' => 'body',
             'arrivals.*.content.color' => 'color',
         ];
-    }
-
-    public function authorize(): bool
-    {
-        return true;
     }
 }

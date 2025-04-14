@@ -19,6 +19,8 @@ class MigrationWithStorageCleanFresh extends FreshCommand
 
             MigrationStorageCleanHelper::cleanArrivalsContentStorage();
 
+            MigrationStorageCleanHelper::cleanBrandsLogo();
+
             $this->info('Storage cleaned successfully.');
         }
     }

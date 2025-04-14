@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->integer('quantity')->default(0);
             $table->decimal('price')->nullable();
             $table->string('value');
+            //$table->index(['attribute_id', 'value', 'product_id'], 'product_attribute_values_index');
         });
     }
 

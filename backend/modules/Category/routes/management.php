@@ -7,7 +7,7 @@ use Modules\Product\Http\Management\Controllers\Product\RetrieveProductControlle
 
 Route::prefix('management')->group(function () {
     Route::prefix('categories')->group(function () {
-        Route::controller(RetrieveProductController::class)->group(function () {
+        Route::controller(RetrieveProductController::class)->middleware('auth.manager')->group(function () {
             Route::get('/products', 'getProductsByRootCategories');
 
             Route::get('/{category}/products', 'getProductsByCategory')
@@ -15,27 +15,34 @@ Route::prefix('management')->group(function () {
         });
 
         Route::controller(CategoryController::class)->group(function () {
-            Route::get('/', 'index')->withoutMiddleware(['throttle']);
+            Route::get('/', 'index')->withoutMiddleware(['throttle:api', 'auth.manager']);
 
-            Route::get('/root', 'rootCategories');
+            Route::get('/root', 'rootCategories')->middleware('auth.manager');
 
-            Route::post('/', 'create');
+            Route::post('/', 'create')->middleware('auth.manager');
 
             Route::whereNumber('category')->group(function () {
-                Route::get('/{category}/attributes', 'getAllAttributesForCategory');
+                Route::get('/{category}/attributes', 'getAllAttributesForCategory')->middleware('auth.manager');
 
-                Route::put('/{category}', 'edit');
+                Route::put('/{category}', 'edit')->middleware('auth.manager');
 
-                Route::delete('/{category}', 'delete');
+                Route::delete('/{category}', 'delete')->middleware('auth.manager:super-manager');
 
-                Route::delete('/{category}/attributes/{attribute}', 'deleteAttribute');
+                Route::delete('/{category}/attributes/{attribute}', 'deleteAttribute')->middleware(
+                    'auth.manager:super-manager',
+                );
             });
         });
 
-        Route::whereNumber('category')->controller(CategoryIconController::class)->group(function () {
-            Route::post('/{category}/icon', 'uploadIcon');
+        Route::whereNumber('category')
+            ->middleware('auth.manager')
+            ->controller(CategoryIconController::class)
+            ->group(
+                function () {
+                    Route::post('/{category}/icon', 'uploadIcon');
 
-            Route::post('/{category}/icon', 'editIcon');
-        });
+                    Route::post('/{category}/icon', 'editIcon');
+                },
+            );
     });
 });

@@ -11,18 +11,22 @@ class CategoryObserver
     public function created(Category $category): void
     {
         CacheService::forgetKey(config('product.cache.root-category-children'), $category->id);
+        CacheService::forgetKey(config('category.cache.category-attributes'), $category->id);
     }
 
     public function updated(Category $category): void
     {
         CacheService::forgetKey(config('product.cache.root-category-children'), $category->id);
+        CacheService::forgetKey(config('category.cache.category-attributes'), $category->id);
     }
 
     public function deleted(Category $category): void
     {
         CacheService::forgetKey(config('product.cache.root-category-children'), $category->id);
+        CacheService::forgetKey(config('category.cache.category-attributes'), $category->id);
 
-        $category->products()->wherePublished()
+        $category
+            ->products()->wherePublished()
             ->update(['status' => ProductStatusEnum::NOT_PUBLISHED->value]);
     }
 
@@ -31,7 +35,5 @@ class CategoryObserver
         //
     }
 
-    public function forceDeleted(Category $category): void
-    {
-    }
+    public function forceDeleted(Category $category): void {}
 }

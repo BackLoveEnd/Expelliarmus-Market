@@ -42,7 +42,7 @@ class Category extends Model
 
     public function productAttributes(): HasMany
     {
-        return $this->hasMany(ProductAttribute::class);
+        return $this->hasMany(ProductAttribute::class, 'category_id');
     }
 
     public function productSpecifications(): HasMany

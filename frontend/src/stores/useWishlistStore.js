@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {WishlistService} from "@/services/WishlistService.js";
+import {WishlistService} from "@/services/User/WishlistService.js";
 
 export const useWishlistStore = defineStore('wishlist', {
     state: () => ({
@@ -9,7 +9,7 @@ export const useWishlistStore = defineStore('wishlist', {
     }),
     getters: {
         isProductInWishlist: (state) => (productId) => {
-            return state.wishlistItems.some((item) => item.id === productId);
+            return state.wishlistItems.some((item) => Number(item.id) === productId);
         }
     },
     actions: {
@@ -42,11 +42,12 @@ export const useWishlistStore = defineStore('wishlist', {
                 });
         },
 
-        async addToWishlist(productId) {
-            await WishlistService.addProductToWishlist(productId)
-                .then(() => {
-                    this.totalItems += 1;
-                    this.wishlistItems.push({id: productId});
+        async addToWishlist(product) {
+            await WishlistService.addProductToWishlist(Number(product.id))
+                .then((response) => {
+                    ++this.totalItems;
+
+                    this.wishlistItems.push({...product});
                 })
                 .catch((e) => {
                     if ([400, 409, 401, 429].includes(e?.status)) {

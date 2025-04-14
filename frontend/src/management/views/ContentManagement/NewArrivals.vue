@@ -1,149 +1,143 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { ContentManagementService } from '@/services/ContentManagementService'
-import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js'
-import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js'
-import { useToastStore } from '@/stores/useToastStore.js'
-import Description from '@/components/Product/Arrival/Description.vue'
-import DefaultContainer from '@/management/components/Main/DefaultContainer.vue'
-import DefaultArrivalsPlaceholder from '@/management/components/ContentManagement/DefaultArrivalsPlaceholder.vue'
+import {onMounted, ref, watch} from 'vue';
+import {ContentManagementService} from '@/services/Different/ContentManagementService.js';
+import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js';
+import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js';
+import {useToastStore} from '@/stores/useToastStore.js';
+import Description from '@/components/Product/Arrival/Description.vue';
+import DefaultContainer from '@/management/components/Main/DefaultContainer.vue';
+import DefaultArrivalsPlaceholder from '@/management/components/ContentManagement/DefaultArrivalsPlaceholder.vue';
 
-/*const defaultArrivals = [
-  {
-    id: 0,
-    image: 'https://dummyimage.com/744x720/000/fff',
-    title: 'Title(1)',
-    description: 'Desc.1',
-    link: '',
-    imgSize: '744x720'
-  },
-  {
-    id: 1,
-    image: 'https://dummyimage.com/744x336/000/fff',
-    title: 'Title(2)',
-    description: 'Desc.2',
-    link: '',
-    imgSize: '744x336'
-  },
-  {
-    id: 2,
-    image: 'https://dummyimage.com/348x336/000/fff',
-    title: 'Title(3)',
-    description: 'Desc.3',
-    link: '',
-    imgSize: '348x336'
-  },
-  {
-    id: 3,
-    image: 'https://dummyimage.com/348x336/000/fff',
-    title: 'Title(4)',
-    description: 'Desc.4',
-    link: '',
-    imgSize: '348x336'
-  }
-]*/
-/*
-const arrivals = ref([...defaultArrivals])
-*/
-const arrivals = ref({})
-const selectedArrivalId = ref(null)
+const arrivals = ref({});
 
-let selectedArrival = ref({})
+const selectedArrivalId = ref(null);
+
+let selectedArrival = ref({});
 
 const fetchArrivals = async () => {
   await ContentManagementService.getAllArrivals()
       .then(response => {
         arrivals.value = Object.fromEntries(
-            response.data.data.map(({ attributes, ...rest }) => [attributes.position, { attributes, ...rest }])
-        )
+            response.data.data.map(({attributes, ...rest}) => [attributes.position, {attributes, ...rest}])
+        );
       })
       .catch(error => {
-        console.error(error)
-      })
-}
+        if (error?.status === 404) {
 
-const toast = useToastStore()
+        } else {
+          console.error(error);
+        }
+      });
+};
 
-const saveArrivals = () => {
-  ContentManagementService.uploadArrivalContent(arrivals.value)
+const toast = useToastStore();
+
+const saveArrivals = async () => {
+  const data = Object.values(arrivals.value).map(item => ({...item.attributes, id: item.id}));
+
+  await ContentManagementService.uploadArrivalContent(data)
       .then(() => {
-        toast.showToast('Arrivals saved successfully!', defaultSuccessSettings)
+        toast.showToast('Arrivals saved successfully!', defaultSuccessSettings);
       })
       .catch(error => {
-        console.error(error)
-        toast.showToast('Unknown error. Try again or contact us.', defaultErrorSettings)
-      })
-}
+        if (error?.status === 422) {
+          toast.showToast(error?.response?.data?.message, defaultErrorSettings);
+        }
 
-function imageSizeByPosition (position) {
+        toast.showToast('Unknown error. Try again or contact us.', defaultErrorSettings);
+      });
+};
+
+const deleteArrival = async (id) => {
+  if (arrivals.value.hasOwnProperty(id) && arrivals.value[id].id !== null) {
+    await ContentManagementService.deleteArrivalContent(arrivals.value[id].id)
+        .then(() => {
+          delete arrivals.value[id];
+
+          toast.showToast('Arrival deleted successfully!', defaultSuccessSettings);
+        })
+        .catch(error => {
+          toast.showToast('Unknown error. Try again or contact us.', defaultErrorSettings);
+        });
+  } else {
+    setDefaultArrival(id);
+  }
+};
+
+function imageSizeByPosition(position) {
   if (position === 1) {
-    return '744x720'
+    return '744x720';
   }
 
   if (position === 2) {
-    return '744x336'
+    return '744x336';
   }
 
-  return '348x336'
+  return '348x336';
 }
 
 const handleFileUpload = (event, id) => {
-  const file = event.target.files[0]
-  if (!file) return
+  const file = event.target.files[0];
+  if (!file) return;
 
-  const reader = new FileReader()
+  const reader = new FileReader();
   reader.onload = (e) => {
 
-    if (!arrivals.value.hasOwnProperty(id)) return
+    if (!arrivals.value.hasOwnProperty(id)) return;
 
-    const img = new Image()
-    img.src = e.target.result
+    const img = new Image();
+    img.src = e.target.result;
     img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const ctx = canvas.getContext('2d')
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
-      const [width, height] = imageSizeByPosition(id).split('x').map(Number)
-      canvas.width = width
-      canvas.height = height
+      const [width, height] = imageSizeByPosition(id).split('x').map(Number);
+      canvas.width = width;
+      canvas.height = height;
 
-      ctx.drawImage(img, 0, 0, width, height)
+      ctx.drawImage(img, 0, 0, width, height);
 
-      arrivals.value[id].attributes.image_url = canvas.toDataURL('image/jpeg', 1)
-      console.log(arrivals.value)
-    }
-  }
-  reader.readAsDataURL(file)
+      arrivals.value[id].attributes.image_url = canvas.toDataURL('image/jpeg', 1);
+    };
+  };
+  reader.readAsDataURL(file);
+};
+
+function setDefaultArrival(position) {
+  selectedArrival.value = {
+    id: null,
+    attributes: {
+      position: position,
+      content: {
+        title: 'Default Title',
+        body: 'Default Description',
+      },
+      arrival_url: '',
+      image_url: `https://dummyimage.com/${imageSizeByPosition(position)}/000/fff`,
+    },
+  };
 }
-onMounted(fetchArrivals)
 
-watch(arrivals, { deep: true })
+onMounted(fetchArrivals);
+
 watch(
     selectedArrivalId,
     (newSelectedId) => {
       if (typeof arrivals.value[newSelectedId] !== 'undefined') {
-        selectedArrival.value = arrivals.value[newSelectedId]
+        selectedArrival.value = arrivals.value[newSelectedId];
       } else {
-        selectedArrival.value = {
-          attributes: {
-            position: newSelectedId,
-            content: {
-              title: 'Default Title',
-              body: 'Default Description',
-            },
-            arrival_url: '',
-            image_url: `https://dummyimage.com/${imageSizeByPosition(newSelectedId)}/000/fff`,
-          },
-        }
+        setDefaultArrival(newSelectedId);
       }
     }
-)
+);
+
 watch(
-    selectedArrival,
+    (selectedArrival),
     (newSelectedArrival) => {
-      arrivals.value[newSelectedArrival.attributes.position] = newSelectedArrival
+      arrivals.value[newSelectedArrival.attributes.position] = newSelectedArrival;
     },
-    { deep: true }
-)
+    {deep: true}
+);
 </script>
 
 <template>
@@ -153,6 +147,7 @@ watch(
         <h1 class="font-semibold text-4xl mb-4">New Arrivals Management</h1>
         <div class="flex flex-col items-start mt-12 space-y-8">
           <h2 class="text-xl font-semibold">Arrivals</h2>
+          <span class="text-sm">Note: On public home page, new arrivals will be visible only when all 3 sections are filled.</span>
           <form class="max-w-max mx-4">
             <label for="arrivalsId" class="block mb-2 text-m font-semibold">Select an option</label>
             <select v-model="selectedArrivalId" id="arrivalsId"
@@ -189,24 +184,18 @@ watch(
 
             </div>
           </form>
-          <div class="flex gap-4 mt-4">
+          <div class="flex gap-4 mt-4" v-if="selectedArrival.attributes">
             <button
                 @click="saveArrivals"
                 class="bg-blue-500 text-white px-4 py-2 rounded"
             >
               Save
             </button>
-            <button v-if="selectedArrival"
-                    @click="deleteArrival(selectedArrivalId)"
-                    class="bg-red-500 text-white px-3 py-1 rounded"
+            <button
+                @click="deleteArrival(selectedArrivalId)"
+                class="bg-red-500 text-white px-3 py-1 rounded"
             >
               Delete
-            </button>
-            <button v-if="selectedArrival"
-                    @click="hideArrival(selectedArrivalId)"
-                    class="bg-gray-500 text-white px-3 py-1 rounded"
-                    disabled
-            >Hide
             </button>
           </div>
         </div>
@@ -284,7 +273,7 @@ watch(
         </div>
       </section>
       <div class="container mx-auto space-y-4" v-else>
-        <p>Нема ничего</p>
+        <p>Arrivals not found.</p>
       </div>
     </div>
   </default-container>

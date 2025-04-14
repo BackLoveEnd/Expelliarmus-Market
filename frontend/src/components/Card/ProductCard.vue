@@ -2,7 +2,7 @@
   <router-link
       @click.prevent="useScrolling().scrollToTop()"
       class="w-272 h-auto flex flex-col gap-4 group hover:shadow-md rounded-md p-3 cursor-pointer transition-all duration-200"
-      :to="`/shop/products/${product.id}/${product.slug}`"
+      :to="{ name: 'product-page', params: { productId: product.id, productSlug: product.slug }}"
   >
     <div class="relative overflow-hidden">
       <img
@@ -38,7 +38,11 @@ const props = defineProps({
   product: Object
 });
 
-const wishlist = useWishlistToggler(props.product.id);
+const wishlist = useWishlistToggler({
+  title: props.product.title,
+  id: props.product.id,
+  slug: props.product.slug
+});
 
 const truncator = useTruncator();
 </script>

@@ -8,6 +8,7 @@
 @import "./button.css";
 @import "./checkbox.css";
 @import "./multiselect.css";
+@import "./slider.css";
 
 /* Data */
 @import './tree.css';

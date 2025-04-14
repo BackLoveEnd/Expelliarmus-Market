@@ -1,7 +1,7 @@
 <script setup>
-import { WarehouseService } from "@/services/WarehouseService.js";
-import { computed, reactive, ref, watch } from "vue";
-import { statusColors } from "@/utils/statusColors.js";
+import {WarehouseService} from "@/services/Product/WarehouseService.js";
+import {computed, reactive, ref, watch} from "vue";
+import {statusColors} from "@/utils/statusColors.js";
 import WarehouseSingleVariationViewer from "@/management/components/Warehouse/WarehouseSingleVariationViewer.vue";
 import WarehouseCombinedVariationsViewer from "@/management/components/Warehouse/WarehouseCombinedVariationsViewer.vue";
 
@@ -39,7 +39,7 @@ const variations = ref([]);
 
 const statusColor = computed(() => {
   const status = statusColors.find(
-    (item) => item.name === product.status.colorType,
+      (item) => item.name === product.status.colorType,
   );
 
   return status?.color ?? "";
@@ -55,16 +55,17 @@ async function getWarehouseProduct() {
     Object.assign(brand, response.brand);
 
     variations.value = response.variations;
-  } catch (e) {}
+  } catch (e) {
+  }
 }
 
 await getWarehouseProduct();
 
 watch(
-  () => props.product,
-  async () => {
-    await getWarehouseProduct();
-  },
+    () => props.product,
+    async () => {
+      await getWarehouseProduct();
+    },
 );
 </script>
 
@@ -74,9 +75,9 @@ watch(
     <div class="flex flex-row gap-x-12 justify-center">
       <div>
         <img
-          :src="product.previewImage"
-          alt="Product Image"
-          class="max-w-[240px] h-auto"
+            :src="product.previewImage"
+            alt="Product Image"
+            class="max-w-[240px] h-auto"
         />
       </div>
 
@@ -100,9 +101,9 @@ watch(
             <p class="text-gray-900 text-sm">
               Price:
               {{
-                parseInt(warehouse.price)
-                  ? "$" + warehouse.price
-                  : warehouse.price
+              parseInt(warehouse.price)
+              ? "$" + warehouse.price
+              : warehouse.price
               }}
             </p>
             <p class="text-gray-900 text-sm">
@@ -121,15 +122,15 @@ watch(
       </div>
     </div>
     <section
-      class="container mx-auto space-y-8"
-      v-if="product.variationType !== null"
+        class="container mx-auto space-y-8"
+        v-if="product.variationType !== null"
     >
       <h2 class="text-center text-3xl">Product Options</h2>
       <warehouse-combined-variations-viewer
-        v-if="product.variationType === 'combined'"
-        :variations="variations"
+          v-if="product.variationType === 'combined'"
+          :variations="variations"
       />
-      <warehouse-single-variation-viewer v-else :variations="variations" />
+      <warehouse-single-variation-viewer v-else :variations="variations"/>
     </section>
   </section>
 </template>

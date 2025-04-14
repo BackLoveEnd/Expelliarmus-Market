@@ -12,11 +12,16 @@ class CategoriesBrowseListResource extends JsonApiResource
 
     public function toAttributes(Request $request): array
     {
-        return [
+        $attributes = [
             'name' => $this->name,
             'slug' => $this->slug,
-            'icon' => $this->icon_url,
         ];
+
+        if ($this->icon_url) {
+            $attributes['icon'] = $this->icon_url;
+        }
+
+        return $attributes;
     }
 
 }

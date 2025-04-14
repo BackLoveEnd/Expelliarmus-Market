@@ -1,17 +1,17 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { CategoryService } from '@/services/CategoryService.js'
-import { MegaMenu } from 'primevue'
-import 'primeicons/primeicons.css'
+import {onMounted, ref} from "vue";
+import {CategoryService} from "@/services/Category/CategoryService.js";
+import {MegaMenu} from "primevue";
 
-const items = ref([])
+
+const items = ref([]);
 
 onMounted(async () => {
   await CategoryService.getCategoriesTree()
       .then((response) => {
-        items.value = transformCategories(response?.data.data)
-      })
-})
+        items.value = transformCategories(response?.data.data);
+      });
+});
 
 const transformCategories = (categories) => {
   return categories.map(category => ({
@@ -29,25 +29,19 @@ const transformCategories = (categories) => {
               : []
         }))]
         : []
-  }))
-}
+  }));
+};
 
 </script>
 
 <template>
-  <MegaMenu
-      :model="items"
-      orientation="vertical"
-      scroll-height="25rem"
-      class="max-h-[25rem]"
-  >
+  <MegaMenu :model="items" orientation="vertical">
+
     <template #item="{ item }">
       <router-link v-slot="{ href, navigate }" :to="item.route" custom>
         <a :href="href" @click="navigate">
           <span :class="item.icon"/>
-          <span class="ml-2 text-lg">{{ item.label }}</span>
-          <i v-if="Array.isArray(item.items) && item.items.length > 0"
-             class="pi pi-angle-right text-gray-600 text-base"></i>
+          <span class="ml-2">{{ item.label }}</span>
         </a>
       </router-link>
     </template>

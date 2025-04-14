@@ -16,14 +16,16 @@ class RouteServiceProvider extends ServiceProvider
 
     public function map(): void
     {
-        $this->mapApiRoutes();
+        $this->mapManagementRoutes();
 
         $this->mapShopRoutes();
     }
 
-    protected function mapApiRoutes(): void
+    protected function mapManagementRoutes(): void
     {
-        Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name, '/routes/api.php'));
+        Route::middleware('api')->prefix('api')->name('management.')->group(
+            module_path($this->name, '/routes/management.php'),
+        );
     }
 
     protected function mapShopRoutes(): void

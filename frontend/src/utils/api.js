@@ -31,16 +31,23 @@ export default function api() {
             return response;
         },
         function (error) {
+            const authStore = useAuthStore();
+
             if (error.response?.status >= 500 && error.response?.status <= 599) {
                 router.push({path: '/500', state: {redirected: true}});
+
                 return Promise.reject(error);
             }
 
             if (error.request?.status === 403) {
             }
 
-            if ([401, 419].includes(error.request?.status)) {
-                useAuthStore().forgetUser();
+            if ([401, 419].includes(error.response?.status)) {
+                if (authStore.isManager || authStore.isSuperManager) {
+                    return Promise.reject(error);
+                }
+
+                authStore.forgetUser();
             }
 
             return Promise.reject(error);

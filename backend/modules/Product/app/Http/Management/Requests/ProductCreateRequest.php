@@ -5,12 +5,14 @@ namespace Modules\Product\Http\Management\Requests;
 use AllowDynamicProperties;
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Validation\Rule;
+use Modules\Product\Models\Product;
 use Modules\Product\Rules\AllSpecificationsInGroupAreUniqueRule;
 use Modules\Product\Rules\AttributeInCombinationUniqueRule;
 use Modules\Product\Rules\PriceComplianceForCombinedVariationsRule;
 use Modules\Product\Rules\PriceComplianceForSingleVariationsRule;
 use Modules\Product\Rules\ProductSpecificationExistsRule;
 use Modules\Product\Rules\ValueHasCorrectDataTypeRule;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
 use Modules\Warehouse\Rules\AttributesExistsInCombinedVariationsRule;
@@ -21,7 +23,7 @@ class ProductCreateRequest extends JsonApiRelationsFormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', Product::class);
     }
 
     public function jsonApiAttributeRules(): array

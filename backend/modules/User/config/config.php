@@ -4,6 +4,6 @@ return [
     'name' => 'User',
     'retrieve' => [
         'users-table' => 10,
-        'user-wishlist' => 2,
+        'user-wishlist' => 4,
     ],
 ];

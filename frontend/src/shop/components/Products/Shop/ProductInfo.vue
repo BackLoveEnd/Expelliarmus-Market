@@ -5,7 +5,7 @@ import PurchaseButton from "@/components/Product/Main/PurchaseButton.vue";
 import Description from "@/components/Product/Main/Description.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
 import {computed, onBeforeUnmount, reactive, ref, watch} from "vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 import Specs from "@/components/Product/Main/Specs.vue";
 import SingleVariationsViewer from "@/components/Product/Main/SingleVariationsViewer.vue";
@@ -52,7 +52,11 @@ const router = useRouter();
 
 const breadcrumbStore = useBreadCrumbStore();
 
-const wishlist = useWishlistToggler(props.productId);
+const wishlist = useWishlistToggler({
+  title: 'Title',
+  id: props.productId,
+  slug: props.productSlug
+});
 
 const isCartModalOpen = ref(false);
 
@@ -65,7 +69,8 @@ const pricePerUnit = computed(() => price.value.toFixed(2));
 let selectedVariation = reactive({
   id: null,
   price: null,
-  discount: null
+  discount: null,
+  availability: null
 });
 
 const emit = defineEmits(["product-data"]);
@@ -91,7 +96,6 @@ const imagesUrls = computed(() => {
 });
 
 const discountIfAvailable = computed(() => {
-  console.log(productInfo.product.discount);
   if (productInfo?.product?.discount !== null) {
     return {
       old_price: productInfo?.product?.discount.old_price,
@@ -166,6 +170,7 @@ function setSelectedVariation(variation) {
   selectedVariation.price = variation.attributes.price;
   selectedVariation.id = variation.attributes.id;
   selectedVariation.discount = variation.attributes.discount;
+  selectedVariation.availability = variation.attributes.availability;
 }
 
 await getProduct();
@@ -190,7 +195,7 @@ onBeforeUnmount(() => breadcrumbStore.clearBreadcrumbs());
                 :title="productInfo.product?.title"
                 :title-desc="productInfo.product?.title_description"
                 :article="productInfo.product?.article"
-                :status="productInfo.warehouse?.attributes?.status"
+                :status="selectedVariation?.availability ?? productInfo?.warehouse?.status"
             >
             </description>
           </div>

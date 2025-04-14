@@ -4,21 +4,21 @@ import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErr
 import ToastUnAuthAddToWishlist from "@/components/Default/Toasts/Wishlist/ToastUnAuthAddToWishlist.vue";
 import wishlistToastSetting from "@/components/Default/Toasts/Wishlist/toastSettings.js";
 
-export function useWishlistToggler(productId) {
+export function useWishlistToggler(product) {
     const wishlistStore = useWishlistStore();
 
     const toastStore = useToastStore();
 
     const toggleWishlist = async () => {
-        if (!productId) return;
+        if (!product) return;
 
-        productId = Number(productId);
+        const productId = Number(product.id);
 
         try {
             if (wishlistStore.isProductInWishlist(productId)) {
                 await wishlistStore.removeFromWishlist(productId);
             } else {
-                await wishlistStore.addToWishlist(productId);
+                await wishlistStore.addToWishlist(product);
             }
         } catch (e) {
             if (e?.status === 401) {
@@ -31,7 +31,7 @@ export function useWishlistToggler(productId) {
     };
 
     const isInWishlist = () => {
-        return wishlistStore.isProductInWishlist(Number(productId));
+        return wishlistStore.isProductInWishlist(Number(product.id));
     };
 
     return {

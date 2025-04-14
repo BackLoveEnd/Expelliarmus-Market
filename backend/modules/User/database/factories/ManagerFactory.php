@@ -4,7 +4,7 @@ namespace Modules\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-use Modules\User\Models\Manager;
+use Modules\Manager\Models\Manager;
 
 class ManagerFactory extends Factory
 {

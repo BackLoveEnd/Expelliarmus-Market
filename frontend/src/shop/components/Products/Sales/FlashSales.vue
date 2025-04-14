@@ -2,7 +2,7 @@
 import {ref, watch} from "vue";
 import CardSlider from "@/components/Card/CardSlider.vue";
 import ProductDiscountCard from "@/components/Card/ProductDiscountCard.vue";
-import {ProductsShopService} from "@/services/ProductsShopService.js";
+import {ProductsShopService} from "@/services/Product/ProductsShopService.js";
 import SectionTitle from "@/components/Default/SectionTitle.vue";
 
 const discountedProducts = ref([]);

@@ -3,7 +3,7 @@ import ProductEditForm from "@/management/components/Product/Edit/ProductEditFor
 import DefaultContainer from "@/management/components/Main/DefaultContainer.vue";
 import DefaultModal from "@/management/components/Main/DefaultModal.vue";
 import {reactive, ref} from "vue";
-import {ProductService} from "@/services/ProductService.js";
+import {ProductService} from "@/services/Product/ProductService.js";
 import {useToastStore} from "@/stores/useToastStore.js";
 import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
 import {useRouter} from "vue-router";
@@ -92,7 +92,7 @@ async function moveToTrash() {
       .catch((e) => {
         if (e.response?.status === 403) {
           toast.showToast(e.response?.data?.message, defaultWarningSettings);
-        } else {
+        } else if (e.response?.status > 500) {
           toast.showToast("Unknown error. Please try again or contact us.", defaultErrorSettings);
         }
         isDeleteModalOpen.value = false;

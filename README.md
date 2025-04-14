@@ -94,9 +94,9 @@ You will need to set local domain name in
 your [system hosts file](https://stackoverflow.com/questions/18200785/setting-up-local-domain-in-linux):
 
 ````
-172.0.0.1 expelliarmus.com
+<your IPv4> expelliarmus.com
 
-172.0.0.1 api.expelliarmus.com
+<your IPv4> api.expelliarmus.com
 ````
 
 ### Installation
@@ -122,6 +122,14 @@ Build mode:
 ````
 make front-build
 ````
+
+Additionally, you can create a **test super manager** to get access to the manager panel:
+
+````
+make super-manager
+````
+
+Manager login page available on **/management/manager/auth** URL.
 
 For more commands see:
 

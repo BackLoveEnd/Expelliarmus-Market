@@ -3,7 +3,10 @@
 namespace Modules\Brand\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
+use Modules\Brand\Interfaces\BrandLogoStorageInterface;
+use Modules\Brand\Storage\BrandImageLocalStorage;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -36,6 +39,12 @@ class BrandServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(AuthServiceProvider::class);
+
+        // Change when using a different storage
+        $this->app->singleton(BrandLogoStorageInterface::class, function ($app) {
+            return new BrandImageLocalStorage(Storage::disk('public_brands_images'));
+        });
     }
 
     /**
@@ -86,8 +95,10 @@ class BrandServiceProvider extends ServiceProvider
 
             foreach ($iterator as $file) {
                 if ($file->isFile() && $file->getExtension() === 'php') {
-                    $relativePath = str_replace($configPath . DIRECTORY_SEPARATOR, '', $file->getPathname());
-                    $configKey = $this->nameLower . '.' . str_replace([DIRECTORY_SEPARATOR, '.php'], ['.', ''], $relativePath);
+                    $relativePath = str_replace($configPath.DIRECTORY_SEPARATOR, '', $file->getPathname());
+                    $configKey = $this->nameLower.'.'.str_replace([DIRECTORY_SEPARATOR, '.php'],
+                            ['.', ''],
+                            $relativePath);
                     $key = ($relativePath === 'config.php') ? $this->nameLower : $configKey;
 
                     $this->publishes([$file->getPathname() => config_path($relativePath)], 'config');
@@ -109,7 +120,10 @@ class BrandServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->nameLower);
 
-        $componentNamespace = $this->module_namespace($this->name, $this->app_path(config('modules.paths.generator.component-class.path')));
+        $componentNamespace = $this->module_namespace(
+            $this->name,
+            $this->app_path(config('modules.paths.generator.component-class.path')),
+        );
         Blade::componentNamespace($componentNamespace, $this->nameLower);
     }
 

@@ -25,7 +25,7 @@ app.use(vClickOutside);
 
 app.use(Toast, {
     transition: "Vue-Toastification__fade",
-    maxToasts: 3,
+    maxToasts: 2,
     newestOnTop: true,
 });
 
