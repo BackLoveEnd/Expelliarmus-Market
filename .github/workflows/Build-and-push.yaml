@@ -106,7 +106,7 @@ jobs:
       
       - name: First-start-app
         run: 
-          sudo su -c "make first-start-app"
+          sudo make first-start-app
 
       #- name: Start frontend dev server
       #  run: docker exec -i npm npm run dev
