@@ -2,14 +2,13 @@ name: Docker compose CI and push
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
 
     steps:
       - name: Checkout repository
@@ -50,74 +49,22 @@ jobs:
           sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
 
           echo "Updated .env:"
-          cat .env
-          
-      #- name: Debug current directory
-      #  run: |
-      #    pwd
-      #    ls -a
-        
-      #- name: Verify .env file exists
-      #  run: |
-      #      if [ ! -f .env ]; then
-      #        echo ".env file does not exist!"
-      #        exit 1
-      #      fi
         
       - name: Copy .env to backend and frontend directories
         working-directory: ${{ github.workspace }}
         run: |
             cp .env ./backend/
-            ls -a ./backend/
             
       - name: Setting frontend env
         run : |
           cp .env.front.example ./frontend/
           mv ./frontend/.env.front.example ./frontend/.env
           echo "Updated .env:"
-          cat ./frontend/.env
-          ls -a ./frontend/
 
-      #- name: Start Docker Compose
-      #  run: docker compose up -d --build
-
-      #- name: Install Composer Dependencies
-      #  run: docker exec php composer install
-
-      #- name: Install NPM Dependencies
-      #  run: docker exec npm npm install
-
-      #- name: Wait for PostgreSQL to be ready
-      #  run: |
-      #    echo "⏳ Waiting for PostgreSQL..."
-      #    for i in {1..12}; do
-      #      docker exec php php artisan migrate:status && break || sleep 5
-      #    done
-      
-      #- name: Run Migrations and Seed Database
-      #  run: docker exec php php artisan migrate:fresh --seed --storage-clean
-      
-
-      #- name: Create Storage Link
-      #  run: docker exec php php artisan storage:link
-
-      #- name: Generate Application Key
-      #  run: docker exec php php artisan key:generate
-      
       - name: First-start-app
         run: make first-start-app
 
-      #- name: Start frontend dev server
-      #  run: docker exec -i npm npm run dev
-      #- name: Build with Docker Compose
-      #  run: docker-compose -f docker-compose.yml build
-
-      #- name: Build Docker image
-      #  run: docker compose -f compose.yaml up -d --build
-
-      #- name: Push Docker images to GHCR
-       # run: docker compose -f compose.yaml push
-
+     
     
 
 
