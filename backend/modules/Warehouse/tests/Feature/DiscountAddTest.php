@@ -7,7 +7,10 @@ namespace Modules\Warehouse\Tests\Feature;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
+use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
+use Modules\User\Database\Seeders\UserPermissionSeeder;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
@@ -15,6 +18,13 @@ use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;
 class DiscountAddTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed([UserPermissionSeeder::class]);
+    }
 
     public function test_can_add_discount_for_product_without_variations(): void
     {
@@ -107,16 +117,20 @@ class DiscountAddTest extends TestCase
     {
         $product = Product::factory()->withoutAttributes();
 
-        $response1 = $this->postJson("api/management/warehouse/products/$product->id/discounts", [
-            'data' => [
-                'attributes' => [
-                    'percentage' => 25,
-                    'start_date' => Carbon::now()->subDay(),
-                    'end_date' => Carbon::now()->addDay(),
-                    'variation' => null,
+        $manager = Manager::factory()->superManager()->create();
+
+        $response1 = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/warehouse/products/$product->id/discounts", [
+                'data' => [
+                    'attributes' => [
+                        'percentage' => 25,
+                        'start_date' => Carbon::now()->subDay(),
+                        'end_date' => Carbon::now()->addDay(),
+                        'variation' => null,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
         $response1->assertJsonValidationErrors([
             'data.attributes.start_date' => 'The start date has already passed.',

@@ -6,18 +6,32 @@ namespace Modules\Product\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
+use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
+use Modules\User\Database\Seeders\UserPermissionSeeder;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 
 class ProductPublishedUnpublishedTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed([UserPermissionSeeder::class]);
+    }
+
     public function test_can_publish_product(): void
     {
         $product = Product::factory()->unPublished()->withoutAttributes();
 
-        $this->postJson("api/management/products/{$product->id}/publish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/publish");
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -30,7 +44,11 @@ class ProductPublishedUnpublishedTest extends TestCase
         $product = Product::factory()->state(['status' => ProductStatusEnum::TRASHED->value])
             ->withoutAttributes();
 
-        $response = $this->postJson("api/management/products/{$product->id}/publish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/publish");
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -47,7 +65,11 @@ class ProductPublishedUnpublishedTest extends TestCase
         $product = Product::factory()->state(['status' => ProductStatusEnum::PUBLISHED->value])
             ->withoutAttributes();
 
-        $response = $this->postJson("api/management/products/{$product->id}/publish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/publish");
 
         $response
             ->assertStatus(200)
@@ -58,7 +80,11 @@ class ProductPublishedUnpublishedTest extends TestCase
     {
         $product = Product::factory()->unPublished()->withoutAttributes();
 
-        $this->postJson("api/management/products/{$product->id}/unpublish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/unpublish");
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -70,7 +96,11 @@ class ProductPublishedUnpublishedTest extends TestCase
     {
         $product = Product::factory()->state(['status' => ProductStatusEnum::TRASHED])->withoutAttributes();
 
-        $response = $this->postJson("api/management/products/{$product->id}/unpublish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/unpublish");
 
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
@@ -86,7 +116,11 @@ class ProductPublishedUnpublishedTest extends TestCase
     {
         $product = Product::factory()->unPublished()->withoutAttributes();
 
-        $response = $this->postJson("api/management/products/{$product->id}/unpublish");
+        $manager = Manager::factory()->superManager()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson("api/management/products/{$product->id}/unpublish");
 
         $response
             ->assertStatus(200)
