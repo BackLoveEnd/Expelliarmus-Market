@@ -10,6 +10,9 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Category\Http\Management\Actions\DeleteCategoryAttributeAction;
 use Modules\Category\Http\Management\Exceptions\AttributeNotRelatedToCategoryException;
 use Modules\Category\Models\Category;
+use Modules\Manager\Models\Manager;
+use Modules\User\Database\Seeders\UserPermissionSeeder;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryDeleteTest extends TestCase
@@ -17,15 +20,24 @@ class CategoryDeleteTest extends TestCase
 
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed([UserPermissionSeeder::class]);
+    }
+
     public function test_can_delete_category(): void
     {
         $category = Category::query()->create(['name' => 'Category 1']);
+
+        $manager = Manager::factory()->superManager()->create();
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
         ]);
 
-        $this->delete('/api/management/categories/'.$category->id);
+        $this->actingAs($manager, RolesEnum::MANAGER->toString())->delete('/api/management/categories/'.$category->id);
 
         $this->assertDatabaseMissing('categories', [
             'id' => $category->id,
@@ -61,9 +73,12 @@ class CategoryDeleteTest extends TestCase
         $fakeAttribute = $this->createTestAttribute($fakeCategory);
 
         $this->assertThrows(
-            test: fn() => (new DeleteCategoryAttributeAction())->handle($category,
-                $fakeAttribute->first()),
-            expectedClass: AttributeNotRelatedToCategoryException::class
+            test: fn()
+                => (new DeleteCategoryAttributeAction())->handle(
+                $category,
+                $fakeAttribute->first(),
+            ),
+            expectedClass: AttributeNotRelatedToCategoryException::class,
         );
     }
 

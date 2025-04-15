@@ -6,7 +6,6 @@ namespace Modules\Manager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Manager\Models\Manager;
-use Modules\User\Enums\RolesEnum;
 
 class ManagerSeeder extends Seeder
 {
@@ -14,8 +13,6 @@ class ManagerSeeder extends Seeder
     {
         Manager::query()->truncate();
 
-        Manager::factory(4)->create()->each(function (Manager $manager) {
-            $manager->assignRole(RolesEnum::MANAGER->toString());
-        });
+        Manager::factory(4)->create();
     }
 }

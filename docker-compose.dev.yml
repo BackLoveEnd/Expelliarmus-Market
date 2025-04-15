@@ -1,0 +1,11 @@
+services:
+  npm:
+    build:
+      context: .docker/node
+      dockerfile: node.Dockerfile
+    container_name: npm
+    volumes:
+      - ./frontend:/var/www/expelliarmus/frontend
+    command: npm run build
+    networks:
+      - expelliarmus

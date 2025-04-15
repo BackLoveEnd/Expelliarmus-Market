@@ -7,7 +7,10 @@ namespace Modules\Warehouse\Tests\Feature;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
+use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
+use Modules\User\Database\Seeders\UserPermissionSeeder;
+use Modules\User\Enums\RolesEnum;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Models\Discount;
@@ -24,6 +27,8 @@ class DiscountEditTest extends TestCase
         parent::setUp();
 
         $this->factory = new ProductDiscountServiceFactory($this->app);
+
+        $this->seed([UserPermissionSeeder::class]);
     }
 
     public function test_can_edit_discount(): void
@@ -153,6 +158,8 @@ class DiscountEditTest extends TestCase
     {
         $product = Product::factory()->withoutAttributes();
 
+        $manager = Manager::factory()->superManager()->create();
+
         (new ProductDiscountServiceFactory($this->app))
             ->addDiscount($product)
             ->process(
@@ -166,16 +173,18 @@ class DiscountEditTest extends TestCase
         $discount = Discount::query()->where('discountable_id', $product->id)
             ->first(['id']);
 
-        $response1 = $this->putJson("api/management/warehouse/products/$product->id/discounts/$discount->id", [
-            'data' => [
-                'attributes' => [
-                    'percentage' => 25,
-                    'start_date' => Carbon::now()->subDay(),
-                    'end_date' => Carbon::now()->addDay(),
-                    'variation' => null,
+        $response1 = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->putJson("api/management/warehouse/products/$product->id/discounts/$discount->id", [
+                'data' => [
+                    'attributes' => [
+                        'percentage' => 25,
+                        'start_date' => Carbon::now()->subDay(),
+                        'end_date' => Carbon::now()->addDay(),
+                        'variation' => null,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
         $response1->assertJsonValidationErrors([
             'data.attributes.start_date' => 'The start date has already passed.',
