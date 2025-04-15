@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
+use Modules\Manager\Models\Manager;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
@@ -14,7 +15,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     public function register(): void
     {
-        // Telescope::night();
+        /*if (config('telescope.enabled')) {
+            Telescope::night();
+        }*/
 
         $this->hideSensitiveRequestDetails();
 
@@ -59,9 +62,14 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+            return in_array(
+                $user->email,
+                $emails = Manager::query()
+                    ->where('is_super_manager', true)
+                    ->pluck('email')
+                    ->toArray(),
+                true,
+            );
         });
     }
 }

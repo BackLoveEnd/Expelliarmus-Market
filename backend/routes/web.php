@@ -1,10 +1,34 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
+use Modules\Manager\Models\Manager;
 use Modules\User\Http\Controllers\UserController;
+
+// Temporary
+Route::get('/dev-login', function () {
+    return view('telescope.auth-telescope');
+});
+
+// Temporary
+Route::post('/dev-login', function (Request $request) {
+    $user = Manager::query()
+        ->where('email', $request->email)
+        ->where('is_super_manager', true)
+        ->first();
+
+    if (! $user) {
+        return back()->withErrors(['email' => 'User not found.']);
+    }
+
+    Auth::guard('manager')->login($user);
+
+    return redirect('/telescope');
+});
 
 Route::prefix('api')->group(function () {
     $limiter = config('fortify.limiters.login');
