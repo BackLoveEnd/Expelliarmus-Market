@@ -28,7 +28,8 @@ class CategoryIconTest extends TestCase
 
         $this->storageMock = $this->createMock(FilesystemManager::class);
 
-        $this->storageMock->method('disk')->with('public_icons')
+        $this->storageMock
+            ->method('disk')->with('public_icons')
             ->willReturn(Storage::disk('public_icons'));
     }
 
@@ -39,6 +40,7 @@ class CategoryIconTest extends TestCase
         $service = new CategoryIconService($this->storageMock);
 
         $svgIcon = UploadedFile::fake()->image('icon.svg');
+
         $name = $svgIcon->hashName();
 
         $service->upload($svgIcon, $category);
@@ -105,7 +107,7 @@ class CategoryIconTest extends TestCase
 
         $this->assertThrows(
             test: fn() => $service->upload($svgIcon, $categories->children[0]),
-            expectedClass: CannotUploadIconForNotRootCategoryException::class
+            expectedClass: CannotUploadIconForNotRootCategoryException::class,
         );
     }
 
