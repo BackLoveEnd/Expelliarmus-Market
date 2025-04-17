@@ -2,9 +2,9 @@ import axios from "axios";
 import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useRouter} from "vue-router";
 
-const router = useRouter();
-
 export default function api() {
+    const router = useRouter();
+    
     const api = axios.create({
         baseURL: `/api`,
         withCredentials: true,

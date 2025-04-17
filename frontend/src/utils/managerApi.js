@@ -4,9 +4,9 @@ import {useRouter} from "vue-router";
 import {useToastStore} from "@/stores/useToastStore.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 
-const router = useRouter();
-
 export default function managerApi() {
+    const router = useRouter();
+    
     const api = axios.create({
         baseURL: `/api/management`,
         withCredentials: true,
