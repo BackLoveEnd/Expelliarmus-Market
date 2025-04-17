@@ -1,7 +1,13 @@
-CREATE DATABASE IF NOT EXISTS expelliarmus ENCODING = 'UTF8';
+\connect postgres
 
-ALTER DATABASE expelliarmus OWNER TO postgres;
+SELECT 'CREATE DATABASE expelliarmus'
+WHERE NOT EXISTS (SELECT
+                  FROM pg_database
+                  WHERE datname = 'expelliarmus')
+\gexec
 
-CREATE DATABASE IF NOT EXISTS expelliarmus_test ENCODING = 'UTF8';
-
-ALTER DATABASE expelliarmus OWNER TO postgres;
+SELECT 'CREATE DATABASE expelliarmus_test'
+WHERE NOT EXISTS (SELECT
+                  FROM pg_database
+                  WHERE datname = 'expelliarmus_test')
+\gexec
