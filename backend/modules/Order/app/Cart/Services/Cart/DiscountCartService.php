@@ -19,6 +19,9 @@ class DiscountCartService
 
         if ($this->discountService->productHasActiveDiscount($product)) {
             $currentRelation = $product->getCurrentVariationRelation();
+
+            if ($currentRelation) {
+            }
             $lastDiscount = $currentRelation->lastActiveDiscount->first();
 
             return [

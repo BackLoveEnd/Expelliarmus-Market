@@ -194,13 +194,10 @@ class CartStorageService
 
     public function isCartEmpty(?User $user): bool
     {
-        if ($user) {
-            if ($this->session->has($this->cartSessionKey) || $user->cart()->exists()) {
-                return false;
-            }
-        }
+        $sessionHasCart = $this->session->has($this->cartSessionKey);
+        $userHasCart = $user?->cart()->exists() ?? false;
 
-        return $this->session->has($this->cartSessionKey);
+        return ! $sessionHasCart && ! $userHasCart;
     }
 
     private function hasDifferentVariation(Collection $cart, object $item): bool
