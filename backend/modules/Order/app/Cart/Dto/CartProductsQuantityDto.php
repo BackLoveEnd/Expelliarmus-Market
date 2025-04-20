@@ -6,7 +6,7 @@ namespace Modules\Order\Cart\Dto;
 
 use Illuminate\Support\Collection;
 use Modules\Order\Cart\Http\Requests\UpdateProductsQuantityRequest;
-use Modules\Order\Models\Cart;
+use Modules\Order\Cart\Models\Cart;
 use Modules\Product\Models\Product;
 
 final readonly class CartProductsQuantityDto
