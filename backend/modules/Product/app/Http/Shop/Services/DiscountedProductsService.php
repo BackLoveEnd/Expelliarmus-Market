@@ -87,7 +87,7 @@ final class DiscountedProductsService
         return $product->loadMissing('singleAttributes.lastActiveDiscount');
     }
 
-    public function loadLastActiveDiscountForProducts(BaseCollection $products): BaseCollection
+    public function loadLastActiveDiscountForProducts(Collection $products): BaseCollection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(
             fn(Product $product) => is_null($product->hasCombinedAttributes()),
@@ -129,7 +129,7 @@ final class DiscountedProductsService
             fn(Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
-        $withoutVariationProducts = $withoutVariationProducts->load([
+        $withoutVariationProducts = $withoutVariationProducts->loadMissing([
             'discount' => fn($query)
                 => $query
                 ->where('discounts.status', DiscountStatusEnum::ACTIVE)

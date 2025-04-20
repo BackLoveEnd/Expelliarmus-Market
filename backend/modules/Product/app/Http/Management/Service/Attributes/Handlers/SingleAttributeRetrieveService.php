@@ -49,7 +49,9 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
     {
         $variationIds = $productsWithVariations->pluck('variation_id')->unique();
 
-        $variations = ProductAttributeValue::query()->whereIn('id', $variationIds)
+        $variations = ProductAttributeValue::query()
+            ->with(['attribute' => fn($query) => $query->select([...$this->attributeCols, 'type'])])
+            ->whereIn('id', $variationIds)
             ->select($this->variationCols)
             ->get()
             ->keyBy('id');

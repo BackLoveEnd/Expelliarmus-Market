@@ -51,7 +51,9 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
     {
         $variationIds = $productsWithVariations->pluck('variation_id')->unique();
 
-        $variations = ProductVariation::query()->whereIn('id', $variationIds)
+        $variations = ProductVariation::query()
+            ->with(['productAttributes' => fn($query) => $query->select([...$this->attributeCols, 'type'])])
+            ->whereIn('id', $variationIds)
             ->select($this->variationCols)
             ->get()
             ->keyBy('id');
