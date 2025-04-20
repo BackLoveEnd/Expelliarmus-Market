@@ -16,6 +16,8 @@ class Order extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'status',
         'total_price',
