@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('id')->generatedAs()->always();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->json('variation')->nullable();
             $table->integer('quantity');
             $table->decimal('total_price');
             $table->decimal('price_per_unit_at_order_time');
