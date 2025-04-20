@@ -5,6 +5,7 @@ namespace Modules\Order\Order\Emails;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
@@ -15,9 +16,6 @@ class OrderCreatedMail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct(
         /**
          * @param  Collection<OrderLineDto>  $orderLines
@@ -26,10 +24,17 @@ class OrderCreatedMail extends Mailable
         private UserInterface $user,
     ) {}
 
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Your order has been created',
+        );
+    }
+
     public function content(): Content
     {
         return new Content(
-            view: 'mail.orders.created',
+            markdown: 'mails.orders.created',
         );
     }
 }

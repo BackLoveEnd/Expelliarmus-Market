@@ -68,7 +68,7 @@ class OrderLineService
                 $pricePerUnit = $orderLineItem->product->lastActiveDiscount->first()?->discount_price
                     ?? $orderLineItem->product->default_price;
 
-                $data['unitPrice'] = $orderLineItem->product->default_price;
+                $data['unitPrice'] = $pricePerUnit;
 
                 $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem->quantity);
             }

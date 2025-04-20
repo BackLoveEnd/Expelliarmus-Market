@@ -116,7 +116,7 @@ class WarehouseProductInfoService
                 return is_null($item->variation_id);
             });
 
-        $withoutVariationProductsOnly = new Collection($withoutVariationProducts->pluck('products'));
+        $withoutVariationProductsOnly = new Collection($withoutVariationProducts->pluck('product'));
 
         $withoutVariationProductsOnly = $withoutVariationProductsOnly->loadMissing([
             'warehouse' => fn($query) => $query->select($dto->warehouseCols),
