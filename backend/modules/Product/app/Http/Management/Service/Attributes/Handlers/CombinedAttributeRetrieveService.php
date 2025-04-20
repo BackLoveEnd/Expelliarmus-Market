@@ -57,11 +57,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             ->keyBy('id');
 
         return $productsWithVariations->transform(function ($item) use ($variations) {
-            /**
-             * @var Product $item
-             * @var ProductVariation $item ['product']
-             */
-            $item['product']->setRelation('combinedAttributes', $variations->get($item['variation_id']));
+            $item->product->setRelation('combinedAttributes', $variations->get($item->variation_id));
 
             return $item;
         });

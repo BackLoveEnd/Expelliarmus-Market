@@ -55,11 +55,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
             ->keyBy('id');
 
         return $productsWithVariations->transform(function ($item) use ($variations) {
-            /**
-             * @var Product $item
-             * @var ProductAttributeValue $item ['product']
-             */
-            $item['product']->setRelation('singleAttributes', $variations->get($item['variation_id']));
+            $item->product->setRelation('singleAttributes', $variations->get($item->variation_id));
 
             return $item;
         });
