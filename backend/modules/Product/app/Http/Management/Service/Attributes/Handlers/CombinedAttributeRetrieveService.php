@@ -47,6 +47,26 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             ->first($this->variationCols);
     }
 
+    public function loadAttributesByIds(BaseCollection $productsWithVariations): BaseCollection
+    {
+        $variationIds = $productsWithVariations->pluck('variation_id')->unique();
+
+        $variations = ProductVariation::query()->whereIn('id', $variationIds)
+            ->select($this->variationCols)
+            ->get()
+            ->keyBy('id');
+
+        return $productsWithVariations->transform(function ($item) use ($variations) {
+            /**
+             * @var Product $item
+             * @var ProductVariation $item ['product']
+             */
+            $item['product']->setRelation('combinedAttributes', $variations->get($item['variation_id']));
+
+            return $item;
+        });
+    }
+
     public function getAttributesForProductCollection(Collection $products): Collection
     {
         $relations = [

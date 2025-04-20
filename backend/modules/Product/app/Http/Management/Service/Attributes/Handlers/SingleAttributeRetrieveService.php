@@ -45,6 +45,26 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
             ->first($this->variationCols);
     }
 
+    public function loadAttributesByIds(BaseCollection $productsWithVariations): BaseCollection
+    {
+        $variationIds = $productsWithVariations->pluck('variation_id')->unique();
+
+        $variations = ProductAttributeValue::query()->whereIn('id', $variationIds)
+            ->select($this->variationCols)
+            ->get()
+            ->keyBy('id');
+
+        return $productsWithVariations->transform(function ($item) use ($variations) {
+            /**
+             * @var Product $item
+             * @var ProductAttributeValue $item ['product']
+             */
+            $item['product']->setRelation('singleAttributes', $variations->get($item['variation_id']));
+
+            return $item;
+        });
+    }
+
     public function getAttributesForProductCollection(Collection $products): Collection
     {
         $relations = [

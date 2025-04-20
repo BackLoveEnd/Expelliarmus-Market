@@ -37,6 +37,11 @@ class ProductAttributeHandler
         return $this->retrieveStrategy->loadAttributesById($this->product, $variationId);
     }
 
+    public function loadAttributesByIds(BaseCollection $productsWithVariations): BaseCollection
+    {
+        return $this->retrieveStrategy->loadAttributesByIds($productsWithVariations);
+    }
+
     public function getAttributesForCollection(Collection $products): Collection
     {
         return $this->retrieveStrategy->getAttributesForProductCollection($products);
