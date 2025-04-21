@@ -53,7 +53,7 @@ ENV GID=${GID}
 
 WORKDIR /var/www/expelliarmus/backend
 
-# Install dependencies for PHP (без dev-пакетов)
+# Install dependencies for PHP
 RUN apk update && apk add --no-cache \
     imagemagick \
     postgresql-libs \
