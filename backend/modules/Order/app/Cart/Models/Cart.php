@@ -1,11 +1,12 @@
 <?php
 
-namespace Modules\Order\Models;
+namespace Modules\Order\Cart\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Order\Database\Factories\CartFactory;
 use Modules\Product\Models\Product;
 use Modules\User\Models\User;
 use Ramsey\Uuid\Uuid;
@@ -79,5 +80,10 @@ class Cart extends Model
                 $cart->id = Uuid::uuid7()->toString();
             }
         });
+    }
+
+    protected static function newFactory(): CartFactory
+    {
+        return CartFactory::new();
     }
 }

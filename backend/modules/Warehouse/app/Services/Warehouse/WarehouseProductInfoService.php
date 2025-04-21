@@ -11,6 +11,7 @@ use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttribute
 use Modules\Product\Http\Management\Service\Attributes\Handlers\ProductAttributeService;
 use Modules\Product\Models\Product;
 use RuntimeException;
+use stdClass;
 
 class WarehouseProductInfoService
 {
@@ -106,6 +107,39 @@ class WarehouseProductInfoService
         );
     }
 
+    public function getProductsAttributeById(
+        BaseCollection $productsWithVariationId,
+        AttributesColsDto $dto,
+    ): BaseCollection {
+        [$withoutVariationProducts, $withVariationProducts] = $productsWithVariationId
+            ->partition(function (stdClass $item) {
+                return is_null($item->variation_id);
+            });
+
+        $withoutVariationProductsOnly = new Collection($withoutVariationProducts->pluck('product'));
+
+        $withoutVariationProductsOnly = $withoutVariationProductsOnly->loadMissing([
+            'warehouse' => fn($query) => $query->select($dto->warehouseCols),
+        ]);
+
+        $withoutVariationProducts = $withoutVariationProducts->map(
+            function (stdClass $item) use ($withoutVariationProductsOnly) {
+                $item->product = $withoutVariationProductsOnly->firstWhere('id', $item->product->id);
+
+                return $item;
+            },
+        );
+
+        [$combinedVariationProducts, $singleVariationProducts] = $this->getLoadedVariationsByIds(
+            unloadVariations: $withVariationProducts,
+            dto: $dto,
+        );
+
+        return $withoutVariationProducts
+            ->merge($combinedVariationProducts)
+            ->merge($singleVariationProducts);
+    }
+
     public function getAttributeServiceHandler(): ProductAttributeHandler
     {
         return $this->productAttributeService->getAttributeHandler();
@@ -143,6 +177,41 @@ class WarehouseProductInfoService
         return $this->productAttributeService
             ->setAttributesColumns(...$columns)
             ->getAttributes();
+    }
+
+    private function getLoadedVariationsByIds(BaseCollection $unloadVariations, AttributesColsDto $dto): array
+    {
+        [$combinedVariationProducts, $singleVariationProducts] = $unloadVariations->partition(
+            fn(stdClass $item) => $item->product->hasCombinedAttributes(),
+        );
+
+        $combinedVariationProducts = $this->getLoadedCombinedVariationsByIds(
+            variations: $combinedVariationProducts,
+            columns: $dto->combinedAttrCols,
+        );
+
+        $singleVariationProducts = $this->getLoadedSingleVariationsByIds(
+            variations: $singleVariationProducts,
+            columns: $dto->singleAttrCols,
+        );
+
+        return [$combinedVariationProducts, $singleVariationProducts];
+    }
+
+    private function getLoadedCombinedVariationsByIds(BaseCollection $variations, array $columns): BaseCollection
+    {
+        return $this->productAttributeService
+            ->setAttributesColumns(...$columns)
+            ->combinedHandler()
+            ->loadAttributesByIds($variations);
+    }
+
+    private function getLoadedSingleVariationsByIds(BaseCollection $variations, array $columns): BaseCollection
+    {
+        return $this->productAttributeService
+            ->setAttributesColumns(...$columns)
+            ->singleHandler()
+            ->loadAttributesByIds($variations);
     }
 
     private function getLoadedVariations(Collection $unloadVariations, AttributesColsDto $dto): array

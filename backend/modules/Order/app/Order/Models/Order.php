@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Order\Models;
+namespace Modules\Order\Order\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,10 +16,12 @@ class Order extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'status',
         'total_price',
-        'created_at'
+        'created_at',
     ];
 
     public function userable(): MorphTo
@@ -35,7 +37,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'created_at' => 'datetime'
+            'created_at' => 'datetime',
         ];
     }
 

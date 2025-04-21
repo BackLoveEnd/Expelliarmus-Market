@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Manager\Observers\ManagerObserver;
-use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\ManagerFactory;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -22,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon $created_at
  */
 #[ObservedBy(ManagerObserver::class)]
-class Manager extends Authenticatable implements UserInterface
+class Manager extends Authenticatable
 {
     use HasFactory;
     use HasRoles;

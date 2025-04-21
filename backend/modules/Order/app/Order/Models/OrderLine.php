@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Order\Models;
+namespace Modules\Order\Order\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +23,7 @@ class OrderLine extends Model
         'order_id',
         'quantity',
         'total_price',
-        'price_per_unit_at_order_time'
+        'price_per_unit_at_order_time',
     ];
 
     public function order(): BelongsTo
