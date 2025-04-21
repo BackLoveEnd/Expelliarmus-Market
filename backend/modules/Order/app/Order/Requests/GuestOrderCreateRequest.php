@@ -32,4 +32,11 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
             'address' => 'Address',
         ];
     }
+
+    public function jsonApiCustomErrorMessages(): array
+    {
+        return [
+            'phone.phone' => 'The :attribute field must be a valid phone number.',
+        ];
+    }
 }

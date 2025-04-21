@@ -30,6 +30,6 @@ class OrderCreateController extends Controller
 
         $this->orderService->for($user)->process();
 
-        return response()->json(['message' => 'Order created successfully.'], 404);
+        return response()->json(['message' => 'Order created successfully.']);
     }
 }

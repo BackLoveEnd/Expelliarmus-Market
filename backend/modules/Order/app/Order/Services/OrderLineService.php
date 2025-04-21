@@ -66,7 +66,7 @@ class OrderLineService
                 ];
             } else {
                 $pricePerUnit = $orderLineItem->product->lastActiveDiscount->first()?->discount_price
-                    ?? $orderLineItem->product->default_price;
+                    ?? $orderLineItem->product->warehouse->default_price;
 
                 $data['unitPrice'] = $pricePerUnit;
 

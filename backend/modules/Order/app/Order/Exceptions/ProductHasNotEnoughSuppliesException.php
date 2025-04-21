@@ -18,6 +18,7 @@ class ProductHasNotEnoughSuppliesException extends Exception
     {
         return response()->json(
             ['message' => "Product $this->message has not enough supplies for requested quantities."],
+            409,
         );
     }
 }

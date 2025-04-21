@@ -30,6 +30,7 @@ class OrderGuestCreateService
             $this->orderPersistService->saveCheckout($user, $orderLines);
 
             event(new OrderCreated($user, $orderLines));
+            // clear cart
         } catch (Throwable $e) {
             throw new FailedToCreateOrderException($e->getMessage(), $e->getCode(), $e);
         }

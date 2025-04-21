@@ -22,6 +22,7 @@ use Propaganistas\LaravelPhone\Rules\Phone;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $address
  * @property string $phone_country_code
  * @property Phone $phone_number
  * @property Carbon $created_at

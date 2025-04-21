@@ -29,6 +29,7 @@ class OrderRegularUserCreateService
             $this->orderPersistService->saveCheckout($user, $orderLines);
 
             event(new OrderCreated($user, $orderLines));
+            // clear cart
         } catch (Throwable $e) {
             throw $e;
         }
