@@ -15,6 +15,8 @@ use RuntimeException;
 
 class OrderService
 {
+    private UserInterface $user;
+
     public function __construct(
         private CartStorageService $storageService,
         private WarehouseStockService $stockService,
@@ -23,12 +25,9 @@ class OrderService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    private UserInterface $user;
-
     public function for(UserInterface $user): static
     {
         $this->user = $user;
-
 
         return $this;
     }

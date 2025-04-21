@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('phone_country_code');
             $table->string('phone_number');
+            $table->string('address');
             $table->timestamp('created_at')->nullable();
             $table->primary('id');
         });

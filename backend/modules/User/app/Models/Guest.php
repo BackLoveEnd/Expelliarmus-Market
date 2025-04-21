@@ -13,6 +13,7 @@ use Modules\Order\Order\Models\Order;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\GuestFactory;
 use Modules\User\Observers\GuestObserver;
+use Propaganistas\LaravelPhone\Casts\E164PhoneNumberCast;
 use Propaganistas\LaravelPhone\Rules\Phone;
 
 /**
@@ -60,6 +61,7 @@ class Guest extends Model implements UserInterface
     {
         return [
             'created_at' => 'datetime',
+            'phone_number' => E164PhoneNumberCast::class.':UA,US',
         ];
     }
 

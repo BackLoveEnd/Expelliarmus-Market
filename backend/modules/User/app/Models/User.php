@@ -14,6 +14,7 @@ use Modules\Order\Order\Models\Order;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\UserFactory;
 use Modules\User\Observers\UserObserver;
+use Propaganistas\LaravelPhone\Casts\E164PhoneNumberCast;
 use Propaganistas\LaravelPhone\Rules\Phone;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -78,6 +79,7 @@ class User extends Authenticatable implements UserInterface
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'created_at' => 'datetime',
+            'phone_number' => E164PhoneNumberCast::class.':UA,US',
         ];
     }
 
