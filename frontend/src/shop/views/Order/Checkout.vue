@@ -47,34 +47,7 @@
             </button>
           </div>
           <div class="flex flex-col w-2/5 gap-y-12">
-            <div class="flex flex-col gap-y-12 overflow-y-auto max-h-96">
-              <product-checkout-card
-                  image="https://dummyimage.com/54x54/000/fff"
-                  price="$100"
-                  product-name="LCD Monitor"
-              />
-              <product-checkout-card
-                  image="https://dummyimage.com/54x54/000/fff"
-                  price="$100"
-                  product-name="LCD Monitor"
-              />
-            </div>
-            <div class="flex flex-col gap-y-6">
-              <div class="flex justify-between">
-                <span>Subtotal:</span>
-                <span>$200</span>
-              </div>
-              <hr class="h-[2px] bg-gray-300 border-0"/>
-              <div class="flex justify-between">
-                <span>Shipping:</span>
-                <span>Free</span>
-              </div>
-              <hr class="h-[2px] bg-gray-300 border-0"/>
-              <div class="flex justify-between">
-                <span class="font-semibold">Total:</span>
-                <span class="font-semibold">$200</span>
-              </div>
-            </div>
+            <products-checkout-overview/>
             <div class="space-y-6">
               <div class="flex flex-col">
                 <disclosure v-slot="{ open, close }" ref="disclosureRef">
@@ -192,14 +165,14 @@
               </div>
             </div>
             <div class="flex flex-col gap-y-6">
-              <div class="flex gap-x-4">
+              <div class="flex gap-x-4 items-center">
                 <base-text-input
                     id="coupon"
                     name="coupon"
                     placeholder="Coupon Code"
                 ></base-text-input>
                 <button
-                    class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
+                    class="px-12 py-1 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
                 >
                   Apply Coupon
                 </button>
@@ -223,10 +196,10 @@
 import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import BaseTextInput from "@/components/Default/Inputs/BaseTextInput.vue";
 import PhoneInput from "@/components/Default/Inputs/PhoneInput.vue";
-import ProductCheckoutCard from "@/shop/views/Order/ProductCheckoutCard.vue";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import CheckoutCreditCard from "@/shop/views/Order/CheckoutCreditCard.vue";
 import {ref} from "vue";
+import ProductsCheckoutOverview from "@/shop/components/Order/ProductsCheckoutOverview.vue";
 
 const links = ref([
   {url: "/", name: "Home"},

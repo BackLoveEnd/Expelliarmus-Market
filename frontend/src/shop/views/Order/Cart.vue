@@ -65,13 +65,14 @@
                   <span>${{ totalPrice }}</span>
                 </div>
               </div>
-              <button
-                  type="button"
+              <router-link
+                  to="/checkout"
+                  @click.prevent="useScrolling().scrollToTop()"
                   class="px-12 py-4 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
                   aria-label="Proceed to Checkout"
               >
                 Proceed to Checkout
-              </button>
+              </router-link>
             </div>
           </div>
         </div>
@@ -92,59 +93,60 @@
 </template>
 
 <script setup>
-import BreadCrumbs from '@/components/Default/BreadCrumbs.vue'
-import { ref } from 'vue'
-import CartOverview from '@/shop/components/Cart/CartOverview.vue'
-import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
-import { useCartStore } from '@/stores/useCartStore.js'
-import { useToastStore } from '@/stores/useToastStore.js'
-import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js'
-import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js'
+import BreadCrumbs from '@/components/Default/BreadCrumbs.vue';
+import {ref} from 'vue';
+import CartOverview from '@/shop/components/Cart/CartOverview.vue';
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue';
+import {useCartStore} from '@/stores/useCartStore.js';
+import {useToastStore} from '@/stores/useToastStore.js';
+import defaultSuccessSettings from '@/components/Default/Toasts/Default/defaultSuccessSettings.js';
+import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js';
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const links = ref([
-  { url: '/', name: 'Home' },
-  { url: '/cart', name: 'Cart' },
-])
+  {url: '/', name: 'Home'},
+  {url: '/cart', name: 'Cart'},
+]);
 
-const toast = useToastStore()
+const toast = useToastStore();
 
-const cartStore = useCartStore()
+const cartStore = useCartStore();
 
-const totalPrice = ref(0)
+const totalPrice = ref(0);
 
-const productsToUpdate = ref([])
+const productsToUpdate = ref([]);
 
 const clearCart = async () => {
   await cartStore.clearCart().then(() => {
-    toast.showToast('Cart was cleared.', defaultSuccessSettings)
-  })
-}
+    toast.showToast('Cart was cleared.', defaultSuccessSettings);
+  });
+};
 
 const handleTotalPrice = (value) => {
-  totalPrice.value = value
-}
+  totalPrice.value = value;
+};
 
 const handleUpdatedProduct = (product) => {
-  const index = productsToUpdate.value.findIndex((item) => item.productId === product.productId)
+  const index = productsToUpdate.value.findIndex((item) => item.productId === product.productId);
 
   if (index === -1) {
-    productsToUpdate.value.push(product)
+    productsToUpdate.value.push(product);
   } else {
-    productsToUpdate.value[index] = product
+    productsToUpdate.value[index] = product;
   }
-}
+};
 
 const updateProducts = async () => {
   await cartStore.updateQuantity(productsToUpdate.value)
       .then(() => {
-        toast.showToast('Cart was updated.', defaultSuccessSettings)
+        toast.showToast('Cart was updated.', defaultSuccessSettings);
 
-        productsToUpdate.value = []
+        productsToUpdate.value = [];
       })
       .catch((e) => {
-        toast.showToast(e?.response?.data?.message, defaultErrorSettings)
-      })
-}
+        toast.showToast(e?.response?.data?.message, defaultErrorSettings);
+      });
+};
 
 
 </script>

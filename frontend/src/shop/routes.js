@@ -13,6 +13,7 @@ import CategoriesOverview from "@/shop/views/Shop/CategoriesOverview.vue";
 import AllProducts from "@/shop/views/Product/AllProducts.vue";
 import BrandsOverview from "@/shop/views/Shop/BrandsOverview.vue";
 import BrandsBrowse from "@/shop/views/Shop/BrandsBrowse.vue";
+import {useCartStore} from "@/stores/useCartStore.js";
 
 export default [
     {
@@ -80,6 +81,15 @@ export default [
     {
         path: "/checkout",
         component: CheckOut,
+        beforeEnter(to, from, next) {
+            const cart = useCartStore();
+
+            if (cart.totalItems === 0) {
+                return next({name: "cart"});
+            }
+
+            return next();
+        }
     },
     {
         path: "/about-us",
