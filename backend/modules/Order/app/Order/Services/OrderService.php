@@ -32,26 +32,22 @@ class OrderService
         return $this;
     }
 
-    public function process(): void
+    public function process(): string
     {
         if ($this->user instanceof User) {
-            $this->userOrderFactory($this->user);
-
-            return;
+            return $this->userOrderFactory($this->user);
         }
 
         if ($this->user instanceof Guest) {
-            $this->guestOrderFactory($this->user);
-
-            return;
+            return $this->guestOrderFactory($this->user);
         }
 
         throw new RuntimeException('User not provided');
     }
 
-    private function userOrderFactory(User $user): void
+    private function userOrderFactory(User $user): string
     {
-        (new OrderRegularUserCreateService(
+        return (new OrderRegularUserCreateService(
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(
@@ -66,9 +62,9 @@ class OrderService
         ))->create($user);
     }
 
-    private function guestOrderFactory(Guest $guest): void
+    private function guestOrderFactory(Guest $guest): string
     {
-        (new OrderGuestCreateService(
+        return (new OrderGuestCreateService(
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(

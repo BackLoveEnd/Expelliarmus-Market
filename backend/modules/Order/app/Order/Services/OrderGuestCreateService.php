@@ -19,7 +19,7 @@ class OrderGuestCreateService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    public function create(Guest $user): void
+    public function create(Guest $user): string
     {
         try {
             $orderItemsPrepared = $this->prepareOrderService->prepare(null);
@@ -27,9 +27,11 @@ class OrderGuestCreateService
             /**@var Collection<int, OrderLineDto> $orderLines */
             $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared);
 
-            $this->orderPersistService->saveCheckout($user, $orderLines);
+            $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
             event(new OrderCreated($user, $orderLines));
+
+            return $orderId;
             // clear cart
         } catch (Throwable $e) {
             throw new FailedToCreateOrderException($e->getMessage(), $e->getCode(), $e);

@@ -18,7 +18,7 @@ class OrderRegularUserCreateService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    public function create(User $user): void
+    public function create(User $user): string
     {
         try {
             $orderItemsPrepared = $this->prepareOrderService->prepare($user);
@@ -26,10 +26,12 @@ class OrderRegularUserCreateService
             /**@var Collection<int, OrderLineDto> $orderLines */
             $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared);
 
-            $this->orderPersistService->saveCheckout($user, $orderLines);
+            $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
             event(new OrderCreated($user, $orderLines));
             // clear cart
+
+            return $orderId;
         } catch (Throwable $e) {
             throw $e;
         }

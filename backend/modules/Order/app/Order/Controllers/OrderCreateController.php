@@ -28,8 +28,13 @@ class OrderCreateController extends Controller
             );
         }
 
-        $this->orderService->for($user)->process();
+        $orderId = $this->orderService->for($user)->process();
 
-        return response()->json(['message' => 'Order created successfully.']);
+        return response()->json([
+            'message' => 'Order created successfully.',
+            'data' => [
+                'order_id' => $orderId,
+            ],
+        ]);
     }
 }
