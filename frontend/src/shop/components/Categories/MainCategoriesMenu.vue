@@ -52,10 +52,10 @@ const transformCategories = (categories) => {
               <span v-if="item.icon" :class="item.icon"/>
               <span class="ml-2">{{ item.label }}</span>
             </div>
-            <i
-                v-if="Array.isArray(item.items) && item.items.length > 0"
-                class="pi pi-angle-right text-sm text-gray-600"
-            ></i>
+            <!--            <i
+                            v-if="Array.isArray(item.items) && item.items.length > 0"
+                            class="pi pi-angle-right text-sm text-gray-600"
+                        ></i>-->
           </a>
         </router-link>
 
