@@ -6,9 +6,15 @@ namespace Modules\Order\Order\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class FailedToCreateOrderException extends Exception
 {
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+
     public function report(): false
     {
         return false;

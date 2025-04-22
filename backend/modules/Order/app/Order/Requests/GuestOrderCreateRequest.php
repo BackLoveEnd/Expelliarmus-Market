@@ -14,7 +14,7 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
         $user = $this->user('web');
 
         return [
-            'email' => [Rule::requiredIf(! $user), 'email'],
+            'email' => [Rule::requiredIf(! $user), 'email', 'unique:guests,email', 'unique:users,email'],
             'first_name' => [Rule::requiredIf(! $user), 'string', 'max:255'],
             'last_name' => [Rule::requiredIf(! $user), 'string', 'max:255'],
             'phone' => [Rule::requiredIf(! $user), 'phone:UA,US'],

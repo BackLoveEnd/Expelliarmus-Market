@@ -14,9 +14,9 @@ use Modules\User\Contracts\UserInterface;
 
 class OrderPersistService
 {
-    public function saveCheckout(UserInterface $user, Collection $orderLines): void
+    public function saveCheckout(UserInterface $user, Collection $orderLines): string
     {
-        DB::transaction(function () use ($user, $orderLines) {
+        return DB::transaction(function () use ($user, $orderLines) {
             $order = $this->createOrder($user, $orderLines->sum('totalPrice'));
 
             $data = $orderLines->map(function (OrderLineDto $dto) use ($order) {
@@ -31,6 +31,8 @@ class OrderPersistService
             });
 
             OrderLine::query()->insert($data->toArray());
+
+            return $order->order_id;
         });
     }
 

@@ -25,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $user_id
  * @property Carbon $email_verified_at
  * @property string $password
+ * @property string $address
  * @property Carbon $created_at
  * @property string $phone_country_code
  * @property Phone $phone_number
@@ -44,6 +45,7 @@ class User extends Authenticatable implements UserInterface
         'last_name',
         'email',
         'password',
+        'address',
         'phone_country_code',
         'phone_number',
     ];
@@ -54,6 +56,7 @@ class User extends Authenticatable implements UserInterface
         'remember_token',
         'two_factor_secret',
         'two_factor_recovery_codes',
+        'address',
         'phone_country_code',
         'phone_number',
     ];

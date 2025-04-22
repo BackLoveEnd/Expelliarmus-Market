@@ -20,6 +20,7 @@ class UserResource extends JsonApiResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'full_name' => $this->fullName(),
+            'address' => $this->address,
             'created_at' => $this->created_at->format('Y-m-d H:i').' '.Carbon::now()->timezone,
             'role' => RolesEnum::REGULAR_USER,
         ];
@@ -29,7 +30,8 @@ class UserResource extends JsonApiResource
         }
 
         if ($this->phone_number) {
-            $attributes['phone_mask'] = Str::mask($this->phone_number, '*', -4);
+            $attributes['phone_mask'] = substr((string)Str::mask($this->phone_number, '*', 3, -3), 3);
+
             $attributes['phone_original'] = $this->phone_number;
         }
 

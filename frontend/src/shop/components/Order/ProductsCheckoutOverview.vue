@@ -13,6 +13,7 @@ const truncator = useTruncator();
     <product-checkout-card
         v-for="product in cart.cartItems"
         :price="product.unitPrice"
+        :quantity="product.quantity"
         :product-name="truncator.truncateString(product.productTitle, 20).value"
         :image="product.productImage"
         :product-link="{
@@ -25,7 +26,7 @@ const truncator = useTruncator();
   <div class="flex flex-col gap-y-6">
     <div class="flex justify-between">
       <span>Subtotal:</span>
-      <span>$200</span>
+      <span>${{ cart.totalPrice }}</span>
     </div>
     <hr class="h-[2px] bg-gray-300 border-0"/>
     <div class="flex justify-between">

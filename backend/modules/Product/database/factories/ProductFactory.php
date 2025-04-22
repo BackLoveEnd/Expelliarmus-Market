@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Product\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
 use Modules\Product\Models\Product;
@@ -92,7 +93,7 @@ class ProductFactory extends Factory
                     ->count(2)
                     ->hasAttached(
                         factory: $attributes,
-                        pivot: ['value' => 'test value'],
+                        pivot: ['value' => 'test-'.Str::random(5)],
                     ),
                 relationship: 'combinedAttributes',
             )

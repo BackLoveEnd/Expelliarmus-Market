@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Order\Database\Factory\OrderFactory;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property Carbon created_at
@@ -48,6 +49,10 @@ class Order extends Model
         self::creating(function (Order $order) {
             if ($order->created_at === null) {
                 $order->created_at = Carbon::now();
+            }
+
+            if ($order->order_id === null) {
+                $order->order_id = Uuid::uuid7()->toString();
             }
         });
     }
