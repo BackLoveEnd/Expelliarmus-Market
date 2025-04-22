@@ -41,12 +41,12 @@ const handleCheckout = async () => {
 
   if (!auth.isRegularUser) {
     await userForm?.value?.submit();
-  }
-
-  if (!userHasFilledPersonalInfoToProcessCheckout()) {
-    isCheckoutProcessLoading.value = false;
-    toast.showToast("Please fill in your personal information to proceed with checkout.");
-    return;
+  } else {
+    if (!userHasFilledPersonalInfoToProcessCheckout()) {
+      isCheckoutProcessLoading.value = false;
+      toast.showToast("Please fill in your personal information to proceed with checkout.");
+      return;
+    }
   }
 
   await ShopOrderService.createOrder(guestUserData.value ?? null)
