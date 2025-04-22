@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Cart\Dto;
 
 use Illuminate\Support\Collection;
-use Modules\Order\Models\Cart;
+use Modules\Order\Cart\Models\Cart;
 
 final class UserCartInfoDto
 {

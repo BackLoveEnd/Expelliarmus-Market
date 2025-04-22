@@ -7,7 +7,7 @@ namespace Modules\Order\Cart\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
-use Modules\Order\Models\Cart;
+use Modules\Order\Cart\Models\Cart;
 use Modules\User\Models\User;
 
 class CartExistsInDbRule implements ValidationRule

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
-use Modules\Order\Models\OrderLine;
+use Modules\Order\Order\Models\OrderLine;
 use Modules\Product\Builders\ProductBuilder;
 use Modules\Product\Casts\ProductArticleCast;
 use Modules\Product\Database\Factories\ProductFactory;

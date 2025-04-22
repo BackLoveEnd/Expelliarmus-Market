@@ -12,5 +12,7 @@ interface ProductAttributeRetrieveInterface
 
     public function loadAttributesById(Product $product, int $variationId): VariationInterface;
 
+    public function loadAttributesByIds(\Illuminate\Support\Collection $productsWithVariations);
+
     public function getAttributesForProductCollection(Collection $products): Collection;
 }

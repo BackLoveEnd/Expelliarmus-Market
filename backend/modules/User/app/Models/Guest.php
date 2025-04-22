@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Modules\Order\Models\Cart;
-use Modules\Order\Models\Order;
+use Modules\Order\Cart\Models\Cart;
+use Modules\Order\Order\Models\Order;
+use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\GuestFactory;
 use Modules\User\Observers\GuestObserver;
+use Propaganistas\LaravelPhone\Casts\E164PhoneNumberCast;
 use Propaganistas\LaravelPhone\Rules\Phone;
 
 /**
@@ -20,26 +22,24 @@ use Propaganistas\LaravelPhone\Rules\Phone;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property string $address
  * @property string $phone_country_code
  * @property Phone $phone_number
  * @property Carbon $created_at
  */
 #[ObservedBy(GuestObserver::class)]
-class Guest extends Model
+class Guest extends Model implements UserInterface
 {
     use HasFactory;
 
     public $timestamps = false;
-
-    protected $primaryKey = 'guest_id';
-
-    public $incrementing = false;
 
     protected $fillable = [
         'first_name',
         'last_name',
         'email',
         'phone_country_code',
+        'address',
         'phone_number',
     ];
 
@@ -62,6 +62,7 @@ class Guest extends Model
     {
         return [
             'created_at' => 'datetime',
+            'phone_number' => E164PhoneNumberCast::class.':UA,US',
         ];
     }
 

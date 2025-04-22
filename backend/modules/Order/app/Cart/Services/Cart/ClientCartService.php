@@ -26,6 +26,12 @@ class ClientCartService
     {
         $this->checker->ensureProductCanBeAddedToCart($dto->product);
 
+        if ($this->storage->productExistsInCart($user, $dto->product, $dto->variationId)) {
+            $this->storage->addQuantityToExistProduct($user, $dto);
+
+            return;
+        }
+
         $cartInfo = is_null($dto->product->hasCombinedAttributes())
             ? $this->prepareService->prepareCartInfoForNonVariationProduct($dto)
             : $this->prepareService->prepareCartInfoForProductWithVariations($dto);

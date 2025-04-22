@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Database\Factory;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Order\Models\Order;
+use Modules\Order\Order\Models\Order;
 
 class OrderFactory extends Factory
 {
