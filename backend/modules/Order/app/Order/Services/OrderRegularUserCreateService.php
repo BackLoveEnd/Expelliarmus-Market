@@ -28,7 +28,7 @@ class OrderRegularUserCreateService
 
             $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
-            event(new OrderCreated($user, $orderLines));
+            event(new OrderCreated($user, $orderId, $orderLines));
             // clear cart
 
             return $orderId;

@@ -29,7 +29,7 @@ class OrderGuestCreateService
 
             $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
-            event(new OrderCreated($user, $orderLines));
+            event(new OrderCreated($user, $orderId, $orderLines));
 
             return $orderId;
             // clear cart
