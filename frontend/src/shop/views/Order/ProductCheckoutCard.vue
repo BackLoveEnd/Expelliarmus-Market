@@ -5,7 +5,8 @@
       <img :src="image" :alt="productName" class="max-w-14 max-h-14"/>
       <span class="text-base font-normal underline underline-offset-2 text-blue-400">{{ productName }}</span>
     </router-link>
-    <div class="flex items-center justify-center">
+    <div class="flex items-center justify-center gap-x-2">
+      <span>{{ quantity }}x</span>
       <div class="space-x-2" v-if="discount">
         <span class="line-through decoration-red-500">${{ price.toFixed(2) }}</span>
         <span class="font-semibold">${{ discount.new_price.toFixed(2) }}</span>
@@ -30,6 +31,10 @@ const props = defineProps({
   price: {
     type: Number,
     required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true
   },
   productLink: {
     type: Object,

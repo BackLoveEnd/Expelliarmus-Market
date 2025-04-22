@@ -77,6 +77,7 @@ export default [
     {
         path: "/cart",
         component: Cart,
+        name: "cart"
     },
     {
         path: "/checkout",

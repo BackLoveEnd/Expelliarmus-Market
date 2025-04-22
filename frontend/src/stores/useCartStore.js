@@ -35,7 +35,7 @@ export const useCartStore = defineStore('cart', {
         async addToCart(product) {
             await CartService.addToCart(product)
                 .then((response) => {
-                    this.cartItems.length += 1;
+                    this.cartItems.push({productId: product.product_id});
                 })
                 .catch((e) => {
                     if ([422, 400].includes(e.status)) {

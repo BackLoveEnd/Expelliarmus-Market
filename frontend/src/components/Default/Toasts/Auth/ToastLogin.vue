@@ -8,7 +8,7 @@ const auth = useAuthStore();
   <div class="w-full d-flex justify-between items-center">
     <span
     >Welcome back<span class="font-bold"
-    >, {{ auth.user.first_name }}!</span
+    >, {{ auth.firstName }}!</span
     ></span
     >
   </div>

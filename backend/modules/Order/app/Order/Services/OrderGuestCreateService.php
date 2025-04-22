@@ -35,7 +35,6 @@ class OrderGuestCreateService
             event(new OrderCreated($user, $orderId, $orderLines));
 
             return $orderId;
-            // clear cart
         } catch (Throwable $e) {
             if ($e instanceof CartMustNotBeEmptyBeforeOrderException
                 || $e instanceof ProductCannotBeProcessedToCheckoutException
