@@ -27,6 +27,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
+            'address' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'phone:UA,US'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -38,6 +39,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'first_name' => $input['first_name'],
                 'last_name' => $input['last_name'] ?? null,
                 'email' => $input['email'],
+                'phone_number' => $input['phone'] ?? null,
+                'address' => $input['address'] ?? null,
             ])->save();
         }
     }
@@ -52,6 +55,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         $user->forceFill([
             'name' => $input['name'],
             'email' => $input['email'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'phone_number' => $input['phone'] ?? null,
             'email_verified_at' => null,
         ])->save();
 
