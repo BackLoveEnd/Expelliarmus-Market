@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Modules\User\Enums\RolesEnum;
+use Modules\User\Models\Guest;
 use Modules\User\Models\User;
 
 class CreateNewUser implements CreatesNewUsers
@@ -28,6 +29,7 @@ class CreateNewUser implements CreatesNewUsers
                 'email',
                 'max:255',
                 Rule::unique(User::class),
+                Rule::unique(Guest::class),
             ],
             'password' => $this->passwordRules(),
         ])->validate();

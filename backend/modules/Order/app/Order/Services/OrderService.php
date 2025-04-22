@@ -48,6 +48,7 @@ class OrderService
     private function userOrderFactory(User $user): string
     {
         return (new OrderRegularUserCreateService(
+            cartStorage: $this->storageService,
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(
@@ -65,6 +66,7 @@ class OrderService
     private function guestOrderFactory(Guest $guest): string
     {
         return (new OrderGuestCreateService(
+            cartStorage: $this->storageService,
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(

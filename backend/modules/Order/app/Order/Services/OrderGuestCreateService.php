@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Services;
 
 use Illuminate\Support\Collection;
+use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Events\OrderCreated;
 use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
@@ -17,6 +18,7 @@ use Throwable;
 class OrderGuestCreateService
 {
     public function __construct(
+        private CartStorageService $cartStorage,
         private PrepareOrderService $prepareOrderService,
         private OrderLineService $orderPriceService,
         private OrderPersistService $orderPersistService,
@@ -34,6 +36,8 @@ class OrderGuestCreateService
 
             event(new OrderCreated($user, $orderId, $orderLines));
 
+            $this->cartStorage->clearSessionCart();
+            
             return $orderId;
         } catch (Throwable $e) {
             if ($e instanceof CartMustNotBeEmptyBeforeOrderException
