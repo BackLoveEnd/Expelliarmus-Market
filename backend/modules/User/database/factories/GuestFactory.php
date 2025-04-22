@@ -20,6 +20,7 @@ class GuestFactory extends Factory
             'email' => fake()->unique()->email(),
             'phone_country_code' => 'UA',
             'phone_number' => fake()->e164PhoneNumber(),
+            'address' => fake()->address(),
         ];
     }
 }

@@ -19,8 +19,10 @@ services:
     networks:
       - expelliarmus
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   npm:
     build:
@@ -73,8 +75,8 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD-SHELL", "is_ready" ]
-      timeout: 5s
+      test: [ "CMD-SHELL", "pg_isready -U $DB_USERNAME" ]
+      interval: 5s
       retries: 10
     networks:
       - expelliarmus
@@ -128,6 +130,10 @@ services:
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     command: redis-server --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 10
     networks:
       - expelliarmus
 

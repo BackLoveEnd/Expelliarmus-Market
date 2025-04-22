@@ -7,8 +7,10 @@ namespace Modules\Order\Cart\Services\Cart;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Modules\Order\Cart\Dto\ProductCartDto;
 use Modules\Order\Cart\Dto\UserCartInfoDto;
-use Modules\Order\Models\Cart;
+use Modules\Order\Cart\Models\Cart;
+use Modules\Product\Models\Product;
 use Modules\User\Models\User;
 use Ramsey\Uuid\Uuid;
 
@@ -130,6 +132,54 @@ class CartStorageService
         }
     }
 
+    public function productExistsInCart(?User $user, Product $product, ?int $variationId = null): bool
+    {
+        if ($user) {
+            $query = $user
+                ->cart()
+                ->where('product_id', $product->id);
+
+            if ($variationId) {
+                $query->whereJsonContains('variation->id', $variationId);
+            } else {
+                $query->whereNull('variation');
+            }
+
+            return $query->exists();
+        }
+
+        return collect($this->session->get($this->cartSessionKey, []))
+            ->contains(function ($item) use ($product, $variationId) {
+                if ($item->variation === null) {
+                    return false;
+                }
+
+                return $item->product_id === $product->id &&
+                    (! $variationId || ($item->variation['id'] ?? null) === $variationId);
+            });
+    }
+
+    public function addQuantityToExistProduct(?User $user, ProductCartDto $dto): void
+    {
+        if ($user) {
+            $cartItem = $user->cart()->where('product_id', $dto->product->id)->first();
+
+            if ($cartItem) {
+                $cartItem->increment('quantity', $dto->quantity);
+            }
+        }
+
+        $cart = collect($this->session->get($this->cartSessionKey, []));
+
+        $cart->each(function ($item) use ($dto) {
+            if ($item->product_id === $dto->product->id && $item->variation['id'] === $dto->variationId) {
+                $item->quantity += $dto->quantity;
+            }
+        });
+
+        $this->session->put($this->cartSessionKey, $cart->toArray());
+    }
+
     public function clearCart(?User $user): void
     {
         $user?->cart()->delete();
@@ -144,7 +194,10 @@ class CartStorageService
 
     public function isCartEmpty(?User $user): bool
     {
-        return $user ? ! $user->cart()->exists() : ! $this->session->has($this->cartSessionKey);
+        $sessionHasCart = $this->session->has($this->cartSessionKey);
+        $userHasCart = $user?->cart()->exists() ?? false;
+
+        return ! $sessionHasCart && ! $userHasCart;
     }
 
     private function hasDifferentVariation(Collection $cart, object $item): bool

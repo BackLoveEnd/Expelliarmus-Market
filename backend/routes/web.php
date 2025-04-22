@@ -239,3 +239,10 @@ Route::middleware('auth:sanctum')->group(function () {
             ->middleware($twoFactorMiddleware);
     }*/
 });
+
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Expelliarmus Shop API v1.0',
+        'status' => 200,
+    ]);
+});

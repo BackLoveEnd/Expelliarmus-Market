@@ -1,0 +1,31 @@
+services:
+  npm:
+    build:
+      context: .docker/node
+      dockerfile: node.Dockerfile
+    container_name: npm
+    volumes:
+      - ./frontend:/var/www/expelliarmus/frontend
+    command: npm run build
+    networks:
+      - expelliarmus
+  nginx:
+    build:
+      context: .docker/nginx
+      dockerfile: nginx.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+
+    container_name: nginx
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
+      - ./frontend:/var/www/expelliarmus/frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - php
+      - npm
+    networks:
+      - expelliarmus

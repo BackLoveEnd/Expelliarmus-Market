@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Modules\Order\Models\Cart;
-use Modules\Order\Models\Order;
+use Modules\Order\Cart\Models\Cart;
+use Modules\Order\Order\Models\Order;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Database\Factories\UserFactory;
 use Modules\User\Observers\UserObserver;
+use Propaganistas\LaravelPhone\Casts\E164PhoneNumberCast;
 use Propaganistas\LaravelPhone\Rules\Phone;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -24,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $user_id
  * @property Carbon $email_verified_at
  * @property string $password
+ * @property string $address
  * @property Carbon $created_at
  * @property string $phone_country_code
  * @property Phone $phone_number
@@ -43,6 +45,7 @@ class User extends Authenticatable implements UserInterface
         'last_name',
         'email',
         'password',
+        'address',
         'phone_country_code',
         'phone_number',
     ];
@@ -53,6 +56,7 @@ class User extends Authenticatable implements UserInterface
         'remember_token',
         'two_factor_secret',
         'two_factor_recovery_codes',
+        'address',
         'phone_country_code',
         'phone_number',
     ];
@@ -78,6 +82,7 @@ class User extends Authenticatable implements UserInterface
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'created_at' => 'datetime',
+            'phone_number' => E164PhoneNumberCast::class.':UA,US',
         ];
     }
 

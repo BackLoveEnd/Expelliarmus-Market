@@ -61,10 +61,14 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
+        if ($this->app->environment('local')) {
+            return;
+        }
+
         Gate::define('viewTelescope', function ($user) {
             return in_array(
                 $user->email,
-                $emails = Manager::query()
+                Manager::query()
                     ->where('is_super_manager', true)
                     ->pluck('email')
                     ->toArray(),

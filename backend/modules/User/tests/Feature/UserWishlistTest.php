@@ -58,7 +58,7 @@ class UserWishlistTest extends TestCase
                 'total',
             ],
             'links' => [
-                'next', // next_page_number
+                'next_page_number',
             ],
         ]);
     }

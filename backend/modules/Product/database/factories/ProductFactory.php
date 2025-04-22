@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Modules\Product\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductSpecAttributes;
 use Modules\Warehouse\Enums\ProductStatusEnum;
+use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 use Modules\Warehouse\Models\ProductAttribute;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
@@ -68,7 +70,9 @@ class ProductFactory extends Factory
 
         $this->addToWarehouse($product, false);
 
-        return $product;
+        return $product->load([
+            'warehouse',
+        ]);
     }
 
     public function withCombinedAttributes(): Product
@@ -89,7 +93,7 @@ class ProductFactory extends Factory
                     ->count(2)
                     ->hasAttached(
                         factory: $attributes,
-                        pivot: ['value' => 'test value'],
+                        pivot: ['value' => 'test-'.Str::random(5)],
                     ),
                 relationship: 'combinedAttributes',
             )
@@ -102,7 +106,9 @@ class ProductFactory extends Factory
 
         $this->addToWarehouse($product, false);
 
-        return $product;
+        return $product->load([
+            'warehouse',
+        ]);
     }
 
     public function withoutAttributes(): Product
@@ -119,7 +125,9 @@ class ProductFactory extends Factory
 
         $this->addToWarehouse($product);
 
-        return $product;
+        return $product->load([
+            'warehouse',
+        ]);
     }
 
     public function published(): ProductFactory
@@ -169,6 +177,7 @@ class ProductFactory extends Factory
     {
         $state = [
             'product_id' => $product->id,
+            'status' => WarehouseProductStatusEnum::IN_STOCK->value,
         ];
 
         if (! $price) {

@@ -7,7 +7,12 @@ export const useCartStore = defineStore('cart', {
     }),
     getters: {
         totalPrice(state) {
-            return state.cartItems.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+            const total = state.cartItems.reduce((sum, item) => {
+                const price = item.discount?.final_price ?? item.unitPrice;
+                return sum + price * item.quantity;
+            }, 0);
+
+            return total.toFixed(2);
         },
         totalItems(state) {
             return state.cartItems.length;
@@ -30,7 +35,7 @@ export const useCartStore = defineStore('cart', {
         async addToCart(product) {
             await CartService.addToCart(product)
                 .then((response) => {
-                    this.cartItems.length += 1;
+                    this.cartItems.push({productId: product.product_id});
                 })
                 .catch((e) => {
                     if ([422, 400].includes(e.status)) {

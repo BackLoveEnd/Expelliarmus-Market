@@ -3,7 +3,7 @@
     <button
         @click="handleButtonClick"
         :class="{
-        'bg-white text-black underline underline-offset-4 decoration-2 decoration-dashed border border-gray-700 border-green-600 hover:text-green-600':
+        'bg-white text-black underline underline-offset-4 decoration-2 decoration-dashed border border-green-600 hover:text-green-600':
           isInCart,
         'bg-[#db4444] border border-[#db4444] text-white hover:bg-red-900':
           !isInCart,

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Order\Cart\Http\Controllers\CartController;
+use Modules\Order\Order\Controllers\OrderCreateController;
 
 Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
     Route::controller(CartController::class)->group(function () {
@@ -15,4 +16,8 @@ Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
 
         Route::delete('/{id}', 'removeFromCart');
     });
+});
+
+Route::prefix('shop/user/order')->middleware('customer')->group(function () {
+    Route::post('/checkout', OrderCreateController::class);
 });
