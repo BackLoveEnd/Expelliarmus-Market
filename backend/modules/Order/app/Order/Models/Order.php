@@ -51,7 +51,7 @@ class Order extends Model
                 $order->created_at = Carbon::now();
             }
 
-            if ($order->order_id !== null) {
+            if ($order->order_id === null) {
                 $order->order_id = Uuid::uuid7()->toString();
             }
         });

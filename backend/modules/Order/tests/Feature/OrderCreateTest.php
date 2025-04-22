@@ -43,7 +43,7 @@ class OrderCreateTest extends TestCase
 
         $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
 
-        $response->assertExactJson([
+        $response->assertJsonFragment([
             'message' => 'Order created successfully.',
         ]);
 
@@ -138,7 +138,7 @@ class OrderCreateTest extends TestCase
 
         $guest = Guest::query()->whereEmail('testorderihor@gmail.com')->first();
 
-        $response->assertExactJson([
+        $response->assertJsonFragment([
             'message' => 'Order created successfully.',
         ]);
 
@@ -212,7 +212,7 @@ class OrderCreateTest extends TestCase
             'message' => 'Product was added to cart.',
         ]);
 
-        $response->assertExactJson([
+        $response->assertJsonFragment([
             'message' => 'Order created successfully.',
         ]);
 

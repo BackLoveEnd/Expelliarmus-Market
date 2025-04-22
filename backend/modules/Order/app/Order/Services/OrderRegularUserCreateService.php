@@ -7,6 +7,10 @@ namespace Modules\Order\Order\Services;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Events\OrderCreated;
+use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
+use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
+use Modules\Order\Order\Exceptions\ProductCannotBeProcessedToCheckoutException;
+use Modules\Order\Order\Exceptions\ProductHasNotEnoughSuppliesException;
 use Modules\User\Models\User;
 use Throwable;
 
@@ -33,7 +37,13 @@ class OrderRegularUserCreateService
 
             return $orderId;
         } catch (Throwable $e) {
-            throw $e;
+            if ($e instanceof CartMustNotBeEmptyBeforeOrderException
+                || $e instanceof ProductCannotBeProcessedToCheckoutException
+                || $e instanceof ProductHasNotEnoughSuppliesException) {
+                throw $e;
+            }
+
+            throw new FailedToCreateOrderException(message: $e->getMessage(), previous: $e);
         }
     }
 }
