@@ -4,14 +4,15 @@ import api from "@/utils/api.js";
 const formatter = useJsonApiFormatter();
 
 export const ShopOrderService = {
-    async createOrder(guestUserData = null) {
-        if (guestUserData) {
+    async createOrder(orderData = null) {
+        if (orderData) {
             const data = formatter.toJsonApi({
-                first_name: guestUserData.first_name,
-                last_name: guestUserData.last_name,
-                email: guestUserData.email,
-                phone: guestUserData.country_code + guestUserData.phone_number,
-                address: guestUserData.address,
+                first_name: orderData.first_name,
+                last_name: orderData.last_name,
+                email: orderData.email,
+                phone: orderData.country_code + orderData.phone_number,
+                address: orderData.address,
+                coupon: orderData.coupon ?? null
             }, 'guests');
 
             return await api().post("/shop/user/order/checkout", data);

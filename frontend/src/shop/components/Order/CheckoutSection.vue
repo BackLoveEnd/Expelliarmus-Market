@@ -4,13 +4,14 @@ import CheckoutCreditCard from "@/shop/views/Order/CheckoutCreditCard.vue";
 import ProductsCheckoutOverview from "@/shop/components/Order/ProductsCheckoutOverview.vue";
 import RegularUserInfo from "@/shop/components/Order/RegularUserInfo.vue";
 import GuestInfo from "@/shop/components/Order/GuestInfo.vue";
-import BaseTextInput from "@/components/Default/Inputs/BaseTextInput.vue";
 import {ref} from "vue";
 import {ShopOrderService} from "@/services/Order/ShopOrderService.js";
 import {useAuthStore} from "@/stores/useAuthStore.js";
 import {useToastStore} from "@/stores/useToastStore.js";
 import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
 import {useScrolling} from "@/composables/useScrolling.js";
+import OrderCoupon from "@/shop/components/Order/OrderCoupon.vue";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 
 const auth = useAuthStore();
 
@@ -26,6 +27,8 @@ const guestUserData = ref();
 
 const disclosureRef = ref(null);
 
+const coupon = ref();
+
 const handleUserFormData = (data) => {
   if (!data) {
     isCheckoutProcessLoading.value = false;
@@ -37,19 +40,28 @@ const handleUserFormData = (data) => {
 };
 
 const handleCheckout = async () => {
-  isCheckoutProcessLoading.value = true;
-
   if (!auth.isRegularUser) {
     await userForm?.value?.submit();
+
+    if (!guestUserData.value) {
+      toast.showToast("Please fill in your personal information to proceed with checkout.");
+      return;
+    }
   } else {
     if (!userHasFilledPersonalInfoToProcessCheckout()) {
-      isCheckoutProcessLoading.value = false;
       toast.showToast("Please fill in your personal information to proceed with checkout.");
       return;
     }
   }
 
-  await ShopOrderService.createOrder(guestUserData.value ?? null)
+  isCheckoutProcessLoading.value = true;
+
+  const data = {
+    ...guestUserData.value,
+    coupon: coupon.value.coupon,
+  };
+
+  await ShopOrderService.createOrder(data)
       .then((response) => {
         if (response.status === 200) {
           emit('checkout-process-success', response?.data?.data?.order_id);
@@ -57,10 +69,14 @@ const handleCheckout = async () => {
       })
       .catch((e) => {
         if ([422, 409].includes(e?.status)) {
-          toast.showToast(e?.response?.data?.message);
+          toast.showToast(e?.response?.data?.message, defaultErrorSettings);
         }
       })
-      .finally(() => isCheckoutProcessLoading.value = true);
+      .finally(() => isCheckoutProcessLoading.value = false);
+};
+
+const handleCouponApplied = (couponData) => {
+  coupon.value = couponData;
 };
 
 function userHasFilledPersonalInfoToProcessCheckout() {
@@ -88,7 +104,7 @@ function closeDisclosure() {
           <regular-user-info/>
         </div>
         <div class="flex flex-col w-2/5 gap-y-12">
-          <products-checkout-overview/>
+          <products-checkout-overview :coupon="coupon"/>
           <div class="space-y-6">
             <div class="flex flex-col">
               <disclosure v-slot="{ open, close }" ref="disclosureRef">
@@ -208,16 +224,7 @@ function closeDisclosure() {
           </div>
           <div class="flex flex-col gap-y-6">
             <div class="flex gap-x-4 items-center">
-              <base-text-input
-                  id="coupon"
-                  name="coupon"
-                  placeholder="Coupon Code"
-              ></base-text-input>
-              <button
-                  class="px-12 py-1 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
-              >
-                Apply Coupon
-              </button>
+              <order-coupon @coupon-applied="handleCouponApplied"/>
             </div>
             <div class="block">
               <button
