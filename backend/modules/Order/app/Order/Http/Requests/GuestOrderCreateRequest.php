@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Requests;
+namespace Modules\Order\Order\Http\Requests;
 
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
@@ -19,6 +19,7 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
             'last_name' => [Rule::requiredIf(! $user), 'string', 'max:255'],
             'phone' => [Rule::requiredIf(! $user), 'phone:UA,US'],
             'address' => [Rule::requiredIf(! $user), 'string', 'max:255'],
+            'coupon' => ['nullable', 'string'],
         ];
     }
 
@@ -30,6 +31,7 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
             'last_name' => 'Last Name',
             'phone' => 'Phone',
             'address' => 'Address',
+            'coupon' => 'Coupon',
         ];
     }
 
