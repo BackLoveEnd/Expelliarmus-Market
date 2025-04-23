@@ -7,12 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected string $name = 'User';
 
-    public function boot(): void
-    {
-        parent::boot();
-    }
+    protected string $name = 'User';
 
     public function map(): void
     {
@@ -30,6 +26,8 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapShopRoutes(): void
     {
-        Route::middleware('api')->prefix('api')->name('shop.')->group(module_path($this->name, '/routes/shop.php'));
+        Route::middleware('api')->prefix('api')->name('shop.')->group(module_path($this->name,
+            '/routes/shop.php'));
     }
+
 }

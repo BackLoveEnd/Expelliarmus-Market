@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Feature;
-
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +17,7 @@ use Modules\ContentManagement\Storage\NewArrivals\NewArrivalsStorage;
 
 class NewArrivalsTest extends TestCase
 {
+
     use RefreshDatabase;
 
     protected FilesystemManager $storageMock;
@@ -46,7 +45,7 @@ class NewArrivalsTest extends TestCase
             Storage::disk('public_content')->assertExists('arrivals/'.$arrival->file->hashName());
 
             $this->assertDatabaseHas('content_new_arrivals', [
-                'image_source' => $arrival->file->hashName()
+                'image_source' => $arrival->file->hashName(),
             ]);
         }
     }
@@ -58,13 +57,13 @@ class NewArrivalsTest extends TestCase
                 'file' => UploadedFile::fake()->image('image_1.png'),
                 'position' => 1,
                 'image_url' => null,
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'content' => [
                     'title' => 'Expelliarmus',
-                    'body' => 'Expelliarmus is a disarming charm.'
+                    'body' => 'Expelliarmus is a disarming charm.',
                 ],
-                'arrival_id' => null
-            ]
+                'arrival_id' => null,
+            ],
         ]);
 
         $service = new NewArrivalsContentService(new NewArrivalsStorage($this->storageMock));
@@ -77,7 +76,7 @@ class NewArrivalsTest extends TestCase
         $service->deleteArrival($arrivalFromDb);
 
         $this->assertDatabaseMissing('content_new_arrivals', [
-            'arrival_id' => $arrivalFromDb->arrival_id
+            'arrival_id' => $arrivalFromDb->arrival_id,
         ]);
 
         $this->storageMock->assertMissing('arrivals/'.$arrivalFromDb->image_source);
@@ -102,7 +101,7 @@ class NewArrivalsTest extends TestCase
             $this->storageMock->assertExists('arrivals/'.$arrival->file->hashName());
 
             $this->assertDatabaseHas('content_new_arrivals', [
-                'image_source' => $arrival->file->hashName()
+                'image_source' => $arrival->file->hashName(),
             ]);
         }
 
@@ -112,50 +111,49 @@ class NewArrivalsTest extends TestCase
         }
     }
 
-
     private function generateNewArrivals(): Collection
     {
         return ArrivalContentDto::collection([
             [
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'position' => 1,
                 'content' => [
                     'title' => 'Expelliarmus',
-                    'body' => 'Expelliarmus is a disarming charm.'
+                    'body' => 'Expelliarmus is a disarming charm.',
                 ],
                 'file' => UploadedFile::fake()->image('expelliarmus.jpg'),
                 'exists_image_url' => null,
             ],
             [
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'position' => 2,
                 'content' => [
                     'title' => 'Stupefy',
-                    'body' => 'Stupefy is a stunning spell.'
+                    'body' => 'Stupefy is a stunning spell.',
                 ],
                 'file' => UploadedFile::fake()->image('stupefy.jpg'),
                 'exists_image_url' => null,
             ],
             [
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'position' => 3,
                 'content' => [
                     'title' => 'Lumos',
-                    'body' => 'Lumos is a light spell.'
+                    'body' => 'Lumos is a light spell.',
                 ],
                 'file' => UploadedFile::fake()->image('lumos.jpg'),
                 'exists_image_url' => null,
             ],
             [
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'position' => 4,
                 'content' => [
                     'title' => 'Alohomora',
-                    'body' => 'Alohomora is a unlocking spell.'
+                    'body' => 'Alohomora is a unlocking spell.',
                 ],
                 'file' => UploadedFile::fake()->image('alohomora.jpg'),
                 'exists_image_url' => null,
-            ]
+            ],
         ]);
     }
 
@@ -170,7 +168,7 @@ class NewArrivalsTest extends TestCase
                 'image_url' => $arrival->image_url,
                 'arrival_url' => $arrival->arrival_url,
                 'content' => $arrival->content,
-                'position' => $arrival->position->value
+                'position' => $arrival->position->value,
             ];
         });
 
@@ -179,14 +177,15 @@ class NewArrivalsTest extends TestCase
                 'file' => UploadedFile::fake()->image('image_1.png'),
                 'position' => NewArrivalsPositionEnum::QUATERNARY->value,
                 'image_url' => null,
-                'arrival_url' => 'http://expelliarmus.com',
+                'arrival_url' => config('app.frontend_url'),
                 'arrival_id' => null,
                 'content' => [
                     'title' => 'Expelliarmus',
-                    'body' => 'Expelliarmus is a disarming charm.'
-                ]
+                    'body' => 'Expelliarmus is a disarming charm.',
+                ],
             ],
-            ...$arrivals->toArray()
+            ...$arrivals->toArray(),
         ]);
     }
+
 }

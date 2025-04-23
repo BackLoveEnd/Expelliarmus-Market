@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
+
     /**
      * Run the migrations.
      */
@@ -15,7 +16,7 @@ return new class extends Migration {
             $table->uuid('order_id')->unique();
             $table->morphs('userable');
             $table->tinyInteger('status');
-            $table->decimal('total_price', 8, 2);
+            $table->decimal('total_price');
             $table->timestamp('created_at')->nullable();
             $table->primary('id');
         });
@@ -28,4 +29,5 @@ return new class extends Migration {
     {
         Schema::dropIfExists('orders');
     }
+
 };

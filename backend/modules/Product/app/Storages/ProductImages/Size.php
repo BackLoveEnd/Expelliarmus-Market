@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Modules\Product\Storages\ProductImages;
 
-class Size
+readonly class Size
 {
+
     public function __construct(
-        public readonly int $width,
-        public readonly int $height
-    ) {
-    }
+        public int $width,
+        public int $height
+    ) {}
+
 }

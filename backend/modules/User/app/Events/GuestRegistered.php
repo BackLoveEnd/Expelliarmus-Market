@@ -7,10 +7,12 @@ namespace Modules\User\Events;
 use Modules\User\Models\Guest;
 use Modules\User\Models\User;
 
-class GuestRegistered
+readonly class GuestRegistered
 {
+
     public function __construct(
-        public readonly User $createdUser,
-        public readonly Guest $guest,
+        public User $createdUser,
+        public Guest $guest,
     ) {}
+
 }
