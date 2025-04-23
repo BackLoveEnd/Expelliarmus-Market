@@ -58,9 +58,10 @@
           <div class="flex justify-between items-center">
             <button
                 type="submit"
-                class="px-12 py-4 bg-[#DB4444] text-center cursor-pointer text-white hover:bg-red-900 rounded-md"
+                class="px-12 py-4 bg-[#DB4444] flex justify-center items-center cursor-pointer text-white hover:bg-red-900 rounded-md"
             >
-              Log In
+              <i v-if="isLoading" class="pi pi-spin pi-spinner font-semibold"></i>
+              <span v-else>Log In</span>
             </button>
             <router-link
                 class="text-[#DB4444]"
@@ -139,6 +140,8 @@ const auth = useAuthStore();
 const toast = useToastStore();
 const cartStore = useCartStore();
 
+const isLoading = ref(false);
+
 const showModalToReAuth = ref(false);
 
 const schema = yup.object().shape({
@@ -154,6 +157,8 @@ const user = reactive({
 const loginError = ref(null);
 
 function login() {
+  isLoading.value = true;
+
   auth
       .login(user)
       .then((response) => {
@@ -178,7 +183,8 @@ function login() {
         if (e?.status === 429) {
           toast.showToast('Too many requests. Please, wait.', defaultErrorSettings);
         }
-      });
+      })
+      .finally(() => isLoading.value = false);
 }
 
 function loginAsCustomer() {
