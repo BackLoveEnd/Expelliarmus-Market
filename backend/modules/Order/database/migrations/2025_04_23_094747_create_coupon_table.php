@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->timestamp('expires_at')->nullable();
         });
     }
-s
+
     public function down(): void
     {
         Schema::dropIfExists('coupons');

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\Order\Order\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Modules\Order\Database\Factories\CouponFactory;
 use Modules\Order\Order\Enum\CouponTypeEnum;
 
 /**
@@ -18,6 +20,8 @@ use Modules\Order\Order\Enum\CouponTypeEnum;
  */
 class Coupon extends Model
 {
+    use HasFactory;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -35,5 +39,10 @@ class Coupon extends Model
             'expires_at' => 'datetime',
             'type' => CouponTypeEnum::class,
         ];
+    }
+
+    protected static function newFactory(): CouponFactory
+    {
+        return CouponFactory::new();
     }
 }

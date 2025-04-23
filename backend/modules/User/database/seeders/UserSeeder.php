@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\Order\Order\Models\Coupon;
 use Modules\User\Models\User;
 
 class UserSeeder extends Seeder
@@ -13,8 +14,14 @@ class UserSeeder extends Seeder
     {
         User::query()->truncate();
 
-        User::factory(10)->create()->each(function (User $user) {
+        $users = User::factory(10)->create();
+
+        $users->each(function (User $user) {
             $user->assignRole('regular_user');
+        });
+
+        $users->take(3)->each(function (User $user) {
+            Coupon::factory()->user($user)->create();
         });
     }
 }
