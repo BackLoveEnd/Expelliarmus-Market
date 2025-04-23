@@ -16,7 +16,7 @@ class CouponFactory extends Factory
     public function definition(): array
     {
         return [
-            'coupon_id' => $this->faker->unique()->asciify('********'),
+            'coupon_id' => strtoupper($this->faker->unique()->word()),
             'user_id' => null,
             'email' => null,
             'discount' => $this->faker->numberBetween(10, 25),

@@ -28,7 +28,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 Rule::unique('users')->ignore($user->id),
             ],
             'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'phone:UA,US'],
+            'phone' => ['nullable', 'phone:UA,US', Rule::unique('phone_number')->ignore($user->id)],
         ])->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email &&

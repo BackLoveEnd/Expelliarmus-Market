@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->unsignedInteger('id')->generatedAs()->always()->primary();
-            $table->string('coupon_id', 8)->unique();
+            $table->string('coupon_id')->unique();
             $table->integer('discount');
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('email')->nullable();
