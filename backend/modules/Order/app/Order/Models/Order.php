@@ -3,15 +3,24 @@
 namespace Modules\Order\Order\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Order\Database\Factory\OrderFactory;
+use Modules\Order\Order\Enum\OrderStatusEnum;
+use Modules\User\Contracts\UserInterface;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @property Carbon created_at
+ * @property int $id
+ * @property string $order_id
+ * @property OrderStatusEnum $status
+ * @property float $total_price
+ * @property string $userable_type
+ * @property int $userable_id
+ * @property Carbon created_a
  */
 class Order extends Model
 {
@@ -23,6 +32,8 @@ class Order extends Model
         'status',
         'total_price',
         'created_at',
+        'userable_type',
+        'userable_id',
     ];
 
     public function userable(): MorphTo
@@ -33,6 +44,13 @@ class Order extends Model
     public function orderLines(): HasMany
     {
         return $this->hasMany(OrderLine::class);
+    }
+
+    public function scopeClient(Builder $builder, UserInterface $client): Builder
+    {
+        return $builder
+            ->where('userable_type', $client::class)
+            ->where('userable_id', $client->id);
     }
 
     protected function casts(): array

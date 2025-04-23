@@ -11,6 +11,8 @@ use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\Order\Order\Models\Order;
 use Modules\Order\Order\Models\OrderLine;
 use Modules\User\Contracts\UserInterface;
+use Modules\User\Models\Guest;
+use Modules\User\Models\User;
 
 class OrderPersistService
 {
@@ -34,6 +36,14 @@ class OrderPersistService
 
             return $order->order_id;
         });
+    }
+
+    public function syncGuestOrdersWithRegularUser(Guest $guest, User $user): int
+    {
+        return Order::query()->client($guest)->update([
+            'userable_type' => User::class,
+            'userable_id' => $user->id,
+        ]);
     }
 
     private function createOrder(UserInterface $user, float $totalPrice): Order

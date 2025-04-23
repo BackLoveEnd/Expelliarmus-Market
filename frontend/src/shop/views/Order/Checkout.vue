@@ -13,6 +13,7 @@ import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
 import {ref} from "vue";
 import CheckoutSection from "@/shop/components/Order/CheckoutSection.vue";
 import CheckoutSuccess from "@/shop/components/Order/CheckoutSuccess.vue";
+import {useCartStore} from "@/stores/useCartStore.js";
 
 const links = ref([
   {url: "/", name: "Home"},
@@ -22,11 +23,16 @@ const links = ref([
 
 const isCheckoutSuccess = ref(false);
 
+const cart = useCartStore();
+
 const orderId = ref(null);
 
 const checkoutProcessSuccess = (order_id) => {
   isCheckoutSuccess.value = true;
+
   orderId.value = order_id;
+
+  cart.cartItems = [];
 };
 </script>
 

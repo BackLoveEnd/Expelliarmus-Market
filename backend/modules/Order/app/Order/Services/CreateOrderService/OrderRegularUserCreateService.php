@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Illuminate\Support\Collection;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
@@ -12,10 +12,11 @@ use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
 use Modules\Order\Order\Exceptions\ProductCannotBeProcessedToCheckoutException;
 use Modules\Order\Order\Exceptions\ProductHasNotEnoughSuppliesException;
-use Modules\User\Models\Guest;
+use Modules\Order\Order\Services\OrderPersistService;
+use Modules\User\Models\User;
 use Throwable;
 
-class OrderGuestCreateService
+class OrderRegularUserCreateService
 {
     public function __construct(
         private CartStorageService $cartStorage,
@@ -24,10 +25,10 @@ class OrderGuestCreateService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    public function create(Guest $user): string
+    public function create(User $user): string
     {
         try {
-            $orderItemsPrepared = $this->prepareOrderService->prepare(null);
+            $orderItemsPrepared = $this->prepareOrderService->prepare($user);
 
             /**@var Collection<int, OrderLineDto> $orderLines */
             $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared);
@@ -36,8 +37,8 @@ class OrderGuestCreateService
 
             event(new OrderCreated($user, $orderId, $orderLines));
 
-            $this->cartStorage->clearSessionCart();
-            
+            $this->cartStorage->clearCart($user);
+
             return $orderId;
         } catch (Throwable $e) {
             if ($e instanceof CartMustNotBeEmptyBeforeOrderException

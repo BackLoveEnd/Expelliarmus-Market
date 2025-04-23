@@ -7,7 +7,7 @@ namespace Modules\Order\Order\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Order\Order\Requests\GuestOrderCreateRequest;
-use Modules\Order\Order\Services\OrderService;
+use Modules\Order\Order\Services\CreateOrderService\OrderService;
 use Modules\User\Http\Actions\Guests\CreateGuestAction;
 use Modules\User\Http\Dto\CreateGuestDto;
 

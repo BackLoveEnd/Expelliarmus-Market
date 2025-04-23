@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Modules\Order\Cart\Services\Cart\CartStorageService;
+use Modules\Order\Order\Services\OrderPersistService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Models\Guest;
