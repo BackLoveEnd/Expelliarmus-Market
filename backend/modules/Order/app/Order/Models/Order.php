@@ -57,6 +57,7 @@ class Order extends Model
     {
         return [
             'created_at' => 'datetime',
+            'status' => OrderStatusEnum::class,
         ];
     }
 

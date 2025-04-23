@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Controllers;
+namespace Modules\Order\Order\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Modules\Order\Order\Requests\GuestOrderCreateRequest;
+use Modules\Order\Order\Http\Requests\GuestOrderCreateRequest;
 use Modules\Order\Order\Services\CreateOrderService\OrderService;
 use Modules\User\Http\Actions\Guests\CreateGuestAction;
 use Modules\User\Http\Dto\CreateGuestDto;
@@ -28,7 +28,10 @@ class OrderCreateController extends Controller
             );
         }
 
-        $orderId = $this->orderService->for($user)->process();
+        $orderId = $this->orderService
+            ->for($user)
+            ->usingCoupon($request->coupon)
+            ->process();
 
         return response()->json([
             'message' => 'Order created successfully.',
