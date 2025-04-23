@@ -10,6 +10,7 @@ use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
 use Modules\Order\Order\Services\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
+use Modules\User\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
 use stdClass;
 use Throwable;
@@ -21,8 +22,11 @@ class OrderLineService
         private CouponService $couponService,
     ) {}
 
-    public function prepareOrderLines(Collection $orderItems, ?string $couponCode): OrderLinesDto
-    {
+    public function prepareOrderLines(
+        Collection $orderItems,
+        User|string|null $user,
+        ?string $couponCode,
+    ): OrderLinesDto {
         $this->discountService->loadLastActiveDiscountForProducts(
             new EloquentCollection($orderItems->pluck('product')),
         );
@@ -32,7 +36,7 @@ class OrderLineService
         );
         return OrderLinesDto::from(
             orderLines: $orderLines,
-            totalPrice: $this->countTotalPriceWithCoupon($orderLines, $couponCode),
+            totalPrice: $this->countTotalPriceWithCoupon($orderLines, $user, $couponCode),
         );
     }
 
@@ -85,14 +89,17 @@ class OrderLineService
         });
     }
 
-    private function countTotalPriceWithCoupon(Collection $orderLines, ?string $couponCode): float
-    {
+    private function countTotalPriceWithCoupon(
+        Collection $orderLines,
+        User|string|null $user,
+        ?string $couponCode,
+    ): float {
         if ($couponCode === null) {
             return round($orderLines->sum('totalPrice'), 2);
         }
 
         try {
-            $coupon = $this->couponService->checkCoupon($couponCode, null);
+            $coupon = $this->couponService->checkCoupon($couponCode, $user);
 
             $totalPrice = $orderLines->sum('totalPrice');
 

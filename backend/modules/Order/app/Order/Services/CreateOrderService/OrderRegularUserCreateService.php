@@ -28,7 +28,11 @@ class OrderRegularUserCreateService
         try {
             $orderItemsPrepared = $this->prepareOrderService->prepare($user);
 
-            $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared, $couponCode);
+            $orderLines = $this->orderPriceService->prepareOrderLines(
+                orderItems: $orderItemsPrepared,
+                user: $user,
+                couponCode: $couponCode,
+            );
 
             $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 

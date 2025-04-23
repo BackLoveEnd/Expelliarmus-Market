@@ -26,7 +26,7 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
             'phone_country_code' => 'UA',
-            'phone_number' => fake()->e164PhoneNumber(),
+            'phone_number' => "+380".fake()->unique()->numberBetween(1000000000, 999999999),
         ];
     }
 

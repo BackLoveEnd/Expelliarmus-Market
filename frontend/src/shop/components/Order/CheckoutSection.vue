@@ -56,12 +56,7 @@ const handleCheckout = async () => {
 
   isCheckoutProcessLoading.value = true;
 
-  const data = {
-    ...guestUserData.value,
-    coupon: coupon.value.coupon,
-  };
-
-  await ShopOrderService.createOrder(data)
+  await ShopOrderService.createOrder(guestUserData.value ?? null, coupon.value?.coupon ?? null)
       .then((response) => {
         if (response.status === 200) {
           emit('checkout-process-success', response?.data?.data?.order_id);

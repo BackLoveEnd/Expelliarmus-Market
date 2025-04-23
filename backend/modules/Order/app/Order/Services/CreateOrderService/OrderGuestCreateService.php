@@ -28,7 +28,11 @@ class OrderGuestCreateService
         try {
             $orderItemsPrepared = $this->prepareOrderService->prepare(null);
 
-            $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared, $couponCode);
+            $orderLines = $this->orderPriceService->prepareOrderLines(
+                orderItems: $orderItemsPrepared,
+                user: $user->email,
+                couponCode: $couponCode,
+            );
 
             $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
