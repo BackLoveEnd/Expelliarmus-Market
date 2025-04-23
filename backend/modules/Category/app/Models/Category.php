@@ -59,8 +59,12 @@ class Category extends Model
         });
     }
 
-    public static function getAllCategoriesInTree(): Collection
+    public static function getAllCategoriesInTree(int $limit = 0): Collection
     {
+        if ($limit !== 0) {
+            return self::defaultOrder()->withDepth()->limit($limit)->get()->toTree();
+        }
+
         return self::defaultOrder()->withDepth()->get()->toTree();
     }
 
