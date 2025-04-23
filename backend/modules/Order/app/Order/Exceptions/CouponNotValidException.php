@@ -11,6 +11,6 @@ class CouponNotValidException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => 'Coupon is not valid'], 422);
+        return response()->json(['message' => 'Coupon is not valid.'], 422);
     }
 }

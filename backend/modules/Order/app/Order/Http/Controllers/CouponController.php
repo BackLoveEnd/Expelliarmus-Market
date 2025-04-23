@@ -22,18 +22,20 @@ class CouponController
      *
      * Usage place - Shop.
      *
-     * @param  CouponCheckRequest  $request
+     * @param  Request  $request
      * @return CouponResource|JsonResponse
      * @throws CouponNotValidException
      */
     public function checkCoupon(Request $request): CouponResource|JsonResponse
     {
-        if ($request->query('coupon') === null) {
+        $couponCode = $request->route()?->parameter('coupon');
+
+        if ($couponCode === null) {
             return response()->json(['message' => 'Coupon code is required'], 422);
         }
 
         $coupon = $this->couponService->checkCoupon(
-            couponCode: $request->query('coupon'),
+            couponCode: $couponCode,
             user: $request->user('web'),
         );
 

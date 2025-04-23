@@ -23,6 +23,6 @@ Route::prefix('shop/user/order')->middleware('customer')->group(function () {
     Route::post('/checkout', OrderCreateController::class);
 });
 
-Route::prefix('coupons')->middleware('customer')->group(function () {
+Route::prefix('shop/users/coupons')->middleware('customer')->group(function () {
     Route::get('/{coupon}/check', [CouponController::class, 'checkCoupon']);
 });
