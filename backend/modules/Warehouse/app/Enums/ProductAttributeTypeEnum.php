@@ -4,6 +4,7 @@ namespace Modules\Warehouse\Enums;
 
 enum ProductAttributeTypeEnum: int
 {
+
     case STRING = 0;
 
     case NUMBER = 1;
@@ -22,7 +23,7 @@ enum ProductAttributeTypeEnum: int
         };
     }
 
-    public function castToType(mixed $value): mixed
+    public function castToType(mixed $value): string|int|float
     {
         return match ($this) {
             self::NUMBER => (int) $value,
@@ -30,4 +31,5 @@ enum ProductAttributeTypeEnum: int
             self::DECIMAL => round($value, 2)
         };
     }
+
 }

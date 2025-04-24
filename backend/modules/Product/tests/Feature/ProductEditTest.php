@@ -6,16 +6,13 @@ namespace Modules\Product\Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
-use Illuminate\Support\Facades\DB;
 use Mockery;
-use Modules\Brand\Models\Brand;
 use Modules\Category\Database\Seeders\CategoryDatabaseSeeder;
 use Modules\Category\Models\Category;
 use Modules\Product\Database\Seeders\ProductDatabaseSeeder;
 use Modules\Product\Http\Management\Actions\Product\Edit\DeleteVariationsWhenNeedAction;
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProduct;
 use Modules\Product\Http\Management\Actions\Product\Edit\EditProductFactoryAction;
-use Modules\Product\Http\Management\Requests\ProductCreateRequest;
 use Modules\Product\Http\Management\Requests\ProductEditRequest;
 use Modules\Product\Models\Product;
 use Modules\Product\Models\ProductSpec;
@@ -263,7 +260,8 @@ class ProductEditTest extends TestCase
         }
     }
 
-    public function test_can_edit_product_with_combined_options_with_new_attributes_and_exist_variations(): void
+    public function test_can_edit_product_with_combined_options_with_new_attributes_and_exist_variations(
+    ): void
     {
         $product = Product::factory()->withCombinedAttributes();
 
@@ -317,7 +315,8 @@ class ProductEditTest extends TestCase
     }
 
     // Balanced means some variations or attributes exists, some new
-    public function test_can_edit_product_with_combined_options_with_balanced_variations_and_balanced_attributes(): void
+    public function test_can_edit_product_with_combined_options_with_balanced_variations_and_balanced_attributes(
+    ): void
     {
         $product = Product::factory()->withCombinedAttributes();
 
@@ -326,7 +325,7 @@ class ProductEditTest extends TestCase
         $request = $this->createRequestFromExists($product, [
             'product_specs' => $this->generateSpecs($product->category),
             'is_combined_attributes' => true,
-            'combined_variations' => $options
+            'combined_variations' => $options,
         ]);
 
         $attributeNames = collect($options[0]['attributes'])->pluck('name');
@@ -348,7 +347,7 @@ class ProductEditTest extends TestCase
                 'sku' => $option['sku'],
                 'price' => $option['price'],
                 'quantity' => $option['quantity'],
-                'product_id' => $product->id
+                'product_id' => $product->id,
             ]);
         }
 
@@ -378,7 +377,7 @@ class ProductEditTest extends TestCase
         (new DeleteVariationsWhenNeedAction())->handle($product, true);
 
         $this->assertDatabaseMissing('product_attribute_values', [
-            'product_id' => $product->id
+            'product_id' => $product->id,
         ]);
     }
 
@@ -392,12 +391,12 @@ class ProductEditTest extends TestCase
         (new DeleteVariationsWhenNeedAction())->handle($product, false);
 
         $this->assertDatabaseMissing('product_variations', [
-            'product_id' => $product->id
+            'product_id' => $product->id,
         ]);
 
         foreach ($variations as $variation) {
             $this->assertDatabaseMissing('variation_attribute_values', [
-                'variation_id' => $variation
+                'variation_id' => $variation,
             ]);
         }
     }
@@ -416,16 +415,16 @@ class ProductEditTest extends TestCase
         (new DeleteVariationsWhenNeedAction())->handle($productWithCombined, null);
 
         $this->assertDatabaseMissing('product_attribute_values', [
-            'product_id' => $productWithSingle->id
+            'product_id' => $productWithSingle->id,
         ]);
 
         $this->assertDatabaseMissing('product_variations', [
-            'product_id' => $productWithCombined->id
+            'product_id' => $productWithCombined->id,
         ]);
 
         foreach ($variations as $variation) {
             $this->assertDatabaseMissing('variation_attribute_values', [
-                'variation_id' => $variation
+                'variation_id' => $variation,
             ]);
         }
     }
@@ -700,7 +699,7 @@ class ProductEditTest extends TestCase
         $request->title_description = $overrides['title_description'] ?? $product->title_description;
         $request->main_description = $overrides['main_description'] ?? $product->main_description_markdown;
         $request->total_quantity = $overrides['total_quantity'] ?? $product->warehouse->total_quantity;
-        $request->price = $overrides['price'] ?? (float)$product->warehouse->default_price;
+        $request->price = $overrides['price'] ?? $product->warehouse->default_price;
         $request->product_article = $overrides['product_article'] ?? $product->product_article;
 
         return $request;

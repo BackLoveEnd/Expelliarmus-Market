@@ -7,13 +7,13 @@ namespace Modules\Category\Http\Management\DTO;
 use Illuminate\Support\Collection;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
-class ProductAttributesDto
+readonly class ProductAttributesDto
 {
 
     public function __construct(
-        public readonly string $name,
-        public readonly int $type,
-        public readonly bool $required,
+        public string $name,
+        public int $type,
+        public bool $required,
     ) {}
 
     public static function collect(Collection $attributes): Collection

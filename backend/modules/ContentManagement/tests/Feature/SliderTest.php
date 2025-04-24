@@ -16,6 +16,7 @@ use Modules\ContentManagement\Storage\Slider\SliderContentStorage;
 
 class SliderTest extends TestCase
 {
+
     use RefreshDatabase;
 
     protected FilesystemManager $storageMock;
@@ -43,7 +44,7 @@ class SliderTest extends TestCase
             Storage::disk('public_content')->assertExists('slider/'.$slide->image->hashName());
 
             $this->assertDatabaseHas('content_sliders', [
-                'image_source' => $slide->image->hashName()
+                'image_source' => $slide->image->hashName(),
             ]);
         }
     }
@@ -67,7 +68,7 @@ class SliderTest extends TestCase
             $this->storageMock->assertExists('slider/'.$slide->image->hashName());
 
             $this->assertDatabaseHas('content_sliders', [
-                'image_source' => $slide->image->hashName()
+                'image_source' => $slide->image->hashName(),
             ]);
         }
 
@@ -84,9 +85,9 @@ class SliderTest extends TestCase
                 'image' => UploadedFile::fake()->image('image_1.png'),
                 'order' => 1,
                 'image_url' => null,
-                'content_url' => 'http://expelliarmus.com',
-                'slide_id' => null
-            ]
+                'content_url' => config('app.frontend_url'),
+                'slide_id' => null,
+            ],
         ]);
 
         $service = new SliderContentService(new SliderContentStorage($this->storageMock));
@@ -99,7 +100,7 @@ class SliderTest extends TestCase
         $service->delete($slideFromDb);
 
         $this->assertDatabaseMissing('content_sliders', [
-            'slide_id' => $slideFromDb->slide_id
+            'slide_id' => $slideFromDb->slide_id,
         ]);
 
         $this->storageMock->assertMissing('slider/'.$slideFromDb->image_source);
@@ -122,15 +123,17 @@ class SliderTest extends TestCase
         $this->assertEquals([1, 2], $remainingSlides->pluck('order')->toArray());
     }
 
-    private function generateChangedSlidesFromExisting(EloquentCollection $slidesFromDb, int $randomTake): Collection
-    {
+    private function generateChangedSlidesFromExisting(
+        EloquentCollection $slidesFromDb,
+        int $randomTake
+    ): Collection {
         $slides = $slidesFromDb->take($randomTake)->map(function (ContentSlider $contentSlider) {
             return [
                 'slide_id' => $contentSlider->slide_id,
                 'image' => UploadedFile::fake()->image('new_image.png'),
                 'image_url' => $contentSlider->image_url,
                 'content_url' => $contentSlider->content_url,
-                'order' => $contentSlider->order
+                'order' => $contentSlider->order,
             ];
         });
 
@@ -139,10 +142,10 @@ class SliderTest extends TestCase
                 'image' => UploadedFile::fake()->image('image_1.png'),
                 'order' => $slides->max('order') + 1,
                 'image_url' => null,
-                'content_url' => 'http://expelliarmus.com',
-                'slide_id' => null
+                'content_url' => config('app.frontend_url'),
+                'slide_id' => null,
             ],
-            ...$slides->toArray()
+            ...$slides->toArray(),
         ]);
     }
 
@@ -153,23 +156,24 @@ class SliderTest extends TestCase
                 'image' => UploadedFile::fake()->image('image_1.png'),
                 'order' => 1,
                 'image_url' => null,
-                'content_url' => 'http://expelliarmus.com',
-                'slide_id' => null
+                'content_url' => config('app.frontend_url'),
+                'slide_id' => null,
             ],
             [
                 'image' => UploadedFile::fake()->image('image_2.png'),
                 'order' => 2,
                 'image_url' => null,
-                'content_url' => 'http://expelliarmus.com',
-                'slide_id' => null
+                'content_url' => config('app.frontend_url'),
+                'slide_id' => null,
             ],
             [
                 'image' => UploadedFile::fake()->image('image_2.png'),
                 'order' => 3,
                 'image_url' => null,
-                'content_url' => 'http://expelliarmus.com',
-                'slide_id' => null
-            ]
+                'content_url' => config('app.frontend_url'),
+                'slide_id' => null,
+            ],
         ]);
     }
+
 }

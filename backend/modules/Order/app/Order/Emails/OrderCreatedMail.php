@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
+use Modules\Order\Order\Dto\OrderLinesDto;
 use Modules\User\Contracts\UserInterface;
 
 class OrderCreatedMail extends Mailable
@@ -20,7 +21,7 @@ class OrderCreatedMail extends Mailable
         /**
          * @param  Collection<OrderLineDto>  $orderLines
          */
-        private Collection $orderLines,
+        private OrderLinesDto $orderLines,
         private UserInterface $user,
     ) {}
 

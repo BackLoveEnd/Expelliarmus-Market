@@ -94,13 +94,14 @@
                 </div>
 
                 <div class="mt-5">
-                  <button
-                      type="button"
+                  <router-link
+                      to="/checkout"
+                      @click.prevent="useScrolling().scrollToTop()"
                       class="float-end px-8 py-2 bg-[#db4444] text-white text-center hover:bg-red-900 rounded-md"
                       aria-label="Proceed to Checkout"
                   >
                     Proceed to Checkout
-                  </button>
+                  </router-link>
                 </div>
               </div>
 
@@ -124,6 +125,7 @@ import ProductCheckoutCard from "@/shop/views/Order/ProductCheckoutCard.vue";
 import QuantityAdjuster from "@/components/Product/Main/QuantityAdjuster.vue";
 import {useCartStore} from "@/stores/useCartStore.js";
 import {useTruncator} from "@/composables/useTruncator.js";
+import {useScrolling} from "@/composables/useScrolling.js";
 
 const props = defineProps({
   isOpen: {

@@ -9,12 +9,12 @@ use Modules\Product\Models\Product;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ProductsRetriever
+readonly class ProductsRetriever
 {
 
     public function __construct(
-        public readonly FiltersConnector $filtersConnector,
-        public readonly SortsConnector $sortsConnector,
+        public FiltersConnector $filtersConnector,
+        public SortsConnector $sortsConnector,
     ) {}
 
     public function retrieve(int $retrieveNum, array $columns = ['*']): LengthAwarePaginator

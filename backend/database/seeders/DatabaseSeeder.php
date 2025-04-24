@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Modules\Category\Database\Seeders\CategoryDatabaseSeeder;
 use Modules\ContentManagement\Database\Seeders\ContentManagementDatabaseSeeder;
+use Modules\Order\Database\Seeders\OrderDatabaseSeeder;
 use Modules\Product\Database\Seeders\ProductDatabaseSeeder;
 use Modules\User\Database\Seeders\UserDatabaseSeeder;
 use Modules\Warehouse\Database\Seeders\WarehouseDatabaseSeeder;
@@ -23,7 +24,8 @@ class DatabaseSeeder extends Seeder
             CategoryDatabaseSeeder::class,
             ProductDatabaseSeeder::class,
             WarehouseDatabaseSeeder::class,
-            ContentManagementDatabaseSeeder::class
+            ContentManagementDatabaseSeeder::class,
+            OrderDatabaseSeeder::class,
         ]);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Illuminate\Support\Collection;
 use Modules\Order\Cart\Services\Cart\CartStorageService;

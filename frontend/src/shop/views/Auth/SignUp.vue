@@ -15,6 +15,8 @@ const {scrollToTop} = useScrolling();
 
 const router = useRouter();
 
+const isLoading = ref(false);
+
 const formData = reactive({
   email: null,
   first_name: null,
@@ -32,6 +34,8 @@ const schema = yup.object().shape({
 });
 
 function signUp() {
+  isLoading.value = true;
+
   register(formData)
       .then((response) => {
         if (response.status === HttpStatusCode.Created) {
@@ -43,7 +47,8 @@ function signUp() {
         if (e.response.data?.errors) {
           registerErrors.value = Object.values(e.response.data.errors).flat();
         }
-      });
+      })
+      .finally(() => isLoading.value = false);
 }
 </script>
 
@@ -144,9 +149,10 @@ function signUp() {
           <div class="space-y-6">
             <button
                 type="submit"
-                class="w-full px-12 py-4 bg-[#DB4444] text-center cursor-pointer text-white hover:bg-red-900 rounded-md"
+                class="w-full px-12 py-4 bg-[#DB4444] flex justify-center items-center cursor-pointer text-white hover:bg-red-900 rounded-md"
             >
-              Create an Account
+              <i v-if="isLoading" class="pi pi-spin pi-spinner font-semibold"></i>
+              <span v-else>Create an Account</span>
             </button>
             <p class="text-gray-600 text-center text-sm">
               Are you ready have an account?

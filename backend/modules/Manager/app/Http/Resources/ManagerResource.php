@@ -10,9 +10,10 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class ManagerResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
-        $attributes = [
+        return [
             'manager_id' => $this->manager_id,
             'email' => $this->email,
             'first_name' => $this->first_name,
@@ -21,7 +22,6 @@ class ManagerResource extends JsonApiResource
             'created_at' => $this->created_at,
             'role' => $this->isSuperManager() ? RolesEnum::SUPER_MANAGER : RolesEnum::MANAGER,
         ];
-
-        return $attributes;
     }
+
 }

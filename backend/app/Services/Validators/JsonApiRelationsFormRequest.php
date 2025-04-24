@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Validators;
 
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 /**
  * @method Collection relation(string $key)
  */
 abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
 {
+
     public const string RELATION_KEY = 'data.relationships.';
 
     public function rules(): array
@@ -51,11 +53,11 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
 
         return collect($data)
             ->flatMap(function ($item, $relationship) {
-                if (! is_array($item)) {
+                if ( ! is_array($item)) {
                     return [self::RELATION_KEY."{$relationship}.data" => $item];
                 }
 
-                if (! str_ends_with($relationship, '.*')) {
+                if ( ! str_ends_with($relationship, '.*')) {
                     if (array_is_list($item)) {
                         return [self::RELATION_KEY."{$relationship}.data" => $item];
                     }
@@ -77,7 +79,7 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
     public function __call($method, $parameters)
     {
         if ($method === 'relation') {
-            if (! $parameters) {
+            if ( ! $parameters) {
                 return collect($this->data('data.relationships'))
                     ->mapWithKeys(fn($item, $key) => $item);
             }
@@ -88,10 +90,10 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
                 return collect($this->data($relationKey)['data']);
             }
 
-            return collect([]);
+            return collect();
         }
 
-        throw new \RuntimeException('Undefined method in json api validation');
+        throw new RuntimeException('Undefined method in json api validation');
     }
 
     /**
@@ -126,4 +128,5 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
      * ]
      */
     abstract public function jsonApiRelationshipsCustomAttributes(): ?array;
+
 }

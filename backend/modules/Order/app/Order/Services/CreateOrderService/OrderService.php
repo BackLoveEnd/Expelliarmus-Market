@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Modules\Order\Cart\Services\Cart\CartStorageService;
+use Modules\Order\Order\Services\CouponService;
+use Modules\Order\Order\Services\OrderPersistService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Models\Guest;
@@ -17,6 +19,8 @@ class OrderService
 {
     private UserInterface $user;
 
+    private ?string $couponCode = null;
+
     public function __construct(
         private CartStorageService $storageService,
         private WarehouseStockService $stockService,
@@ -28,6 +32,13 @@ class OrderService
     public function for(UserInterface $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function usingCoupon(?string $couponCode): static
+    {
+        $this->couponCode = $couponCode;
 
         return $this;
     }
@@ -48,6 +59,7 @@ class OrderService
     private function userOrderFactory(User $user): string
     {
         return (new OrderRegularUserCreateService(
+            cartStorage: $this->storageService,
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(
@@ -57,14 +69,16 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
+                couponService: new CouponService(),
             ),
             orderPersistService: $this->orderPersistService,
-        ))->create($user);
+        ))->create($user, $this->couponCode);
     }
 
     private function guestOrderFactory(Guest $guest): string
     {
         return (new OrderGuestCreateService(
+            cartStorage: $this->storageService,
             prepareOrderService: new PrepareOrderService(
                 cartStorage: $this->storageService,
                 availabilityCheckerService: new ProductsAvailabilityCheckerService(
@@ -74,8 +88,9 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
+                couponService: new CouponService(),
             ),
             orderPersistService: $this->orderPersistService,
-        ))->create($guest);
+        ))->create($guest, $this->couponCode);
     }
 }
