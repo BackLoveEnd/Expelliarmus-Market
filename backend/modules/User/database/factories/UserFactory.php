@@ -27,13 +27,14 @@ class UserFactory extends Factory
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
             'phone_country_code' => 'UA',
-            'phone_number' => "+380".fake()->numberBetween(1000000000, 999999999),
+            'phone_number' => "+38096".fake()->randomNumber(7),
         ];
     }
 
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn(array $attributes)
+            => [
             'email_verified_at' => null,
         ]);
     }
