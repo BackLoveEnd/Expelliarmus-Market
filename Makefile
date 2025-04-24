@@ -44,8 +44,8 @@ frontend-dependencies-install: ## Install frontend dependencies
 backend-dependencies-install: ## Install backend dependencies
 	docker exec php composer install
 
-backend-cache-clean: ## Clean backend application cache
-	docker exec php php artisan cache:clean
+backend-cache-clear: ## Clean backend application cache
+	docker exec php php artisan cache:clear
 
 backend-tests: ## Run backend tests.
 	docker exec php php artisan test

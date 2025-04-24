@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Modules\Order\Cart\Models\Cart;
 use Modules\Order\Order\Enum\OrderStatusEnum;
+use Modules\Order\Order\Models\Coupon;
 use Modules\Product\Models\Product;
 use Modules\User\Models\Guest;
 use Modules\User\Models\User;
@@ -241,6 +242,147 @@ class OrderCreateTest extends TestCase
             'variation->id' => $combinedVariation->id,
             'price_per_unit_at_order_time' => $discountProduct->discount_price,
         ]);
+    }
+
+    public function test_can_create_order_with_global_coupon(): void
+    {
+        $product1 = Product::factory()->published()->withoutAttributes();
+        $product2 = Product::factory()->published()->withSingleAttributes();
+
+        $variationProduct2 = $product2->singleAttributes->first();
+
+        $coupon = Coupon::factory()->create();
+
+        $responseFirstCart = $this->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product1->id,
+                    'variation_id' => null,
+                    'quantity' => 3,
+                ],
+            ],
+        ]);
+
+        $responseSecondCart = $this->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product2->id,
+                    'variation_id' => $variationProduct2->id,
+                    'quantity' => 1,
+                ],
+            ],
+        ]);
+
+        $response = $this->postJson('/api/shop/user/order/checkout', [
+            'data' => [
+                'type' => 'guests',
+                'attributes' => [
+                    'first_name' => 'Ihor',
+                    'last_name' => 'K',
+                    'email' => 'testorderihor@gmail.com',
+                    'phone' => '+380915155577',
+                    'address' => 'Kyiv, Ukraine',
+                    'coupon' => $coupon->coupon_id,
+                ],
+            ],
+        ]);
+
+        $responseFirstCart->assertExactJson([
+            'message' => 'Product was added to cart.',
+        ]);
+
+        $responseSecondCart->assertExactJson([
+            'message' => 'Product was added to cart.',
+        ]);
+
+        $this->assertDatabaseHas('guests', [
+            'email' => 'testorderihor@gmail.com',
+        ]);
+
+        $guest = Guest::query()->whereEmail('testorderihor@gmail.com')->first();
+
+        $response->assertJsonFragment([
+            'message' => 'Order created successfully.',
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'userable_id' => $guest->id,
+            'userable_type' => Guest::class,
+            'status' => OrderStatusEnum::PENDING->value,
+        ]);
+
+        $order = $guest->orders()->first();
+
+        $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
+
+        $this->assertEquals(
+            round((float)$order->total_price, 2),
+            round($totalPrice - ($totalPrice * $coupon->discount / 100), 2),
+        );
+    }
+
+    public function test_can_create_order_with_personal_coupon(): void
+    {
+        $product1 = Product::factory()->published()->withoutAttributes();
+        $product2 = Product::factory()->published()->withSingleAttributes();
+
+        $variationProduct2 = $product2->singleAttributes->first();
+
+        $user = User::factory()->create();
+
+        $coupon = Coupon::factory()->user($user)->create();
+
+        $responseFirstCart = $this->actingAs($user)->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product1->id,
+                    'variation_id' => null,
+                    'quantity' => 3,
+                ],
+            ],
+        ]);
+
+        $responseSecondCart = $this->actingAs($user)->postJson('api/shop/user/cart', [
+            'data' => [
+                'attributes' => [
+                    'product_id' => $product2->id,
+                    'variation_id' => $variationProduct2->id,
+                    'quantity' => 1,
+                ],
+            ],
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout', [
+            'data' => [
+                'type' => 'guests',
+                'attributes' => [
+                    'coupon' => $coupon->coupon_id,
+                ],
+            ],
+        ]);
+
+        $responseFirstCart->assertExactJson([
+            'message' => 'Product was added to cart.',
+        ]);
+
+        $responseSecondCart->assertExactJson([
+            'message' => 'Product was added to cart.',
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'userable_id' => $user->id,
+            'userable_type' => User::class,
+            'status' => OrderStatusEnum::PENDING->value,
+        ]);
+
+        $order = $user->orders()->first();
+
+        $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
+
+        $this->assertEquals(
+            round((float)$order->total_price, 2),
+            round($totalPrice - ($totalPrice * $coupon->discount / 100), 2),
+        );
     }
 
     public function test_cannot_create_order_if_user_cart_empty(): void

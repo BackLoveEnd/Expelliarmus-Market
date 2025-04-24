@@ -10,10 +10,13 @@ use Modules\User\Models\User;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
+
     /**
      * Validate and update the given user's profile information.
      *
      * @param  array<string, string>  $input
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(User $user, array $input): void
     {
@@ -28,7 +31,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 Rule::unique('users')->ignore($user->id),
             ],
             'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'phone:UA,US'],
+            'phone' => ['nullable', 'phone:UA,US', Rule::unique('phone_number')->ignore($user->id)],
         ])->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email &&
@@ -62,4 +65,5 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         $user->sendEmailVerificationNotification();
     }
+
 }

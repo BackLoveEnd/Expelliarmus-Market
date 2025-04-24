@@ -12,6 +12,7 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class UserResource extends JsonApiResource
 {
+
     public function toAttributes(Request $request): array
     {
         $attributes = [
@@ -30,7 +31,7 @@ class UserResource extends JsonApiResource
         }
 
         if ($this->phone_number) {
-            $attributes['phone_mask'] = substr((string)Str::mask($this->phone_number, '*', 3, -3), 3);
+            $attributes['phone_mask'] = substr(Str::mask($this->phone_number, '*', 3, -3), 3);
 
             $attributes['phone_original'] = $this->phone_number;
         }
@@ -42,4 +43,5 @@ class UserResource extends JsonApiResource
     {
         return $this->user_id;
     }
+
 }

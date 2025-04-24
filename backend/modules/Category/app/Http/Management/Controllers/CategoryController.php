@@ -7,6 +7,7 @@ namespace Modules\Category\Http\Management\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Modules\Category\Http\Management\Actions\DeleteCategoryAttributeAction as DeleteAction;
 use Modules\Category\Http\Management\Actions\EditCategoryAction;
@@ -35,11 +36,12 @@ class CategoryController extends Controller
      *
      * Usage place - Admin section.
      *
+     * @param  Request  $request
      * @return JsonResponse|AnonymousResourceCollection
      */
-    public function index(): JsonResponse|AnonymousResourceCollection
+    public function index(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $categories = Category::getAllCategoriesInTree();
+        $categories = Category::getAllCategoriesInTree((int)$request->query('limit'));
 
         if ($categories->isEmpty()) {
             return response()->json(['message' => 'Categories not found'], 404);

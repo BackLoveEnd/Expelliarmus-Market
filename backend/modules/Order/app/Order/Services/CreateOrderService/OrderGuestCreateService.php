@@ -2,20 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
-use Illuminate\Support\Collection;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
-use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Events\OrderCreated;
 use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
 use Modules\Order\Order\Exceptions\ProductCannotBeProcessedToCheckoutException;
 use Modules\Order\Order\Exceptions\ProductHasNotEnoughSuppliesException;
-use Modules\User\Models\User;
+use Modules\Order\Order\Services\OrderPersistService;
+use Modules\User\Models\Guest;
 use Throwable;
 
-class OrderRegularUserCreateService
+class OrderGuestCreateService
 {
     public function __construct(
         private CartStorageService $cartStorage,
@@ -24,20 +23,23 @@ class OrderRegularUserCreateService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    public function create(User $user): string
+    public function create(Guest $user, ?string $couponCode): string
     {
         try {
-            $orderItemsPrepared = $this->prepareOrderService->prepare($user);
+            $orderItemsPrepared = $this->prepareOrderService->prepare(null);
 
-            /**@var Collection<int, OrderLineDto> $orderLines */
-            $orderLines = $this->orderPriceService->prepareOrderLines($orderItemsPrepared);
+            $orderLines = $this->orderPriceService->prepareOrderLines(
+                orderItems: $orderItemsPrepared,
+                user: $user->email,
+                couponCode: $couponCode,
+            );
 
             $orderId = $this->orderPersistService->saveCheckout($user, $orderLines);
 
             event(new OrderCreated($user, $orderId, $orderLines));
 
-            $this->cartStorage->clearCart($user);
-            
+            $this->cartStorage->clearSessionCart();
+
             return $orderId;
         } catch (Throwable $e) {
             if ($e instanceof CartMustNotBeEmptyBeforeOrderException

@@ -2,33 +2,45 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
+use Modules\Order\Order\Dto\OrderLinesDto;
+use Modules\Order\Order\Services\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
+use Modules\User\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
 use stdClass;
+use Throwable;
 
 class OrderLineService
 {
     public function __construct(
         private DiscountedProductsService $discountService,
+        private CouponService $couponService,
     ) {}
 
-    public function prepareOrderLines(Collection $orderItems): Collection
-    {
+    public function prepareOrderLines(
+        Collection $orderItems,
+        User|string|null $user,
+        ?string $couponCode,
+    ): OrderLinesDto {
         $this->discountService->loadLastActiveDiscountForProducts(
             new EloquentCollection($orderItems->pluck('product')),
         );
 
-        return OrderLineDto::fromCheckout(
-            items: $this->countPricesWithFormatting($orderItems),
+        $orderLines = OrderLineDto::fromCheckout(
+            $this->countPricesWithFormatting($orderItems),
+        );
+        return OrderLinesDto::from(
+            orderLines: $orderLines,
+            totalPrice: $this->countTotalPriceWithCoupon($orderLines, $user, $couponCode),
         );
     }
 
-    private function countPricesWithFormatting(Collection $orderItems)
+    private function countPricesWithFormatting(Collection $orderItems): Collection
     {
         return $orderItems->map(function (stdClass $orderLineItem) {
             $variation = $orderLineItem->product->getCurrentVariationRelation();
@@ -75,6 +87,31 @@ class OrderLineService
 
             return (object)$data;
         });
+    }
+
+    private function countTotalPriceWithCoupon(
+        Collection $orderLines,
+        User|string|null $user,
+        ?string $couponCode,
+    ): float {
+        if ($couponCode === null) {
+            return round($orderLines->sum('totalPrice'), 2);
+        }
+
+        try {
+            $coupon = $this->couponService->checkCoupon($couponCode, $user);
+
+            $totalPrice = $orderLines->sum('totalPrice');
+
+            $totalPrice = round($totalPrice - ($totalPrice * $coupon->discount / 100), 2);
+
+            // TODO: move removing coupon to place, where order will set as paid or completed
+            $this->couponService->deleteCoupon($coupon);
+
+            return $totalPrice;
+        } catch (Throwable $e) {
+            return round($orderLines->sum('totalPrice'), 2);
+        }
     }
 
     private function countPrice(float $price, int $quantity): float

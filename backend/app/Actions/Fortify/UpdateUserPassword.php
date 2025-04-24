@@ -9,12 +9,15 @@ use Modules\User\Models\User;
 
 class UpdateUserPassword implements UpdatesUserPasswords
 {
+
     use PasswordValidationRules;
 
     /**
      * Validate and update the user's password.
      *
      * @param  array<string, string>  $input
+     *
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(User $user, array $input): void
     {
@@ -29,4 +32,5 @@ class UpdateUserPassword implements UpdatesUserPasswords
             'password' => Hash::make($input['password']),
         ])->save();
     }
+
 }
