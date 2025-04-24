@@ -34,43 +34,43 @@ const transformCategories = (categories) => {
 </script>
 
 <template>
-  <div class="max-h-[400px] overflow-y-auto w-64 border rounded">
-    <TieredMenu :model="items" class="w-full">
-      <template #item="{ item }">
-        <router-link
-            v-if="item.route"
-            v-slot="{ href, navigate }"
-            :to="item.route"
-            custom
-        >
-          <a
-              :href="href"
-              @click="navigate"
-              class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
-          >
-            <div class="flex items-center">
-              <span v-if="item.icon" :class="item.icon"/>
-              <span class="ml-2">{{ item.label }}</span>
-            </div>
-            <!--            <i
-                            v-if="Array.isArray(item.items) && item.items.length > 0"
-                            class="pi pi-angle-right text-sm text-gray-600"
-                        ></i>-->
-          </a>
-        </router-link>
+  <TieredMenu :model="items">
+    <!--
+          <template #item="{ item }">
+            <router-link
+                v-if="item.route"
+                v-slot="{ href, navigate }"
+                :to="item.route"
+                custom
+            >
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
+              >
+                <div class="flex items-center">
+                  <span v-if="item.icon" :class="item.icon"/>
+                  <span class="ml-2">{{ item.label }}</span>
+                </div>
+                &lt;!&ndash;            <i
+                                v-if="Array.isArray(item.items) && item.items.length > 0"
+                                class="pi pi-angle-right text-sm text-gray-600"
+                            ></i>&ndash;&gt;
+              </a>
+            </router-link>
 
-        <a
-            v-else
-            class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
-        >
-          <div class="flex items-center">
-            <span v-if="item.icon" :class="item.icon"/>
-            <span class="ml-2">{{ item.label }}</span>
-          </div>
-        </a>
-      </template>
-    </TieredMenu>
-  </div>
+            <a
+                v-else
+                class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
+            >
+              <div class="flex items-center">
+                <span v-if="item.icon" :class="item.icon"/>
+                <span class="ml-2">{{ item.label }}</span>
+              </div>
+            </a>
+          </template>
+    -->
+  </TieredMenu>
 </template>
 
 
