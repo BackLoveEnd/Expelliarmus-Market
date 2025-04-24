@@ -82,6 +82,22 @@ class OrderCreateTest extends TestCase
             'variation->id' => $cartItem3->variation['id'],
             'price_per_unit_at_order_time' => $cartItem3->price_per_unit,
         ]);
+
+        // Check if the stock was decreased
+        $this->assertDatabaseHas('warehouses', [
+            'product_id' => $product1->id,
+            'total_quantity' => $product1->warehouse->total_quantity - $cartItem1->quantity,
+        ]);
+
+        $this->assertDatabaseHas('product_attribute_values', [
+            'product_id' => $product2->id,
+            'quantity' => $product2->singleAttributes->first()->quantity - $cartItem2->quantity,
+        ]);
+
+        $this->assertDatabaseHas('product_variations', [
+            'product_id' => $product3->id,
+            'quantity' => $product3->combinedAttributes->first()->quantity - $cartItem3->quantity,
+        ]);
     }
 
     public function test_can_create_order_as_guest_user(): void

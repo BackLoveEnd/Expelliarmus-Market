@@ -13,9 +13,14 @@ use Modules\Order\Order\Models\OrderLine;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Models\Guest;
 use Modules\User\Models\User;
+use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 
 class OrderPersistService
 {
+    public function __construct(
+        private WarehouseStockService $warehouseStockService,
+    ) {}
+
     public function saveCheckout(UserInterface $user, OrderLinesDto $dto): string
     {
         return DB::transaction(function () use ($user, $dto) {
@@ -31,6 +36,10 @@ class OrderPersistService
                     'variation' => $dto->variation ? json_encode($dto->variation) : null,
                 ];
             });
+
+            $this->warehouseStockService->decreaseProductsStock(
+                productsWithQuantities: $dto->orderLines->select(['product', 'quantity']),
+            );
 
             OrderLine::query()->insert($data->toArray());
 
@@ -50,6 +59,7 @@ class OrderPersistService
     {
         return $user->orders()->create([
             'total_price' => $totalPrice,
+            'contact_email' => $user->email,
             'status' => OrderStatusEnum::PENDING,
             'created_at' => now(),
         ]);

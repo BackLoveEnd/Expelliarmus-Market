@@ -18,6 +18,7 @@ use Ramsey\Uuid\Uuid;
  * @property string $order_id
  * @property OrderStatusEnum $status
  * @property float $total_price
+ * @property string $contact_email
  * @property string $userable_type
  * @property int $userable_id
  * @property Carbon created_a
@@ -34,6 +35,7 @@ class Order extends Model
         'created_at',
         'userable_type',
         'userable_id',
+        'contact_email',
     ];
 
     public function userable(): MorphTo

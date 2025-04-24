@@ -26,7 +26,6 @@ class OrderService
         private WarehouseStockService $stockService,
         private WarehouseProductInfoService $warehouseService,
         private DiscountedProductsService $discountService,
-        private OrderPersistService $orderPersistService,
     ) {}
 
     public function for(UserInterface $user): static
@@ -71,7 +70,9 @@ class OrderService
                 discountService: $this->discountService,
                 couponService: new CouponService(),
             ),
-            orderPersistService: $this->orderPersistService,
+            orderPersistService: new OrderPersistService(
+                warehouseStockService: $this->stockService,
+            ),
         ))->create($user, $this->couponCode);
     }
 
@@ -90,7 +91,9 @@ class OrderService
                 discountService: $this->discountService,
                 couponService: new CouponService(),
             ),
-            orderPersistService: $this->orderPersistService,
+            orderPersistService: new OrderPersistService(
+                warehouseStockService: $this->stockService,
+            ),
         ))->create($guest, $this->couponCode);
     }
 }
