@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->uuid('order_id')->unique();
             $table->morphs('userable');
             $table->tinyInteger('status');
+            $table->string('contact_email');
             $table->decimal('total_price');
             $table->timestamp('created_at')->nullable();
             $table->primary('id');
