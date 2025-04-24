@@ -6,6 +6,7 @@ namespace Modules\Order\Order\Http\Requests;
 
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
+use Modules\Order\Order\Rules\UniquePhoneGuestRule;
 
 class GuestOrderCreateRequest extends JsonApiFormRequest
 {
@@ -21,8 +22,7 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
                 Rule::requiredIf(! $user),
                 'phone:UA,US',
                 'unique:users,phone_number',
-                Rule::unique('guests', 'phone_number')
-                    ->where('email', $this->email),
+                new UniquePhoneGuestRule($this->email),
             ],
             'address' => [Rule::requiredIf(! $user), 'string', 'max:255'],
             'coupon' => ['nullable', 'string'],

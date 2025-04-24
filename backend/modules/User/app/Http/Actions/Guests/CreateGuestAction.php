@@ -7,7 +7,6 @@ namespace Modules\User\Http\Actions\Guests;
 use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
 use Modules\User\Http\Dto\CreateGuestDto;
 use Modules\User\Models\Guest;
-use Propaganistas\LaravelPhone\Rules\Phone;
 use Throwable;
 
 class CreateGuestAction
@@ -38,7 +37,7 @@ class CreateGuestAction
     {
         $guest->last_name = $dto->lastName;
         $guest->first_name = $dto->firstName;
-        $guest->phone_number = new Phone();
+        $guest->phone_number = $dto->phone;
         $guest->address = $dto->address;
         $guest->save();
 
