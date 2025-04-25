@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAMESPACE: ${{ github.repository_owner }}/expelliarmus-market
 
 jobs:
   build:
@@ -30,6 +29,13 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
+
+      - name: Sanitize repo slug
+        uses: actions/github-script@v6
+        id: repo_slug
+        with:
+            result-encoding: string
+            script: return `ghcr.io/${github.repository}`.toLowerCase()
 
       - name: Setting Environment
         env:
@@ -65,25 +71,24 @@ jobs:
             file: docker-compose.yml
             push: true
             tags: |
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-queue:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-queue:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-php:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-php:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-nginx:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-nginx:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-npm:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-npm:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-scheduler:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-scheduler:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-redis:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-redis:${{ github.sha }}
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-postgres:latest
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-postgres:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-queue:latest
+              ${{ steps.repo_slug.outputs.result }}-queue:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-php:latest
+              ${{ steps.repo_slug.outputs.result }}-php:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-nginx:latest
+              ${{ steps.repo_slug.outputs.result }}-nginx:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-npm:latest
+              ${{ steps.repo_slug.outputs.result }}-npm:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-scheduler:latest
+              ${{ steps.repo_slug.outputs.result }}-scheduler:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-redis:latest
+              ${{ steps.repo_slug.outputs.result }}-redis:${{ github.sha }}
+              ${{ steps.repo_slug.outputs.result }}-postgres:latest
+              ${{ steps.repo_slug.outputs.result }}-postgres:${{ github.sha }}
   
       - name: Show pushed images
         run: |
-            echo "Pushed images to $REGISTRY/${{ env.IMAGE_NAMESPACE }}-*"
-            docker run --rm mplatform/mquery "${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-php:latest"
+            docker run --rm mplatform/mquery "${{ steps.repo_slug.outputs.result }}-php:latest"
 
       - name: Show image sizes
         run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
