@@ -62,7 +62,7 @@ jobs:
         run: docker compose -f docker-compose.yml build
 
       - name: Show image sizes
-        run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep ${IMAGE_NAMESPACE}
+        run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
       
       - name: Tag images
         run: |
