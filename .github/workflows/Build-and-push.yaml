@@ -40,6 +40,7 @@ jobs:
           REGISTRY: ghcr.io
           IMAGE_NAMESPACE: ${{ github.repository_owner }}
           IMAGE_PREFIX: expelliarmus-market
+          TAG: latest
 
         run: |
           cp .env.example .env
@@ -57,22 +58,25 @@ jobs:
         run: |
           cp .env ./backend/
       
-      - name: First-start-app
-        run: docker compose up -d --build
-      - name: Test size
-        run: docker ps -s --format "table {{.ID}}\t{{.Image}}\t{{.Size}}"
-      - name: Tag and Push Images
+      - name: Build containers with Docker Compose
+        run: docker compose -f docker-compose.yml build
+
+      - name: Show image sizes
+        run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep ${IMAGE_NAMESPACE}
+      
+      - name: Tag images
         run: |
-          TAG=latest
+          docker tag ${IMAGE_PREFIX}-php       ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:${TAG}
+          docker tag ${IMAGE_PREFIX}-queue     ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:${TAG}
+          docker tag ${IMAGE_PREFIX}-nginx     ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:${TAG}
+          docker tag ${IMAGE_PREFIX}-npm       ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:${TAG}
+          docker tag ${IMAGE_PREFIX}-scheduler ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:${TAG}
   
-          docker tag ${IMAGE_PREFIX}-php       ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:$TAG
-          docker tag ${IMAGE_PREFIX}-queue     ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:$TAG
-          docker tag ${IMAGE_PREFIX}-nginx     ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:$TAG
-          docker tag ${IMAGE_PREFIX}-npm       ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:$TAG
-          docker tag ${IMAGE_PREFIX}-scheduler ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:$TAG
-  
-          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:$TAG
-          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:$TAG
-          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:$TAG
-          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:$TAG
-          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:$TAG
+      - name: Push images to GHCR
+        run: |
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:${TAG}
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:${TAG}
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:${TAG}
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:${TAG}
+            docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:${TAG}
+    
