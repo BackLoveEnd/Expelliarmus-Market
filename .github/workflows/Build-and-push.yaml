@@ -57,12 +57,7 @@ jobs:
         run: |
           cp .env ./backend/
 
-      - name: Setting frontend env
-        run: |
-          cp .env.front.example ./frontend/
-          mv ./frontend/.env.front.example ./frontend/.env
-          echo "Updated .env:"
-
+ 
           - name: Build and Push Docker Images
           run: |
             docker build -t ghcr.io/${{ github.repository }}/php:latest -f .docker/php/php.Dockerfile .
