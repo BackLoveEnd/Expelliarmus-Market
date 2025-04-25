@@ -24,7 +24,7 @@ class CancelExpiredDiscounts implements ShouldQueue
             Discount::query()
                 ->chunkById(100, function ($discounts) {
                     foreach ($discounts as $discount) {
-                        $discount->update(['status' => DiscountStatusEnum::defineStatus($discount)]);
+                        $discount->update(['status' => DiscountStatusEnum::defineStatus($discount)->value]);
                     }
                 });
         });

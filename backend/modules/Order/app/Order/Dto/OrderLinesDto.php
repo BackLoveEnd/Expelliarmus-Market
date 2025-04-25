@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Dto;
 
 use Illuminate\Support\Collection;
+use Modules\Order\Order\Models\Coupon;
 
 final readonly class OrderLinesDto
 {
@@ -12,13 +13,15 @@ final readonly class OrderLinesDto
         /**@var Collection<OrderLineDto> $orderLines */
         public Collection $orderLines,
         public float $totalPrice,
+        public ?Coupon $coupon = null,
     ) {}
 
-    public static function from(Collection $orderLines, float $totalPrice): self
+    public static function from(Collection $orderLines, float $totalPrice, ?Coupon $coupon): self
     {
         return new self(
             orderLines: $orderLines,
             totalPrice: $totalPrice,
+            coupon: $coupon,
         );
     }
 }

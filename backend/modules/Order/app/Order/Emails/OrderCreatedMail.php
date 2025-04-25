@@ -36,6 +36,12 @@ class OrderCreatedMail extends Mailable
     {
         return new Content(
             view: 'mails.orders.created',
+            with: [
+                'user' => $this->user,
+                'orderLines' => $this->orderLines->orderLines,
+                'totalPrice' => $this->orderLines->totalPrice,
+                'coupon' => $this->orderLines->coupon,
+            ],
         );
     }
 }

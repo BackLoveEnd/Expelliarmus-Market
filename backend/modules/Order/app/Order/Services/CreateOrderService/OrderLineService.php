@@ -34,9 +34,17 @@ class OrderLineService
         $orderLines = OrderLineDto::fromCheckout(
             $this->countPricesWithFormatting($orderItems),
         );
+
+        $priceWithCoupon = $this->countTotalPriceWithCoupon(
+            $orderLines,
+            $user,
+            $couponCode,
+        );
+
         return OrderLinesDto::from(
             orderLines: $orderLines,
-            totalPrice: $this->countTotalPriceWithCoupon($orderLines, $user, $couponCode),
+            totalPrice: $priceWithCoupon['totalPrice'],
+            coupon: $priceWithCoupon['coupon'],
         );
     }
 
@@ -49,6 +57,8 @@ class OrderLineService
                 'product' => $orderLineItem->product,
                 'quantity' => $orderLineItem->quantity,
                 'variation' => null,
+                'discount' => $orderLineItem->product->lastActiveDiscount?->first()
+                    ?? $variation->lastActiveDiscount?->first() ?? null,
             ];
 
             if ($variation) {
@@ -93,9 +103,12 @@ class OrderLineService
         Collection $orderLines,
         User|string|null $user,
         ?string $couponCode,
-    ): float {
+    ): array {
         if ($couponCode === null) {
-            return round($orderLines->sum('totalPrice'), 2);
+            return [
+                'coupon' => null,
+                'totalPrice' => round($orderLines->sum('totalPrice'), 2),
+            ];
         }
 
         try {
@@ -108,9 +121,12 @@ class OrderLineService
             // TODO: move removing coupon to place, where order will set as paid or completed
             $this->couponService->deleteCoupon($coupon);
 
-            return $totalPrice;
+            return ['coupon' => $coupon, 'totalPrice' => $totalPrice];
         } catch (Throwable $e) {
-            return round($orderLines->sum('totalPrice'), 2);
+            return [
+                'coupon' => null,
+                'totalPrice' => round($orderLines->sum('totalPrice'), 2),
+            ];
         }
     }
 

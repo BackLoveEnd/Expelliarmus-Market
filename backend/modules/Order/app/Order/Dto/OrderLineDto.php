@@ -6,6 +6,7 @@ namespace Modules\Order\Order\Dto;
 
 use Illuminate\Support\Collection;
 use Modules\Product\Models\Product;
+use Modules\Warehouse\Models\Discount;
 use stdClass;
 
 final readonly class OrderLineDto
@@ -17,6 +18,7 @@ final readonly class OrderLineDto
         public float $unitPriceAtOrderTime,
         public ?int $orderId = null,
         public ?array $variation = null,
+        public ?Discount $discount = null,
     ) {}
 
     public static function fromCheckout(Collection $items): Collection
@@ -29,6 +31,7 @@ final readonly class OrderLineDto
                 unitPriceAtOrderTime: $element->unitPrice,
                 orderId: null,
                 variation: $element->variation ?? null,
+                discount: $element->discount ?? null,
             );
         });
     }

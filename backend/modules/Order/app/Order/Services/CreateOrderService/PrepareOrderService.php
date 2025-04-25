@@ -43,6 +43,7 @@ class PrepareOrderService
             ->get([
                 'id',
                 'status',
+                'title',
                 'with_attribute_combinations',
                 'product_article',
                 'preview_image',
