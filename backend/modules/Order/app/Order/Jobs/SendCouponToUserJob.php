@@ -117,11 +117,11 @@ class SendCouponToUserJob implements ShouldQueue
     {
         $couponMeta->each(function (stdClass $coupon) {
             Mail::to($coupon->contact_email)->queue(
-                new CouponMail(
+                (new CouponMail(
                     couponCode: $coupon->coupon_code,
                     expiresAt: now()->addMonth(),
                     discount: $coupon->discount_amount,
-                ),
+                ))->onQueue('low'),
             );
         });
     }

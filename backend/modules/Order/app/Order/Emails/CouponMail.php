@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 
 class CouponMail extends Mailable
 {
@@ -17,8 +18,8 @@ class CouponMail extends Mailable
 
     public function __construct(
         private string $couponCode,
-        private string $expiresAt,
-        private string $discount,
+        private Carbon $expiresAt,
+        private int $discount,
     ) {}
 
     public function envelope(): Envelope
@@ -32,6 +33,11 @@ class CouponMail extends Mailable
     {
         return new Content(
             markdown: 'mails.coupons.present',
+            with: [
+                'couponCode' => $this->couponCode,
+                'discount' => $this->discount,
+                'expiresAt' => $this->expiresAt->toFormattedDateString(),
+            ],
         );
     }
 }

@@ -10,6 +10,7 @@ use Modules\Order\Cart\Services\Cart\CartDataPrepareService;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Order\Cart\Services\Cart\ClientCartService;
 use Modules\Order\Cart\Services\Cart\DiscountCartService;
+use Modules\Order\Order\Jobs\CancelExpiredCoupons;
 use Modules\Order\Order\Jobs\SendCouponToUserJob;
 use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 use Nwidart\Modules\Traits\PathNamespace;
@@ -52,7 +53,9 @@ class OrderServiceProvider extends ServiceProvider
             /**@var Schedule $schedule */
             $schedule = $this->app->make(Schedule::class);
 
-            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily(9, 18);
+            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily('9', '18');
+
+            $schedule->job(new CancelExpiredCoupons(), 'low')->dailyAt('00:00');
         });
     }
 
