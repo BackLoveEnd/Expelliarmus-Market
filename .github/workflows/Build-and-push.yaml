@@ -65,12 +65,12 @@ jobs:
         run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
       
       - name: Tag images
+        env:
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
+          IMAGE_PREFIX: ${{ env.IMAGE_PREFIX }}
+          TAG: ${{ env.TAG }}
         run: |
-          REGISTRY=${{ env.REGISTRY }}
-          IMAGE_NAMESPACE=${{ env.IMAGE_NAMESPACE }}
-          IMAGE_PREFIX=${{ env.IMAGE_PREFIX }}
-          TAG=${{ env.TAG }}
-
           docker tag ${IMAGE_PREFIX}-php       ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:${TAG}
           docker tag ${IMAGE_PREFIX}-queue     ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:${TAG}
           docker tag ${IMAGE_PREFIX}-nginx     ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:${TAG}
@@ -78,12 +78,12 @@ jobs:
           docker tag ${IMAGE_PREFIX}-scheduler ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:${TAG}
   
       - name: Push images to GHCR
+        env:
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAMESPACE: ${{ env.IMAGE_NAMESPACE }}
+          IMAGE_PREFIX: ${{ env.IMAGE_PREFIX }}
+          TAG: ${{ env.TAG }}
         run: |
-          REGISTRY=${{ env.REGISTRY }}
-          IMAGE_NAMESPACE=${{ env.IMAGE_NAMESPACE }}
-          IMAGE_PREFIX=${{ env.IMAGE_PREFIX }}
-          TAG=${{ env.TAG }}
-
           docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:${TAG}
           docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:${TAG}
           docker push ${REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:${TAG}
