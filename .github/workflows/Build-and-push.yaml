@@ -56,3 +56,6 @@ jobs:
       
       - name: First-start-app
         run: docker compose up -d --build
+      - name: Test size
+        run: docker ps -s --format "table {{.ID}}\t{{.Image}}\t{{.Size}}"
+         
