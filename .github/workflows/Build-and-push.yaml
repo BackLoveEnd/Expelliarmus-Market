@@ -20,12 +20,12 @@ jobs:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.run_id }}
 
-          #- name: Log in to GitHub Container Registry
-          #  uses: docker/login-action@v2
-          #  with:
-          #   registry: ghcr.io
-          #   username: ${{ github.actor }}
-          #  password: ${{ secrets.GHCR_PAT }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Setting Environment
         env:
@@ -37,6 +37,9 @@ jobs:
           DB_HOST: ${{ vars.DB_HOST }}
           DB_CONNECTION: ${{ vars.DB_CONNECTION }}
           APP_KEY: ${{ secrets.APP_KEY }}
+          REGISTRY: ghcr.io
+          IMAGE_NAMESPACE: ${{ github.repository_owner }}
+          IMAGE_PREFIX: expelliarmus-market
 
         run: |
           cp .env.example .env
@@ -58,4 +61,18 @@ jobs:
         run: docker compose up -d --build
       - name: Test size
         run: docker ps -s --format "table {{.ID}}\t{{.Image}}\t{{.Size}}"
-         
+      - name: Tag and Push Images
+        run: |
+          TAG=latest
+  
+          docker tag ${IMAGE_PREFIX}-php       ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:$TAG
+          docker tag ${IMAGE_PREFIX}-queue     ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:$TAG
+          docker tag ${IMAGE_PREFIX}-nginx     ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:$TAG
+          docker tag ${IMAGE_PREFIX}-npm       ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:$TAG
+          docker tag ${IMAGE_PREFIX}-scheduler ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:$TAG
+  
+          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-php:$TAG
+          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-queue:$TAG
+          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-nginx:$TAG
+          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-npm:$TAG
+          docker push ghcr.io/${IMAGE_NAMESPACE}/${IMAGE_PREFIX}-scheduler:$TAG
