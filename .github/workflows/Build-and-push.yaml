@@ -2,7 +2,7 @@ name: Docker compose CI and push
 
 on:
   push:
-    branches: [ "dev", "master","test"  ]
+    branches: [ "dev", "master","test" ]
   pull_request:
     branches: [ "dev", "master","test" ]
 
@@ -20,12 +20,12 @@ jobs:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.run_id }}
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          #- name: Log in to GitHub Container Registry
+          #  uses: docker/login-action@v2
+          #  with:
+          #   registry: ghcr.io
+          #   username: ${{ github.actor }}
+          #  password: ${{ secrets.GHCR_PAT }}
 
       - name: Setting Environment
         env:
@@ -40,7 +40,6 @@ jobs:
 
         run: |
           cp .env.example .env
-
           sed -i "s/^DB_HOST=.*/DB_HOST=${DB_HOST}/" .env
           sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=${DB_CONNECTION}/" .env
           sed -i "s/^DB_DATABASE=.*/DB_DATABASE=${DB_DATABASE}/" .env
@@ -48,21 +47,12 @@ jobs:
           sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD}/" .env
           sed -i "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=${REDIS_PASSWORD}/" .env
           sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
-
           echo "Updated .env:"
           cat .env
-
       - name: Copy .env to backend
         working-directory: ${{ github.workspace }}
         run: |
           cp .env ./backend/
-
- 
-          - name: Build and Push Docker Images
-          run: |
-            docker build -t ghcr.io/${{ github.repository }}/php:latest -f .docker/php/php.Dockerfile .
-            docker build -t ghcr.io/${{ github.repository }}/node:latest -f .docker/node/node.Dockerfile .
-            docker build -t ghcr.io/${{ github.repository }}/nginx:latest -f .docker/nginx/nginx.Dockerfile .
-            docker push ghcr.io/${{ github.repository }}/php:latest
-            docker push ghcr.io/${{ github.repository }}/node:latest
-            docker push ghcr.io/${{ github.repository }}/nginx:latest
+      
+      - name: First-start-app
+        run: docker compose up -d --build
