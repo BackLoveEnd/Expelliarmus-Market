@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Coupons\Services\CouponService;
+use Modules\User\Coupons\Services\CouponManageService;
 use Modules\User\Users\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
 use stdClass;
@@ -19,7 +19,7 @@ class OrderLineService
 {
     public function __construct(
         private DiscountedProductsService $discountService,
-        private CouponService $couponService,
+        private CouponManageService $couponService,
     ) {}
 
     public function prepareOrderLines(

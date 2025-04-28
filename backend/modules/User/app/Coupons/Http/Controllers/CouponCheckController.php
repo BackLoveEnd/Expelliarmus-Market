@@ -9,12 +9,12 @@ use Illuminate\Http\Request;
 use Modules\Order\Order\Http\Requests\CouponCheckRequest;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
 use Modules\User\Coupons\Http\Resources\CouponResource;
-use Modules\User\Coupons\Services\CouponService;
+use Modules\User\Coupons\Services\CouponManageService;
 
-class CouponController
+class CouponCheckController
 {
     public function __construct(
-        private CouponService $couponService,
+        private CouponManageService $couponService,
     ) {}
 
     /**

@@ -14,7 +14,7 @@ use Modules\Brand\Http\Resources\BrandResource;
 use Modules\Brand\Http\Resources\BrandsPaginatedResource;
 use Modules\Brand\Models\Brand;
 use Modules\User\Coupons\Jobs\SendCouponToUserJob;
-use Modules\User\Coupons\Services\CouponService;
+use Modules\User\Coupons\Services\CouponManageService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveBrandsController extends Controller
@@ -39,7 +39,7 @@ class RetrieveBrandsController extends Controller
      */
     public function getPaginated(): JsonApiResourceCollection|JsonResponse
     {
-        (new SendCouponToUserJob(new CouponService()))->handle();
+        (new SendCouponToUserJob(new CouponManageService()))->handle();
         if ($this->request->hasAny(['limit', 'offset'])) {
             return $this->wantsLimitOffsetPaginatedBrands();
         }

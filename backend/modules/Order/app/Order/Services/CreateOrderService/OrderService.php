@@ -6,7 +6,7 @@ namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Coupons\Services\CouponService;
+use Modules\User\Coupons\Services\CouponManageService;
 use Modules\User\Users\Contracts\UserInterface;
 use Modules\User\Users\Models\Guest;
 use Modules\User\Users\Models\User;
@@ -67,7 +67,7 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponService(),
+                couponService: new CouponManageService(),
             ),
             orderPersistService: new OrderPersistService(
                 warehouseStockService: $this->stockService,
@@ -88,7 +88,7 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponService(),
+                couponService: new CouponManageService(),
             ),
             orderPersistService: new OrderPersistService(
                 warehouseStockService: $this->stockService,
