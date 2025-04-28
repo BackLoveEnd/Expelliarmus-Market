@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Product\Http\Shop\Actions;
+namespace Modules\Product\Http\Shop\Actions\Prices;
 
 use Illuminate\Support\Facades\DB;
 use Modules\Brand\Models\Brand;

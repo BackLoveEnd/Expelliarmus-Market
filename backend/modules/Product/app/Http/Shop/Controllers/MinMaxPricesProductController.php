@@ -8,9 +8,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Brand\Models\Brand;
 use Modules\Category\Models\Category;
-use Modules\Product\Http\Shop\Actions\GetMinMaxProductPriceForBrandAction as PriceBrandAction;
-use Modules\Product\Http\Shop\Actions\GetMinMaxProductsPriceAction;
-use Modules\Product\Http\Shop\Actions\GetMinMaxProductsPriceForCategoryAction as PriceCategoryAction;
+use Modules\Product\Http\Shop\Actions\Prices\GetMinMaxProductPriceForBrandAction as PriceBrandAction;
+use Modules\Product\Http\Shop\Actions\Prices\GetMinMaxProductsPriceAction;
+use Modules\Product\Http\Shop\Actions\Prices\GetMinMaxProductsPriceForCategoryAction as PriceCategoryAction;
 
 class MinMaxPricesProductController extends Controller
 {
