@@ -19,7 +19,7 @@ Route::prefix('management/users')->middleware('auth.manager')->group(function ()
 
         Route::post('/', [CouponManageController::class, 'create']);
 
-        Route::put('/{coupon}', [CouponManageController::class, 'edit']);
+        Route::put('/{coupon:coupon_id}', [CouponManageController::class, 'edit']);
     });
 
     Route::get('/guests', [GuestsController::class, 'getGuests'])

@@ -55,7 +55,7 @@ const clearData = () => {
 };
 
 async function updateCoupon() {
-  await ShopCouponService.editCoupon(newCoupon)
+  await ShopCouponService.editCoupon({id: props.couponData.coupon, ...newCoupon})
       .then((response) => {
         if (response?.status === 200) {
           emit("coupon-updated", response?.data?.data?.attributes);
@@ -89,10 +89,9 @@ watch(
     () => props.couponData,
     (data) => {
       if (data) {
-        newCoupon.email = data.email || null;
+        newCoupon.email = data.user_email || null;
         newCoupon.discount = data.discount || null;
         newCoupon.expires_at = data.expires_at ? new Date(data.expires_at) : null;
-        newCoupon.email = data.user_email || null;
       }
     },
     {immediate: true}

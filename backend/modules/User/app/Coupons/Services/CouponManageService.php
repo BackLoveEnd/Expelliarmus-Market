@@ -10,9 +10,11 @@ use Modules\User\Coupons\Dto\CouponEditDto;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
 use Modules\User\Coupons\Events\CouponAssignedToUser;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
+use Modules\User\Coupons\Exceptions\FailedToUpdateCouponException;
 use Modules\User\Coupons\Exceptions\PersonalCouponMustHaveUserException;
 use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
+use Throwable;
 
 class CouponManageService
 {
@@ -67,43 +69,51 @@ class CouponManageService
 
     public function updateCoupon(Coupon $coupon, CouponEditDto $dto): void
     {
-        $fieldsToUpdate = [
-            'discount' => $dto->discount,
-            'expires_at' => $dto->expiresAt,
-        ];
+        try {
+            $fieldsToUpdate = [
+                'discount' => $dto->discount,
+                'expires_at' => $dto->expiresAt,
+            ];
 
-        if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
-            $coupon->update($fieldsToUpdate);
+            if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
+                $coupon->update($fieldsToUpdate);
 
-            return;
-        }
-
-        if (! $dto->email && $coupon->type->is(CouponTypeEnum::PERSONAL)) {
-            throw new PersonalCouponMustHaveUserException();
-        }
-
-        $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
-
-        if (! $user) {
-            $coupon->update([
-                ...$fieldsToUpdate,
-                'user_id' => null,
-                'email' => $dto->email,
-            ]);
-
-            if ($coupon->email !== $dto->email) {
-                event(new CouponAssignedToUser($dto->email, $coupon));
+                return;
             }
-        } else {
-            $coupon->update([
-                ...$fieldsToUpdate,
-                'user_id' => $user->id,
-                'email' => null,
-            ]);
 
-            if ($coupon->user_id !== $user->id) {
-                event(new CouponAssignedToUser($user->email, $coupon));
+            if (! $dto->email && $coupon->type->is(CouponTypeEnum::PERSONAL)) {
+                throw new PersonalCouponMustHaveUserException();
             }
+
+            $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
+
+            if (! $user) {
+                $oldEmail = $coupon->email;
+
+                $coupon->update([
+                    ...$fieldsToUpdate,
+                    'user_id' => null,
+                    'email' => $dto->email,
+                ]);
+
+                if ($oldEmail !== $dto->email) {
+                    event(new CouponAssignedToUser($dto->email, $coupon));
+                }
+            } else {
+                $oldUserId = $coupon->user_id;
+
+                $coupon->update([
+                    ...$fieldsToUpdate,
+                    'user_id' => $user->id,
+                    'email' => null,
+                ]);
+ 
+                if ($oldUserId !== $user->id) {
+                    event(new CouponAssignedToUser($user->email, $coupon));
+                }
+            }
+        } catch (Throwable $e) {
+            throw new FailedToUpdateCouponException($e->getMessage());
         }
     }
 

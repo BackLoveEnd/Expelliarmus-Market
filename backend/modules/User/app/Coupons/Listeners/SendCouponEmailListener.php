@@ -18,11 +18,11 @@ class SendCouponEmailListener implements ShouldQueue
     public function handle(CouponAssignedToUser $event): void
     {
         Mail::to($event->email)->send(
-            new CouponMail(
+            (new CouponMail(
                 couponCode: $event->coupon->coupon_id,
                 expiresAt: $event->coupon->expires_at,
                 discount: $event->coupon->discount,
-            ),
+            ))->onQueue('low'),
         );
     }
 }

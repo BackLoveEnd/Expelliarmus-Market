@@ -53,7 +53,7 @@ const addCoupon = () => {
 
 const editCoupon = (coupon) => {
   isEditCouponModalOpen.value = true;
-
+  console.log(coupon);
   editCouponData.value = {
     coupon: coupon.coupon,
     discount: coupon.discount,
