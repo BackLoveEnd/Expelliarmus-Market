@@ -24,6 +24,9 @@ Route::prefix('shop/user/orders')->middleware('customer')->group(function () {
     Route::get('/', [UserOrdersRetrieveController::class, 'getOrderHistory'])
         ->withoutMiddleware('throttle:api');
 
+    Route::get('/cancelled', [UserOrdersRetrieveController::class, 'getCancelledOrders'])
+        ->withoutMiddleware('throttle:api');
+
     Route::post('/checkout', OrderCreateController::class);
 });
 

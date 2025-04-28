@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Modules\Order\Order\Http\Resources\UserOrdersResource;
 use Modules\Order\Order\Services\UserOrdersService;
@@ -22,15 +24,46 @@ class UserOrdersRetrieveController extends Controller
      * Usage place - Shop.
      *
      * @param  Request  $request
-     * @return JsonApiResourceCollection
+     * @return JsonApiResourceCollection|JsonResponse
      */
-    public function getOrderHistory(Request $request): JsonApiResourceCollection
+    public function getOrderHistory(Request $request): JsonApiResourceCollection|JsonResponse
     {
         $orders = $this->userOrdersService->getOrders(
             user: $request->user('web'),
             limit: config('order.retrieve.user_orders'),
         );
 
+        if ($orders->getCollection()->isEmpty()) {
+            return response()->json(['message' => 'No orders found.'], 404);
+        }
+
+        return $this->formatUserOrders($orders);
+    }
+
+    /**
+     * Retrieve the cancelled orders of the authenticated user.
+     *
+     * Usage place - Shop.
+     *
+     * @param  Request  $request
+     * @return JsonApiResourceCollection|JsonResponse
+     */
+    public function getCancelledOrders(Request $request): JsonApiResourceCollection|JsonResponse
+    {
+        $orders = $this->userOrdersService->getCancelledOrders(
+            user: $request->user('web'),
+            limit: config('order.retrieve.user_orders'),
+        );
+
+        if ($orders->getCollection()->isEmpty()) {
+            return response()->json(['message' => 'No cancelled orders found.'], 404);
+        }
+
+        return $this->formatUserOrders($orders);
+    }
+
+    protected function formatUserOrders(LengthAwarePaginator $orders): JsonApiResourceCollection
+    {
         return UserOrdersResource::collection($orders->getCollection())
             ->additional([
                 'links' => [
