@@ -13,6 +13,7 @@ import Users from "@/management/views/Users/Users.vue";
 import Guests from "@/management/views/Users/Guests.vue";
 import Discounts from "@/management/views/Warehouse/Discounts.vue";
 import Managers from "@/management/views/Manager/Managers.vue";
+import Coupons from "@/management/views/Users/Coupons.vue";
 
 export default [
     {
@@ -44,6 +45,11 @@ export default [
         path: "clients/guests",
         component: Guests,
         name: "guests"
+    },
+    {
+        path: "clients/coupons",
+        component: Coupons,
+        name: "coupons"
     },
     {
         path: "products/discounts",

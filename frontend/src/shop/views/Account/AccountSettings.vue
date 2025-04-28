@@ -1,5 +1,5 @@
 <template>
-  <main class="space-y-20 first-of-type:mt-20 last-of-type:mb-20">
+  <main class="space-y-20 first-of-type:mt-20 last-of-type:mb-20" id="panelContainer">
     <section class="container mx-auto">
       <div class="flex justify-between">
         <bread-crumbs :links="links"></bread-crumbs>
@@ -28,22 +28,22 @@
               </tab>
               <!--              <tab as="template" v-slot="{ selected }">
                               <button
-                                :class="{
-                                  'text-[#db4444]': selected,
-                                  'text-[#808080]': !selected,
-                                }"
-                                class="focus:outline-none"
+                                  :class="{
+                                                'text-[#db4444]': selected,
+                                                'text-[#808080]': !selected,
+                                              }"
+                                  class="focus:outline-none"
                               >
                                 Access Book
                               </button>
                             </tab>
                             <tab as="template" v-slot="{ selected }">
                               <button
-                                :class="{
-                                  'text-[#db4444]': selected,
-                                  'text-[#808080]': !selected,
-                                }"
-                                class="focus:outline-none"
+                                  :class="{
+                                                'text-[#db4444]': selected,
+                                                'text-[#808080]': !selected,
+                                              }"
+                                  class="focus:outline-none"
                               >
                                 My Payment Options
                               </button>
@@ -84,15 +84,16 @@
           <tab-panel v-show="selectedTab === 0" class="py-10 px-20 space-y-8">
             <profile-info/>
           </tab-panel>
+          <!--          <tab-panel v-show="selectedTab === 1" class="py-10 px-20 space-y-8">
+
+                    </tab-panel>-->
+          <!--          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
+                      <payment-options/>
+                    </tab-panel>-->
           <tab-panel v-show="selectedTab === 1" class="py-10 px-20 space-y-8">
-          </tab-panel>
-          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
-            <payment-options/>
-          </tab-panel>
-          <tab-panel v-show="selectedTab === 3" class="py-10 px-20 space-y-8">
             <my-orders/>
           </tab-panel>
-          <tab-panel v-show="selectedTab === 4" class="py-10 px-20 space-y-8">
+          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
             <my-cancellations/>
           </tab-panel>
         </tab-panels>

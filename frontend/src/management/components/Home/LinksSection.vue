@@ -1,5 +1,6 @@
 <script setup>
 import LiLink from "@/management/components/Home/LiLink.vue";
+import {useAuthStore} from "@/stores/useAuthStore.js";
 </script>
 
 <template>
@@ -87,6 +88,12 @@ import LiLink from "@/management/components/Home/LiLink.vue";
             </li>
             <li class="mb-4">
               <li-link title="Guests" icon="pi-users" link-name="guests"/>
+            </li>
+            <li class="mb-4" v-if="useAuthStore().isSuperManager">
+              <li-link title="Managers" icon="pi-user-edit" link-name="managers"/>
+            </li>
+            <li class="mb-4">
+              <li-link title="Coupons" icon="pi-ticket" link-name="coupons"/>
             </li>
           </ul>
         </div>

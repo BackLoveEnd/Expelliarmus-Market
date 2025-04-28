@@ -1,7 +1,7 @@
 <script setup>
 import BaseTextInput from "@/components/Default/Inputs/BaseTextInput.vue";
 import {ref} from "vue";
-import {ShopCouponService} from "@/services/Order/ShopCouponService.js";
+import {ShopCouponService} from "@/services/User/ShopCouponService.js";
 
 const couponCode = ref(null);
 
