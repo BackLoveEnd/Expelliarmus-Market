@@ -1,5 +1,5 @@
 <template>
-  <main class="space-y-20 first-of-type:mt-20 last-of-type:mb-20">
+  <main class="space-y-20 first-of-type:mt-20 last-of-type:mb-20" id="panelContainer">
     <section class="container mx-auto">
       <div class="flex justify-between">
         <bread-crumbs :links="links"></bread-crumbs>
@@ -28,22 +28,22 @@
               </tab>
               <!--              <tab as="template" v-slot="{ selected }">
                               <button
-                                :class="{
-                                  'text-[#db4444]': selected,
-                                  'text-[#808080]': !selected,
-                                }"
-                                class="focus:outline-none"
+                                  :class="{
+                                                'text-[#db4444]': selected,
+                                                'text-[#808080]': !selected,
+                                              }"
+                                  class="focus:outline-none"
                               >
                                 Access Book
                               </button>
                             </tab>
                             <tab as="template" v-slot="{ selected }">
                               <button
-                                :class="{
-                                  'text-[#db4444]': selected,
-                                  'text-[#808080]': !selected,
-                                }"
-                                class="focus:outline-none"
+                                  :class="{
+                                                'text-[#db4444]': selected,
+                                                'text-[#808080]': !selected,
+                                              }"
+                                  class="focus:outline-none"
                               >
                                 My Payment Options
                               </button>
@@ -84,15 +84,16 @@
           <tab-panel v-show="selectedTab === 0" class="py-10 px-20 space-y-8">
             <profile-info/>
           </tab-panel>
+          <!--          <tab-panel v-show="selectedTab === 1" class="py-10 px-20 space-y-8">
+
+                    </tab-panel>-->
+          <!--          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
+                      <payment-options/>
+                    </tab-panel>-->
           <tab-panel v-show="selectedTab === 1" class="py-10 px-20 space-y-8">
-          </tab-panel>
-          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
-            <payment-options/>
-          </tab-panel>
-          <tab-panel v-show="selectedTab === 3" class="py-10 px-20 space-y-8">
             <my-orders/>
           </tab-panel>
-          <tab-panel v-show="selectedTab === 4" class="py-10 px-20 space-y-8">
+          <tab-panel v-show="selectedTab === 2" class="py-10 px-20 space-y-8">
             <my-cancellations/>
           </tab-panel>
         </tab-panels>
@@ -102,35 +103,35 @@
 </template>
 
 <script setup>
-import {defineAsyncComponent, ref} from "vue";
-import BreadCrumbs from "@/components/Default/BreadCrumbs.vue";
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/vue";
-import {useAuthStore} from "@/stores/useAuthStore.js";
+import { defineAsyncComponent, ref } from 'vue'
+import BreadCrumbs from '@/components/Default/BreadCrumbs.vue'
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue'
+import { useAuthStore } from '@/stores/useAuthStore.js'
 
 const ProfileInfo = defineAsyncComponent(
-    () => import("@/shop/views/Account/ProfileInfo.vue"),
-);
+    () => import('@/shop/views/Account/ProfileInfo.vue'),
+)
 const PaymentOptions = defineAsyncComponent(
-    () => import("@/shop/views/Account/PaymentOptions.vue"),
-);
+    () => import('@/shop/views/Account/PaymentOptions.vue'),
+)
 const MyOrders = defineAsyncComponent(
-    () => import("@/shop/views/Account/MyOrders.vue"),
-);
+    () => import('@/shop/views/Account/MyOrders.vue'),
+)
 const MyCancellations = defineAsyncComponent(
-    () => import("@/shop/views/Account/MyCancellations.vue"),
-);
+    () => import('@/shop/views/Account/MyCancellations.vue'),
+)
 
-const auth = useAuthStore();
+const auth = useAuthStore()
 
 const links = ref([
-  {url: "/", name: "Home"},
-  {url: "/account", name: "Account"},
-]);
+  { url: '/', name: 'Home' },
+  { url: '/account', name: 'Account' },
+])
 
-const selectedTab = ref(0);
+const selectedTab = ref(0)
 
-function changeTab(index) {
-  selectedTab.value = index;
+function changeTab (index) {
+  selectedTab.value = index
 }
 </script>
 
