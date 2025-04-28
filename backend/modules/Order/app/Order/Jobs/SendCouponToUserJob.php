@@ -14,7 +14,7 @@ use Modules\Order\Order\Emails\CouponMail;
 use Modules\Order\Order\Enum\CouponTypeEnum;
 use Modules\Order\Order\Models\Coupon;
 use Modules\Order\Order\Models\Order;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use stdClass;
 
 class SendCouponToUserJob implements ShouldQueue

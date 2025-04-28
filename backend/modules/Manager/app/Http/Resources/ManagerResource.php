@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Manager\Http\Resources;
 
 use Illuminate\Http\Request;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use TiMacDonald\JsonApi\JsonApiResource;
 
 class ManagerResource extends JsonApiResource

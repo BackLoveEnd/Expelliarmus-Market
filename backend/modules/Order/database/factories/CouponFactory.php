@@ -7,7 +7,7 @@ namespace Modules\Order\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Order\Order\Enum\CouponTypeEnum;
 use Modules\Order\Order\Models\Coupon;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class CouponFactory extends Factory
 {

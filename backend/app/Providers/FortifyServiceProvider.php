@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
-use Modules\User\Events\UserLogin;
-use Modules\User\Models\User;
+use Modules\User\Users\Events\UserLogin;
+use Modules\User\Users\Models\User;
 
 class FortifyServiceProvider extends ServiceProvider
 {

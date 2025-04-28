@@ -12,8 +12,8 @@ use Illuminate\Http\Request;
 use Modules\Manager\Http\Middleware\AuthManagerMiddleware;
 use Modules\Manager\Http\Middleware\GuestManagerMiddleware;
 use Modules\Product\Http\Middleware\AppendIncludeRelationships;
-use Modules\User\Http\Exceptions\AlreadyAuthenticatedException;
-use Modules\User\Http\Middleware\GuestOrUserMiddleware;
+use Modules\User\Users\Http\Exceptions\AlreadyAuthenticatedException;
+use Modules\User\Users\Http\Middleware\GuestOrUserMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

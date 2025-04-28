@@ -8,8 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\Order\Order\Http\Requests\GuestOrderCreateRequest;
 use Modules\Order\Order\Services\CreateOrderService\OrderService;
-use Modules\User\Http\Actions\Guests\CreateGuestAction;
-use Modules\User\Http\Dto\CreateGuestDto;
+use Modules\User\Users\Http\Actions\Guests\CreateGuestAction;
+use Modules\User\Users\Http\Dto\CreateGuestDto;
 
 class OrderCreateController extends Controller
 {

@@ -5,7 +5,7 @@ namespace Modules\Brand\Http\Requests;
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Brand\Models\Brand;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class BrandRequest extends JsonApiFormRequest
 {

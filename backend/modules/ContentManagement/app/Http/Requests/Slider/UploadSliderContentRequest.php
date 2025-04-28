@@ -7,7 +7,7 @@ use Modules\ContentManagement\Models\ContentSlider;
 use Modules\ContentManagement\Rules\OnlySpecificDomainRule;
 use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
 use Modules\ContentManagement\Rules\SlidesExistsRule;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class UploadSliderContentRequest extends FormRequest
 {

@@ -7,7 +7,7 @@ use Illuminate\Validation\Rule;
 use Modules\Category\Models\Category;
 use Modules\Category\Rules\CreateSubCategoryRule;
 use Modules\Category\Rules\UniqueRootCategoryRule;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CreateCategoryRequest extends JsonApiRelationsFormRequest

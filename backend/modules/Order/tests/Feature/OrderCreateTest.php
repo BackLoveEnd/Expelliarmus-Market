@@ -10,8 +10,8 @@ use Modules\Order\Cart\Models\Cart;
 use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\Order\Order\Models\Coupon;
 use Modules\Product\Models\Product;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 

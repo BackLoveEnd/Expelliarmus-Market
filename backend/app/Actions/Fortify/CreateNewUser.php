@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
-use Modules\User\Enums\RolesEnum;
-use Modules\User\Events\GuestRegistered;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Users\Enums\RolesEnum;
+use Modules\User\Users\Events\GuestRegistered;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 
 class CreateNewUser implements CreatesNewUsers
 {

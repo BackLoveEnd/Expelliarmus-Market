@@ -10,7 +10,7 @@ use Modules\Manager\Models\Manager;
 use Modules\Product\Http\Management\Actions\Product\Edit\MoveProductToTrashAction;
 use Modules\Product\Models\Product;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 
 class ProductDeleteTest extends TestCase

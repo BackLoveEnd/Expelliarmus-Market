@@ -10,9 +10,9 @@ use Modules\Order\Order\Dto\OrderLinesDto;
 use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\Order\Order\Models\Order;
 use Modules\Order\Order\Models\OrderLine;
-use Modules\User\Contracts\UserInterface;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Users\Contracts\UserInterface;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 
 class OrderPersistService

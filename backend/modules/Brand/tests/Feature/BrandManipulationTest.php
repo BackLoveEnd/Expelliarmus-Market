@@ -10,7 +10,7 @@ use Modules\Category\Models\Category;
 use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Symfony\Component\HttpFoundation\Response;
 
 class BrandManipulationTest extends TestCase

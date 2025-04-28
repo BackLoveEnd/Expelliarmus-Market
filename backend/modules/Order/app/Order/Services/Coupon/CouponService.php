@@ -7,7 +7,7 @@ namespace Modules\Order\Order\Services\Coupon;
 use Modules\Order\Order\Enum\CouponTypeEnum;
 use Modules\Order\Order\Exceptions\CouponNotValidException;
 use Modules\Order\Order\Models\Coupon;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class CouponService
 {

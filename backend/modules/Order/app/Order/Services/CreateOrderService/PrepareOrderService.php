@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use stdClass;
 
 class PrepareOrderService

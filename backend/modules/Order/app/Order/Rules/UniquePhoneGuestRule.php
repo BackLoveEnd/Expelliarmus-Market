@@ -6,7 +6,7 @@ namespace Modules\Order\Order\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Modules\User\Models\Guest;
+use Modules\User\Users\Models\Guest;
 
 class UniquePhoneGuestRule implements ValidationRule
 {

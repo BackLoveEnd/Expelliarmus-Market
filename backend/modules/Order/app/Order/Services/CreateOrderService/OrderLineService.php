@@ -10,7 +10,7 @@ use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
 use Modules\Order\Order\Services\Coupon\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
 use stdClass;
 use Throwable;

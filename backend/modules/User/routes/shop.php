@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\PasswordController;
 use Laravel\Fortify\Http\Controllers\ProfileInformationController;
-use Modules\User\Http\Controllers\UserController;
-use Modules\User\Http\Controllers\UserWishlistController;
+use Modules\User\Users\Http\Controllers\UserController;
+use Modules\User\Users\Http\Controllers\UserWishlistController;
 
 Route::middleware(['auth:sanctum'])->prefix('user')->group(function () {
     Route::controller(UserWishlistController::class)->prefix('/wishlist')->group(function () {

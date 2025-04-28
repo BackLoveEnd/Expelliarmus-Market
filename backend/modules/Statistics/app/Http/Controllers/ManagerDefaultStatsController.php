@@ -10,8 +10,8 @@ use Modules\Product\Models\Product;
 use Modules\Statistics\Http\Stats\TotalProductsStats;
 use Modules\Statistics\Http\Stats\TotalUsersStats;
 use Modules\Statistics\Services\CountStatisticsService;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 
 class ManagerDefaultStatsController extends Controller
 {

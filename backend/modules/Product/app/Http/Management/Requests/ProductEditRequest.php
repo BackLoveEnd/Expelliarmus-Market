@@ -11,7 +11,7 @@ use Modules\Product\Rules\PriceComplianceForCombinedVariationsRule;
 use Modules\Product\Rules\PriceComplianceForSingleVariationsRule;
 use Modules\Product\Rules\ProductSpecificationExistsRule;
 use Modules\Product\Rules\ValueHasCorrectDataTypeRule;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 use Modules\Warehouse\Enums\ProductAttributeViewTypeEnum;
 use Modules\Warehouse\Rules\AttributesExistsInCombinedVariationsRule;

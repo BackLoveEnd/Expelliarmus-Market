@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Order\Database\Factory\OrderFactory;
 use Modules\Order\Order\Enum\OrderStatusEnum;
-use Modules\User\Contracts\UserInterface;
+use Modules\User\Users\Contracts\UserInterface;
 
 /**
  * @property int $id
