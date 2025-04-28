@@ -9,7 +9,7 @@ use Modules\User\Coupons\Exceptions\CouponNotValidException;
 use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
 
-class CouponService
+class CouponManageService
 {
     public function checkCoupon(string $couponCode, User|string|null $user): Coupon
     {

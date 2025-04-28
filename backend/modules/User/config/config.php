@@ -5,5 +5,6 @@ return [
     'retrieve' => [
         'users-table' => 10,
         'user-wishlist' => 4,
+        'coupons' => 10,
     ],
 ];
