@@ -3,6 +3,8 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import {computed, ref} from "vue";
 import {ShopCouponService} from "@/services/User/ShopCouponService.js";
+import AddCouponModal from "@/management/components/Users/Coupons/AddCouponModal.vue";
+import EditCouponModal from "@/management/components/Users/Coupons/EditCouponModal.vue";
 
 const page = ref(0);
 const isFetching = ref(false);
@@ -11,9 +13,18 @@ const rowOptions = [5, 10, 25, 50];
 const coupons = ref([]);
 const limit = ref(rowOptions[0]);
 
+const isAddCouponModalOpen = ref(false);
+const isEditCouponModalOpen = ref(false);
+
 const offset = computed(() => page.value * limit.value);
 
-const fetchBrands = async (pageIndex) => {
+const editCouponData = ref({
+  coupon: null,
+  discount: null,
+  expires_at: null,
+});
+
+const fetchCoupons = async (pageIndex) => {
   isFetching.value = true;
 
   await ShopCouponService.getCoupons(`/users/coupons/global?limit=${limit.value}&offset=${pageIndex * limit.value}`)
@@ -33,13 +44,37 @@ const fetchBrands = async (pageIndex) => {
       });
 };
 
-await fetchBrands(0);
+await fetchCoupons(0);
+
+const addCoupon = () => {
+  isAddCouponModalOpen.value = true;
+};
+
+const editCoupon = (coupon) => {
+  isEditCouponModalOpen.value = true;
+
+  editCouponData.value = {
+    coupon: coupon.coupon,
+    discount: coupon.discount,
+    expires_at: coupon.expires_at,
+  };
+};
+
+const handleAddedCoupon = async () => {
+  if (coupons.value.length < limit.value) {
+    await fetchCoupons(0);
+  }
+};
+
+const handleUpdatedCoupon = async () => {
+  await fetchCoupons(0);
+};
 
 const onPageChange = async (event) => {
   if (event.rows !== limit.value) {
     limit.value = event.rows;
     page.value = 0;
-    await fetchBrands(0);
+    await fetchCoupons(0);
     return;
   }
 
@@ -47,7 +82,7 @@ const onPageChange = async (event) => {
 
   if (nextPage !== page.value) {
     page.value = nextPage;
-    await fetchBrands(nextPage);
+    await fetchCoupons(nextPage);
   }
 };
 </script>
@@ -64,6 +99,7 @@ const onPageChange = async (event) => {
         Coupons not found
       </p>
       <button
+          @click="addCoupon"
           class="w-32 h-10 px-1 bg-blue-500 rounded-md text-white"
       >
         Add Coupon
@@ -85,6 +121,7 @@ const onPageChange = async (event) => {
   >
     <template #header>
       <button
+          @click="addCoupon"
           class="w-32 h-10 px-1 bg-blue-500 rounded-md text-white"
       >
         Add Coupon
@@ -110,6 +147,7 @@ const onPageChange = async (event) => {
     <Column>
       <template #body="slotProps" style="width: 5%; min-width: 8rem">
         <button
+            @click="editCoupon(slotProps.data)"
             type="button"
             class="text-blue-500"
         >
@@ -128,6 +166,21 @@ const onPageChange = async (event) => {
       </template>
     </Column>
   </DataTable>
+
+  <add-coupon-modal
+      :is-modal-open="isAddCouponModalOpen"
+      type="global"
+      @modal-close="isAddCouponModalOpen = false"
+      @coupon-added="handleAddedCoupon"
+  />
+
+  <edit-coupon-modal
+      :is-modal-open="isEditCouponModalOpen"
+      type="global"
+      :coupon-data="editCouponData"
+      @coupon-updated="handleUpdatedCoupon"
+      @modal-close="isEditCouponModalOpen = false"
+  />
 </template>
 
 <style scoped></style>
