@@ -34,15 +34,16 @@ class UserOrdersRetrieveController extends Controller
         return UserOrdersResource::collection($orders->getCollection())
             ->additional([
                 'links' => [
-                    'first' => $orders->url(1),
-                    'last' => $orders->url($orders->lastPage()),
-                    'next' => $orders->nextPageUrl(),
-                    'prev' => $orders->previousPageUrl(),
+                    'first' => 1,
+                    'last' => $orders->lastPage(),
+                    'next' => $orders->hasMorePages() ? $orders->currentPage() + 1 : null,
+                    'prev' => $orders->currentPage() > 1 ? $orders->currentPage() - 1 : null,
                 ],
                 'meta' => [
                     'total' => $orders->total(),
                     'current_page' => $orders->currentPage(),
                     'last_page' => $orders->lastPage(),
+                    'per_page' => $orders->perPage(),
                 ],
             ]);
     }

@@ -3,6 +3,6 @@
 return [
     'name' => 'Order',
     'retrieve' => [
-        'user_orders' => 6,
+        'user_orders' => 4,
     ],
 ];
