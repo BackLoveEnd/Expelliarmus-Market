@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Exceptions;
+namespace Modules\User\Coupons\Exceptions;
 
 use Exception;
 use Illuminate\Http\JsonResponse;

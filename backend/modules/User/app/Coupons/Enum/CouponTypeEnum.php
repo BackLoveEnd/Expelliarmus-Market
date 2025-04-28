@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Order\Order\Enum;
+namespace Modules\User\Coupons\Enum;
 
 enum CouponTypeEnum: int
 {

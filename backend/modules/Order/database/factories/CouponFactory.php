@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\Order\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Order\Order\Enum\CouponTypeEnum;
-use Modules\Order\Order\Models\Coupon;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
 
 class CouponFactory extends Factory

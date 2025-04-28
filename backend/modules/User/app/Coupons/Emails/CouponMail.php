@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Emails;
+namespace Modules\User\Coupons\Emails;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;

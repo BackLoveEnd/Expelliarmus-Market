@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Order\Order\Jobs;
+namespace Modules\User\Coupons\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,10 +10,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Modules\Order\Order\Emails\CouponMail;
-use Modules\Order\Order\Enum\CouponTypeEnum;
-use Modules\Order\Order\Models\Coupon;
 use Modules\Order\Order\Models\Order;
+use Modules\User\Coupons\Emails\CouponMail;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
 use stdClass;
 

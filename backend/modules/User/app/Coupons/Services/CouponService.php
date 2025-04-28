@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services\Coupon;
+namespace Modules\User\Coupons\Services;
 
-use Modules\Order\Order\Enum\CouponTypeEnum;
-use Modules\Order\Order\Exceptions\CouponNotValidException;
-use Modules\Order\Order\Models\Coupon;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Exceptions\CouponNotValidException;
+use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
 
 class CouponService

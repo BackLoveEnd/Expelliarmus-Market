@@ -13,8 +13,8 @@ use Modules\Brand\Http\Actions\GetPagePaginatedBrandsAction;
 use Modules\Brand\Http\Resources\BrandResource;
 use Modules\Brand\Http\Resources\BrandsPaginatedResource;
 use Modules\Brand\Models\Brand;
-use Modules\Order\Order\Jobs\SendCouponToUserJob;
-use Modules\Order\Order\Services\Coupon\CouponService;
+use Modules\User\Coupons\Jobs\SendCouponToUserJob;
+use Modules\User\Coupons\Services\CouponService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveBrandsController extends Controller

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Http\Controllers;
+namespace Modules\User\Coupons\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Order\Order\Exceptions\CouponNotValidException;
 use Modules\Order\Order\Http\Requests\CouponCheckRequest;
-use Modules\Order\Order\Http\Resources\CouponResource;
-use Modules\Order\Order\Services\Coupon\CouponService;
+use Modules\User\Coupons\Exceptions\CouponNotValidException;
+use Modules\User\Coupons\Http\Resources\CouponResource;
+use Modules\User\Coupons\Services\CouponService;
 
 class CouponController
 {

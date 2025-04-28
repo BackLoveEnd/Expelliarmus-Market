@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Jobs;
+namespace Modules\User\Coupons\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\Order\Order\Models\Coupon;
+use Modules\User\Coupons\Models\Coupon;
 
 class CancelExpiredCoupons implements ShouldQueue
 {

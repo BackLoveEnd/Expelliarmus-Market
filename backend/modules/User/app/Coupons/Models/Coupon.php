@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Models;
+namespace Modules\User\Coupons\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Modules\Order\Database\Factories\CouponFactory;
-use Modules\Order\Order\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
 
 /**
  * @property string $coupon_id

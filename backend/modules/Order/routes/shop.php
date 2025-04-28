@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Order\Cart\Http\Controllers\CartController;
-use Modules\Order\Order\Http\Controllers\CouponController;
 use Modules\Order\Order\Http\Controllers\OrderCreateController;
 use Modules\Order\Order\Http\Controllers\UserOrdersRetrieveController;
+use Modules\User\Coupons\Http\Controllers\CouponController;
 
 Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
     Route::controller(CartController::class)->group(function () {
