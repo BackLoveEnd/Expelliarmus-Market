@@ -37,7 +37,7 @@ class CouponStorageService
     public function getPersonal(int $limit, int $offset): LimitOffsetDto
     {
         $coupons = QueryBuilder::for(Coupon::class)
-            ->join('users', 'coupons.user_id', '=', 'users.id')
+            ->with(['user' => fn($query) => $query->select('id', 'email')])
             ->allowedSorts(['expires_at'])
             ->where('type', CouponTypeEnum::PERSONAL)
             ->limit($limit)

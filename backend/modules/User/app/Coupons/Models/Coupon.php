@@ -6,9 +6,11 @@ namespace Modules\User\Coupons\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Modules\Order\Database\Factories\CouponFactory;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Users\Models\User;
 
 /**
  * @property string $coupon_id
@@ -32,6 +34,11 @@ class Coupon extends Model
         'type',
         'expires_at',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected function casts(): array
     {

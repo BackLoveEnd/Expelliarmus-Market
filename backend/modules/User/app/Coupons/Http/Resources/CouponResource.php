@@ -16,6 +16,9 @@ class CouponResource extends JsonApiResource
             'discount' => $this->discount,
             'type' => $this->type->toString(),
             'expires_at' => $this->expires_at,
+            'user_email' => $this->user_id
+                ? $this->whenLoaded('user', fn() => $this->user->email)
+                : $this->email,
         ];
     }
 }

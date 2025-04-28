@@ -57,6 +57,7 @@ class CouponRetrieveController extends Controller
             offset: (int)$request->query('offset', 0),
         );
 
+
         return CouponResource::collection($dto->items)->additional($dto->wrapMeta());
     }
 }
