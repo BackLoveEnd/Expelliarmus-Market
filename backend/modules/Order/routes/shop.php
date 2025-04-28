@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Order\Cart\Http\Controllers\CartController;
 use Modules\Order\Order\Http\Controllers\CouponController;
 use Modules\Order\Order\Http\Controllers\OrderCreateController;
+use Modules\Order\Order\Http\Controllers\UserOrdersRetrieveController;
 
 Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
     Route::controller(CartController::class)->group(function () {
@@ -19,7 +20,10 @@ Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
     });
 });
 
-Route::prefix('shop/user/order')->middleware('customer')->group(function () {
+Route::prefix('shop/user/orders')->middleware('customer')->group(function () {
+    Route::get('/', [UserOrdersRetrieveController::class, 'getOrderHistory'])
+        ->withoutMiddleware('throttle:api');
+
     Route::post('/checkout', OrderCreateController::class);
 });
 

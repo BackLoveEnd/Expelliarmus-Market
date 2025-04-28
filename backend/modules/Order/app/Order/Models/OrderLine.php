@@ -5,7 +5,7 @@ namespace Modules\Order\Order\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Modules\Warehouse\Models\Product;
+use Modules\Product\Models\Product;
 
 /**
  * @property int $product_id
