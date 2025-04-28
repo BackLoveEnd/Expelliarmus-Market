@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Order\Order\Services;
 
+use Modules\Order\Order\Services\CreateOrderService\OrderPersistService;
 use Modules\User\Models\Guest;
 use Modules\User\Models\User;
 

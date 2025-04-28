@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Modules\Order\Cart\Services\Cart\CartStorageService;
-use Modules\Order\Order\Services\CouponService;
-use Modules\Order\Order\Services\OrderPersistService;
+use Modules\Order\Order\Services\Coupon\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\User\Contracts\UserInterface;
 use Modules\User\Models\Guest;
@@ -42,7 +41,7 @@ class OrderService
         return $this;
     }
 
-    public function process(): string
+    public function process(): int
     {
         if ($this->user instanceof User) {
             return $this->userOrderFactory($this->user);
@@ -55,7 +54,7 @@ class OrderService
         throw new RuntimeException('User not provided');
     }
 
-    private function userOrderFactory(User $user): string
+    private function userOrderFactory(User $user): int
     {
         return (new OrderRegularUserCreateService(
             cartStorage: $this->storageService,
@@ -76,7 +75,7 @@ class OrderService
         ))->create($user, $this->couponCode);
     }
 
-    private function guestOrderFactory(Guest $guest): string
+    private function guestOrderFactory(Guest $guest): int
     {
         return (new OrderGuestCreateService(
             cartStorage: $this->storageService,

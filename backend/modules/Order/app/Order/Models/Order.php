@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Order\Database\Factory\OrderFactory;
 use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\User\Contracts\UserInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @property int $id
@@ -73,7 +72,7 @@ class Order extends Model
             }
 
             if ($order->order_id === null) {
-                $order->order_id = Uuid::uuid7()->toString();
+                $order->order_id = randomNumber(12);
             }
         });
     }

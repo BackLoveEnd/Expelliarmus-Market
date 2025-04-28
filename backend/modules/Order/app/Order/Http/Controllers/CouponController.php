@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Modules\Order\Order\Exceptions\CouponNotValidException;
 use Modules\Order\Order\Http\Requests\CouponCheckRequest;
 use Modules\Order\Order\Http\Resources\CouponResource;
-use Modules\Order\Order\Services\CouponService;
+use Modules\Order\Order\Services\Coupon\CouponService;
 
 class CouponController
 {

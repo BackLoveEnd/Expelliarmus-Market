@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Illuminate\Support\Facades\DB;
 use Modules\Order\Order\Dto\OrderLineDto;
@@ -21,7 +21,7 @@ class OrderPersistService
         private WarehouseStockService $warehouseStockService,
     ) {}
 
-    public function saveCheckout(UserInterface $user, OrderLinesDto $dto): string
+    public function saveCheckout(UserInterface $user, OrderLinesDto $dto): int
     {
         return DB::transaction(function () use ($user, $dto) {
             $order = $this->createOrder($user, $dto->totalPrice);

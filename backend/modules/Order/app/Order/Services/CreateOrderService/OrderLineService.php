@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\Order\Order\Services\CouponService;
+use Modules\Order\Order\Services\Coupon\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\User\Models\User;
 use Modules\Warehouse\Models\ProductVariation;

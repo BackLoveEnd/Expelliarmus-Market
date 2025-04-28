@@ -16,7 +16,7 @@ class OrderCreated
 
     public function __construct(
         public readonly UserInterface $user,
-        public readonly string $orderId,
+        public readonly int $orderId,
         public readonly OrderLinesDto $orderLines,
     ) {}
 }

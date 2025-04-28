@@ -14,7 +14,7 @@ use Modules\Brand\Http\Resources\BrandResource;
 use Modules\Brand\Http\Resources\BrandsPaginatedResource;
 use Modules\Brand\Models\Brand;
 use Modules\Order\Order\Jobs\SendCouponToUserJob;
-use Modules\Order\Order\Services\CouponService;
+use Modules\Order\Order\Services\Coupon\CouponService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveBrandsController extends Controller

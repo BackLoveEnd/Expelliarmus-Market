@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Order\Services;
+namespace Modules\Order\Order\Services\Coupon;
 
 use Modules\Order\Order\Enum\CouponTypeEnum;
 use Modules\Order\Order\Exceptions\CouponNotValidException;
