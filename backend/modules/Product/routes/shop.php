@@ -17,6 +17,8 @@ Route::prefix('/shop')->withoutMiddleware(['throttle:api'])->group(function () {
 
         Route::get('/products/suggestions', 'suggestions');
 
+        Route::get('/products/top-sellers', 'topSellers');
+
         Route::get('/categories/{category:slug}/products', 'relatedToProduct');
     });
 
