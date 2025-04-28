@@ -5,6 +5,7 @@ import {computed, ref} from "vue";
 import {ShopCouponService} from "@/services/User/ShopCouponService.js";
 import AddCouponModal from "@/management/components/Users/Coupons/AddCouponModal.vue";
 import EditCouponModal from "@/management/components/Users/Coupons/EditCouponModal.vue";
+import DeleteCouponModal from "@/management/components/Users/Coupons/DeleteCouponModal.vue";
 
 const page = ref(0);
 const isFetching = ref(false);
@@ -15,6 +16,9 @@ const limit = ref(rowOptions[0]);
 
 const isAddCouponModalOpen = ref(false);
 const isEditCouponModalOpen = ref(false);
+const isDeleteCouponModalOpen = ref(false);
+
+const couponId = ref(null);
 
 const offset = computed(() => page.value * limit.value);
 
@@ -48,6 +52,12 @@ await fetchCoupons(0);
 
 const addCoupon = () => {
   isAddCouponModalOpen.value = true;
+};
+
+const deleteCoupon = (coupon) => {
+  isDeleteCouponModalOpen.value = true;
+
+  couponId.value = coupon;
 };
 
 const editCoupon = (coupon) => {
@@ -158,6 +168,7 @@ const onPageChange = async (event) => {
     <Column>
       <template #body="slotProps" style="width: 5%; min-width: 8rem">
         <button
+            @click="deleteCoupon(slotProps.data.coupon)"
             type="button"
             class="text-red-500"
         >
@@ -180,6 +191,13 @@ const onPageChange = async (event) => {
       :coupon-data="editCouponData"
       @coupon-updated="handleUpdatedCoupon"
       @modal-close="isEditCouponModalOpen = false"
+  />
+
+  <delete-coupon-modal
+      :is-modal-open="isDeleteCouponModalOpen"
+      :coupon-id="couponId"
+      @modal-close="isDeleteCouponModalOpen = false"
+      @coupon-deleted="handleUpdatedCoupon"
   />
 </template>
 

@@ -21,5 +21,9 @@ export const ShopCouponService = {
         const data = useJsonApiFormatter().toJsonApi(coupon, 'coupons');
 
         return await managerApi().put(`/users/coupons/${coupon.id}`, data);
+    },
+
+    async deleteCoupon(couponId) {
+        return await managerApi().delete(`/users/coupons/${couponId}`);
     }
 };

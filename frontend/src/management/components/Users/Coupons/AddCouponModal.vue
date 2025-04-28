@@ -189,20 +189,22 @@ async function createCoupon() {
       </div>
     </template>
     <template #modalFooter>
-      <button
-          type="submit"
-          :form="`form-${props.type}`"
-          class="px-4 py-2 bg-blue-500 text-white rounded-md"
-      >
-        Create
-      </button>
-      <button
-          type="button"
-          @click="closeModal"
-          class="ml-2 px-4 py-2 bg-gray-300 rounded-md"
-      >
-        Cancel
-      </button>
+      <div class="flex justify-between">
+        <button
+            type="submit"
+            :form="`form-${props.type}`"
+            class="px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          Create
+        </button>
+        <button
+            type="button"
+            @click="closeModal"
+            class="ml-2 px-4 py-2 bg-gray-300 rounded-md"
+        >
+          Cancel
+        </button>
+      </div>
     </template>
   </DefaultModal>
 </template>
