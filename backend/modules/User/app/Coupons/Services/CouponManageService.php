@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\User\Coupons\Services;
 
+use Illuminate\Support\Facades\DB;
+use Modules\User\Coupons\Dto\CouponDto;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
 use Modules\User\Coupons\Models\Coupon;
@@ -35,6 +37,30 @@ class CouponManageService
         }
 
         throw new CouponNotValidException();
+    }
+
+    public function createCoupon(CouponDto $dto): Coupon
+    {
+        return DB::transaction(function () use ($dto) {
+            if ($dto->email) {
+                $user = User::query()->where('email', $dto->email)->first(['id']);
+            }
+
+            $coupon = Coupon::query()->create([
+                'coupon_id' => $dto->couponCode ?? randomString(12, true),
+                'discount' => $dto->discount,
+                'expires_at' => $dto->expiresAt,
+                'type' => $dto->type->value,
+                'user_id' => $user?->id,
+                'email' => $user?->email ?? $dto->email,
+            ]);
+
+            if ($user) {
+                $coupon->setRelation('user', $user);
+            }
+
+            return $coupon;
+        });
     }
 
     public function deleteCoupon(Coupon $coupon): void
