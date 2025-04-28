@@ -12,3 +12,20 @@ if (! function_exists('randomNumber')) {
         return (int)$output;
     }
 }
+
+if (! function_exists('randomString')) {
+    function randomString($length = 10, bool $upper = false): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        $charactersLength = strlen($characters);
+
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return $upper ? strtoupper($randomString) : $randomString;
+    }
+}
