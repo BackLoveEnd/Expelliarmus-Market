@@ -31,11 +31,13 @@ class CouponFactory extends Factory
             if ($user instanceof User) {
                 return [
                     'user_id' => $user->id,
+                    'type' => CouponTypeEnum::PERSONAL->value,
                 ];
             }
 
             return [
                 'email' => $user,
+                'type' => CouponTypeEnum::PERSONAL->value,
             ];
         });
     }

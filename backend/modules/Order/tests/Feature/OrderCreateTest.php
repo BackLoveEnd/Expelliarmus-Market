@@ -42,7 +42,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response->assertJsonFragment([
             'message' => 'Order created successfully.',
@@ -128,7 +128,7 @@ class OrderCreateTest extends TestCase
         ]);
 
         // As guest user
-        $response = $this->postJson('/api/shop/user/order/checkout', [
+        $response = $this->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -219,7 +219,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $responseFirstCart->assertExactJson([
             'message' => 'Product was added to cart.',
@@ -289,7 +289,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->postJson('/api/shop/user/order/checkout', [
+        $response = $this->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -368,7 +368,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout', [
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -405,7 +405,7 @@ class OrderCreateTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response->assertStatus(409);
 
@@ -425,7 +425,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response
             ->assertExactJson([
@@ -447,7 +447,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response1 = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response1 = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response1
             ->assertExactJson([
@@ -471,7 +471,7 @@ class OrderCreateTest extends TestCase
 
         $variation->update(['quantity' => 0]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response
             ->assertExactJson([

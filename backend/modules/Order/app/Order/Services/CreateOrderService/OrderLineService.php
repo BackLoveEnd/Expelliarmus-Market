@@ -58,7 +58,7 @@ class OrderLineService
                 'quantity' => $orderLineItem->quantity,
                 'variation' => null,
                 'discount' => $orderLineItem->product->lastActiveDiscount?->first()
-                    ?? $variation->lastActiveDiscount?->first() ?? null,
+                    ?? $variation?->lastActiveDiscount?->first() ?? null,
             ];
 
             if ($variation) {
