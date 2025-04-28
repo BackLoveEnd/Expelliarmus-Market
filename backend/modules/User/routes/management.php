@@ -18,6 +18,8 @@ Route::prefix('management/users')->middleware('auth.manager')->group(function ()
             ->withoutMiddleware(['throttle:api']);
 
         Route::post('/', [CouponManageController::class, 'create']);
+
+        Route::put('/{coupon}', [CouponManageController::class, 'edit']);
     });
 
     Route::get('/guests', [GuestsController::class, 'getGuests'])

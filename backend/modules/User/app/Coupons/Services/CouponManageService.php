@@ -6,7 +6,9 @@ namespace Modules\User\Coupons\Services;
 
 use Illuminate\Support\Facades\DB;
 use Modules\User\Coupons\Dto\CouponDto;
+use Modules\User\Coupons\Dto\CouponEditDto;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Events\CouponAssignedToUser;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
 use Modules\User\Coupons\Exceptions\PersonalCouponMustHaveUserException;
 use Modules\User\Coupons\Models\Coupon;
@@ -42,7 +44,7 @@ class CouponManageService
 
     public function createCoupon(CouponDto $dto): Coupon
     {
-        return DB::transaction(function () use ($dto) {
+        $coupon = DB::transaction(function () use ($dto) {
             if ($dto->type->is(CouponTypeEnum::GLOBAL)) {
                 return $this->saveGlobalCoupon($dto);
             }
@@ -53,6 +55,56 @@ class CouponManageService
 
             return $this->savePersonalCoupon($dto);
         });
+
+        if ($coupon->user) {
+            event(new CouponAssignedToUser($coupon->user->email, $coupon));
+        } elseif ($coupon->email) {
+            event(new CouponAssignedToUser($coupon->email, $coupon));
+        }
+
+        return $coupon;
+    }
+
+    public function updateCoupon(Coupon $coupon, CouponEditDto $dto): void
+    {
+        $fieldsToUpdate = [
+            'discount' => $dto->discount,
+            'expires_at' => $dto->expiresAt,
+        ];
+
+        if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
+            $coupon->update($fieldsToUpdate);
+
+            return;
+        }
+
+        if (! $dto->email && $coupon->type->is(CouponTypeEnum::PERSONAL)) {
+            throw new PersonalCouponMustHaveUserException();
+        }
+
+        $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
+
+        if (! $user) {
+            $coupon->update([
+                ...$fieldsToUpdate,
+                'user_id' => null,
+                'email' => $dto->email,
+            ]);
+
+            if ($coupon->email !== $dto->email) {
+                event(new CouponAssignedToUser($dto->email, $coupon));
+            }
+        } else {
+            $coupon->update([
+                ...$fieldsToUpdate,
+                'user_id' => $user->id,
+                'email' => null,
+            ]);
+
+            if ($coupon->user_id !== $user->id) {
+                event(new CouponAssignedToUser($user->email, $coupon));
+            }
+        }
     }
 
     public function deleteCoupon(Coupon $coupon): void

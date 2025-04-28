@@ -7,9 +7,16 @@ namespace Modules\User\Coupons\Http\Requests;
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Models\Coupon;
+use Modules\User\Users\Enums\RolesEnum;
 
 class CreateCouponRequest extends JsonApiFormRequest
 {
+    public function authorize(): bool
+    {
+        return $this->user(RolesEnum::MANAGER->toString())?->can('manage', Coupon::class);
+    }
+
     public function jsonApiAttributeRules(): array
     {
         return [
