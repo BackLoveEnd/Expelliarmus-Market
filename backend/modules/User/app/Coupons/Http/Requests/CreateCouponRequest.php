@@ -20,7 +20,12 @@ class CreateCouponRequest extends JsonApiFormRequest
                 'string',
                 Rule::in([CouponTypeEnum::GLOBAL->toString(), CouponTypeEnum::PERSONAL->toString()]),
             ],
-            'email' => ['nullable', 'email', Rule::exists('users', 'email')],
+            'email' => [
+                'nullable',
+                'required_if:data.attributes.type,'.CouponTypeEnum::PERSONAL->toString(),
+                'email',
+                Rule::exists('users', 'email'),
+            ],
             'expires_at' => ['required', 'date', 'after:tomorrow'],
         ];
     }

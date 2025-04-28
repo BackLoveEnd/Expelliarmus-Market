@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\User\Coupons\Dto\CouponDto;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
+use Modules\User\Coupons\Exceptions\PersonalCouponMustHaveUserException;
 use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\User;
 
@@ -42,24 +43,15 @@ class CouponManageService
     public function createCoupon(CouponDto $dto): Coupon
     {
         return DB::transaction(function () use ($dto) {
-            if ($dto->email) {
-                $user = User::query()->where('email', $dto->email)->first(['id']);
+            if ($dto->type->is(CouponTypeEnum::GLOBAL)) {
+                return $this->saveGlobalCoupon($dto);
             }
 
-            $coupon = Coupon::query()->create([
-                'coupon_id' => $dto->couponCode ?? randomString(12, true),
-                'discount' => $dto->discount,
-                'expires_at' => $dto->expiresAt,
-                'type' => $dto->type->value,
-                'user_id' => $user?->id,
-                'email' => $user?->email ?? $dto->email,
-            ]);
-
-            if ($user) {
-                $coupon->setRelation('user', $user);
+            if (! $dto->email && $dto->type->is(CouponTypeEnum::PERSONAL)) {
+                throw new PersonalCouponMustHaveUserException();
             }
 
-            return $coupon;
+            return $this->savePersonalCoupon($dto);
         });
     }
 
@@ -68,5 +60,37 @@ class CouponManageService
         if ($coupon->type->is(CouponTypeEnum::PERSONAL)) {
             $coupon->delete();
         }
+    }
+
+    protected function saveGlobalCoupon(CouponDto $dto): Coupon
+    {
+        return Coupon::query()->create([
+            'coupon_id' => $dto->couponCode ?? randomString(12, true),
+            'discount' => $dto->discount,
+            'type' => $dto->type->value,
+            'expires_at' => $dto->expiresAt,
+            'user_id' => null,
+            'email' => null,
+        ]);
+    }
+
+    protected function savePersonalCoupon(CouponDto $dto): Coupon
+    {
+        $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
+
+        $coupon = Coupon::query()->create([
+            'coupon_id' => $dto->couponCode ?? randomString(12, true),
+            'discount' => $dto->discount,
+            'type' => $dto->type->value,
+            'expires_at' => $dto->expiresAt,
+            'user_id' => $user?->id,
+            'email' => $user ? null : $dto->email,
+        ]);
+
+        if ($user) {
+            $coupon->setRelation('user', $user);
+        }
+
+        return $coupon;
     }
 }

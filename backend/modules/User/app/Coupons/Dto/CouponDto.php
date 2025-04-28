@@ -22,7 +22,7 @@ final readonly class CouponDto
     {
         return new self(
             expiresAt: Carbon::parse($request->expires_at)->setTimezone(config('app.timezone')),
-            type: CouponTypeEnum::tryFrom($request->type),
+            type: CouponTypeEnum::fromString($request->type),
             discount: (int)$request->discount,
             couponCode: $request->coupon_code,
             email: $request->email,
