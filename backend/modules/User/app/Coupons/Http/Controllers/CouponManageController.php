@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Modules\User\Coupons\Dto\CouponDto;
 use Modules\User\Coupons\Dto\CouponEditDto;
-use Modules\User\Coupons\Exceptions\PersonalCouponMustHaveUserException;
+use Modules\User\Coupons\Exceptions\FailedToUpdateCouponException;
 use Modules\User\Coupons\Http\Requests\CreateCouponRequest;
 use Modules\User\Coupons\Http\Requests\EditCouponRequest;
 use Modules\User\Coupons\Http\Resources\CouponResource;
@@ -46,7 +46,7 @@ class CouponManageController extends Controller
      * @param  EditCouponRequest  $request
      * @param  Coupon  $coupon
      * @return JsonResponse
-     * @throws PersonalCouponMustHaveUserException
+     * @throws FailedToUpdateCouponException
      */
     public function edit(EditCouponRequest $request, Coupon $coupon): JsonResponse
     {
@@ -56,5 +56,20 @@ class CouponManageController extends Controller
         );
 
         return response()->json(['message' => 'Coupon updated successfully.']);
+    }
+
+    /**
+     * Delete a coupon.
+     *
+     * Usage place - Admin section.
+     *
+     * @param  Coupon  $coupon
+     * @return JsonResponse
+     */
+    public function delete(Coupon $coupon): JsonResponse
+    {
+        $this->couponManageService->deleteCoupon($coupon);
+
+        return response()->json(['message' => 'Coupon deleted successfully.']);
     }
 }

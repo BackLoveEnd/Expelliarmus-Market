@@ -107,7 +107,7 @@ class CouponManageService
                     'user_id' => $user->id,
                     'email' => null,
                 ]);
- 
+
                 if ($oldUserId !== $user->id) {
                     event(new CouponAssignedToUser($user->email, $coupon));
                 }
@@ -119,7 +119,21 @@ class CouponManageService
 
     public function deleteCoupon(Coupon $coupon): void
     {
+        $this->deleteGlobalCoupon($coupon);
+
+        $this->deletePersonalCoupon($coupon);
+    }
+
+    public function deletePersonalCoupon(Coupon $coupon): void
+    {
         if ($coupon->type->is(CouponTypeEnum::PERSONAL)) {
+            $coupon->delete();
+        }
+    }
+
+    public function deleteGlobalCoupon(Coupon $coupon): void
+    {
+        if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
             $coupon->delete();
         }
     }

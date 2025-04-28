@@ -44,7 +44,7 @@ class CouponTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('coupons', [
-            'coupon_code' => 'TEST123',
+            'coupon_id' => 'TEST123',
             'type' => CouponTypeEnum::GLOBAL->value,
         ]);
     }
@@ -202,6 +202,41 @@ class CouponTest extends TestCase
         $this->assertDatabaseMissing('coupons', [
             'id' => $coupon->id,
             'user_id' => $user->id,
+        ]);
+    }
+
+    public function test_can_delete_coupon(): void
+    {
+        $manager = Manager::factory()->create();
+
+        $response = $this
+            ->actingAs($manager, RolesEnum::MANAGER->toString())
+            ->postJson('api/management/users/coupons', [
+                'data' => [
+                    'type' => 'coupons',
+                    'attributes' => [
+                        'coupon_code' => 'TEST1235678',
+                        'expires_at' => now()->addDays(30)->toDateTimeString(),
+                        'discount' => 10,
+                        'type' => CouponTypeEnum::GLOBAL->toString(),
+                        'email' => null,
+                    ],
+                ],
+            ]);
+
+        $this->assertDatabaseHas('coupons', [
+            'coupon_id' => 'TEST1235678',
+            'type' => CouponTypeEnum::GLOBAL->value,
+        ]);
+
+        $coupon = Coupon::query()->where('coupon_id', 'TEST1235678')->first(['id', 'coupon_id']);
+
+        $deleteResponse = $this
+            ->actingAs($manager)
+            ->deleteJson('api/management/users/coupons/'.$coupon->coupon_id);
+
+        $this->assertDatabaseMissing('coupons', [
+            'id' => $coupon->id,
         ]);
     }
 

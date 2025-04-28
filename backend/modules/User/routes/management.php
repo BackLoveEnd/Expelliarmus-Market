@@ -20,6 +20,9 @@ Route::prefix('management/users')->middleware('auth.manager')->group(function ()
         Route::post('/', [CouponManageController::class, 'create']);
 
         Route::put('/{coupon:coupon_id}', [CouponManageController::class, 'edit']);
+
+        Route::delete('/{coupon:coupon_id}', [CouponManageController::class, 'delete'])
+            ->withoutMiddleware(['throttle:api']);
     });
 
     Route::get('/guests', [GuestsController::class, 'getGuests'])
