@@ -26,7 +26,10 @@ class UserOrdersRetrieveController extends Controller
      */
     public function getOrderHistory(Request $request): JsonApiResourceCollection
     {
-        $orders = $this->userOrdersService->getOrders($request->user('web'));
+        $orders = $this->userOrdersService->getOrders(
+            user: $request->user('web'),
+            limit: config('order.retrieve.user_orders'),
+        );
 
         return UserOrdersResource::collection($orders->getCollection())
             ->additional([

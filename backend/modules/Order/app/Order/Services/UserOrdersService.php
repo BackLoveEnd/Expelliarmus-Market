@@ -11,12 +11,12 @@ use Modules\User\Models\User;
 
 class UserOrdersService
 {
-    public function getOrders(User $user): LengthAwarePaginator
+    public function getOrders(User $user, int $limit = 5): LengthAwarePaginator
     {
         $orders = $user
             ->orders()
             ->orderBy('created_at', 'desc')
-            ->paginate();
+            ->paginate($limit);
 
         $orderLines = OrderLine::query()
             ->with(['product' => fn($query) => $query->select('id', 'title', 'preview_image')])
