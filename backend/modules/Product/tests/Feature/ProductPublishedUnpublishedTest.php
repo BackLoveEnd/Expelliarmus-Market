@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductStatusEnum;
 
 class ProductPublishedUnpublishedTest extends TestCase

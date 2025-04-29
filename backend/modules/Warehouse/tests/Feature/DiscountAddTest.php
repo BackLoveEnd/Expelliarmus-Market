@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Http\Exceptions\VariationToApplyDiscountDoesNotExists;
 use Modules\Warehouse\Services\Discount\ProductDiscountServiceFactory;

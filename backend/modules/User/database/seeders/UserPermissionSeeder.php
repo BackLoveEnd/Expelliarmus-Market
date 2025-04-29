@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -47,6 +47,8 @@ class UserPermissionSeeder extends Seeder
             'show_content_management',
             'show_warehouse',
             'manage_warehouse',
+            'coupons_view',
+            'coupons_manage',
         ];
 
         $superManagerPermissions = [

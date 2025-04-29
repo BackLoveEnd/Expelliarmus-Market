@@ -10,7 +10,7 @@ use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
 use Modules\Order\Order\Exceptions\ProductCannotBeProcessedToCheckoutException;
 use Modules\Order\Order\Exceptions\ProductHasNotEnoughSuppliesException;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Throwable;
 
 class OrderRegularUserCreateService

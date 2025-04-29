@@ -7,7 +7,7 @@ use Modules\ContentManagement\Models\NewArrival;
 use Modules\ContentManagement\Rules\NewArrivalsExistsRule;
 use Modules\ContentManagement\Rules\OnlySpecificDomainRule;
 use Modules\ContentManagement\Rules\OnlySpecificStorageUrlRule;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class NewArrivalsUploadRequest extends FormRequest
 {

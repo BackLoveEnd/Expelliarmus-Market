@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\Order\Order\Services\Coupon\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Services\CouponManageService;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
 use stdClass;
 use Throwable;
@@ -19,7 +19,7 @@ class OrderLineService
 {
     public function __construct(
         private DiscountedProductsService $discountService,
-        private CouponService $couponService,
+        private CouponManageService $couponService,
     ) {}
 
     public function prepareOrderLines(
@@ -58,7 +58,7 @@ class OrderLineService
                 'quantity' => $orderLineItem->quantity,
                 'variation' => null,
                 'discount' => $orderLineItem->product->lastActiveDiscount?->first()
-                    ?? $variation->lastActiveDiscount?->first() ?? null,
+                    ?? $variation?->lastActiveDiscount?->first() ?? null,
             ];
 
             if ($variation) {
@@ -119,7 +119,7 @@ class OrderLineService
             $totalPrice = round($totalPrice - ($totalPrice * $coupon->discount / 100), 2);
 
             // TODO: move removing coupon to place, where order will set as paid or completed
-            $this->couponService->deleteCoupon($coupon);
+            $this->couponService->deletePersonalCoupon($coupon);
 
             return ['coupon' => $coupon, 'totalPrice' => $totalPrice];
         } catch (Throwable $e) {

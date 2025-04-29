@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\User\Contracts\UserInterface;
+use Modules\User\Users\Contracts\UserInterface;
 
 class OrderCreated
 {

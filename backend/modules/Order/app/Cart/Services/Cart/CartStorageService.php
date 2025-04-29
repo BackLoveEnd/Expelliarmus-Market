@@ -11,7 +11,7 @@ use Modules\Order\Cart\Dto\ProductCartDto;
 use Modules\Order\Cart\Dto\UserCartInfoDto;
 use Modules\Order\Cart\Models\Cart;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Ramsey\Uuid\Uuid;
 
 class CartStorageService

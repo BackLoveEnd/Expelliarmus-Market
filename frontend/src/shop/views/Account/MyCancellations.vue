@@ -126,6 +126,7 @@
 </template>
 
 <script setup>
+
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { ShopOrderService } from '@/services/Order/ShopOrderService.js'
 import { onMounted, reactive, ref } from 'vue'
@@ -147,14 +148,15 @@ const metaData = reactive({
   lastPage: null,
   total: null,
   perPage: null,
-})
+
+});
 
 const links = reactive({
   first: null,
   last: null,
   prev: null,
   next: null,
-})
+});
 
 const isLoading = ref(false)
 
@@ -182,6 +184,7 @@ function upperCaseFirstLetter (str) {
 }
 
 onMounted(() => getCancelledOrders())
+
 </script>
 
 <style scoped>

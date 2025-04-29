@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Modules\Manager\Http\Dto\ManagerRegisterDto;
 use Modules\Manager\Interfaces\ManagerAuthRepositoryInterface;
 use Modules\Manager\Models\Manager;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class ManagerAuthRepository implements ManagerAuthRepositoryInterface
 {

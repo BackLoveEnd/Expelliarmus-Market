@@ -7,7 +7,7 @@ namespace Modules\Order\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Order\Cart\Models\Cart;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Contracts\VariationInterface;
 
 class CartFactory extends Factory

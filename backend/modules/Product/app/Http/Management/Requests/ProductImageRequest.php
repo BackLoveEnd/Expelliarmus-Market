@@ -4,7 +4,7 @@ namespace Modules\Product\Http\Management\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\Product\Models\Product;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class ProductImageRequest extends FormRequest
 {

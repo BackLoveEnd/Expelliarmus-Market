@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Modules\Product\Models\Product;
 use Modules\Product\Rules\ProductImagesExistsRule;
 use Modules\Product\Rules\ProductImagesStorageUrlRule;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class ProductEditImageRequest extends FormRequest
 {

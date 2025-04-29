@@ -12,7 +12,7 @@ use Modules\Category\Http\Management\Exceptions\AttributeNotRelatedToCategoryExc
 use Modules\Category\Models\Category;
 use Modules\Manager\Models\Manager;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryDeleteTest extends TestCase

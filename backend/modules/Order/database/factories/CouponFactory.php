@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Modules\Order\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Order\Order\Enum\CouponTypeEnum;
-use Modules\Order\Order\Models\Coupon;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Models\Coupon;
+use Modules\User\Users\Models\User;
 
 class CouponFactory extends Factory
 {
@@ -31,11 +31,13 @@ class CouponFactory extends Factory
             if ($user instanceof User) {
                 return [
                     'user_id' => $user->id,
+                    'type' => CouponTypeEnum::PERSONAL->value,
                 ];
             }
 
             return [
                 'email' => $user,
+                'type' => CouponTypeEnum::PERSONAL->value,
             ];
         });
     }

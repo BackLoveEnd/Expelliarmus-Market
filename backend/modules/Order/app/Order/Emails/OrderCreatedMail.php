@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\User\Contracts\UserInterface;
+use Modules\User\Users\Contracts\UserInterface;
 
 class OrderCreatedMail extends Mailable
 {

@@ -7,7 +7,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Modules\Manager\Models\Manager;
-use Modules\User\Http\Controllers\UserController;
+use Modules\User\Users\Http\Controllers\UserController;
 
 // Temporary
 Route::get('/dev-login', function () {

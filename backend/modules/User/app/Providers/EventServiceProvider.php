@@ -3,10 +3,12 @@
 namespace Modules\User\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Modules\User\Events\GuestRegistered;
-use Modules\User\Events\UserLogin;
-use Modules\User\Listeners\MigrateGuestDataToRegularUserListener;
-use Modules\User\Listeners\SyncUserCartAfterLoginListener;
+use Modules\User\Coupons\Events\CouponAssignedToUser;
+use Modules\User\Coupons\Listeners\SendCouponEmailListener;
+use Modules\User\Users\Events\GuestRegistered;
+use Modules\User\Users\Events\UserLogin;
+use Modules\User\Users\Listeners\MigrateGuestDataToRegularUserListener;
+use Modules\User\Users\Listeners\SyncUserCartAfterLoginListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         GuestRegistered::class => [
             MigrateGuestDataToRegularUserListener::class,
+        ],
+        CouponAssignedToUser::class => [
+            SendCouponEmailListener::class,
         ],
     ];
 }

@@ -1,0 +1,172 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\User\Coupons\Services;
+
+use Illuminate\Support\Facades\DB;
+use Modules\User\Coupons\Dto\CouponDto;
+use Modules\User\Coupons\Dto\CouponEditDto;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Events\CouponAssignedToUser;
+use Modules\User\Coupons\Exceptions\CouponNotValidException;
+use Modules\User\Coupons\Exceptions\FailedToUpdateCouponException;
+use Modules\User\Coupons\Exceptions\PersonalCouponMustHaveUserException;
+use Modules\User\Coupons\Models\Coupon;
+use Modules\User\Users\Models\User;
+use Throwable;
+
+class CouponManageService
+{
+    public function checkCoupon(string $couponCode, User|string|null $user): Coupon
+    {
+        $coupon = Coupon::query()
+            ->where('coupon_id', $couponCode)
+            ->where('expires_at', '>=', now())
+            ->first();
+
+        if (! $coupon) {
+            throw new CouponNotValidException();
+        }
+
+        if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
+            return $coupon;
+        }
+
+        if ($user instanceof User && $coupon->user_id === $user->id) {
+            return $coupon;
+        }
+
+        if ($coupon->email && $coupon->email === $user) {
+            return $coupon;
+        }
+
+        throw new CouponNotValidException();
+    }
+
+    public function createCoupon(CouponDto $dto): Coupon
+    {
+        $coupon = DB::transaction(function () use ($dto) {
+            if ($dto->type->is(CouponTypeEnum::GLOBAL)) {
+                return $this->saveGlobalCoupon($dto);
+            }
+
+            if (! $dto->email && $dto->type->is(CouponTypeEnum::PERSONAL)) {
+                throw new PersonalCouponMustHaveUserException();
+            }
+
+            return $this->savePersonalCoupon($dto);
+        });
+
+        if ($coupon->user) {
+            event(new CouponAssignedToUser($coupon->user->email, $coupon));
+        } elseif ($coupon->email) {
+            event(new CouponAssignedToUser($coupon->email, $coupon));
+        }
+
+        return $coupon;
+    }
+
+    public function updateCoupon(Coupon $coupon, CouponEditDto $dto): void
+    {
+        try {
+            $fieldsToUpdate = [
+                'discount' => $dto->discount,
+                'expires_at' => $dto->expiresAt,
+            ];
+
+            if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
+                $coupon->update($fieldsToUpdate);
+
+                return;
+            }
+
+            if (! $dto->email && $coupon->type->is(CouponTypeEnum::PERSONAL)) {
+                throw new PersonalCouponMustHaveUserException();
+            }
+
+            $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
+
+            if (! $user) {
+                $oldEmail = $coupon->email;
+
+                $coupon->update([
+                    ...$fieldsToUpdate,
+                    'user_id' => null,
+                    'email' => $dto->email,
+                ]);
+
+                if ($oldEmail !== $dto->email) {
+                    event(new CouponAssignedToUser($dto->email, $coupon));
+                }
+            } else {
+                $oldUserId = $coupon->user_id;
+
+                $coupon->update([
+                    ...$fieldsToUpdate,
+                    'user_id' => $user->id,
+                    'email' => null,
+                ]);
+
+                if ($oldUserId !== $user->id) {
+                    event(new CouponAssignedToUser($user->email, $coupon));
+                }
+            }
+        } catch (Throwable $e) {
+            throw new FailedToUpdateCouponException($e->getMessage());
+        }
+    }
+
+    public function deleteCoupon(Coupon $coupon): void
+    {
+        $this->deleteGlobalCoupon($coupon);
+
+        $this->deletePersonalCoupon($coupon);
+    }
+
+    public function deletePersonalCoupon(Coupon $coupon): void
+    {
+        if ($coupon->type->is(CouponTypeEnum::PERSONAL)) {
+            $coupon->delete();
+        }
+    }
+
+    public function deleteGlobalCoupon(Coupon $coupon): void
+    {
+        if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
+            $coupon->delete();
+        }
+    }
+
+    protected function saveGlobalCoupon(CouponDto $dto): Coupon
+    {
+        return Coupon::query()->create([
+            'coupon_id' => $dto->couponCode ?? randomString(12, true),
+            'discount' => $dto->discount,
+            'type' => $dto->type->value,
+            'expires_at' => $dto->expiresAt,
+            'user_id' => null,
+            'email' => null,
+        ]);
+    }
+
+    protected function savePersonalCoupon(CouponDto $dto): Coupon
+    {
+        $user = User::query()->where('email', $dto->email)->first(['id', 'email']);
+
+        $coupon = Coupon::query()->create([
+            'coupon_id' => $dto->couponCode ?? randomString(12, true),
+            'discount' => $dto->discount,
+            'type' => $dto->type->value,
+            'expires_at' => $dto->expiresAt,
+            'user_id' => $user?->id,
+            'email' => $user ? null : $dto->email,
+        ]);
+
+        if ($user) {
+            $coupon->setRelation('user', $user);
+        }
+
+        return $coupon;
+    }
+}

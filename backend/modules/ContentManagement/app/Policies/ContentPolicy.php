@@ -5,8 +5,8 @@ namespace Modules\ContentManagement\Policies;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use Modules\Manager\Models\Manager;
-use Modules\User\Contracts\UserInterface;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Contracts\UserInterface;
+use Modules\User\Users\Enums\RolesEnum;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ContentPolicy

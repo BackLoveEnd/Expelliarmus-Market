@@ -131,6 +131,7 @@
 </template>
 
 <script setup>
+
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import { ShopOrderService } from '@/services/Order/ShopOrderService.js'
 import { onMounted, reactive, ref } from 'vue'
@@ -204,6 +205,7 @@ function upperCaseFirstLetter (str) {
 }
 
 onMounted(() => getOrders())
+
 </script>
 
 <style scoped>

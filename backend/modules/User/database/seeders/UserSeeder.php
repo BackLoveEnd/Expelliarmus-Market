@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\User\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Modules\Order\Order\Models\Coupon;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Models\Coupon;
+use Modules\User\Users\Models\User;
 
 class UserSeeder extends Seeder
 {

@@ -8,7 +8,7 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Str;
 use Modules\Order\Cart\Models\Cart;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class CartExistsInDbRule implements ValidationRule
 {

@@ -6,7 +6,7 @@ namespace Modules\Brand\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\Brand\Models\Brand;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class BrandImageUploadRequest extends FormRequest
 {

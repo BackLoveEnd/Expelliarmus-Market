@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Dto;
 
 use Illuminate\Support\Collection;
-use Modules\Order\Order\Models\Coupon;
+use Modules\User\Coupons\Models\Coupon;
 
 final readonly class OrderLinesDto
 {
