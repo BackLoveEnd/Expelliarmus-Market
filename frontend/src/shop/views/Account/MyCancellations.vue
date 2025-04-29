@@ -126,27 +126,29 @@
 </template>
 
 <script setup>
-import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
-import {ShopOrderService} from "@/services/Order/ShopOrderService.js";
-import {onMounted, reactive, ref} from "vue";
-import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
-import {useTruncator} from "@/composables/useTruncator.js";
-import {useAuthStore} from "@/stores/useAuthStore.js";
-import {useScrolling} from "@/composables/useScrolling.js";
 
-const truncator = useTruncator();
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+import { ShopOrderService } from '@/services/Order/ShopOrderService.js'
+import { onMounted, reactive, ref } from 'vue'
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
+import { useTruncator } from '@/composables/useTruncator.js'
+import { useAuthStore } from '@/stores/useAuthStore.js'
+import { useScrolling } from '@/composables/useScrolling.js'
 
-const scroller = useScrolling();
+const truncator = useTruncator()
 
-const auth = useAuthStore();
+const scroller = useScrolling()
 
-const orders = ref([]);
+const auth = useAuthStore()
+
+const orders = ref([])
 
 const metaData = reactive({
   currentPage: null,
   lastPage: null,
   total: null,
   perPage: null,
+
 });
 
 const links = reactive({
@@ -156,32 +158,33 @@ const links = reactive({
   next: null,
 });
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 
-async function getCancelledOrders(page = 1) {
-  isLoading.value = true;
+async function getCancelledOrders (page = 1) {
+  isLoading.value = true
 
   await ShopOrderService.getCancelledOrders(page)
       .then((response) => {
-        orders.value = response.data;
+        orders.value = response.data
 
-        Object.assign(metaData, response.meta);
+        Object.assign(metaData, response.meta)
 
-        Object.assign(links, response.links);
+        Object.assign(links, response.links)
       })
       .catch((e) => {
 
       })
       .finally(() => {
-        isLoading.value = false;
-      });
+        isLoading.value = false
+      })
 }
 
-function upperCaseFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+function upperCaseFirstLetter (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-onMounted(() => getCancelledOrders());
+onMounted(() => getCancelledOrders())
+
 </script>
 
 <style scoped>

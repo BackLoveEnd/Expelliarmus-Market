@@ -131,79 +131,81 @@
 </template>
 
 <script setup>
-import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
-import {ShopOrderService} from "@/services/Order/ShopOrderService.js";
-import {onMounted, reactive, ref} from "vue";
-import SuspenseLoader from "@/components/Default/SuspenseLoader.vue";
-import {useTruncator} from "@/composables/useTruncator.js";
-import {useAuthStore} from "@/stores/useAuthStore.js";
-import {useScrolling} from "@/composables/useScrolling.js";
 
-const truncator = useTruncator();
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
+import { ShopOrderService } from '@/services/Order/ShopOrderService.js'
+import { onMounted, reactive, ref } from 'vue'
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
+import { useTruncator } from '@/composables/useTruncator.js'
+import { useAuthStore } from '@/stores/useAuthStore.js'
+import { useScrolling } from '@/composables/useScrolling.js'
 
-const scroller = useScrolling();
+const truncator = useTruncator()
 
-const auth = useAuthStore();
+const scroller = useScrolling()
 
-const orders = ref([]);
+const auth = useAuthStore()
+
+const orders = ref([])
 
 const metaData = reactive({
   currentPage: null,
   lastPage: null,
   total: null,
   perPage: null,
-});
+})
 
 const links = reactive({
   first: null,
   last: null,
   prev: null,
   next: null,
-});
+})
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 
-async function getOrders(page = 1) {
-  isLoading.value = true;
+async function getOrders (page = 1) {
+  isLoading.value = true
 
   await ShopOrderService.getMyOrders(page)
       .then((response) => {
-        orders.value = response.data;
+        orders.value = response.data
 
-        Object.assign(metaData, response.meta);
+        Object.assign(metaData, response.meta)
 
-        Object.assign(links, response.links);
+        Object.assign(links, response.links)
       })
       .catch((e) => {
 
       })
       .finally(() => {
-        isLoading.value = false;
-      });
+        isLoading.value = false
+      })
 }
 
-function getStatusColor(status) {
+function getStatusColor (status) {
   switch (status) {
     case 'pending':
-      return 'text-yellow-500';
+      return 'text-yellow-500'
     case 'delivered':
-      return 'text-green-500';
+      return 'text-green-500'
     case 'canceled':
-      return 'text-red-500';
+      return 'text-red-500'
     case 'refunded':
-      return 'text-blue-500';
+      return 'text-blue-500'
     case 'in progress':
-      return 'text-gray-500';
+      return 'text-gray-500'
     default:
-      return '';
+      return ''
   }
 }
 
-function upperCaseFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+function upperCaseFirstLetter (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-onMounted(() => getOrders());
+onMounted(() => getOrders())
+
 </script>
 
 <style scoped>
