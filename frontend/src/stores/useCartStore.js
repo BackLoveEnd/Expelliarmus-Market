@@ -17,9 +17,17 @@ export const useCartStore = defineStore('cart', {
         totalItems(state) {
             return state.cartItems.length;
         },
-        isProductInCart: (state) => (productId) => {
-            return state.cartItems.some((item) => Number(productId) === Number(item.productId));
-        },
+        isProductInCart: (state) => (productId, variationId = null) => {
+            return state.cartItems.some((item) => {
+                const sameProduct = Number(productId) === Number(item.productId);
+
+                const sameVariation = variationId === null
+                    ? item.variation?.id === null
+                    : Number(variationId) === Number(item.variation?.id);
+
+                return sameProduct && sameVariation;
+            });
+        }
     },
     actions: {
         async fetchCart() {
@@ -35,7 +43,7 @@ export const useCartStore = defineStore('cart', {
         async addToCart(product) {
             await CartService.addToCart(product)
                 .then((response) => {
-                    this.cartItems.push({productId: product.product_id});
+                    this.cartItems.push({productId: product.product_id, variation: {id: product.variation_id ?? null}});
                 })
                 .catch((e) => {
                     if ([422, 400].includes(e.status)) {

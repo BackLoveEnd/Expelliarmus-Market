@@ -19,7 +19,7 @@
 import {useToastStore} from "@/stores/useToastStore.js";
 import {useCartStore} from "@/stores/useCartStore.js";
 import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 
 const props = defineProps({
   productInfo: Object
@@ -31,7 +31,7 @@ const toast = useToastStore();
 
 const cartStore = useCartStore();
 
-const isInCart = ref(cartStore.isProductInCart(props.productInfo.product_id));
+const isInCart = ref(false);
 
 async function handleButtonClick() {
   if (isInCart.value) {
@@ -52,6 +52,14 @@ async function addToCart() {
 function handleCartOpenModal() {
   emit("open-cart-modal");
 }
+
+watch(
+    () => props.productInfo,
+    (newValue) => {
+      isInCart.value = cartStore.isProductInCart(props.productInfo.product_id, props.productInfo.variation_id);
+    },
+    {immediate: true, deep: true}
+);
 </script>
 
 <style scoped></style>

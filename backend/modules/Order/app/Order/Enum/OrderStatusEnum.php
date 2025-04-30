@@ -14,6 +14,19 @@ enum OrderStatusEnum: int
 
     case IN_PROGRESS = 5;
 
+    public function is(OrderStatusEnum $status): bool
+    {
+        return $this === $status;
+    }
+
+    public function canBeChanged(): bool
+    {
+        return match ($this) {
+            self::PENDING, self::IN_PROGRESS, self::DELIVERED => true,
+            self::CANCELED, self::REFUNDED => false,
+        };
+    }
+
     public function toString(): string
     {
         return match ($this) {
