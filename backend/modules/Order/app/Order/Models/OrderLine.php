@@ -12,6 +12,7 @@ use Modules\Product\Models\Product;
  * @property int $order_id
  * @property int $quantity
  * @property float $total_price
+ * @property array|null $variation
  * @property float $price_per_unit_at_order_time
  */
 class OrderLine extends Model
@@ -25,6 +26,13 @@ class OrderLine extends Model
         'total_price',
         'price_per_unit_at_order_time',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'variation' => 'array',
+        ];
+    }
 
     public function order(): BelongsTo
     {

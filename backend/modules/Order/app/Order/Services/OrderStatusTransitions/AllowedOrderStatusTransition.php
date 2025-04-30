@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\Order\Order\Services\OrderStatusTransitions;
 
-use InvalidArgumentException;
 use Modules\Order\Order\Enum\OrderStatusEnum as Status;
+use Modules\Order\Order\Exceptions\CannotChangeOrderStatusException;
 
 abstract class AllowedOrderStatusTransition
 {
@@ -45,9 +45,7 @@ abstract class AllowedOrderStatusTransition
             });
 
         if (! $transition) {
-            throw new InvalidArgumentException(
-                "No order status transition for ".$currentStatus->toString()." - ".$nextStatus->toString(),
-            );
+            throw CannotChangeOrderStatusException::fromStatuses($currentStatus, $nextStatus);
         }
 
         return new $transition['transition']();
