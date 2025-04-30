@@ -120,84 +120,84 @@
 </template>
 
 <script setup>
-import {ErrorMessage, Field, Form} from "vee-validate";
-import * as yup from "yup";
-import {onMounted, reactive, ref} from "vue";
-import {useScrolling} from "@/composables/useScrolling.js";
-import {useAuthStore} from "@/stores/useAuthStore.js";
-import {useRouter} from "vue-router";
-import {useToastStore} from "@/stores/useToastStore.js";
-import ToastLogin from "@/components/Default/Toasts/Auth/ToastLogin.vue";
-import loginToastSettings from "@/components/Default/Toasts/Auth/loginToastSettings.js";
-import {emailRule} from "@/utils/validationRules.js";
-import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
-import {useCartStore} from "@/stores/useCartStore.js";
-import DefaultModal from "@/management/components/Main/DefaultModal.vue";
+import { ErrorMessage, Field, Form } from 'vee-validate'
+import * as yup from 'yup'
+import { onMounted, reactive, ref } from 'vue'
+import { useScrolling } from '@/composables/useScrolling.js'
+import { useAuthStore } from '@/stores/useAuthStore.js'
+import { useRouter } from 'vue-router'
+import { useToastStore } from '@/stores/useToastStore.js'
+import ToastLogin from '@/components/Default/Toasts/Auth/ToastLogin.vue'
+import loginToastSettings from '@/components/Default/Toasts/Auth/loginToastSettings.js'
+import { emailRule } from '@/utils/validationRules.js'
+import defaultErrorSettings from '@/components/Default/Toasts/Default/defaultErrorSettings.js'
+import { useCartStore } from '@/stores/useCartStore.js'
+import DefaultModal from '@/management/components/Main/DefaultModal.vue'
 
-const {scrollToTop} = useScrolling();
-const router = useRouter();
-const auth = useAuthStore();
-const toast = useToastStore();
-const cartStore = useCartStore();
+const { scrollToTop } = useScrolling()
+const router = useRouter()
+const auth = useAuthStore()
+const toast = useToastStore()
+const cartStore = useCartStore()
 
-const isLoading = ref(false);
+const isLoading = ref(false)
 
-const showModalToReAuth = ref(false);
+const showModalToReAuth = ref(false)
 
 const schema = yup.object().shape({
   email: emailRule(yup),
-  password: yup.string().required().label("Password"),
-});
+  password: yup.string().required().label('Password'),
+})
 
 const user = reactive({
   email: null,
   password: null,
-});
+})
 
-const loginError = ref(null);
+const loginError = ref(null)
 
-function login() {
-  isLoading.value = true;
+function login () {
+  isLoading.value = true
 
   auth
       .login(user)
       .then((response) => {
         auth.fetchCurrentUser(true).then(async () => {
           await cartStore.fetchCart().catch((e) => {
-          });
+          })
 
-          toast.showToast(ToastLogin, loginToastSettings);
+          toast.showToast(ToastLogin, loginToastSettings)
 
-          await router.push({name: "home"});
-        });
+          await router.push({ name: 'home' })
+        })
       })
       .catch((e) => {
         if (e.response?.data?.errors?.email) {
-          loginError.value = e.response.data.errors.email[0];
+          loginError.value = e.response.data.errors.email[0]
         }
 
         if (e?.status === 403) {
-          showModalToReAuth.value = true;
+          showModalToReAuth.value = true
         }
 
         if (e?.status === 429) {
-          toast.showToast('Too many requests. Please, wait.', defaultErrorSettings);
+          toast.showToast('Too many requests. Please, wait.', defaultErrorSettings)
         }
       })
-      .finally(() => isLoading.value = false);
+      .finally(() => isLoading.value = false)
 }
 
-function loginAsCustomer() {
-  auth.logout(true).then(() => login());
+function loginAsCustomer () {
+  auth.logout(true).then(() => login().finally(() => showModalToReAuth.value = false))
 }
 
-function clearError() {
-  loginError.value = null;
+function clearError () {
+  loginError.value = null
 }
 
 onMounted(() => {
-  scrollToTop();
-});
+  scrollToTop()
+})
 </script>
 
 <style scoped></style>
