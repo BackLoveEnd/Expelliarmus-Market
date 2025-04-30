@@ -7,9 +7,19 @@ namespace Modules\Order\Order\Http\Requests;
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Order\Order\Rules\UniquePhoneGuestRule;
+use Modules\User\Users\Enums\RolesEnum;
 
 class GuestOrderCreateRequest extends JsonApiFormRequest
 {
+    public function authorize(): bool
+    {
+        if ($this->user(RolesEnum::MANAGER->toString())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function jsonApiAttributeRules(): array
     {
         $user = $this->user('web');
