@@ -6,7 +6,7 @@ import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErr
 
 export default function managerApi() {
     const router = useRouter();
-    
+
     const api = axios.create({
         baseURL: `/api/management`,
         withCredentials: true,
@@ -36,13 +36,13 @@ export default function managerApi() {
             const authStore = useAuthStore();
 
             if (!authStore.isManager && !authStore.isSuperManager) {
-                router.push({name: "home"});
+                router?.push({name: "home"});
 
                 return Promise.reject(error);
             }
 
             if (error.response?.status >= 500 && error.response?.status <= 599) {
-                router.push({path: '/500', state: {redirected: true}});
+                router?.push({path: '/500', state: {redirected: true}});
                 return Promise.reject(error);
             }
 
@@ -53,7 +53,7 @@ export default function managerApi() {
             if ([401, 419].includes(error.request?.status)) {
                 authStore.forgetUser();
 
-                router.push({name: "manager-login"});
+                router?.push({name: "manager-login"});
             }
 
             return Promise.reject(error);
