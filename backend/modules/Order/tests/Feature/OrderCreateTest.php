@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Order\Cart\Models\Cart;
 use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\Product\Models\Product;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
 use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Users\Models\Guest;
 use Modules\User\Users\Models\User;
@@ -327,6 +328,13 @@ class OrderCreateTest extends TestCase
             'status' => OrderStatusEnum::PENDING->value,
         ]);
 
+        $this->assertDatabaseHas('coupon_user', [
+            'email' => $guest->email,
+            'user_id' => null,
+            'coupon_id' => $coupon->id,
+            'usage_number' => 1,
+        ]);
+
         $order = $guest->orders()->first();
 
         $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
@@ -346,7 +354,7 @@ class OrderCreateTest extends TestCase
 
         $user = User::factory()->create();
 
-        $coupon = Coupon::factory()->user($user)->create();
+        $coupon = Coupon::factory()->user($user)->type(CouponTypeEnum::PERSONAL)->create();
 
         $responseFirstCart = $this->actingAs($user)->postJson('api/shop/user/cart', [
             'data' => [
@@ -389,6 +397,11 @@ class OrderCreateTest extends TestCase
             'userable_id' => $user->id,
             'userable_type' => User::class,
             'status' => OrderStatusEnum::PENDING->value,
+        ]);
+
+        $this->assertDatabaseMissing('coupon_user', [
+            'user_id' => $user->id,
+            'coupon_id' => $coupon->id,
         ]);
 
         $order = $user->orders()->first();

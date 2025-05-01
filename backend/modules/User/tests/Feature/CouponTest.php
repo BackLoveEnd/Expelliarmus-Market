@@ -72,7 +72,9 @@ class CouponTest extends TestCase
 
         $this->assertDatabaseHas('coupons', [
             'coupon_id' => 'TEST12345',
-            'type' => CouponTypeEnum::PERSONAL->value,
+        ]);
+
+        $this->assertDatabaseHas('coupon_user', [
             'user_id' => $user->id,
             'email' => null,
         ]);
@@ -88,7 +90,7 @@ class CouponTest extends TestCase
 
         $response = $this
             ->actingAs($manager, RolesEnum::MANAGER->toString())
-            ->putJson('api/management/users/coupons/'.$coupon->id, [
+            ->putJson('api/management/users/coupons/'.$coupon->coupon_id, [
                 'data' => [
                     'type' => 'coupons',
                     'attributes' => [
@@ -112,13 +114,13 @@ class CouponTest extends TestCase
 
         $user = User::factory()->create();
 
-        $coupon = Coupon::factory()->user($user)->create();
+        $coupon = Coupon::factory()->user($user)->type(CouponTypeEnum::PERSONAL)->create();
 
         $date = now()->addDays(30)->toDateTimeString();
 
         $response = $this
             ->actingAs($manager, RolesEnum::MANAGER->toString())
-            ->putJson('api/management/users/coupons/'.$coupon->id, [
+            ->putJson('api/management/users/coupons/'.$coupon->coupon_id, [
                 'data' => [
                     'type' => 'coupons',
                     'attributes' => [
@@ -131,10 +133,14 @@ class CouponTest extends TestCase
 
         $this->assertDatabaseHas('coupons', [
             'id' => $coupon->id,
-            'user_id' => $user->id,
-            'email' => null,
             'discount' => 10,
             'expires_at' => $date,
+        ]);
+
+        $this->assertDatabaseHas('coupon_user', [
+            'user_id' => $user->id,
+            'email' => null,
+            'coupon_id' => $coupon->id,
         ]);
     }
 
@@ -142,29 +148,35 @@ class CouponTest extends TestCase
     {
         $manager = Manager::factory()->create();
 
-        $coupon = Coupon::factory()->user('example@gmail.com')->create();
+        $user = User::factory()->create();
+
+        $coupon = Coupon::factory()->user($user->email)->type(CouponTypeEnum::PERSONAL)->create();
 
         $date = now()->addDays(30)->toDateTimeString();
 
         $response = $this
             ->actingAs($manager, RolesEnum::MANAGER->toString())
-            ->putJson('api/management/users/coupons/'.$coupon->id, [
+            ->putJson('api/management/users/coupons/'.$coupon->coupon_id, [
                 'data' => [
                     'type' => 'coupons',
                     'attributes' => [
                         'expires_at' => $date,
                         'discount' => 10,
-                        'email' => 'example@gmail.com',
+                        'email' => $user->email,
                     ],
                 ],
             ]);
 
         $this->assertDatabaseHas('coupons', [
             'id' => $coupon->id,
-            'user_id' => null,
             'discount' => 10,
-            'email' => 'example@gmail.com',
             'expires_at' => $date,
+        ]);
+
+        $this->assertDatabaseHas('coupon_user', [
+            'user_id' => $user->id,
+            'email' => null,
+            'coupon_id' => $coupon->id,
         ]);
     }
 
@@ -174,34 +186,40 @@ class CouponTest extends TestCase
 
         $user = User::factory()->create();
 
-        $coupon = Coupon::factory()->user($user)->create();
+        $user2 = User::factory()->create();
+
+        $coupon = Coupon::factory()->user($user)->type(CouponTypeEnum::PERSONAL)->create();
 
         $date = now()->addDays(30)->toDateTimeString();
 
         $response = $this
             ->actingAs($manager, RolesEnum::MANAGER->toString())
-            ->putJson('api/management/users/coupons/'.$coupon->id, [
+            ->putJson('api/management/users/coupons/'.$coupon->coupon_id, [
                 'data' => [
                     'type' => 'coupons',
                     'attributes' => [
                         'expires_at' => $date,
                         'discount' => 10,
-                        'email' => 'example@gmail.com', // New coupon owner
+                        'email' => $user2->email, // New coupon owner
                     ],
                 ],
             ]);
 
         $this->assertDatabaseHas('coupons', [
             'id' => $coupon->id,
-            'user_id' => null,
             'discount' => 10,
-            'email' => 'example@gmail.com',
             'expires_at' => $date,
         ]);
 
-        $this->assertDatabaseMissing('coupons', [
-            'id' => $coupon->id,
+        $this->assertDatabaseHas('coupon_user', [
+            'user_id' => $user2->id,
+            'email' => null,
+            'coupon_id' => $coupon->id,
+        ]);
+
+        $this->assertDatabaseMissing('coupon_user', [
             'user_id' => $user->id,
+            'coupon_id' => $coupon->id,
         ]);
     }
 
@@ -248,7 +266,7 @@ class CouponTest extends TestCase
 
         $response = $this
             ->actingAs($user, 'web')
-            ->putJson('api/management/users/coupons/'.$coupon->id, [
+            ->putJson('api/management/users/coupons/'.$coupon->coupon_id, [
                 'data' => [
                     'type' => 'coupons',
                     'attributes' => [
