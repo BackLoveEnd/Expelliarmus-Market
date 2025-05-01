@@ -75,7 +75,7 @@ class User extends Authenticatable implements UserInterface
 
     public function coupons(): BelongsToMany
     {
-        return $this->belongsToMany(Coupon::class);
+        return $this->belongsToMany(Coupon::class)->withPivot('email', 'usage_number');
     }
 
     public function wishlist(): HasMany

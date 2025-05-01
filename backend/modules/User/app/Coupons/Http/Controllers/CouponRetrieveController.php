@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Modules\User\Coupons\Http\Resources\CouponResource;
+use Modules\User\Coupons\Http\Resources\PersonalCouponsResource;
 use Modules\User\Coupons\Models\Coupon;
 use Modules\User\Coupons\Services\CouponStorageService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
@@ -57,7 +58,6 @@ class CouponRetrieveController extends Controller
             offset: (int)$request->query('offset', 0),
         );
 
-
-        return CouponResource::collection($dto->items)->additional($dto->wrapMeta());
+        return PersonalCouponsResource::collection($dto->items)->additional($dto->wrapMeta());
     }
 }
