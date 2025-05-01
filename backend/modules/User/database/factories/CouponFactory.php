@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Order\Database\Factories;
+namespace Modules\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
@@ -17,8 +17,6 @@ class CouponFactory extends Factory
     {
         return [
             'coupon_id' => strtoupper($this->faker->unique()->word()),
-            'user_id' => null,
-            'email' => null,
             'discount' => $this->faker->numberBetween(10, 25),
             'expires_at' => now()->addYear(),
             'type' => CouponTypeEnum::GLOBAL->value,
@@ -29,10 +27,10 @@ class CouponFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($user) {
             if ($user instanceof User) {
-                return [
-                    'user_id' => $user->id,
-                    'type' => CouponTypeEnum::PERSONAL->value,
-                ];
+                $user->coupons()->attach($user->id, [
+                    'usage_number' => 0,
+                    'email' => null,
+                ]);
             }
 
             return [

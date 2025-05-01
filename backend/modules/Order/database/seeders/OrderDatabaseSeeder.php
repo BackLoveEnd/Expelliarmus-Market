@@ -9,10 +9,5 @@ class OrderDatabaseSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        $this->call([
-            CouponSeeder::class,
-        ]);
-    }
+    public function run(): void {}
 }

@@ -7,10 +7,10 @@ namespace Modules\User\Coupons\Exceptions;
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class PersonalCouponMustHaveUserException extends Exception
+class ReachedGlobalCouponUserLimitException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => 'Personal coupon must have user.'], 422);
+        return response()->json(['message' => 'You have reached the usage limit for this coupon.'], 403);
     }
 }
