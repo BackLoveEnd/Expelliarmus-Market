@@ -50,7 +50,7 @@ class PrepareOrderService
             ]);
 
         return $cartItems->map(function (stdClass $item) use ($products) {
-            return (object)[
+            return [
                 'product' => $products->firstWhere('id', $item->product_id),
                 'quantity' => $item->quantity,
                 'variation_id' => $item->variation['id'] ?? null,

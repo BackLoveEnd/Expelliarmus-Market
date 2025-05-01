@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Warehouse\Services\Warehouse;
 
+use App\Helpers\ArithmeticOperator as Operator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Modules\Product\Models\Product;
@@ -29,27 +30,6 @@ class WarehouseStockService
         ]);
     }
 
-    /**
-     * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
-     * @return void
-     */
-    public function decreaseProductsStock(Collection $productsWithQuantities): void
-    {
-        [$productsWithoutVariation, $productsWithVariation] = $productsWithQuantities->partition(
-            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === null,
-        );
-
-        [$productsWithSingleVar, $productsWithCombinedVar] = $productsWithVariation->partition(
-            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === false,
-        );
-
-        $this->decreaseQuantityForProductsWithoutVariations($productsWithoutVariation);
-
-        $this->decreaseQuantityForProductsWithSingleVariation($productsWithSingleVar);
-
-        $this->decreaseQuantityForProductsWithCombinedVariation($productsWithCombinedVar);
-    }
-
     public function hasEnoughSuppliesForRequestedQuantity(Product $product, int $requestedQuantity): bool
     {
         if (is_null($product->hasCombinedAttributes())) {
@@ -67,29 +47,69 @@ class WarehouseStockService
         return $product->singleAttributes->quantity > $requestedQuantity;
     }
 
-    protected function ensureVariationRelationProvided(Product $product, string $neededVariationRelation): void
+    /**
+     * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
+     * @return void
+     */
+    public function decreaseProductsStock(Collection $productsWithQuantities): void
     {
-        if (! $product->relationLoaded($neededVariationRelation)
-            || $product->$neededVariationRelation->quantity === null
-        ) {
-            throw new RuntimeException(
-                "Relation for product with quantity must be loaded in order to get supplies quantity info. ".__CLASS__,
-            );
-        }
+        [$productsWithoutVariation, $productsWithVariation] = $productsWithQuantities->partition(
+            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === null,
+        );
+
+        [$productsWithSingleVar, $productsWithCombinedVar] = $productsWithVariation->partition(
+            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === false,
+        );
+
+        $this->adjustQuantityForProductsWithoutVariations($productsWithoutVariation, Operator::MINUS);
+
+        $this->adjustQuantityForProductsWithSingleVariation($productsWithSingleVar, Operator::MINUS);
+
+        $this->adjustQuantityForProductsWithCombinedVariation($productsWithCombinedVar, Operator::MINUS);
     }
 
     /**
      * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
      * @return void
      */
-    protected function decreaseQuantityForProductsWithoutVariations(Collection $productsWithQuantities): void
+    public function returnReservedProductsToStock(Collection $productsWithQuantities): void
     {
+        [$productsWithoutVariation, $productsWithVariation] = $productsWithQuantities->partition(
+            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === null,
+        );
+
+        [$productsWithSingleVar, $productsWithCombinedVar] = $productsWithVariation->partition(
+            fn(array $productWithQuantity) => $productWithQuantity['product']->hasCombinedAttributes() === false,
+        );
+
+        $this->adjustQuantityForProductsWithoutVariations($productsWithoutVariation, Operator::PLUS);
+
+        $this->adjustQuantityForProductsWithSingleVariation($productsWithSingleVar, Operator::PLUS);
+
+        $this->adjustQuantityForProductsWithCombinedVariation($productsWithCombinedVar, Operator::PLUS);
+    }
+
+    /**
+     * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
+     * @param  Operator  $operator
+     * @return void
+     */
+    public function adjustQuantityForProductsWithoutVariations(
+        Collection $productsWithQuantities,
+        Operator $operator,
+    ): void {
         if ($productsWithQuantities->isNotEmpty()) {
-            $cases = $productsWithQuantities->map(function (array $productWithQuantity) {
+            $cases = $productsWithQuantities->map(function (array $productWithQuantity) use ($operator) {
                 /** @var Product $product */
                 $product = $productWithQuantity['product'];
 
-                $newQuantity = $product->warehouse->total_quantity - $productWithQuantity['quantity'];
+                if ($operator === Operator::PLUS) {
+                    $newQuantity = $product->warehouse->total_quantity + $productWithQuantity['quantity'];
+                } elseif ($operator === Operator::MINUS) {
+                    $newQuantity = $product->warehouse->total_quantity - $productWithQuantity['quantity'];
+                } else {
+                    $newQuantity = $product->warehouse->total_quantity;
+                }
 
                 return "WHEN product_id = {$product->id} THEN $newQuantity";
             })->implode(' ');
@@ -103,16 +123,25 @@ class WarehouseStockService
 
     /**
      * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
+     * @param  Operator  $operator
      * @return void
      */
-    public function decreaseQuantityForProductsWithSingleVariation(Collection $productsWithQuantities): void
-    {
+    public function adjustQuantityForProductsWithSingleVariation(
+        Collection $productsWithQuantities,
+        Operator $operator,
+    ): void {
         if ($productsWithQuantities->isNotEmpty()) {
-            $cases = $productsWithQuantities->map(function (array $productWithQuantity) {
+            $cases = $productsWithQuantities->map(function (array $productWithQuantity) use ($operator) {
                 /** @var Product $product */
                 $product = $productWithQuantity['product'];
 
-                $newQuantity = $product->singleAttributes->quantity - $productWithQuantity['quantity'];
+                if ($operator === Operator::PLUS) {
+                    $newQuantity = $product->singleAttributes->quantity + $productWithQuantity['quantity'];
+                } elseif ($operator === Operator::MINUS) {
+                    $newQuantity = $product->singleAttributes->quantity - $productWithQuantity['quantity'];
+                } else {
+                    $newQuantity = $product->singleAttributes->quantity;
+                }
 
                 return "WHEN id = {$product->singleAttributes->id} THEN $newQuantity";
             })->implode(' ');
@@ -127,16 +156,25 @@ class WarehouseStockService
 
     /**
      * @param  Collection<int, array{product: Product, quantity: int}>  $productsWithQuantities
+     * @param  Operator  $operator
      * @return void
      */
-    public function decreaseQuantityForProductsWithCombinedVariation(Collection $productsWithQuantities): void
-    {
+    public function adjustQuantityForProductsWithCombinedVariation(
+        Collection $productsWithQuantities,
+        Operator $operator,
+    ): void {
         if ($productsWithQuantities->isNotEmpty()) {
-            $cases = $productsWithQuantities->map(function (array $productWithQuantity) {
+            $cases = $productsWithQuantities->map(function (array $productWithQuantity) use ($operator) {
                 /** @var Product $product */
                 $product = $productWithQuantity['product'];
 
-                $newQuantity = $product->combinedAttributes->quantity - $productWithQuantity['quantity'];
+                if ($operator === Operator::PLUS) {
+                    $newQuantity = $product->combinedAttributes->quantity + $productWithQuantity['quantity'];
+                } elseif ($operator === Operator::MINUS) {
+                    $newQuantity = $product->combinedAttributes->quantity - $productWithQuantity['quantity'];
+                } else {
+                    $newQuantity = $product->combinedAttributes->quantity;
+                }
 
                 return "WHEN id = {$product->combinedAttributes->id} THEN $newQuantity";
             })->implode(' ');
@@ -146,6 +184,17 @@ class WarehouseStockService
                 ->update([
                     'quantity' => DB::raw("CASE $cases ELSE quantity END"),
                 ]);
+        }
+    }
+
+    protected function ensureVariationRelationProvided(Product $product, string $neededVariationRelation): void
+    {
+        if (! $product->relationLoaded($neededVariationRelation)
+            || $product->$neededVariationRelation->quantity === null
+        ) {
+            throw new RuntimeException(
+                "Relation for product with quantity must be loaded in order to get supplies quantity info. ".__CLASS__,
+            );
         }
     }
 }

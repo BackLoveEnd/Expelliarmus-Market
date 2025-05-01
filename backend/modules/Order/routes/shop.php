@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Order\Cart\Http\Controllers\CartController;
+use Modules\Order\Order\Http\Controllers\OrderCancelController;
 use Modules\Order\Order\Http\Controllers\OrderCreateController;
 use Modules\Order\Order\Http\Controllers\UserOrdersRetrieveController;
 use Modules\User\Coupons\Http\Controllers\CouponCheckController;
@@ -28,6 +29,8 @@ Route::prefix('shop/user/orders')->middleware('customer')->group(function () {
         ->withoutMiddleware('throttle:api');
 
     Route::post('/checkout', OrderCreateController::class);
+
+    Route::delete('/{order:order_id}', OrderCancelController::class);
 });
 
 Route::prefix('shop/users/coupons')->middleware('customer')->group(function () {
