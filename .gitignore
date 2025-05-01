@@ -1,6 +1,6 @@
 /.idea
 /.env
-
+test
 /.devcontainer
 /.vscode
 backend/.envZone.Identifier

@@ -125,9 +125,9 @@ const {scrollToTop} = useScrolling();
 const router = useRouter();
 
 const accountMenuLinks = ref([
-  {url: "/account", name: "Manage My Account", svg: "/default/user.svg"},
-  {url: "", name: "My Orders", svg: "/default/order.svg"},
-  {url: "", name: "My Reviews", svg: "/default/reviews.svg"},
+  {url: "/account", name: "Manage My Account", svg: "pi pi-user"},
+  {url: "/account?tab=1", name: "My Orders", svg: "pi pi-shopping-bag"},
+  {url: "/account?tab=3", name: "My Coupons", svg: "pi pi-ticket"},
 ]);
 
 async function logout() {

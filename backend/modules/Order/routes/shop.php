@@ -21,16 +21,18 @@ Route::prefix('shop/user/cart')->middleware('customer')->group(function () {
     });
 });
 
-Route::prefix('shop/user/orders')->middleware('customer')->group(function () {
+Route::prefix('shop/user/orders')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [UserOrdersRetrieveController::class, 'getOrderHistory'])
         ->withoutMiddleware('throttle:api');
 
     Route::get('/cancelled', [UserOrdersRetrieveController::class, 'getCancelledOrders'])
         ->withoutMiddleware('throttle:api');
 
-    Route::post('/checkout', OrderCreateController::class);
-
     Route::delete('/{order:order_id}', OrderCancelController::class);
+});
+
+Route::prefix('shop/user/orders')->middleware('customer')->group(function () {
+    Route::post('/checkout', OrderCreateController::class);
 });
 
 Route::prefix('shop/users/coupons')->middleware('customer')->group(function () {
