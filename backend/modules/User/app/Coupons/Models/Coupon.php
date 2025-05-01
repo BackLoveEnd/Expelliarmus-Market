@@ -33,7 +33,7 @@ class Coupon extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('email', 'usage_number');
     }
 
     protected function casts(): array
