@@ -6,18 +6,16 @@ namespace Modules\User\Coupons\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
-use Modules\Order\Database\Factories\CouponFactory;
 use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Database\Factories\CouponFactory;
 use Modules\User\Users\Models\User;
 
 /**
  * @property string $coupon_id
  * @property int $discount
  * @property CouponTypeEnum $type
- * @property int $user_id
- * @property string $email
  * @property Carbon $expires_at
  */
 class Coupon extends Model
@@ -29,15 +27,13 @@ class Coupon extends Model
     protected $fillable = [
         'coupon_id',
         'discount',
-        'user_id',
-        'email',
         'type',
         'expires_at',
     ];
 
-    public function user(): BelongsTo
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class);
     }
 
     protected function casts(): array

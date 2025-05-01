@@ -118,8 +118,9 @@ class OrderLineService
 
             $totalPrice = round($totalPrice - ($totalPrice * $coupon->discount / 100), 2);
 
-            // TODO: move removing coupon to place, where order will set as paid or completed
+            // TODO: move removing and increase coupon to place, where order will set as paid or completed
             $this->couponService->deletePersonalCoupon($coupon);
+            $this->couponService->increaseGlobalCouponUsage($coupon, $user);
 
             return ['coupon' => $coupon, 'totalPrice' => $totalPrice];
         } catch (Throwable $e) {

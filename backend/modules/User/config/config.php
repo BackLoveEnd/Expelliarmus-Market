@@ -7,4 +7,7 @@ return [
         'user-wishlist' => 4,
         'coupons' => 10,
     ],
+    'coupons' => [
+        'usage_limit' => 3,
+    ],
 ];
