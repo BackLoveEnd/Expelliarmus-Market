@@ -12,7 +12,6 @@ use Modules\Product\Http\Shop\Services\DiscountedProductsService;
 use Modules\User\Coupons\Services\CouponManageService;
 use Modules\User\Users\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
-use stdClass;
 use Throwable;
 
 class OrderLineService
@@ -50,14 +49,14 @@ class OrderLineService
 
     private function countPricesWithFormatting(Collection $orderItems): Collection
     {
-        return $orderItems->map(function (stdClass $orderLineItem) {
-            $variation = $orderLineItem->product->getCurrentVariationRelation();
+        return $orderItems->map(function (array $orderLineItem) {
+            $variation = $orderLineItem['product']->getCurrentVariationRelation();
 
             $data = [
-                'product' => $orderLineItem->product,
-                'quantity' => $orderLineItem->quantity,
+                'product' => $orderLineItem['product'],
+                'quantity' => $orderLineItem['quantity'],
                 'variation' => null,
-                'discount' => $orderLineItem->product->lastActiveDiscount?->first()
+                'discount' => $orderLineItem['product']->lastActiveDiscount?->first()
                     ?? $variation?->lastActiveDiscount?->first() ?? null,
             ];
 
@@ -67,10 +66,10 @@ class OrderLineService
 
                 $data['unitPrice'] = $pricePerUnit;
 
-                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem->quantity);
+                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem['quantity']);
 
                 $data['variation'] = [
-                    'id' => $orderLineItem->variation_id,
+                    'id' => $orderLineItem['variation_id'],
                     'data' => $variation instanceof ProductVariation
                         ? $variation->productAttributes->map(fn($item)
                             => [
@@ -87,12 +86,12 @@ class OrderLineService
                         ],
                 ];
             } else {
-                $pricePerUnit = $orderLineItem->product->lastActiveDiscount->first()?->discount_price
-                    ?? $orderLineItem->product->warehouse->default_price;
+                $pricePerUnit = $orderLineItem['product']->lastActiveDiscount->first()?->discount_price
+                    ?? $orderLineItem['product']->warehouse->default_price;
 
                 $data['unitPrice'] = $pricePerUnit;
 
-                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem->quantity);
+                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem['quantity']);
             }
 
             return (object)$data;

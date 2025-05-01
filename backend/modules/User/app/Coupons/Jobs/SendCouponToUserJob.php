@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Modules\Order\Order\Models\Order;
@@ -27,7 +28,6 @@ class SendCouponToUserJob implements ShouldQueue
     public function handle(): void
     {
         $i = 0;
-
         $perPage = 100;
 
         do {
@@ -41,26 +41,62 @@ class SendCouponToUserJob implements ShouldQueue
 
             $couponMeta = $this->getCouponMeta($ordersMeta);
 
-            $coupons = Coupon::query()
-                ->whereIn('user_id', $ordersMeta->pluck('userable_id'))
-                ->orWhereIn('email', $ordersMeta->pluck('contact_email'))
-                ->where('type', CouponTypeEnum::PERSONAL)
-                ->get(['user_id', 'email', 'coupon_id', 'discount']);
+            $existing = DB::table('coupon_user')
+                ->join('coupons', 'coupons.id', '=', 'coupon_user.coupon_id')
+                ->where(function ($q) use ($ordersMeta) {
+                    $q
+                        ->whereIn('coupon_user.user_id', $ordersMeta->pluck('userable_id')->filter()->unique())
+                        ->orWhereIn('coupon_user.email', $ordersMeta->pluck('contact_email')->filter()->unique());
+                })
+                ->select('coupon_user.user_id', 'coupon_user.email', 'coupons.discount')
+                ->get();
 
-            $couponMeta = $this->filterExistsCouponForUser($couponMeta, $coupons);
+            $couponMeta = $this->filterExistsCouponForUser($couponMeta, $existing);
 
-            $couponsToDbFields = $couponMeta->map(function (stdClass $meta) {
-                return [
-                    'user_id' => $meta->userable_type === User::class ? $meta->userable_id : null,
-                    'email' => $meta->userable_type === User::class ? null : $meta->contact_email,
-                    'coupon_id' => $meta->coupon_code,
+            if ($couponMeta->isEmpty()) {
+                $i++;
+                continue;
+            }
+
+            $now = now()->addMonth();
+
+            $newCoupons = collect();
+            $couponIdToMeta = [];
+
+            foreach ($couponMeta as $meta) {
+                $code = Str::upper(Str::random(10));
+
+                $newCoupons->push([
+                    'coupon_id' => $code,
                     'discount' => $meta->discount_amount,
                     'type' => CouponTypeEnum::PERSONAL->value,
-                    'expires_at' => now()->addMonth(),
-                ];
-            });
+                    'expires_at' => $now,
+                ]);
 
-            Coupon::query()->insert($couponsToDbFields->toArray());
+                $couponIdToMeta[$code] = $meta;
+                $meta->coupon_code = $code;
+            }
+
+            Coupon::query()->insert($newCoupons->toArray());
+
+            $insertedCoupons = Coupon::query()
+                ->whereIn('coupon_id', array_keys($couponIdToMeta))
+                ->get(['id', 'coupon_id']);
+
+            $couponUserLinks = [];
+
+            foreach ($insertedCoupons as $coupon) {
+                $meta = $couponIdToMeta[$coupon->coupon_id];
+
+                $couponUserLinks[] = [
+                    'coupon_id' => $coupon->id,
+                    'user_id' => $meta->userable_type === User::class ? $meta->userable_id : null,
+                    'email' => $meta->userable_type === User::class ? null : $meta->contact_email,
+                    'usage_number' => 0,
+                ];
+            }
+
+            DB::table('coupon_user')->insert($couponUserLinks);
 
             $this->sendEmailsWithCoupons($couponMeta);
 
@@ -84,13 +120,10 @@ class SendCouponToUserJob implements ShouldQueue
                     return null;
                 }
 
-                $couponCode = Str::upper(Str::random(10));
-
                 return (object)[
                     'userable_id' => $order->userable_id,
                     'userable_type' => $order->userable_type,
                     'order_count' => $order->order_count,
-                    'coupon_code' => $couponCode,
                     'discount_amount' => $discountAmount,
                     'contact_email' => $order->contact_email,
                 ];
@@ -99,18 +132,23 @@ class SendCouponToUserJob implements ShouldQueue
             ->values();
     }
 
-    public function filterExistsCouponForUser(\Illuminate\Support\Collection $couponMeta, Collection $coupons)
-    {
-        return $couponMeta->filter(function (stdClass $meta) use ($coupons) {
-            return ! $coupons->contains(function (Coupon $coupon) use ($meta) {
-                return (
-                    (($meta->userable_type === User::class && $coupon->user_id === $meta->userable_id)
-                        || $coupon->email === $meta->contact_email)
-                    &&
-                    $coupon->discount === $meta->discount_amount
-                );
+    public function filterExistsCouponForUser(
+        \Illuminate\Support\Collection $couponMeta,
+        \Illuminate\Support\Collection $existing,
+    ) {
+        return $couponMeta->filter(function (stdClass $meta) use ($existing) {
+            return ! $existing->contains(function ($row) use ($meta) {
+                $matchesUser = $meta->userable_type === User::class && $row->user_id === $meta->userable_id;
+                $matchesEmail = $meta->userable_type !== User::class && $row->email === $meta->contact_email;
+
+                return ($matchesUser || $matchesEmail) && $row->discount === $meta->discount_amount;
             });
         })->values();
+    }
+
+    public function fail($exception = null): void
+    {
+        throw $exception;
     }
 
     private function sendEmailsWithCoupons(\Illuminate\Support\Collection $couponMeta): void

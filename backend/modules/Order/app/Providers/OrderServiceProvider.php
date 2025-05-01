@@ -53,7 +53,7 @@ class OrderServiceProvider extends ServiceProvider
             /**@var Schedule $schedule */
             $schedule = $this->app->make(Schedule::class);
 
-            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily('9', '18');
+            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily('0', '10');
 
             $schedule->job(new CancelExpiredCoupons(), 'low')->dailyAt('00:00');
         });
