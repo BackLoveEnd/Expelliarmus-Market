@@ -6,7 +6,7 @@ return [
         'users-table' => 10,
         'user-wishlist' => 4,
         'coupons' => 10,
-        'personal_coupons' => 5,
+        'personal_coupons' => 4,
     ],
     'coupons' => [
         'usage_limit' => 3,

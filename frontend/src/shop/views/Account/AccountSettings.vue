@@ -122,38 +122,41 @@
 </template>
 
 <script setup>
-import {defineAsyncComponent, ref} from 'vue';
-import BreadCrumbs from '@/components/Default/BreadCrumbs.vue';
-import {Tab, TabGroup, TabList, TabPanel, TabPanels} from '@headlessui/vue';
-import {useAuthStore} from '@/stores/useAuthStore.js';
+import { defineAsyncComponent, ref } from 'vue'
+import BreadCrumbs from '@/components/Default/BreadCrumbs.vue'
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue'
+import { useAuthStore } from '@/stores/useAuthStore.js'
+import { useRoute } from 'vue-router'
 
 const ProfileInfo = defineAsyncComponent(
     () => import('@/shop/views/Account/ProfileInfo.vue'),
-);
+)
 const PaymentOptions = defineAsyncComponent(
     () => import('@/shop/views/Account/PaymentOptions.vue'),
-);
+)
 const MyOrders = defineAsyncComponent(
     () => import('@/shop/views/Account/MyOrders.vue'),
-);
+)
 const MyCancellations = defineAsyncComponent(
     () => import('@/shop/views/Account/MyCancellations.vue'),
-);
+)
 const MyCoupons = defineAsyncComponent(
     () => import('@/shop/views/Account/MyCoupons.vue'),
-);
+)
 
-const auth = useAuthStore();
+const auth = useAuthStore()
 
 const links = ref([
-  {url: '/', name: 'Home'},
-  {url: '/account', name: 'Account'},
-]);
+  { url: '/', name: 'Home' },
+  { url: '/account', name: 'Account' },
+])
 
-const selectedTab = ref(0);
+const route = useRoute()
 
-function changeTab(index) {
-  selectedTab.value = index;
+const selectedTab = ref(Number(route.query.tab) ?? 0)
+
+function changeTab (index) {
+  selectedTab.value = index
 }
 </script>
 

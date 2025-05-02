@@ -60,7 +60,7 @@ class CouponStorageService
         return Coupon::query()
             ->where('type', CouponTypeEnum::PERSONAL)
             ->whereHas('users', fn($q) => $q->where('coupon_user.user_id', $user->id))
-            ->paginate(config('users.retrieve.personal_coupons'));
+            ->paginate(config('user.retrieve.personal_coupons'));
     }
 
     public function getGlobalForUser(User $user): LengthAwarePaginator
@@ -78,6 +78,6 @@ class CouponStorageService
                     ->whereNull('coupon_user.usage_number')
                     ->orWhere('coupon_user.usage_number', '<', config('user.coupons.usage_limit'));
             })
-            ->paginate(config('users.retrieve.personal_coupons'));
+            ->paginate(config('user.retrieve.personal_coupons'));
     }
 }
