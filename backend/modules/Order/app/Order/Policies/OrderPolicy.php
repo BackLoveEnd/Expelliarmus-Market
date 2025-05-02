@@ -9,6 +9,7 @@ use Illuminate\Auth\Access\Response;
 use Modules\Manager\Models\Manager;
 use Modules\Order\Order\Models\Order;
 use Modules\User\Users\Contracts\UserInterface;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\User\Users\Models\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -23,6 +24,13 @@ class OrderPolicy
         }
 
         return null;
+    }
+
+    public function view(?Manager $manager): Response
+    {
+        return $manager?->hasPermissionTo('orders-view', RolesEnum::MANAGER->toString())
+            ? $this->allow()
+            : throw new AccessDeniedHttpException('Access denied.');
     }
 
     public function cancel(User $user, Order $order): Response

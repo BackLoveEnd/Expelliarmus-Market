@@ -44,9 +44,11 @@ class UserPermissionSeeder extends Seeder
             'show_categories',
             'show_brands',
             'show_products',
+            'show_orders',
             'show_content_management',
             'show_warehouse',
             'manage_warehouse',
+            'manage_orders',
             'coupons_view',
             'coupons_manage',
         ];

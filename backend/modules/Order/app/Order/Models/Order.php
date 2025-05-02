@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Modules\Order\Database\Factory\OrderFactory;
+use Modules\Order\Database\Factories\OrderFactory;
 use Modules\Order\Order\Enum\OrderStatusEnum;
 use Modules\User\Users\Contracts\UserInterface;
 
@@ -20,7 +20,7 @@ use Modules\User\Users\Contracts\UserInterface;
  * @property string $contact_email
  * @property string $userable_type
  * @property int $userable_id
- * @property Carbon created_a
+ * @property Carbon created_at
  */
 class Order extends Model
 {
