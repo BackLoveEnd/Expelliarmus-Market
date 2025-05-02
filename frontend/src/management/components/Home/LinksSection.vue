@@ -132,6 +132,22 @@ import {useAuthStore} from "@/stores/useAuthStore.js";
           <p class="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">Comfortable section for control, manage
             and view customers orders.</p>
         </div>
+        <div class="px-8 pt-4 sm:pt-5 sm:px-10">
+          <ul class="text-gray-500 dark:text-gray-400 font-medium">
+            <li class="mb-4">
+              <li-link title="Pending Orders" icon="pi-clock" link-name="pending-orders"/>
+            </li>
+            <li class="mb-4">
+              <li-link title="Cancelled Orders" icon="pi-times" link-name="cancelled-orders"/>
+            </li>
+            <li class="mb-4">
+              <li-link title="Delivered Orders" icon="pi-check-circle" link-name="delivered-orders"/>
+            </li>
+            <li class="mb-4">
+              <li-link title="Refunded Orders" icon="pi-sync" link-name="refunded-orders"/>
+            </li>
+          </ul>
+        </div>
       </div>
       <div
           class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]"></div>
