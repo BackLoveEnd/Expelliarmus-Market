@@ -4,29 +4,33 @@
   </section>
   <section class="mx-auto w-full space-y-6">
     <div class="flex flex-col gap-y-8">
-      <div>
-        <span>Personal Coupons</span>
+      <div class="flex flex-col gap-y-6">
+        <span class="ml-10">Personal Coupons</span>
+        <suspense>
+          <personal-user-coupons/>
+          <template #fallback>
+            <suspense-loader/>
+          </template>
+        </suspense>
       </div>
-      <div>
-        <span>Global Coupons</span>
+      <div class="flex flex-col gap-y-6">
+        <span class="ml-10">Global Coupons</span>
+        <suspense>
+          <global-user-coupons/>
+          <template #fallback>
+            <suspense-loader/>
+          </template>
+        </suspense>
       </div>
-    </div>
-    <div>
-      <main class="grid place-items-center">
-        <div class="text-center">
-          <p class="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">Cancelled order not found.</p>
-          <div class="mt-10 flex items-center justify-center gap-x-6">
-            <a href="#" class="text-sm font-semibold text-gray-900">Contact support<span
-                aria-hidden="true">&rarr;</span></a>
-          </div>
-        </div>
-      </main>
     </div>
   </section>
 </template>
 
 <script setup>
 
+import PersonalUserCoupons from '@/shop/components/Coupons/PersonalUserCoupons.vue'
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
+import GlobalUserCoupons from '@/shop/components/Coupons/GlobalUserCoupons.vue'
 </script>
 
 <style scoped>
