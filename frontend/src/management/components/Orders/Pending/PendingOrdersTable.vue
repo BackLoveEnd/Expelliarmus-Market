@@ -39,7 +39,10 @@
       </Column>
       <Column header="Order Lines" style="text-align: center">
         <template #body="slotProps">
-          <button type="button" class="text-blue-500 hover:underline hover:underline-offset-4 decoration-blue-500">
+          <button
+              @click="openOrderLineModal(slotProps.data.order.order_id, slotProps.data.order.total_price)"
+              type="button"
+              class="text-blue-500 hover:underline hover:underline-offset-4 decoration-blue-500">
             View
           </button>
         </template>
@@ -59,6 +62,12 @@
       </div>
     </main>
   </div>
+  <order-line-overview-modal
+      :is-open="isOrderLineOverviewModalOpen"
+      :order-id="orderId"
+      :total-price="totalPriceForOrder"
+      @close-modal="isOrderLineOverviewModalOpen = false"
+  />
 </template>
 
 <script setup>
@@ -67,6 +76,13 @@ import {computed, ref} from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
+import OrderLineOverviewModal from "@/management/components/Orders/OrderLineOverviewModal.vue";
+
+const isOrderLineOverviewModalOpen = ref(false);
+
+const orderId = ref(null);
+
+const totalPriceForOrder = ref(null);
 
 const userOrders = ref([]);
 
@@ -123,6 +139,14 @@ const onPageChange = async (event) => {
     page.value = nextPage;
     await getPendingOrders(nextPage);
   }
+};
+
+const openOrderLineModal = (order_id, totalPrice) => {
+  orderId.value = order_id;
+
+  totalPriceForOrder.value = totalPrice;
+
+  isOrderLineOverviewModalOpen.value = true;
 };
 
 const getSeverity = (status) => {
