@@ -19,9 +19,9 @@ class RequestModel
      *
      * @param  class-string<TModel>  $modelName
      * @param  array  $columns
-     * @return TModel
+     * @return TModel|Model
      */
-    public function bind(string $modelName, array $columns = ['*'])
+    public function bind(string $modelName, array $columns = ['*']): Model
     {
         if (! is_subclass_of($modelName, Model::class)) {
             throw new InvalidArgumentException('Not model class given');

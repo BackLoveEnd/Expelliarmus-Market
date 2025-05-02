@@ -20,7 +20,7 @@ use Modules\User\Users\Contracts\UserInterface;
  * @property string $contact_email
  * @property string $userable_type
  * @property int $userable_id
- * @property Carbon created_a
+ * @property Carbon created_at
  */
 class Order extends Model
 {
