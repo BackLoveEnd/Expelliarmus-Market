@@ -8,18 +8,17 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\Order\Order\Services\CouponService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Services\CouponManageService;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Models\ProductVariation;
-use stdClass;
 use Throwable;
 
 class OrderLineService
 {
     public function __construct(
         private DiscountedProductsService $discountService,
-        private CouponService $couponService,
+        private CouponManageService $couponService,
     ) {}
 
     public function prepareOrderLines(
@@ -34,21 +33,31 @@ class OrderLineService
         $orderLines = OrderLineDto::fromCheckout(
             $this->countPricesWithFormatting($orderItems),
         );
+
+        $priceWithCoupon = $this->countTotalPriceWithCoupon(
+            $orderLines,
+            $user,
+            $couponCode,
+        );
+
         return OrderLinesDto::from(
             orderLines: $orderLines,
-            totalPrice: $this->countTotalPriceWithCoupon($orderLines, $user, $couponCode),
+            totalPrice: $priceWithCoupon['totalPrice'],
+            coupon: $priceWithCoupon['coupon'],
         );
     }
 
     private function countPricesWithFormatting(Collection $orderItems): Collection
     {
-        return $orderItems->map(function (stdClass $orderLineItem) {
-            $variation = $orderLineItem->product->getCurrentVariationRelation();
+        return $orderItems->map(function (array $orderLineItem) {
+            $variation = $orderLineItem['product']->getCurrentVariationRelation();
 
             $data = [
-                'product' => $orderLineItem->product,
-                'quantity' => $orderLineItem->quantity,
+                'product' => $orderLineItem['product'],
+                'quantity' => $orderLineItem['quantity'],
                 'variation' => null,
+                'discount' => $orderLineItem['product']->lastActiveDiscount?->first()
+                    ?? $variation?->lastActiveDiscount?->first() ?? null,
             ];
 
             if ($variation) {
@@ -57,10 +66,10 @@ class OrderLineService
 
                 $data['unitPrice'] = $pricePerUnit;
 
-                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem->quantity);
+                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem['quantity']);
 
                 $data['variation'] = [
-                    'id' => $orderLineItem->variation_id,
+                    'id' => $orderLineItem['variation_id'],
                     'data' => $variation instanceof ProductVariation
                         ? $variation->productAttributes->map(fn($item)
                             => [
@@ -77,12 +86,12 @@ class OrderLineService
                         ],
                 ];
             } else {
-                $pricePerUnit = $orderLineItem->product->lastActiveDiscount->first()?->discount_price
-                    ?? $orderLineItem->product->warehouse->default_price;
+                $pricePerUnit = $orderLineItem['product']->lastActiveDiscount->first()?->discount_price
+                    ?? $orderLineItem['product']->warehouse->default_price;
 
                 $data['unitPrice'] = $pricePerUnit;
 
-                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem->quantity);
+                $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem['quantity']);
             }
 
             return (object)$data;
@@ -93,9 +102,12 @@ class OrderLineService
         Collection $orderLines,
         User|string|null $user,
         ?string $couponCode,
-    ): float {
+    ): array {
         if ($couponCode === null) {
-            return round($orderLines->sum('totalPrice'), 2);
+            return [
+                'coupon' => null,
+                'totalPrice' => round($orderLines->sum('totalPrice'), 2),
+            ];
         }
 
         try {
@@ -105,12 +117,16 @@ class OrderLineService
 
             $totalPrice = round($totalPrice - ($totalPrice * $coupon->discount / 100), 2);
 
-            // TODO: move removing coupon to place, where order will set as paid or completed
-            $this->couponService->deleteCoupon($coupon);
+            // TODO: move removing and increase coupon to place, where order will set as paid or completed
+            $this->couponService->deletePersonalCoupon($coupon);
+            $this->couponService->increaseGlobalCouponUsage($coupon, $user);
 
-            return $totalPrice;
+            return ['coupon' => $coupon, 'totalPrice' => $totalPrice];
         } catch (Throwable $e) {
-            return round($orderLines->sum('totalPrice'), 2);
+            return [
+                'coupon' => null,
+                'totalPrice' => round($orderLines->sum('totalPrice'), 2),
+            ];
         }
     }
 

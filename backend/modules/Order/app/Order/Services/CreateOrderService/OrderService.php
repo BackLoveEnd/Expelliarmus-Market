@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Modules\Order\Order\Services\CreateOrderService;
 
 use Modules\Order\Cart\Services\Cart\CartStorageService;
-use Modules\Order\Order\Services\CouponService;
-use Modules\Order\Order\Services\OrderPersistService;
 use Modules\Product\Http\Shop\Services\DiscountedProductsService;
-use Modules\User\Contracts\UserInterface;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Services\CouponManageService;
+use Modules\User\Users\Contracts\UserInterface;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Services\Warehouse\WarehouseProductInfoService;
 use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 use RuntimeException;
@@ -26,7 +25,6 @@ class OrderService
         private WarehouseStockService $stockService,
         private WarehouseProductInfoService $warehouseService,
         private DiscountedProductsService $discountService,
-        private OrderPersistService $orderPersistService,
     ) {}
 
     public function for(UserInterface $user): static
@@ -43,7 +41,7 @@ class OrderService
         return $this;
     }
 
-    public function process(): string
+    public function process(): int
     {
         if ($this->user instanceof User) {
             return $this->userOrderFactory($this->user);
@@ -56,7 +54,7 @@ class OrderService
         throw new RuntimeException('User not provided');
     }
 
-    private function userOrderFactory(User $user): string
+    private function userOrderFactory(User $user): int
     {
         return (new OrderRegularUserCreateService(
             cartStorage: $this->storageService,
@@ -69,13 +67,15 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponService(),
+                couponService: new CouponManageService(),
             ),
-            orderPersistService: $this->orderPersistService,
+            orderPersistService: new OrderPersistService(
+                warehouseStockService: $this->stockService,
+            ),
         ))->create($user, $this->couponCode);
     }
 
-    private function guestOrderFactory(Guest $guest): string
+    private function guestOrderFactory(Guest $guest): int
     {
         return (new OrderGuestCreateService(
             cartStorage: $this->storageService,
@@ -88,9 +88,11 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponService(),
+                couponService: new CouponManageService(),
             ),
-            orderPersistService: $this->orderPersistService,
+            orderPersistService: new OrderPersistService(
+                warehouseStockService: $this->stockService,
+            ),
         ))->create($guest, $this->couponCode);
     }
 }

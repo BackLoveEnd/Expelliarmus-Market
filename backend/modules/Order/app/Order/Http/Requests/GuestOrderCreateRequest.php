@@ -6,9 +6,20 @@ namespace Modules\Order\Order\Http\Requests;
 
 use App\Services\Validators\JsonApiFormRequest;
 use Illuminate\Validation\Rule;
+use Modules\Order\Order\Rules\UniquePhoneGuestRule;
+use Modules\User\Users\Enums\RolesEnum;
 
 class GuestOrderCreateRequest extends JsonApiFormRequest
 {
+    public function authorize(): bool
+    {
+        if ($this->user(RolesEnum::MANAGER->toString())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function jsonApiAttributeRules(): array
     {
         $user = $this->user('web');
@@ -21,8 +32,7 @@ class GuestOrderCreateRequest extends JsonApiFormRequest
                 Rule::requiredIf(! $user),
                 'phone:UA,US',
                 'unique:users,phone_number',
-                Rule::unique('guests', 'phone_number')
-                    ->where('email', $this->email),
+                new UniquePhoneGuestRule($this->email),
             ],
             'address' => [Rule::requiredIf(! $user), 'string', 'max:255'],
             'coupon' => ['nullable', 'string'],

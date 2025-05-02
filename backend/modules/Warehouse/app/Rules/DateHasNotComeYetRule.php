@@ -14,7 +14,7 @@ class DateHasNotComeYetRule implements ValidationRule
         $date = Carbon::parse($value)->setTimezone(config('app.timezone'));
 
         if ($date < now()) {
-            $fail("The start date has already passed.");
+            $fail("The date has already passed.");
         }
     }
 

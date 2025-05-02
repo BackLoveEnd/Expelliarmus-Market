@@ -70,7 +70,7 @@
 
 <script setup>
 import Colors from "@/components/Product/Main/Colors.vue";
-import {computed, onMounted} from "vue";
+import {computed, watch} from "vue";
 
 const props = defineProps({
   previewedVariation: Object,
@@ -92,11 +92,15 @@ function selectVariation(item) {
   emit("selected-option", selectedVariation);
 }
 
-onMounted(() => {
-  if (props.previewedVariation?.data?.length) {
-    selectVariation(props.previewedVariation.data[0]);
-  }
-});
+watch(
+    () => props.previewedVariation,
+    (newVal) => {
+      if (newVal?.data?.length) {
+        selectVariation(newVal.data[0]);
+      }
+    },
+    {immediate: true}
+);
 </script>
 
 <style scoped></style>

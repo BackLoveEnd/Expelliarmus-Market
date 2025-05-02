@@ -93,7 +93,7 @@ return [
 
     'middleware' => [
         'web',
-        'auth.manager',
+        'telescope.access',
         Authorize::class,
     ],
 

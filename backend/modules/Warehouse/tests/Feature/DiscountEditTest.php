@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Manager\Models\Manager;
 use Modules\Product\Models\Product;
 use Modules\User\Database\Seeders\UserPermissionSeeder;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\DTO\Discount\ProductDiscountDto;
 use Modules\Warehouse\Http\Exceptions\DiscountIsNotRelatedToProductException;
 use Modules\Warehouse\Models\Discount;
@@ -187,7 +187,7 @@ class DiscountEditTest extends TestCase
             ]);
 
         $response1->assertJsonValidationErrors([
-            'data.attributes.start_date' => 'The start date has already passed.',
+            'data.attributes.start_date' => 'The date has already passed.',
         ]);
 
         $response2 = $this->putJson("api/management/warehouse/products/$product->id/discounts/$discount->id", [

@@ -1,7 +1,7 @@
 <script setup>
 import BaseTextInput from "@/components/Default/Inputs/BaseTextInput.vue";
 import {ref} from "vue";
-import {ShopCouponService} from "@/services/Order/ShopCouponService.js";
+import {ShopCouponService} from "@/services/User/ShopCouponService.js";
 
 const couponCode = ref(null);
 
@@ -17,7 +17,7 @@ async function checkCoupon() {
         emit("coupon-applied", response?.data?.data?.attributes);
       })
       .catch((e) => {
-        if (e?.status === 422) {
+        if (e?.status === 422 || e?.status === 403) {
           errorMessage.value = e?.response?.data?.message;
         }
       });

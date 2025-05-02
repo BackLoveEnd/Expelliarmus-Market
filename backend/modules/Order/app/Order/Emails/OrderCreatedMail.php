@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Modules\Order\Order\Dto\OrderLineDto;
 use Modules\Order\Order\Dto\OrderLinesDto;
-use Modules\User\Contracts\UserInterface;
+use Modules\User\Users\Contracts\UserInterface;
 
 class OrderCreatedMail extends Mailable
 {
@@ -35,7 +35,13 @@ class OrderCreatedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mails.orders.created',
+            view: 'mails.orders.created',
+            with: [
+                'user' => $this->user,
+                'orderLines' => $this->orderLines->orderLines,
+                'totalPrice' => $this->orderLines->totalPrice,
+                'coupon' => $this->orderLines->coupon,
+            ],
         );
     }
 }

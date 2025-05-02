@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Order\Order\Services;
 
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\Order\Order\Services\CreateOrderService\OrderPersistService;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 
 class GuestMigrateOrdersService
 {

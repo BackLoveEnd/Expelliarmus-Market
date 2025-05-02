@@ -17,7 +17,7 @@ Route::prefix('management')->group(function () {
         Route::controller(CategoryController::class)->group(function () {
             Route::get('/', 'index')->withoutMiddleware(['throttle:api', 'auth.manager']);
 
-            Route::get('/root', 'rootCategories')->middleware('auth.manager');
+            Route::get('/root', 'rootCategories');
 
             Route::post('/', 'create')->middleware('auth.manager');
 

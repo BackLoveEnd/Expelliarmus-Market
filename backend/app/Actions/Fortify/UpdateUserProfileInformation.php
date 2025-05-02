@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
@@ -20,19 +20,26 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(User $user, array $input): void
     {
-        Validator::make($input, [
-            'first_name' => ['required', 'string', 'max:50'],
-            'last_name' => ['nullable', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
+        Validator::make(
+            $input,
+            [
+                'first_name' => ['required', 'string', 'max:50'],
+                'last_name' => ['nullable', 'string', 'max:255'],
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    'max:255',
+                    Rule::unique('users')->ignore($user->id),
+                ],
+                'address' => ['nullable', 'string', 'max:255'],
+                'phone' => ['nullable', 'phone:UA,US', Rule::unique('users', 'phone_number')->ignore($user->id)],
             ],
-            'address' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'phone:UA,US', Rule::unique('phone_number')->ignore($user->id)],
-        ])->validateWithBag('updateProfileInformation');
+            [
+                'phone.phone' => 'Please enter a valid phone number for Ukraine or the US.',
+                'phone.unique' => 'This phone number is already taken.',
+            ],
+        )->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email &&
             $user instanceof MustVerifyEmail) {

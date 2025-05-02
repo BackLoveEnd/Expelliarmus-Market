@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\User\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\User\Models\Guest;
+use Modules\User\Users\Models\Guest;
 
 class GuestFactory extends Factory
 {

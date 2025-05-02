@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use stdClass;
 
 class PrepareOrderService
@@ -43,13 +43,14 @@ class PrepareOrderService
             ->get([
                 'id',
                 'status',
+                'title',
                 'with_attribute_combinations',
                 'product_article',
                 'preview_image',
             ]);
 
         return $cartItems->map(function (stdClass $item) use ($products) {
-            return (object)[
+            return [
                 'product' => $products->firstWhere('id', $item->product_id),
                 'quantity' => $item->quantity,
                 'variation_id' => $item->variation['id'] ?? null,

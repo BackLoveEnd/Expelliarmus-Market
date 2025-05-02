@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Order\Database\Factories\CartFactory;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Ramsey\Uuid\Uuid;
 
 /**

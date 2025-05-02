@@ -8,6 +8,7 @@ return [
         'product-images' => 'product:%s:images',
         'product-preview' => 'product:%s:preview',
         'products-explore' => 'products:explore',
+        'products-top-sellers' => 'products:top-sellers',
         'product-public' => 'products:%s:public',
         'product-related-by-category' => 'products:categories:%s:related',
         'products-suggestions' => 'products:suggestions',
@@ -18,6 +19,7 @@ return [
         'discounted' => 16,
         'flash-sales' => 5,
         'explore' => 10,
+        'top-sellers' => 5,
         'suggestions' => 5,
         'shop' => [
             'default' => 20,

@@ -17,6 +17,7 @@ class UserDatabaseSeeder extends Seeder
             UserSeeder::class,
             GuestSeeder::class,
             ManagerSeeder::class,
+            CouponSeeder::class,
         ]);
     }
 }

@@ -6,7 +6,7 @@ namespace Modules\Category\Http\Management\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Modules\Category\Models\Category;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 
 class CreateCategoryIconRequest extends FormRequest
 {

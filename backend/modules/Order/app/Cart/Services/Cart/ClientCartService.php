@@ -6,7 +6,7 @@ namespace Modules\Order\Cart\Services\Cart;
 
 use Modules\Order\Cart\Dto\CartProductsQuantityDto;
 use Modules\Order\Cart\Dto\ProductCartDto;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class ClientCartService
 {

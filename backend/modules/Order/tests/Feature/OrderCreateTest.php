@@ -8,10 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Modules\Order\Cart\Models\Cart;
 use Modules\Order\Order\Enum\OrderStatusEnum;
-use Modules\Order\Order\Models\Coupon;
 use Modules\Product\Models\Product;
-use Modules\User\Models\Guest;
-use Modules\User\Models\User;
+use Modules\User\Coupons\Enum\CouponTypeEnum;
+use Modules\User\Coupons\Models\Coupon;
+use Modules\User\Users\Models\Guest;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 use Modules\Warehouse\Models\Discount;
 
@@ -42,7 +43,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response->assertJsonFragment([
             'message' => 'Order created successfully.',
@@ -82,6 +83,22 @@ class OrderCreateTest extends TestCase
             'variation->id' => $cartItem3->variation['id'],
             'price_per_unit_at_order_time' => $cartItem3->price_per_unit,
         ]);
+
+        // Check if the stock was decreased
+        $this->assertDatabaseHas('warehouses', [
+            'product_id' => $product1->id,
+            'total_quantity' => $product1->warehouse->total_quantity - $cartItem1->quantity,
+        ]);
+
+        $this->assertDatabaseHas('product_attribute_values', [
+            'product_id' => $product2->id,
+            'quantity' => $product2->singleAttributes->first()->quantity - $cartItem2->quantity,
+        ]);
+
+        $this->assertDatabaseHas('product_variations', [
+            'product_id' => $product3->id,
+            'quantity' => $product3->combinedAttributes->first()->quantity - $cartItem3->quantity,
+        ]);
     }
 
     public function test_can_create_order_as_guest_user(): void
@@ -112,7 +129,7 @@ class OrderCreateTest extends TestCase
         ]);
 
         // As guest user
-        $response = $this->postJson('/api/shop/user/order/checkout', [
+        $response = $this->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -203,7 +220,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $responseFirstCart->assertExactJson([
             'message' => 'Product was added to cart.',
@@ -273,7 +290,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->postJson('/api/shop/user/order/checkout', [
+        $response = $this->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -311,6 +328,13 @@ class OrderCreateTest extends TestCase
             'status' => OrderStatusEnum::PENDING->value,
         ]);
 
+        $this->assertDatabaseHas('coupon_user', [
+            'email' => $guest->email,
+            'user_id' => null,
+            'coupon_id' => $coupon->id,
+            'usage_number' => 1,
+        ]);
+
         $order = $guest->orders()->first();
 
         $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
@@ -330,7 +354,7 @@ class OrderCreateTest extends TestCase
 
         $user = User::factory()->create();
 
-        $coupon = Coupon::factory()->user($user)->create();
+        $coupon = Coupon::factory()->user($user)->type(CouponTypeEnum::PERSONAL)->create();
 
         $responseFirstCart = $this->actingAs($user)->postJson('api/shop/user/cart', [
             'data' => [
@@ -352,7 +376,7 @@ class OrderCreateTest extends TestCase
             ],
         ]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout', [
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout', [
             'data' => [
                 'type' => 'guests',
                 'attributes' => [
@@ -375,6 +399,11 @@ class OrderCreateTest extends TestCase
             'status' => OrderStatusEnum::PENDING->value,
         ]);
 
+        $this->assertDatabaseMissing('coupon_user', [
+            'user_id' => $user->id,
+            'coupon_id' => $coupon->id,
+        ]);
+
         $order = $user->orders()->first();
 
         $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
@@ -389,7 +418,7 @@ class OrderCreateTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response->assertStatus(409);
 
@@ -409,7 +438,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response
             ->assertExactJson([
@@ -431,7 +460,7 @@ class OrderCreateTest extends TestCase
             ->forUser($user)
             ->create();
 
-        $response1 = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response1 = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response1
             ->assertExactJson([
@@ -455,7 +484,7 @@ class OrderCreateTest extends TestCase
 
         $variation->update(['quantity' => 0]);
 
-        $response = $this->actingAs($user)->postJson('/api/shop/user/order/checkout');
+        $response = $this->actingAs($user)->postJson('/api/shop/user/orders/checkout');
 
         $response
             ->assertExactJson([

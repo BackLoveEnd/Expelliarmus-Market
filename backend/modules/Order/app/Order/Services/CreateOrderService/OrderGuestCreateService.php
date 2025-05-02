@@ -10,8 +10,7 @@ use Modules\Order\Order\Exceptions\CartMustNotBeEmptyBeforeOrderException;
 use Modules\Order\Order\Exceptions\FailedToCreateOrderException;
 use Modules\Order\Order\Exceptions\ProductCannotBeProcessedToCheckoutException;
 use Modules\Order\Order\Exceptions\ProductHasNotEnoughSuppliesException;
-use Modules\Order\Order\Services\OrderPersistService;
-use Modules\User\Models\Guest;
+use Modules\User\Users\Models\Guest;
 use Throwable;
 
 class OrderGuestCreateService
@@ -23,7 +22,7 @@ class OrderGuestCreateService
         private OrderPersistService $orderPersistService,
     ) {}
 
-    public function create(Guest $user, ?string $couponCode): string
+    public function create(Guest $user, ?string $couponCode): int
     {
         try {
             $orderItemsPrepared = $this->prepareOrderService->prepare(null);

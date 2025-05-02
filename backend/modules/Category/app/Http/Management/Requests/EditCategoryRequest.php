@@ -7,7 +7,7 @@ namespace Modules\Category\Http\Management\Requests;
 use App\Services\Validators\JsonApiRelationsFormRequest;
 use Illuminate\Validation\Rule;
 use Modules\Category\Models\Category;
-use Modules\User\Enums\RolesEnum;
+use Modules\User\Users\Enums\RolesEnum;
 use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class EditCategoryRequest extends JsonApiRelationsFormRequest

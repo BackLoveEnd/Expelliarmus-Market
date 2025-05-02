@@ -1,7 +1,7 @@
 <script setup>
 import * as yup from "yup";
 import {ErrorMessage, Field, Form} from "vee-validate";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {useScrolling} from "@/composables/useScrolling.js";
 import {register} from "@/utils/auth.js";
 import {HttpStatusCode} from "axios";
@@ -50,6 +50,18 @@ function signUp() {
       })
       .finally(() => isLoading.value = false);
 }
+
+onMounted(() => {
+  const query = router.currentRoute.value.query;
+
+  if (query.email && typeof query.email === "string") {
+    formData.email = query.email;
+  }
+
+  if (query.name && typeof query.name === "string") {
+    formData.first_name = query.name;
+  }
+});
 </script>
 
 <template>

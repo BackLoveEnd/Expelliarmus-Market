@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Modules\Order\Database\Factory\OrderFactory;
 use Modules\Order\Order\Enum\OrderStatusEnum;
-use Modules\User\Contracts\UserInterface;
-use Ramsey\Uuid\Uuid;
+use Modules\User\Users\Contracts\UserInterface;
 
 /**
  * @property int $id
  * @property string $order_id
  * @property OrderStatusEnum $status
  * @property float $total_price
+ * @property string $contact_email
  * @property string $userable_type
  * @property int $userable_id
  * @property Carbon created_a
@@ -34,6 +34,7 @@ class Order extends Model
         'created_at',
         'userable_type',
         'userable_id',
+        'contact_email',
     ];
 
     public function userable(): MorphTo
@@ -71,7 +72,7 @@ class Order extends Model
             }
 
             if ($order->order_id === null) {
-                $order->order_id = Uuid::uuid7()->toString();
+                $order->order_id = randomNumber(12);
             }
         });
     }

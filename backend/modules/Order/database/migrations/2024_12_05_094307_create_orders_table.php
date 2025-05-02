@@ -13,9 +13,10 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->generatedAs('START WITH 1000')->always();
-            $table->uuid('order_id')->unique();
+            $table->bigInteger('order_id')->unique();
             $table->morphs('userable');
             $table->tinyInteger('status');
+            $table->string('contact_email');
             $table->decimal('total_price');
             $table->timestamp('created_at')->nullable();
             $table->primary('id');

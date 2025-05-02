@@ -15,6 +15,10 @@ export const ProductsShopService = {
         return await api().get('/shop/products/suggestions');
     },
 
+    async getTopSellers() {
+        return await api().get('/shop/products/top-sellers');
+    },
+
     async getRelatedProduct(categorySlug) {
         return api().get(`/shop/categories/${categorySlug}/products`);
     },

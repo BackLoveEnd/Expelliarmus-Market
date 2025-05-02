@@ -30,6 +30,9 @@
     <a href="https://tailwindcss.com/">
         <img alt="TailwindCSS" src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
     </a>
+    <a href="https://getbootstrap.com/">
+        <img alt="Bootstrap CSS" src="https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white"/>
+    </a>
     <a href="https://www.docker.com">
         <img alt="Docker" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
     </a>
@@ -38,6 +41,12 @@
     </a>
     <a href="https://www.postgresql.org/">
         <img alt="PostgreSQL" src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white"/>
+    </a>
+    <a href="https://azure.microsoft.com/">
+        <img alt="Azure" src="https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white"/>
+    </a>
+    <a href="https://kubernetes.io/">
+        <img alt="Kubernetes" src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white"/>
     </a>
 </p>
 

@@ -71,7 +71,7 @@
 
 <script setup>
 import Colors from "@/components/Product/Main/Colors.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, ref, watch} from "vue";
 
 const props = defineProps({
   previewedVariations: Array,
@@ -104,13 +104,17 @@ function selectVariation(item) {
   }
 }
 
-onMounted(() => {
-  if (props.previewedVariations.length) {
-    selectVariation(props.previewedVariations[0]?.data[0]);
+watch(
+    () => props.previewedVariations,
+    (newVal) => {
+      if (newVal.length) {
+        selectVariation(newVal[0]?.data[0]);
 
-    selectVariation(props.previewedVariations[1]?.data[0]);
-  }
-});
+        selectVariation(newVal[1]?.data[0]);
+      }
+    },
+    {immediate: true}
+);
 </script>
 
 <style scoped></style>

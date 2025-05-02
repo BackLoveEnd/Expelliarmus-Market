@@ -66,7 +66,7 @@ const price = ref(0);
 
 const pricePerUnit = computed(() => price.value.toFixed(2));
 
-let selectedVariation = reactive({
+let selectedVariation = ref({
   id: null,
   price: null,
   discount: null,
@@ -86,7 +86,7 @@ const priceDependOnQuantity = computed(() =>
 const cartInfoSummarize = computed(() => {
   return {
     product_id: productInfo.product.id,
-    variation_id: selectedVariation.id ?? null,
+    variation_id: selectedVariation.value.id ?? null,
     quantity: quantity.value
   };
 });
@@ -104,22 +104,22 @@ const discountIfAvailable = computed(() => {
     };
   }
 
-  if (selectedVariation.discount === null) {
+  if (selectedVariation.value.discount === null) {
     return null;
   }
 
   return {
-    old_price: selectedVariation.discount.old_price,
-    percentage: selectedVariation.discount.percentage,
-    end_at: selectedVariation.discount.end_at
+    old_price: selectedVariation.value.discount.old_price,
+    percentage: selectedVariation.value.discount.percentage,
+    end_at: selectedVariation.value.discount.end_at
   };
 });
 
 const handleSelectedVariation = (variation) => {
   setSelectedVariation(variation);
 
-  if (selectedVariation.discount !== null) {
-    price.value = parseFloat(selectedVariation.discount.discount_price);
+  if (selectedVariation.value.discount !== null) {
+    price.value = parseFloat(selectedVariation.value.discount.discount_price);
   } else {
     price.value = parseFloat(variation.attributes.price);
   }
@@ -167,10 +167,10 @@ watch(
 );
 
 function setSelectedVariation(variation) {
-  selectedVariation.price = variation.attributes.price;
-  selectedVariation.id = variation.attributes.id;
-  selectedVariation.discount = variation.attributes.discount;
-  selectedVariation.availability = variation.attributes.availability;
+  selectedVariation.value.price = variation.attributes.price;
+  selectedVariation.value.id = variation.attributes.id;
+  selectedVariation.value.discount = variation.attributes.discount;
+  selectedVariation.value.availability = variation.attributes.availability;
 }
 
 await getProduct();

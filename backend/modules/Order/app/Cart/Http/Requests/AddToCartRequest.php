@@ -18,7 +18,7 @@ class AddToCartRequest extends JsonApiFormRequest
                 'integer',
                 new ProductCartRule($this->product_id),
             ],
-            'quantity' => ['nullable', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer', 'min:1'],
         ];
     }
 

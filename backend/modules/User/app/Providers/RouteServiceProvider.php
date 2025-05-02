@@ -26,8 +26,12 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapShopRoutes(): void
     {
-        Route::middleware('api')->prefix('api')->name('shop.')->group(module_path($this->name,
-            '/routes/shop.php'));
+        Route::middleware('api')->prefix('api')->name('shop.')->group(
+            module_path(
+                $this->name,
+                '/routes/shop.php',
+            ),
+        );
     }
 
 }

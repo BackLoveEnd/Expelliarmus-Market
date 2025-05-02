@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Product\Models\Product;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 use Modules\Warehouse\Enums\WarehouseProductStatusEnum;
 use Ramsey\Uuid\Uuid;
 

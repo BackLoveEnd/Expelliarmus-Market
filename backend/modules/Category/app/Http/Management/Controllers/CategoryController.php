@@ -60,8 +60,6 @@ class CategoryController extends Controller
      */
     public function rootCategories(): JsonApiResourceCollection|JsonResponse
     {
-        $this->authorize('view', Category::class);
-
         $categories = Category::onlyRoot();
 
         if ($categories->isEmpty()) {

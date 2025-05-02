@@ -2,6 +2,7 @@
 
 namespace Modules\Order\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\ServiceProvider;
 use Modules\Order\Cart\Services\Cart\AddingPossibilityProductToCartCheckerService;
@@ -9,6 +10,8 @@ use Modules\Order\Cart\Services\Cart\CartDataPrepareService;
 use Modules\Order\Cart\Services\Cart\CartStorageService;
 use Modules\Order\Cart\Services\Cart\ClientCartService;
 use Modules\Order\Cart\Services\Cart\DiscountCartService;
+use Modules\User\Coupons\Jobs\CancelExpiredCoupons;
+use Modules\User\Coupons\Jobs\SendCouponToUserJob;
 use Modules\Warehouse\Services\Warehouse\WarehouseStockService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
@@ -46,10 +49,14 @@ class OrderServiceProvider extends ServiceProvider
 
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function () {
+            /**@var Schedule $schedule */
+            $schedule = $this->app->make(Schedule::class);
+
+            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily('0', '10');
+
+            $schedule->job(new CancelExpiredCoupons(), 'low')->dailyAt('00:00');
+        });
     }
 
     protected function registerConfig(): void

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\TestCase;
 use Modules\Product\Models\Product;
 use Modules\Statistics\Services\CountStatisticsService;
 use Modules\Statistics\Services\StatisticsHandlerInterface;
-use Modules\User\Models\User;
+use Modules\User\Users\Models\User;
 
 class CountStatisticsTest extends TestCase
 {
