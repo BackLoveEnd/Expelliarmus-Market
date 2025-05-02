@@ -5,6 +5,7 @@ namespace Modules\Order\Order\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Order\Database\Factories\OrderLineFactory;
 use Modules\Product\Models\Product;
 
 /**
@@ -18,6 +19,8 @@ use Modules\Product\Models\Product;
 class OrderLine extends Model
 {
     use HasFactory;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'product_id',
@@ -47,5 +50,10 @@ class OrderLine extends Model
     public function priceAtOrderTime(): float
     {
         return $this->price_per_unit_at_order_time;
+    }
+
+    protected static function newFactory(): OrderLineFactory
+    {
+        return OrderLineFactory::new();
     }
 }
