@@ -25,8 +25,8 @@ services:
 
   npm:
     build:
-      context: .docker/node
-      dockerfile: node.Dockerfile
+      context: .
+      dockerfile: .docker/node/node.Dockerfile
     image: ghcr.io/artyom84783454/node:latest
     container_name: npm
     volumes:
