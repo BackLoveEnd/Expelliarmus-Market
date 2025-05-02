@@ -58,6 +58,12 @@ class Product extends Model implements DiscountRelationInterface
     use Slugger;
     use SoftDeletes;
 
+    public const int WITHOUT_OPTIONS = 0;
+
+    public const int SINGLE_OPTION = 1;
+
+    public const int COMBINED_OPTION = 3;
+
     protected $fillable = [
         'title',
         'category_id',
