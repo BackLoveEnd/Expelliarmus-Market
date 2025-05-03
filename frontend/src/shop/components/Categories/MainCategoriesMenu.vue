@@ -1,78 +1,58 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { CategoryService } from '@/services/Category/CategoryService.js'
-import TieredMenu from 'primevue/tieredmenu'
+import {onMounted, ref} from "vue";
+import {MegaMenu} from "primevue";
+import {CategoryService} from "@/services/Category/CategoryService.js";
 
-const items = ref([])
+const items = ref([]);
 
 onMounted(async () => {
-  await CategoryService.getCategoriesTree()
+  await CategoryService.getCategoriesTree(9)
       .then((response) => {
-        items.value = transformCategories(response?.data.data)
-      })
-})
+        items.value = transformCategories(response?.data.data);
+      });
+});
 
 const transformCategories = (categories) => {
-  return categories.map(category => ({
+  let categoriesMapped = categories.map(category => ({
     label: category.name,
-    route: `/products/categories/${category.slug}`,
+    route: `/shop/categories/${category.slug}`,
     items: category.children.length > 0
         ? [category.children.map(subcategory => ({
           label: subcategory.name,
-          route: `/products/categories/${subcategory.slug}`,
+          route: `/shop/categories/${subcategory.slug}`,
           items: subcategory.children.length > 0
               ? subcategory.children.map(child => ({
                 label: child.name,
-                route: `/products/categories/${child.slug}`
+                route: `/shop/categories/${child.slug}`
               }))
               : []
         }))]
         : []
-  }))
-}
+  }));
+
+  categoriesMapped.push({
+    label: "See more categories",
+    route: "/shop/categories",
+    items: []
+  })
+
+  return categoriesMapped;
+};
 
 </script>
 
 <template>
-  <TieredMenu :model="items">
-    <!--
-          <template #item="{ item }">
-            <router-link
-                v-if="item.route"
-                v-slot="{ href, navigate }"
-                :to="item.route"
-                custom
-            >
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
-              >
-                <div class="flex items-center">
-                  <span v-if="item.icon" :class="item.icon"/>
-                  <span class="ml-2">{{ item.label }}</span>
-                </div>
-                &lt;!&ndash;            <i
-                                v-if="Array.isArray(item.items) && item.items.length > 0"
-                                class="pi pi-angle-right text-sm text-gray-600"
-                            ></i>&ndash;&gt;
-              </a>
-            </router-link>
-
-            <a
-                v-else
-                class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 transition"
-            >
-              <div class="flex items-center">
-                <span v-if="item.icon" :class="item.icon"/>
-                <span class="ml-2">{{ item.label }}</span>
-              </div>
-            </a>
-          </template>
-    -->
-  </TieredMenu>
+  <MegaMenu :model="items" orientation="vertical">
+    <template #item="{ item }">
+      <router-link v-slot="{ href, navigate }" :to="item.route" custom>
+        <a :href="href" @click="navigate" class="flex items-center justify-between group">
+          <span class="ml-2 group-hover:underline underline-offset-4">{{ item.label }}</span>
+          <i class="pi pi-angle-right"></i>
+        </a>
+      </router-link>
+    </template>
+  </MegaMenu>
 </template>
-
 
 <style scoped>
 
