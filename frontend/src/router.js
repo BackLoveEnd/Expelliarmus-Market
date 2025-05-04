@@ -87,7 +87,7 @@ router.beforeEach(async (to, from, next) => {
         });
     }
 
-    if (to.meta.guest && auth.isRegularUser) {
+    if (to.meta.guest && (auth.isRegularUser || auth.isManager)) {
         return next({name: "home"});
     }
 

@@ -3,7 +3,11 @@ import {useJsonApiFormatter} from "@/composables/useJsonApiFormatter.js";
 import managerApi from "@/utils/managerApi.js";
 
 export const CategoryService = {
-    async getCategoriesTree() {
+    async getCategoriesTree(limit = null) {
+        if (limit) {
+            return await api().get(`/management/categories?limit=${limit}`);
+        }
+
         return await api().get("/management/categories");
     },
 

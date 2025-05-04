@@ -27,6 +27,7 @@ use Modules\Warehouse\Models\ProductAttribute;
 #[ObservedBy(CategoryObserver::class)]
 class Category extends Model
 {
+
     use HasFactory;
     use NodeTrait;
 
@@ -62,7 +63,7 @@ class Category extends Model
     public static function getAllCategoriesInTree(int $limit = 0): Collection
     {
         if ($limit !== 0) {
-            return self::defaultOrder()->withDepth()->limit($limit)->get()->toTree();
+            return self::defaultOrder()->withDepth()->get()->toTree()->take($limit);
         }
 
         return self::defaultOrder()->withDepth()->get()->toTree();
@@ -126,4 +127,5 @@ class Category extends Model
             $category->slug = Str::slug($category->name);
         });
     }
+
 }

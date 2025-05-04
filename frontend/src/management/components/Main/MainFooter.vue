@@ -36,11 +36,15 @@
                 </template>
               </custom-menu>
             </li>
-            <li
-                class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0"
-            >
-              <i class="pi pi-shopping-bag"></i>
-              Orders
+            <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">
+              <custom-menu :links="ordersLinks" drop-to-up>
+                <template v-slot:menu-button="{ isOpen }">
+                  <span class="hover:underline underline-offset-4 decoration-2 mb-2 md:mb-0">
+                    <i class="pi pi-shopping-bag"></i>
+                    Orders
+                  </span>
+                </template>
+              </custom-menu>
             </li>
             <li @mouseenter="handleMenuEnter" @mouseleave="handleMenuLeave">
               <custom-menu :links="productLinks" drop-to-up>
@@ -115,6 +119,13 @@ const productLinks = ref([
   {url: "/management/products/trashed", name: "Trashed Products", svg: 'pi pi-trash'},
   {url: "/management/products/create", name: "Add Product", svg: 'pi pi-plus'},
   {url: "/management/categories-and-brands", name: "Categories & Brands", svg: 'pi pi-th-large'},
+]);
+
+const ordersLinks = ref([
+  {url: "/management/orders/pending", name: "Pending Orders", svg: 'pi pi-clock'},
+  {url: "/management/orders/cancelled", name: "Cancelled Orders", svg: 'pi pi-times'},
+  {url: "/management/orders/delivered", name: "Delivered Orders", svg: 'pi pi-check-circle'},
+  {url: "/management/orders/refunded", name: "Refunded Orders", svg: 'pi pi-sync'},
 ]);
 
 const clientLinks = ref([

@@ -18,10 +18,11 @@ class OrdersByUsersResource extends JsonApiResource
         return [
             'user' => [
                 'id' => $user->id,
-                'fist_name' => $user->first_name,
+                'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'full_name' => $user->fullName(),
                 'phone_number' => $user->phone_number,
+                'type' => strtolower((new ReflectionClass($user))->getShortName()),
                 'email' => $user->email,
             ],
             'orders' => $this->resource->map(fn(Order $order)
