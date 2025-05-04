@@ -11,6 +11,7 @@ import ResetPassword from "@/shop/views/Auth/Password/ResetPassword.vue";
 import NotFound from "@/components/Default/NotFound.vue";
 import ServerError from "@/components/Default/ServerError.vue";
 import AuthManagement from "@/management/views/Manager/AuthManagement.vue";
+import Maintenance from "@/components/Default/Maintenance.vue";
 
 const routes = [
     {
@@ -61,6 +62,10 @@ const routes = [
     {
         path: "/500",
         component: ServerError,
+    },
+    {
+        path: "/maintenance",
+        component: Maintenance
     },
     {
         path: "/:any(.*)*",
