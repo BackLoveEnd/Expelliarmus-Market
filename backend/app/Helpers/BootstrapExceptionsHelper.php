@@ -7,13 +7,16 @@ namespace App\Helpers;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 final readonly class BootstrapExceptionsHelper
 {
+
     public function __construct(
         private Exceptions $exceptions,
     ) {}
@@ -36,8 +39,21 @@ final readonly class BootstrapExceptionsHelper
         $this->renderMethodNotAllowed();
         $this->renderUnhandleDatabaseException();
         $this->renderAccessDenied();
+        $this->renderServiceUnavailableException();
 
         return $this;
+    }
+
+    private function renderServiceUnavailableException(): void
+    {
+        $this->exceptions->render(function (HttpException $e) {
+            if ($e->getStatusCode() === Response::HTTP_SERVICE_UNAVAILABLE && app()->isDownForMaintenance()) {
+                return response()->json([
+                    'message' => 'Service unavailable.',
+                    'detail' => 'Application is down for maintenance.',
+                ], 503);
+            }
+        });
     }
 
     private function renderJsonOnApi(): void
@@ -85,11 +101,12 @@ final readonly class BootstrapExceptionsHelper
     private function renderUnhandleDatabaseException(): void
     {
         $this->exceptions->render(function (QueryException $e, Request $request) {
-            if (! app()->environment('local')) {
+            if ( ! app()->environment('local')) {
                 return response()->json([
                     'message' => 'Database internal error. Please contact us.',
                 ], 500);
             }
         });
     }
+
 }

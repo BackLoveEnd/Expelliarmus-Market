@@ -41,6 +41,12 @@ export default function managerApi() {
                 return Promise.reject(error);
             }
 
+            if (error.response?.status === 503) {
+                router.push({path: '/maintenance'});
+
+                return Promise.reject(error);
+            }
+
             if (error.response?.status >= 500 && error.response?.status <= 599) {
                 router?.push({path: '/500', state: {redirected: true}});
                 return Promise.reject(error);
