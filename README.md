@@ -219,7 +219,7 @@ available [here](https://documenter.getpostman.com/view/31662162/2sB2cSg3Ya#f83d
 
 ### Database Diagram
 
-![Expelliarmus Shop Database Diagram](./docs/diagrams/expelliarmus_database_diagram.png)
+![Expelliarmus Shop Database Diagram](./docs/diagrams/expelluarmus_database_diagram.png)
 
 or Open in ![Drawio]()
 
