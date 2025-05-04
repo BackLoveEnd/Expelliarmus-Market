@@ -7,7 +7,6 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    image: ghcr.io/artyom84783454/php:latest
     container_name: php
     ports:
       - "9000:9000"
@@ -27,7 +26,6 @@ services:
     build:
       context: .
       dockerfile: .docker/node/node.Dockerfile
-    image: ghcr.io/artyom84783454/node:latest
     container_name: npm
     volumes:
       - ./frontend:/var/www/expelliarmus/frontend
@@ -44,7 +42,6 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-    image: ghcr.io/artyom84783454/nginx:latest
     container_name: nginx
     volumes:
       - ./backend:/var/www/expelliarmus/backend
@@ -94,7 +91,6 @@ services:
     build:
       context: .docker/php
       dockerfile: scheduler.Dockerfile
-    image: ghcr.io/artyom84783454/scheduler:latest
     container_name: scheduler
     volumes:
       - .:/var/www/expelliarmus
@@ -108,7 +104,6 @@ services:
     build:
       context: .docker/php
       dockerfile: queue.Dockerfile
-    image: ghcr.io/artyom84783454/queue:latest
     container_name: queue
     volumes:
       - .:/var/www/expelliarmus
