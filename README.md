@@ -221,6 +221,6 @@ available [here](https://documenter.getpostman.com/view/31662162/2sB2cSg3Ya#f83d
 
 ![Expelliarmus Shop Database Diagram](./docs/diagrams/expelluarmus_database_diagram.png)
 
-or Open in ![Drawio]()
+or [download .drawio file](https://raw.githubusercontent.com/BackLoveEnd/Expelliarmus-Market/refs/heads/master/docs/diagrams/expelliarmus_diagram_database.drawio) (on the open page: Right Click -> Save as) and open diagram with [draw.io](https://app.diagrams.net/).
 
 ### Modules Diagrams
