@@ -1,0 +1,35 @@
+@startuml
+
+class NewArrivalsContentController {
+    + __construct(NewArrivalsContentService $service)
+
+    + uploadNewArrivals(NewArrivalsUploadRequest $request): JsonResponse
+
+    + getNewArrivals(): JsonApiResourceCollection|JsonResponse
+
+    + deleteArrival(NewArrival $arrival): JsonResponse
+}
+
+class NewArrivalsContentService {
+    + __construct(NewArrivalsStorage $storage)
+
+    + getArrivals(): EloquentCollection
+
+    + saveArrivals(): void
+
+    + deleteArrival(): void
+}
+
+class NewArrivalsStorage {
+    + __construct(Filesystem $storage)
+
+    + upload(): false|string
+
+    + delete(): bool
+
+    + getImageUrl(): string
+}
+
+NewArrivalsContentController --> NewArrivalsContentService
+NewArrivalsContentService --> NewArrivalsStorage
+@enduml

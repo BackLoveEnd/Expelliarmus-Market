@@ -1,0 +1,36 @@
+@startuml
+
+class SliderContentController {
+    + __construct(SliderContentService $contentService)
+
+    + upload(UploadSliderContentRequest $request): JsonResponse
+
+    + getAllSliderContent(): JsonApiResourceCollection
+
+    + deleteSlide(ContentSlider $slide): JsonResponse
+}
+
+class SliderContentService {
+    + __construct(SliderContentStorage $storage)
+
+    + getAll(): EloquentCollection
+
+    + saveSlider(): void
+
+    + delete(): void
+}
+
+class SliderContentStorage {
+    + __construct(FilesystemManager $filesystemManager)
+
+    + upload(): false|string
+
+    + deleteManyById(): void
+
+    + getImageUrl(): ?string
+}
+
+SliderContentController --> SliderContentService
+SliderContentService --> SliderContentStorage
+
+@enduml

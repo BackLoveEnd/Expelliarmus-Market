@@ -1,0 +1,122 @@
+@startuml
+
+class WarehouseController {
+    + __construct(WarehouseProductInfoService $warehouseService)
+
+    + searchProductBySearchable(Request $request): JsonApiResourceCollection|JsonResponse
+
+    + getWarehouseProductInfo(ProductSlug $productSlug): WarehouseProductInfoResource
+
+    + getProductPaginated(Request $request, GetProductAction $action): JsonApiResourceCollection
+}
+
+class WarehouseProductInfoService {
+    + __construct ProductAttributeService $productAttributeService
+
+    + searchProducts(): Collection
+
+    + getWarehouseInfoAboutProduct(): Product
+}
+
+class ProductAttributeService {
+    - ?Product $product
+    - ?ProductAttributeRetrieveInterface $retrieveStrategy
+    - ?ProductAttributeHandler $attributeHandler
+
+    + __construct(array $variationCols, array $attributeCols)
+
+    + getAttributeHandler(): ProductAttributeHandler
+
+    + combinedHandler(): ProductAttributeHandler
+
+    + singleHandler(): ProductAttributeHandler
+
+    + setAttributesColumns(): static
+
+    + setProduct(): static
+
+    - makeAttributeHandler(): ProductAttributeHandler
+
+    - setRetrieveStrategy(): void
+}
+
+class ProductAttributeHandler <<proxy>> {
+    + __construct(ProductAttributeRetrieveInterface $retrieveStrategy)
+
+    + getAttributes(): Collection
+
+    + loadAttributeById(int $variationId): VariationInterface
+
+    + loadAttributesByIds(): BaseCollection
+
+    + getAttributesForCollection(): Collection
+
+    + formatPreviewAttributes(): BaseCollection
+
+    + formatWarehouseAttributes(): BaseCollection
+}
+
+interface ProductAttributeRetrieveInterface {
+    + getAttributes(): Collection;
+
+    + loadAttributesById(): VariationInterface;
+
+    + loadAttributesByIds();
+
+    + getAttributesForProductCollection(): Collection;
+}
+
+interface ProductAttributesRetrieveFormatterInterface {
+    + formatPreviewAttributes(): BaseCollection;
+
+    + formatWarehouseInfoAttributes(): BaseCollection;
+}
+
+class SingleAttributeRetrieveService {
+    + __construct(array $variationCols, array $attributeCols)
+
+    + getAttributes(): Collection
+
+    + loadAttributesById(): VariationInterface
+
+    + loadAttributesByIds(): BaseCollection
+
+    + loadAttributesByIds(): BaseCollection
+
+    + getAttributesForProductCollection(): Collection
+
+    + formatPreviewAttributes(): BaseCollection
+
+    + formatWarehouseInfoAttributes(): BaseCollection
+}
+
+class CombinedAttributeRetrieveService {
+    + __construct(array $variationCols, array $attributeCols)
+
+    + getAttributes(): Collection
+
+    + loadAttributesById(): VariationInterface
+
+    + loadAttributesByIds(): BaseCollection
+
+    + loadAttributesByIds(): BaseCollection
+
+    + getAttributesForProductCollection(): Collection
+
+    + formatPreviewAttributes(): BaseCollection
+
+    + formatWarehouseInfoAttributes(): BaseCollection
+}
+
+WarehouseController --> WarehouseProductInfoService
+WarehouseProductInfoService --> ProductAttributeService
+ProductAttributeService --> ProductAttributeHandler
+ProductAttributeHandler --> ProductAttributeRetrieveInterface
+ProductAttributeHandler --> ProductAttributesRetrieveFormatterInterface
+
+SingleAttributeRetrieveService ..|> ProductAttributeRetrieveInterface
+SingleAttributeRetrieveService ..|> ProductAttributesRetrieveFormatterInterface
+
+CombinedAttributeRetrieveService ..|> ProductAttributeRetrieveInterface
+CombinedAttributeRetrieveService ..|> ProductAttributesRetrieveFormatterInterface
+@enduml

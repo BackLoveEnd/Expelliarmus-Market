@@ -1,0 +1,60 @@
+@startuml
+
+class RetrieveProductsController {
+    + __construct(RetrieveProductsService $productsService
+
+    + index(): JsonApiResourceCollection|JsonResponse
+}
+
+class RetrieveProductsService {
+    - ProductsRetriever $retriever
+    - WarehouseProductInfoService $warehouseService
+    - DiscountedProductsService $discountedService
+
+    + __construct($retriever, $warehouseService, $discountedService)
+
+    + getProducts(): LengthAwarePaginator
+
+    - loadWarehouseInfo(): Collection
+}
+
+class ProductsRetriever {
+    + FiltersConnector $filtersConnector
+    + SortsConnector $sortsConnector
+
+    + retrieve(): LengthAwarePaginator
+}
+
+class FiltersConnector {
+    - array $filters
+
+    + defineFilters(): void
+
+    + filters(): array
+}
+
+class SortsConnector {
+    - array $sorts
+
+    + defineSorts(): void
+
+    + sorts(): array
+}
+
+class WarehouseProductInfoService {
+    + getWarehouseInfoAboutProducts(): Collection
+}
+
+class DiscountedProductsService {
+    + loadDiscountsForProducts(): Collection
+}
+
+RetrieveProductsController --> RetrieveProductsService
+
+RetrieveProductsService -> ProductsRetriever
+RetrieveProductsService -> WarehouseProductInfoService
+RetrieveProductsService -> DiscountedProductsService
+
+ProductsRetriever --> FiltersConnector
+ProductsRetriever --> SortsConnector
+@enduml

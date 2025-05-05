@@ -1,0 +1,26 @@
+@startuml
+
+class TrashedProductsController {
+    + __construct(TrashedProductService $trashedService)
+
+    + getTrashed(Request $request): JsonApiResourceCollection|JsonResponse
+
+    + moveToTrash(Product $product, MoveProductToTrashAction $action): JsonResponse
+
+    + restore(Product $product): JsonResponse
+
+    + deleteForever(Product $product): JsonResponse
+}
+
+class TrashedProductService {
+    + __construct(Repository $config)
+
+    + getAll(): LengthAwarePaginator
+
+    + deleteForever(): void
+
+    + restore(): void
+}
+
+TrashedProductsController --> TrashedProductService
+@enduml

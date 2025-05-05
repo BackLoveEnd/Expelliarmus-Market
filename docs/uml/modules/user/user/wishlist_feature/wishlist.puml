@@ -1,0 +1,33 @@
+@startuml
+
+class UserWishlistController {
+    + __construct(WishlistService $wishlistService)
+
+    + getUserWishlist(Request $request): JsonApiResourceCollection|JsonResponse
+
+    + addProductToWishList(Request $request, ProductSlug $productBind): JsonResponse
+
+    + removeFromWishlist(Request $request, ProductSlug $productSlug): JsonResponse
+
+    + clearWishlist(Request $request): JsonResponse
+}
+
+class WishlistService {
+    + __construct(WarehouseProductInfoService $warehouseService)
+
+    + get(User $user): ?LengthAwarePaginator
+
+    + add(User $user, Product $product): void
+
+    + removeProduct(User $user, Product $product): void
+
+    + clearAll(User $user): bool
+}
+
+class WarehouseProductInfoService $warehouseService {
+    + getWarehouseInfoAboutProducts(): Collection
+}
+
+UserWishlistController --> WishlistService
+WishlistService --> WarehouseProductInfoService
+@enduml

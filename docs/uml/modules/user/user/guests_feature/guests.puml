@@ -1,0 +1,12 @@
+@startuml
+
+class GuestsController {
+    + getGuests(Request $request, GetGuestsAction $action): JsonApiResourceCollection
+}
+
+class GetGuestsAction {
+    + handle(): LimitOffsetDto
+}
+
+GuestsController --> GetGuestsAction
+@enduml

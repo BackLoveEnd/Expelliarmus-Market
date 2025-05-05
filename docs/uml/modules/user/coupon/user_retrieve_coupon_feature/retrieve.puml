@@ -1,0 +1,18 @@
+@startuml
+
+class UserRetrieveCouponsController {
+    + __construct(CouponStorageService $couponStorageService)
+
+    + getMyPersonalCoupons(Request $request): JsonApiResourceCollection|JsonResponse
+
+    + getMyGlobalCoupons(Request $request): JsonApiResourceCollection|JsonResponse
+}
+
+class CouponStorageService {
+    + getGlobalForUser(): LengthAwarePaginator
+
+    + getPersonalForUser(): LengthAwarePaginator
+}
+
+UserRetrieveCouponsController --> CouponStorageService
+@enduml

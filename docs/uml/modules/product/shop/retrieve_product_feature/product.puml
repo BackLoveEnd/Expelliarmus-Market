@@ -1,0 +1,46 @@
+@startuml
+
+class RetrieveProductController {
+    - GetPublicProductInfoAction $action
+    - CacheService $cacheService
+
+    + __construct($action, $cacheService)
+
+    + __invoke(ProductSlug $productBind): ProductPublicInfoResource
+}
+
+class GetPublicProductInfoAction {
+    - WarehouseProductInfoService $warehouseProductService
+    - ProductImagesService $imagesService
+    - ProductSpecificationsService $specificationsService
+    - DiscountedProductsService $discountProductService
+
+    + __construct($warehouseProductService, $imagesService, $specificationsService, $discountProductService)
+
+    + handle(): Product
+}
+
+class WarehouseProductInfoService {
+    + getProductAttributes(): BaseCollection
+}
+
+class ProductImagesService {
+    + getProductImages(): array
+}
+
+class ProductSpecificationsService {
+    + prepareProductSpecifications(): array
+}
+
+class DiscountedProductsService {
+    + loadDiscountForProduct(): Product
+}
+
+RetrieveProductController --> GetPublicProductInfoAction
+
+GetPublicProductInfoAction --> WarehouseProductInfoService
+GetPublicProductInfoAction --> ProductImagesService
+GetPublicProductInfoAction --> ProductSpecificationsService
+GetPublicProductInfoAction --> DiscountedProductsService
+
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+
+class DiscountController {
+    + __construct(ProductDiscountServiceFactory $discountService)
+
+    + addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
+
+    + editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
+
+    + cancelDiscount(Product $product, Discount $discount): JsonResponse
+}
+
+class ProductDiscountServiceFactory {
+    + __construct(Application $app)
+
+    + addDiscount(Product $product): DiscountProcessingInterface
+
+    + editDiscount(Product $product, Discount $discount): DiscountProcessingInterface
+
+    + cancelDiscount(Product $product, Discount $discount): CancelDiscountService
+}
+
+interface DiscountProcessingInterface {
+    + process(ProductDiscountDto $dto): void;
+}
+
+abstract class AbstractDiscountService {
+    - ?Collection $productVariations
+
+    + __construct(Product $product)
+
+    - calculateDiscountPrice(): float
+
+    - ensureDiscountRelatedToProduct(): void
+
+    - discountRelatedToProductWithoutVariations(): void
+
+    - discountRelatedToProductWithVariations(): void
+}
+
+class AddDiscountService {
+    + process(DiscountDto $dto): void
+
+    - createDiscount(): void
+
+    - getVariationForCurrentDiscount(): DiscountRelationInterface
+}
+
+class EditDiscountService {
+    + process(DiscountDto $dto): void
+
+    - updateDiscount(): void
+
+    - getVariationForCurrentDiscount(): DiscountRelationInterface
+}
+
+class CancelDiscountService {
+    + process(): void
+}
+
+AddDiscountService ..|> DiscountProcessingInterface
+EditDiscountService ..|> DiscountProcessingInterface
+
+AddDiscountService --|> AbstractDiscountService
+EditDiscountService --|> AbstractDiscountService
+CancelDiscountService --|> AbstractDiscountService
+
+DiscountController --> ProductDiscountServiceFactory
+ProductDiscountServiceFactory --> AddDiscountService
+ProductDiscountServiceFactory --> EditDiscountService
+ProductDiscountServiceFactory --> CancelDiscountService
+
+@enduml

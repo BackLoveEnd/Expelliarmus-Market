@@ -1,0 +1,21 @@
+@startuml
+
+class UserOrdersRetrieveController {
+    + __construct(UserOrdersService $userOrdersService)
+
+    + getOrderHistory(Request $request): JsonApiResourceCollection|JsonResponse
+
+    + getCancelledOrders(Request $request): JsonApiResourceCollection|JsonResponse
+}
+
+class UserOrdersService {
+    + getOrders(): LengthAwarePaginator
+
+    + getCancelledOrders(): LengthAwarePaginator
+
+    - loadOrderLinesForOrders(): EloquentCollection
+}
+
+UserOrdersRetrieveController --> UserOrdersService
+
+@enduml
