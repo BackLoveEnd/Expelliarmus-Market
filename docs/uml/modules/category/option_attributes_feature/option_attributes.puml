@@ -1,0 +1,31 @@
+@startuml
+
+class CategoryOptionAttributesController {
+    + __construct(CacheService $cacheService)
+
+    + getOptionAttributesForCategory(string $categorySlug, GetAttributesAction $action): JsonApiResourceCollection|JsonResponse
+}
+
+class CacheService {
+    + __construct(Repository $repository)
+
+    + key(string $configKey, string|int|null $identifier = null): string
+
+    + repo(): Repository
+}
+
+class GetAttributesAction {
+    + handle(Category $category): BaseCollection
+
+    - mapAttributes(Collection $attributes): BaseCollection
+}
+
+interface Repository {
+    + remember($key, $ttl, $closure)
+}
+
+CategoryOptionAttributesController --> CacheService
+CategoryOptionAttributesController ..> GetAttributesAction : uses
+CacheService --> Repository
+
+@enduml

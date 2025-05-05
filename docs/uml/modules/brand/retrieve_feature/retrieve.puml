@@ -1,0 +1,20 @@
+@startuml
+
+class RetrieveBrandsController {
+    + __construct(Config config, Request request)
+    + getPaginated(): JsonApiResourceCollection|JsonResponse
+    + getBrandInfo(string|int brandId): BrandResource
+}
+
+class GetPagePaginatedBrandsAction {
+    + handle(array columns, int defaultBrandsShowNumber): array
+}
+
+class GetLimitOffsetPaginatedBrandsAction {
+    + handle(array columns, int limit, int offset): object
+}
+
+RetrieveBrandsController *-- GetPagePaginatedBrandsAction : contains
+RetrieveBrandsController *-- GetLimitOffsetPaginatedBrandsAction : contains
+
+@enduml

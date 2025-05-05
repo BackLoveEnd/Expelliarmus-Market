@@ -1,0 +1,138 @@
+@startuml
+
+class CartController {
+    - ClientCartService $service
+    + __construct(ClientCartService service)
+
+    + getClientCart(Request): JsonApiResourceCollection | JsonResponse
+
+    + addProductToCart(Request): JsonResponse
+
+    + updateProductsQuantity(Request)): JsonResponse
+
+    + removeFromCart(Request, string id): JsonResponse
+
+    + clearCart(Request): JsonResponse
+}
+
+class ProductCartDto {
+    + Product $product,
+    + ?int $variationId,
+    + int $quantity,
+}
+
+class CartProductsQuantityDto {
+    + Collection $cartItems
+}
+
+class UserCartInfoDto {
+    - int $product_id,
+    - int $quantity,
+    - string $productImage,
+    - string $productTitle,
+    - string $productSlug,
+    - float $pricePerUnit,
+    - float $finalPrice,
+    - ?array $discount,
+    - ?array $variation,
+    - ?string $id = null,
+}
+
+class ClientCartService {
+    + __construct(
+            CartStorageService $storage,
+            AddingPossibilityProductToCartCheckerService $checker,
+            DiscountCartService $discountCalculator,
+            CartDataPrepareService $prepareService
+        )
+    + getCart(?User $user): array
+
+    + addToCart(?User $user, ProductCartDto $dto): void
+
+    + updateProductsQuantities(?User $user, Dto): void
+
+    + removeFromCart(?User $user, string $id): void
+
+    + clearCart(?User $user): void
+
+    + isCartEmpty(?User $user): bool
+}
+
+class CartStorageService {
+    + __construct(Session $session)
+
+    + getCart(?User $user): array
+
+    + saveCart(?User $user, UserCartInfoDto $cart): void
+
+    + updateCart(?User $user, Collection $cartItems): void
+
+    + removeFromCart(?User $user, string $id): void
+
+    + productExistsInCart(?User $user, Product $product, ?int $variationId = null): bool
+
+    + addQuantityToExistProduct(?User $user, ProductCartDto $dto): void
+
+    + clearCart(?User $user): void
+}
+
+class AddingPossibilityProductToCartCheckerService {
+    + __construct(WarehouseStockService $stockService)
+
+    + ensureProductCanBeAddedToCart(Product $product): void
+
+    + ensureCanUpdateProductsQuantity(Collection $cartItems): void
+}
+
+class CartDataPrepareService {
+    + __construct(
+            WarehouseProductInfoService $warehouseService,
+            WarehouseStockService $stockService,
+            DiscountCartService $discountCalculator
+        )
+
+    + prepareCartInfoForProductWithVariations(ProductCartDto $dto): UserCartInfoDto
+
+    + prepareCartInfoForNonVariationProduct(ProductCartDto $dto): UserCartInfoDto
+
+    + prepareCartItemsBeforeUpdate(CartProductsQuantityDto $dto): Collection
+}
+
+class DiscountCartService {
+    + __construct(DiscountedProductsService $discountService)
+
+    + loadDiscountIfExists(Product $product, int $quantity): ?array
+
+    + countFinalPrice(float $price, int $quantity): float
+
+    + updateQuantitiesAndPrices(CartProductsQuantityDto $dto, Collection $cartItems): Collection
+}
+
+CartController --> ClientCartService
+
+ClientCartService --> CartStorageService
+ClientCartService --> AddingPossibilityProductToCartCheckerService
+ClientCartService --> DiscountCartService
+ClientCartService --> CartDataPrepareService
+
+ClientCartService --> ProductCartDto
+ClientCartService --> CartProductsQuantityDto
+
+CartStorageService --> UserCartInfoDto
+CartStorageService --> ProductCartDto
+
+CartDataPrepareService --> ProductCartDto
+CartDataPrepareService --> UserCartInfoDto
+CartDataPrepareService --> CartProductsQuantityDto
+CartDataPrepareService --> DiscountCartService
+
+DiscountCartService --> CartProductsQuantityDto
+
+AddingPossibilityProductToCartCheckerService --> WarehouseStockService
+
+CartDataPrepareService --> WarehouseProductInfoService
+CartDataPrepareService --> WarehouseStockService
+
+DiscountCartService --> DiscountedProductsService
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+class BrandLogoController {
+    + __construct(BrandImageService $imageService)
+    + upload(BrandImageUploadRequest $request, Brand $brand): JsonResponse
+}
+
+class BrandImageService {
+    + __construct(BrandLogoStorageInterface $logoStorage)
+    + upload(UploadedFile $image, Brand $brand): void
+}
+
+interface BrandLogoStorageInterface {
+    + get(?string $imageId): string
+    + save(UploadedFile $file): string
+    + delete(?string $imageId): bool
+}
+
+BrandLogoController --> BrandImageService
+BrandImageService --> BrandLogoStorageInterface
+
+@enduml

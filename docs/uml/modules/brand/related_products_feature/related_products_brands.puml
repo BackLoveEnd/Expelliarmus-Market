@@ -1,0 +1,12 @@
+@startuml
+
+class RelatedProductBrandsController {
+ + getProductBrandsByCategory(string|int $category, BrandsProductsAction $action): JsonApiResourceCollection|JsonResponse
+}
+
+class BrandsProductsAction {
+    + handle(int|string $category): Collection
+}
+
+RelatedProductBrandsController -> BrandsProductsAction
+@enduml

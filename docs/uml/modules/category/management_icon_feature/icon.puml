@@ -1,0 +1,32 @@
+@startuml
+
+class CategoryIconController {
+    + __construct(CategoryIconService $categoryIconService)
+
+    + uploadIcon(Request $request, Category $category): JsonResponse
+
+    + editIcon(Request $request, Category $category): JsonResponse
+}
+
+class CategoryIconService {
+    + __construct(FilesystemManager $storage)
+
+    + upload(UploadedFile $icon, Category $category): void
+
+    + edit(UploadedFile $icon, Category $category): void
+
+    - saveIcon(UploadedFile $icon): void
+}
+
+class FilesystemManager {
+    + put($path, $options)
+
+    + url($path)
+
+    + exists($path)
+}
+
+CategoryIconController --> CategoryIconService
+
+CategoryIconService --> FilesystemManager
+@enduml

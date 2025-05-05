@@ -1,0 +1,14 @@
+@startuml
+
+class ShopCategoryAccessController {
+    + getCategoriesBrowseList(Request $request, BrowseAction $action): JsonApiResponse|JsonResponse
+
+    + getChildrenOfCategory(Category $category): JsonApiResponse|JsonResponse
+}
+
+class BrowseAction {
+    + handle(int $limit): Collection
+}
+
+ShopCategoryAccessController ..> BrowseAction
+@enduml
