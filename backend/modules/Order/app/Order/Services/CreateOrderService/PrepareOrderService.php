@@ -18,7 +18,7 @@ class PrepareOrderService
         private ProductsAvailabilityCheckerService $availabilityCheckerService,
     ) {}
 
-    public function prepare(?User $user)
+    public function prepare(?User $user): Collection
     {
         if ($this->cartStorage->isCartEmpty($user)) {
             throw new CartMustNotBeEmptyBeforeOrderException();

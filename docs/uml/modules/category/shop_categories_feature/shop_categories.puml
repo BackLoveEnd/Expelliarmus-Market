@@ -7,7 +7,7 @@ class ShopCategoryAccessController {
 }
 
 class BrowseAction {
-    + handle(int $limit): Collection
+    + handle(): Collection
 }
 
 ShopCategoryAccessController ..> BrowseAction

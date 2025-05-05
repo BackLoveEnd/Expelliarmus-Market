@@ -9,15 +9,15 @@ class CategoryOptionAttributesController {
 class CacheService {
     + __construct(Repository $repository)
 
-    + key(string $configKey, string|int|null $identifier = null): string
+    + key(): string
 
     + repo(): Repository
 }
 
 class GetAttributesAction {
-    + handle(Category $category): BaseCollection
+    + handle(): BaseCollection
 
-    - mapAttributes(Collection $attributes): BaseCollection
+    - mapAttributes(): BaseCollection
 }
 
 interface Repository {

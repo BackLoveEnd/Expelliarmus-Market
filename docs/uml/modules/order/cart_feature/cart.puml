@@ -45,43 +45,43 @@ class ClientCartService {
             DiscountCartService $discountCalculator,
             CartDataPrepareService $prepareService
         )
-    + getCart(?User $user): array
+    + getCart(): array
 
-    + addToCart(?User $user, ProductCartDto $dto): void
+    + addToCart(): void
 
-    + updateProductsQuantities(?User $user, Dto): void
+    + updateProductsQuantities(): void
 
-    + removeFromCart(?User $user, string $id): void
+    + removeFromCart(): void
 
-    + clearCart(?User $user): void
+    + clearCart(): void
 
-    + isCartEmpty(?User $user): bool
+    + isCartEmpty(): bool
 }
 
 class CartStorageService {
     + __construct(Session $session)
 
-    + getCart(?User $user): array
+    + getCart(): array
 
-    + saveCart(?User $user, UserCartInfoDto $cart): void
+    + saveCart(): void
 
-    + updateCart(?User $user, Collection $cartItems): void
+    + updateCart(): void
 
-    + removeFromCart(?User $user, string $id): void
+    + removeFromCart(): void
 
-    + productExistsInCart(?User $user, Product $product, ?int $variationId = null): bool
+    + productExistsInCart(): bool
 
-    + addQuantityToExistProduct(?User $user, ProductCartDto $dto): void
+    + addQuantityToExistProduct(): void
 
-    + clearCart(?User $user): void
+    + clearCart(): void
 }
 
 class AddingPossibilityProductToCartCheckerService {
     + __construct(WarehouseStockService $stockService)
 
-    + ensureProductCanBeAddedToCart(Product $product): void
+    + ensureProductCanBeAddedToCart(): void
 
-    + ensureCanUpdateProductsQuantity(Collection $cartItems): void
+    + ensureCanUpdateProductsQuantity(): void
 }
 
 class CartDataPrepareService {
@@ -91,21 +91,21 @@ class CartDataPrepareService {
             DiscountCartService $discountCalculator
         )
 
-    + prepareCartInfoForProductWithVariations(ProductCartDto $dto): UserCartInfoDto
+    + prepareCartInfoForProductWithVariations(): UserCartInfoDto
 
-    + prepareCartInfoForNonVariationProduct(ProductCartDto $dto): UserCartInfoDto
+    + prepareCartInfoForNonVariationProduct(): UserCartInfoDto
 
-    + prepareCartItemsBeforeUpdate(CartProductsQuantityDto $dto): Collection
+    + prepareCartItemsBeforeUpdate(): Collection
 }
 
 class DiscountCartService {
     + __construct(DiscountedProductsService $discountService)
 
-    + loadDiscountIfExists(Product $product, int $quantity): ?array
+    + loadDiscountIfExists(): ?array
 
-    + countFinalPrice(float $price, int $quantity): float
+    + countFinalPrice(): float
 
-    + updateQuantitiesAndPrices(CartProductsQuantityDto $dto, Collection $cartItems): Collection
+    + updateQuantitiesAndPrices(): Collection
 }
 
 CartController --> ClientCartService

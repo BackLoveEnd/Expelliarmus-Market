@@ -4,7 +4,7 @@ class CategoriesBrandController {
 }
 
 class BrandCategoriesAction {
-    + handle(string|int $brandId): Collection
+    + handle(): Collection
 }
 
 CategoriesBrandController ..> BrandCategoriesAction

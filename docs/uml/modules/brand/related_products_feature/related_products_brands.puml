@@ -5,7 +5,7 @@ class RelatedProductBrandsController {
 }
 
 class BrandsProductsAction {
-    + handle(int|string $category): Collection
+    + handle(): Collection
 }
 
 RelatedProductBrandsController -> BrandsProductsAction

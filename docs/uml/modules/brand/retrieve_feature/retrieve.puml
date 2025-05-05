@@ -7,11 +7,11 @@ class RetrieveBrandsController {
 }
 
 class GetPagePaginatedBrandsAction {
-    + handle(array columns, int defaultBrandsShowNumber): array
+    + handle(): array
 }
 
 class GetLimitOffsetPaginatedBrandsAction {
-    + handle(array columns, int limit, int offset): object
+    + handle(): object
 }
 
 RetrieveBrandsController *-- GetPagePaginatedBrandsAction : contains

@@ -11,11 +11,11 @@ class CategoryIconController {
 class CategoryIconService {
     + __construct(FilesystemManager $storage)
 
-    + upload(UploadedFile $icon, Category $category): void
+    + upload(): void
 
-    + edit(UploadedFile $icon, Category $category): void
+    + edit(): void
 
-    - saveIcon(UploadedFile $icon): void
+    - saveIcon(): void
 }
 
 class FilesystemManager {

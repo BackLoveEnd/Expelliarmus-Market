@@ -6,7 +6,7 @@ class BrandLogoController {
 
 class BrandImageService {
     + __construct(BrandLogoStorageInterface $logoStorage)
-    + upload(UploadedFile $image, Brand $brand): void
+    + upload(U): void
 }
 
 interface BrandLogoStorageInterface {
