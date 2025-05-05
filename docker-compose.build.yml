@@ -5,8 +5,6 @@ services:
       dockerfile: .docker/node/node.Dockerfile
     image: ghcr.io/artyom84783454/expelliarmus-market-node:latest
     container_name: npm
-    volumes:
-      - ./frontend:/var/www/expelliarmus/frontend
     command: npm run build
     networks:
       - expelliarmus
