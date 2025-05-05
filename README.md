@@ -326,3 +326,6 @@ or [download .drawio file](https://raw.githubusercontent.com/BackLoveEnd/Expelli
 on the open page: Right Click -> Save as) and open diagram with [draw.io](https://app.diagrams.net/).
 
 ### Modules Diagrams
+
+Diagrams for each modules
+available [here](https://github.com/BackLoveEnd/Expelliarmus-Market/tree/master/docs/uml/modules).
