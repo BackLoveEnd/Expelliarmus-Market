@@ -1,0 +1,34 @@
+@startuml
+
+class ManagerAuthController {
+    + __construct(ManagerAuthService $authService)
+
+    + login(ManagerLoginRequest $request): JsonResponse
+
+    + logout(Request $request): JsonResponse
+
+    + register(ManagerRegisterRequest $request): JsonResponse
+}
+
+class ManagerAuthService {
+    + __construct(ManagerAuthRepositoryInterface $authRepository)
+
+    + register(): void
+
+    + prepareToLogin(): Manager
+}
+
+interface ManagerAuthRepositoryInterface {
+    + save(ManagerRegisterDto $managerRegisterDto): Manager
+    + getByEmail(string $email, array $cols = ['*']): ?Manager
+}
+
+class ManagerAuthRepository {
+    + save(): Manager
+    + getByEmail(): ?Manager
+}
+
+ManagerAuthController --> ManagerAuthService
+ManagerAuthService --> ManagerAuthRepositoryInterface
+ManagerAuthRepository --> ManagerAuthRepositoryInterface : implements
+@enduml

@@ -1,0 +1,86 @@
+@startuml
+
+class ManipulationProductController {
+    + edit(ProductEditRequest $request,Product $product,EditProductFactoryAction $factory): JsonResponse
+}
+
+class EditProductFactoryAction {
+    + createAction(): EditProductActionInterface
+
+    - editSingleOptionProduct(): EditProductActionInterface
+
+    - editCombinedOptionsProduct(): EditProductActionInterface
+
+    - editProductWithoutOptions(): EditProductActionInterface
+}
+
+interface EditProductActionInterface {
+    + handle(EditProduct $editProduct, EditProductInWarehouse $editProductInWarehouse): Product
+}
+
+class EditProduct {
+    + __construct(Product $product, DeleteVariationsWhenNeedAction $deleteVariationAction)
+    + handle(): Product
+}
+
+class EditProductInWarehouse {
+    + __construct(Product $product)
+    + handle(): Warehouse
+}
+
+class DeleteVariationsWhenNeedAction {
+    + handle(): void
+
+    - deleteCombinedVariations(Product $product): void
+
+    - deleteSingleVariation(Product $product): void
+
+    - deleteAllVariations(Product $product): void
+}
+
+class EditProductWithSingleOption {
+    - CreateProductDto $productDto
+    - CreateWarehouseDto $warehouseDto
+    - CreateProductAttributeSingleVariationDto $singleVariationDto
+
+    + __construct($productDto, $warehouseDto, $singleVariationDto)
+
+    + handle(): Product
+
+    - prepareWarehouseData(): void
+
+    - updateSingleVariation(): void
+}
+
+class EditProductWithCombinedOptions {
+    - CreateProductDto $productDto
+    - CreateWarehouseDto $warehouseDto
+    - Collection $combinedVariationsDto
+
+    + handle(): Product
+
+    - prepareWarehouseData(): void
+
+    - updateVariations(): void
+}
+
+class editProductWithoutOptions {
+    + handle(): Product
+}
+
+ManipulationProductController --> EditProductFactoryAction
+
+EditProductFactoryAction --> EditProductWithSingleOption : <<creates>>
+EditProductFactoryAction --> EditProductWithCombinedOptions : <<creates>>
+EditProductFactoryAction --> editProductWithoutOptions : <<creates>>
+
+EditProductWithSingleOption ..|> EditProductActionInterface
+EditProductWithCombinedOptions ..|> EditProductActionInterface
+editProductWithoutOptions ..|> EditProductActionInterface
+
+EditProductActionInterface --> EditProduct
+EditProductActionInterface --> EditProductInWarehouse
+
+EditProduct --> DeleteVariationsWhenNeedAction
+
+@enduml

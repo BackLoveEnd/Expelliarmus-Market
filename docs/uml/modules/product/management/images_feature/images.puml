@@ -1,0 +1,100 @@
+@startuml
+
+class ProductImagesController {
+    + __construct(ProductImagesService $imagesService)
+
+    + store(ProductImageRequest $request, Product $product): JsonResponse
+
+    + edit(ProductEditImageRequest $request, Product $product): JsonResponse
+}
+
+class ProductImagesService {
+    + __construct(ProductImagesStorageInterface $imagesStorage)
+
+    + upload(ProductImageDto $imageDto, Product $product, Size $size): void
+
+    + uploadPreviewImage(?UploadedFile $image, Product $product): ?string
+}
+
+interface ProductImagesStorageInterface {
+    + upload(): string;
+
+    + uploadMany(): array;
+
+    + getOne(): string;
+
+    + getAll(): array;
+
+    + getAllFromSources(): array;
+
+    + delete(): bool;
+
+    + deleteMany(): void;
+
+    + isExists(): bool;
+}
+
+class S3ProductImagesStorage {
+    + upload(): string;
+
+    + uploadMany(): array;
+
+    + getOne(): string;
+
+    + getAll(): array;
+
+    + getAllFromSources(): array;
+
+    + delete(): bool;
+
+    + deleteMany(): void;
+
+    + isExists(): bool;
+}
+
+class LocalProductImagesStorage {
+    + upload(): string;
+
+    + uploadMany(): array;
+
+    + getOne(): string;
+
+    + getAll(): array;
+
+    + getAllFromSources(): array;
+
+    + delete(): bool;
+
+    + deleteMany(): void;
+
+    + isExists(): bool;
+}
+
+abstract class BaseProductImagesStorage {
+    - ImageManagerInterface $imageManager,
+    - Filesystem $storage
+
+    + __construct($imageManager, $storage)
+
+    + saveResized(Product $product, string $imageId, Size $size): string
+
+    + getResized(Product $product, ?string $resizedImageId, Size $size): string
+
+    + isExists(Product $product, string $imageId): bool
+
+    + abstract getInterventionPreviewImage(): Image;
+
+    + abstract getImageFullPath(): string;
+}
+
+ProductImagesController --> ProductImagesService
+
+ProductImagesService --> ProductImagesStorageInterface
+
+LocalProductImagesStorage --|> BaseProductImagesStorage
+LocalProductImagesStorage ..|> ProductImagesStorageInterface
+
+S3ProductImagesStorage --|> BaseProductImagesStorage
+S3ProductImagesStorage ..|> ProductImagesStorageInterface
+
+@enduml

@@ -1,0 +1,131 @@
+@startuml
+
+class OrderCreateController {
+    + __construct(CreateGuestAction $createGuestAction, OrderService $orderService)
+
+    + __invoke(GuestOrderCreateRequest $request): JsonResponse
+}
+
+class CreateGuestAction {
+    + handle(CreateGuestDto $dto): Guest
+}
+
+class OrderService {
+    - DiscountedProductsService $discountService
+    - WarehouseProductInfoService $warehouseService
+    - WarehouseStockService $stockService
+    - CartStorageService $storageService
+
+    + __construct($discountService,$warehouseService,$stockService, $storageService)
+
+    + for(UserInterface $user): static
+
+    + process(): int
+
+    - userOrderFactory(User $user): int
+
+    - guestOrderFactory(Guest $guest): int
+}
+
+class OrderRegularUserCreateService {
+    - CartStorageService $cartStorage
+    - PrepareOrderService $prepareOrderService
+    - OrderLineService $orderPriceService
+    - OrderPersistService $orderPersistService
+
+    + __construct($cartStorage, $prepareOrderService, $orderPriceService, $orderPersistService)
+
+    + create(User $user, ?string $couponCode): int
+}
+
+class OrderGuestCreateService {
+    - CartStorageService $cartStorage
+    - PrepareOrderService $prepareOrderService
+    - OrderLineService $orderPriceService
+    - OrderPersistService $orderPersistService
+
+    + __construct($cartStorage, $prepareOrderService, $orderPriceService, $orderPersistService)
+
+    + create(User $user, ?string $couponCode): int
+}
+
+class CartStorageService {
+    __construct(Session $session)
+
+    + clearCart(?User $user): void
+}
+
+class PrepareOrderService {
+    - ProductsAvailabilityCheckerService $availabilityCheckerService,
+    - CartStorageService
+
+    + __construct($cartStorage, $availabilityCheckerService),
+
+    + prepare(?User $user): Collection
+}
+
+class OrderLineService {
+    - DiscountedProductsService $discountService
+    - CouponManageService $couponService
+
+    + __construct($discountService, $couponService)
+}
+
+class OrderPersistService {
+    + __construct(WarehouseStockService $warehouseStockService)
+
+    + saveCheckout(): int
+}
+
+class ProductsAvailabilityCheckerService {
+    + ensureProductsCanBeProcessedToCheckout(): EloquentCollection
+
+    + ensureHasEnoughSupplies(): Collection
+}
+
+class CouponManageService {
+    + checkCoupon(): Coupon
+}
+
+class DiscountedProductsService {
+    + loadLastActiveDiscountForProduct(): Product
+}
+
+class WarehouseStockService {
+    + decreaseProductsStock(): void
+
+    + returnReservedProductsToStock(): void
+}
+
+class WarehouseProductInfoService {
+    + getProductAttributeById(): Product
+}
+OrderCreateController --> CreateGuestAction
+OrderCreateController --> OrderService
+
+OrderService --> DiscountedProductsService
+OrderService --> WarehouseProductInfoService
+OrderService --> WarehouseStockService
+OrderService --> CartStorageService
+
+OrderService ..> OrderRegularUserCreateService : creates
+OrderService ..> OrderGuestCreateService : creates
+
+OrderRegularUserCreateService --> CartStorageService
+OrderRegularUserCreateService --> PrepareOrderService
+OrderRegularUserCreateService --> OrderLineService
+OrderRegularUserCreateService --> OrderPersistService
+
+OrderGuestCreateService --> CartStorageService
+OrderGuestCreateService --> PrepareOrderService
+OrderGuestCreateService --> OrderLineService
+OrderGuestCreateService --> OrderPersistService
+
+PrepareOrderService --> CartStorageService
+PrepareOrderService --> ProductsAvailabilityCheckerService
+
+OrderLineService --> DiscountedProductsService
+OrderLineService --> CouponManageService
+
+OrderPersistService --> WarehouseStockService
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+
+class ProductListingController {
+    + __construct(CacheService $cacheService)
+
+    + explore(GetExploredProductsAction $action): JsonApiResource|JsonResponse
+
+    + suggestions(GetExploredProductsAction $action): JsonApiResource|JsonResponse
+
+    + relatedToProduct(Category $category, RelatedProductsAction $action): JsonApiResource|JsonResponse
+
+    + topSellers(GetTopSellersProductsAction $action): JsonApiResource|JsonResponse
+}
+
+class GetExploredProductsAction {
+    + __construct(WarehouseProductInfoService $warehouseService)
+
+    + handle(): ?Collection
+}
+
+class GetExploredProductsAction {
+    + __construct(WarehouseProductInfoService $warehouseService)
+
+    + handle(int $take): ?Collection
+}
+
+class RelatedProductsAction {
+    - DiscountedProductsService $discountService
+    - WarehouseProductInfoService $warehouseService
+
+    + __construct($discountService, $warehouseService)
+
+    + handle(): ?Collection
+}
+
+class GetTopSellersProductsAction {
+    - DiscountedProductsService $discountService
+    - WarehouseProductInfoService $warehouseService
+
+    + __construct($discountService, $warehouseService)
+
+    + handle(): ?Collection
+}
+
+class WarehouseProductInfoService {
+    + getWarehouseInfoAboutProducts(): Collection
+}
+
+class DiscountedProductsService {
+    + loadDiscountsForProducts(): Collection
+}
+
+ProductListingController --> GetExploredProductsAction
+ProductListingController --> RelatedProductsAction
+ProductListingController --> GetTopSellersProductsAction
+
+GetExploredProductsAction --> WarehouseProductInfoService
+RelatedProductsAction --> DiscountedProductsService
+RelatedProductsAction --> WarehouseProductInfoService
+GetTopSellersProductsAction --> DiscountedProductsService
+GetTopSellersProductsAction --> WarehouseProductInfoService
+@enduml

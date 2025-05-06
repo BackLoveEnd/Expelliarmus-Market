@@ -1,0 +1,11 @@
+@startuml
+
+class ManipulationBrandController {
+    + create(BrandRequest $request): BrandResource
+
+    + edit(Brand $brand, BrandRequest $request): JsonResponse
+
+    +delete(Brand $brand): JsonResponse
+}
+
+@enduml

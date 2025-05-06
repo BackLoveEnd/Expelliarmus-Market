@@ -1,0 +1,33 @@
+@startuml
+
+class RetrieveDiscountController {
+    + search(Request $request, SearchForProductToAddDiscount $action): Resource|JsonResponse
+
+    + getAllDiscountedProducts(GetAllDiscountedProductsAction $action): Resource
+
+    + getProductWithDiscountsInfo(ProductSlug $productSlug,GetProductWithDiscountInfoAction $action): ProductWarehouseDiscountsResource
+}
+
+class SearchForProductToAddDiscount {
+    + handle(): Collection
+}
+
+class GetAllDiscountedProductsAction {
+    + handle(): LengthAwarePaginator
+}
+
+class GetProductWithDiscountInfoAction {
+    + __construct(WarehouseProductInfoService $warehouseService)
+
+    + handle(): Product
+}
+
+class WarehouseProductInfoService {
+    + getWarehouseInfoAboutProduct(int $productId): Product
+}
+
+RetrieveDiscountController --> SearchForProductToAddDiscount
+RetrieveDiscountController --> GetAllDiscountedProductsAction
+RetrieveDiscountController --> GetProductWithDiscountInfoAction
+GetProductWithDiscountInfoAction --> WarehouseProductInfoService
+@enduml

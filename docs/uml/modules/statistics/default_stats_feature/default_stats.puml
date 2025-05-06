@@ -1,0 +1,26 @@
+@startuml
+
+class ManagerDefaultStatsController {
+    + __construct(CountStatisticsService $service)
+
+    + __invoke(): JsonResponse
+}
+
+class CountStatisticsService $service {
+    - Collection $models
+
+    + for(string|array $model): static
+
+    + apply(array $handlers): Collection
+
+    - applyHandlersToSpecificModel(): Collection
+
+    - applyHandlersToAllModels(): Collection
+
+    - applyHandlerToAllModels(): Collection
+
+    - applyHandlerToModel(): array
+}
+
+ManagerDefaultStatsController --> CountStatisticsService
+@enduml

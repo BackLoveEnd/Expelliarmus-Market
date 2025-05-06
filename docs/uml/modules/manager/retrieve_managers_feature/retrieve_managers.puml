@@ -1,0 +1,12 @@
+@startuml
+
+class RetrieveManagersController {
+    + retrieveManagerTable(Request $request, GetManagersPaginated $action)
+}
+
+class GetManagersPaginated {
+    + handle(): LimitOffsetDto
+}
+
+RetrieveManagersController ..> GetManagersPaginated : uses
+@enduml

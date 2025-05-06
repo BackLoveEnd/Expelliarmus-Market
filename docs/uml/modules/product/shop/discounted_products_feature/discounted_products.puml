@@ -1,0 +1,15 @@
+@startuml
+
+class DiscountedProductsController {
+    + __construct(DiscountedProductsService $service)
+
+    + getFlashSales(Request $request): JsonApiResourceCollection|JsonResponse
+}
+
+class DiscountedProductsService {
+    + getFlashSalesPaginated(int $limit, int $offset): LimitOffsetDto
+}
+
+DiscountedProductsController --> DiscountedProductsService
+
+@enduml

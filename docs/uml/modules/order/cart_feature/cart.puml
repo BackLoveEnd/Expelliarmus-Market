@@ -1,0 +1,138 @@
+@startuml
+
+class CartController {
+    - ClientCartService $service
+    + __construct(ClientCartService service)
+
+    + getClientCart(Request): JsonApiResourceCollection | JsonResponse
+
+    + addProductToCart(Request): JsonResponse
+
+    + updateProductsQuantity(Request)): JsonResponse
+
+    + removeFromCart(Request, string id): JsonResponse
+
+    + clearCart(Request): JsonResponse
+}
+
+class ProductCartDto {
+    + Product $product,
+    + ?int $variationId,
+    + int $quantity,
+}
+
+class CartProductsQuantityDto {
+    + Collection $cartItems
+}
+
+class UserCartInfoDto {
+    - int $product_id,
+    - int $quantity,
+    - string $productImage,
+    - string $productTitle,
+    - string $productSlug,
+    - float $pricePerUnit,
+    - float $finalPrice,
+    - ?array $discount,
+    - ?array $variation,
+    - ?string $id = null,
+}
+
+class ClientCartService {
+    + __construct(
+            CartStorageService $storage,
+            AddingPossibilityProductToCartCheckerService $checker,
+            DiscountCartService $discountCalculator,
+            CartDataPrepareService $prepareService
+        )
+    + getCart(): array
+
+    + addToCart(): void
+
+    + updateProductsQuantities(): void
+
+    + removeFromCart(): void
+
+    + clearCart(): void
+
+    + isCartEmpty(): bool
+}
+
+class CartStorageService {
+    + __construct(Session $session)
+
+    + getCart(): array
+
+    + saveCart(): void
+
+    + updateCart(): void
+
+    + removeFromCart(): void
+
+    + productExistsInCart(): bool
+
+    + addQuantityToExistProduct(): void
+
+    + clearCart(): void
+}
+
+class AddingPossibilityProductToCartCheckerService {
+    + __construct(WarehouseStockService $stockService)
+
+    + ensureProductCanBeAddedToCart(): void
+
+    + ensureCanUpdateProductsQuantity(): void
+}
+
+class CartDataPrepareService {
+    + __construct(
+            WarehouseProductInfoService $warehouseService,
+            WarehouseStockService $stockService,
+            DiscountCartService $discountCalculator
+        )
+
+    + prepareCartInfoForProductWithVariations(): UserCartInfoDto
+
+    + prepareCartInfoForNonVariationProduct(): UserCartInfoDto
+
+    + prepareCartItemsBeforeUpdate(): Collection
+}
+
+class DiscountCartService {
+    + __construct(DiscountedProductsService $discountService)
+
+    + loadDiscountIfExists(): ?array
+
+    + countFinalPrice(): float
+
+    + updateQuantitiesAndPrices(): Collection
+}
+
+CartController --> ClientCartService
+
+ClientCartService --> CartStorageService
+ClientCartService --> AddingPossibilityProductToCartCheckerService
+ClientCartService --> DiscountCartService
+ClientCartService --> CartDataPrepareService
+
+ClientCartService --> ProductCartDto
+ClientCartService --> CartProductsQuantityDto
+
+CartStorageService --> UserCartInfoDto
+CartStorageService --> ProductCartDto
+
+CartDataPrepareService --> ProductCartDto
+CartDataPrepareService --> UserCartInfoDto
+CartDataPrepareService --> CartProductsQuantityDto
+CartDataPrepareService --> DiscountCartService
+
+DiscountCartService --> CartProductsQuantityDto
+
+AddingPossibilityProductToCartCheckerService --> WarehouseStockService
+
+CartDataPrepareService --> WarehouseProductInfoService
+CartDataPrepareService --> WarehouseStockService
+
+DiscountCartService --> DiscountedProductsService
+
+@enduml

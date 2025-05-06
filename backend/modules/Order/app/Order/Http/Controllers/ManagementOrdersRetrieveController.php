@@ -15,7 +15,7 @@ use Modules\Order\Order\Models\Order;
 use Modules\Order\Order\Services\OrdersInfoService;
 use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
-class ManagementOrdersRetrieveService extends Controller
+class ManagementOrdersRetrieveController extends Controller
 {
     public function __construct(
         private OrdersInfoService $ordersInfoService,

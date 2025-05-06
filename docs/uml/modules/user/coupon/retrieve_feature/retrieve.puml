@@ -1,0 +1,19 @@
+@startuml
+
+class CouponRetrieveController {
+    + __construct(CouponStorageService $storageService)
+
+    + getPersonalCoupons(Request $request): JsonApiResourceCollection
+
+    + getGlobalCoupons(Request $request): JsonApiResourceCollection
+}
+
+class CouponStorageService {
+    + getGlobals(int $limit, int $offset): LimitOffsetDto
+
+    + getPersonal(int $limit, int $offset): LimitOffsetDto
+}
+
+CouponRetrieveController --> CouponStorageService
+
+@enduml
