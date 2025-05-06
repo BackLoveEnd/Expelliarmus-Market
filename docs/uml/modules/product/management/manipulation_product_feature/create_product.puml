@@ -1,0 +1,96 @@
+@startuml
+
+class ManipulationProductController {
+    + store(ProductCreateRequest $request, CreateProductFactoryAction $factory): JsonResponse
+}
+
+class CreateProductFactoryAction {
+    + createAction(): CreateProductActionInterface
+
+    - createSingleAttributeProduct(): CreateProductActionInterface
+
+    - createCombinedAttributeProduct(): CreateProductActionInterface
+
+    - createProductWithoutAttributes(): CreateProductActionInterface
+}
+
+interface CreateProductActionInterface {
+    + handle(CreateProduct $createProduct, CreateProductInWarehouse $createInWarehouse): Product
+}
+
+class CreateProduct {
+    + handle(CreateProductDto $dto): Product
+}
+
+class CreateProductInWarehouse {
+    + handle(Product $product, CreateWarehouseDto $dto): Warehouse
+}
+
+class CreateProductDto {
+    + string $title,
+    + string $titleDesc,
+    + string $mainDesc,
+    + int $categoryId,
+    + int $brandId,
+    + string $productArticle,
+    + Collection $productSpecs,
+}
+
+class CreateWarehouseDto {
+    - int $totalQuantity,
+    - readonly ?float $price = null,
+    - ?Collection $variationPrices = null,
+
+    + setTotalQuantity(int $totalQuantity): void
+
+    + setVariationPrices(Collection $prices): void
+}
+
+class CreateProductWithSingleAttributesAction {
+    - CreateProductDto $productDto
+    - CreateWarehouseDto $warehouseDto
+    - CreateProductAttributeSingleVariationDto $singleVariationDto
+
+    + __construct($productDto, $warehouseDto, $singleVariationDto)
+
+    + handle(): Product
+
+    - prepareWarehouseData(): void
+
+    - handleSingleAttributeCreation(): void
+}
+
+class CreateProductWithCombinedAttributesAction {
+    - CreateProductDto $productDto
+    - CreateWarehouseDto $warehouseDto
+    - Collection $combinedVariationsDto
+
+    + handle(): Product
+
+    - prepareWarehouseData(): void
+
+    - handleCreatingCombinedAttributes(): void
+
+    - createVariations(): EloquentCollection
+}
+
+class CreateProductWithoutAttributes {
+    + handle(): Product
+}
+
+ManipulationProductController --> CreateProductFactoryAction
+CreateProductFactoryAction --> CreateProductWithSingleAttributesAction : creates
+CreateProductFactoryAction --> CreateProductWithCombinedAttributesAction : creates
+
+CreateProductWithSingleAttributesAction ..|> CreateProductActionInterface
+CreateProductWithCombinedAttributesAction ..|> CreateProductActionInterface
+
+CreateProductActionInterface --> CreateProduct
+CreateProductActionInterface --> CreateProductInWarehouse
+
+CreateProductWithSingleAttributesAction --> CreateProductDto
+CreateProductWithSingleAttributesAction --> CreateWarehouseDto
+
+CreateProductWithCombinedAttributesAction --> CreateProductDto
+CreateProductWithCombinedAttributesAction --> CreateWarehouseDto
+@enduml

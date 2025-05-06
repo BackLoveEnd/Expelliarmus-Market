@@ -43,6 +43,9 @@ class GetWarehouseProductsPaginatedAction
                     'products.title',
                     'products.product_article',
                     'products.status',
+                    'warehouses.status as warehouse_status',
+                    'warehouses.total_quantity',
+                    'warehouses.arrived_at',
                 ]);
 
             return new LimitOffsetDto(

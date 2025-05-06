@@ -1,0 +1,22 @@
+@startuml
+
+class UsersController {
+    + user(Request $request): UserResource|ManagerResource|JsonResponse
+
+    + store(Request $request, CreateNewUser $action): JsonResponse
+
+    + getRegularCustomers(Request $request, GetRegularCustomersAction $action): JsonApiResourceCollection
+}
+
+class GetRegularCustomersAction {
+    + handle(): LimitOffsetDto
+}
+
+class CreateNewUser {
+    + create(array $input): User
+}
+
+UsersController --> GetRegularCustomersAction
+UsersController --> CreateNewUser
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+
+class MinMaxPricesProductController {
+    + getMinMaxProductsPrice(GetMinMaxProductsPriceAction $action): JsonResponse
+
+    + getMinMaxProductsPriceForCategory(Category $category, PriceCategoryAction $action): JsonResponse
+
+    + getMinMaxProductsPriceForBrand(Brand $brand, PriceBrandAction $action): JsonResponse
+}
+
+class GetMinMaxProductsPriceAction {
+    + handle(): object
+}
+
+class GetMinMaxProductsPriceForCategoryAction {
+    + handle(Category $category): object
+}
+
+class GetMinMaxProductPriceForBrandAction {
+    + handle(Brand $brand): object
+}
+
+MinMaxPricesProductController --> GetMinMaxProductsPriceAction : uses
+MinMaxPricesProductController --> GetMinMaxProductsPriceForCategoryAction : uses
+MinMaxPricesProductController --> GetMinMaxProductPriceForBrandAction : uses
+@enduml

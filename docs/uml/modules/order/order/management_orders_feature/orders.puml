@@ -1,0 +1,37 @@
+@startuml
+
+class ManagementOrdersRetrieveController {
+    + __construct(OrdersInfoService $ordersInfoService)
+
+    + getPendingOrders(Request $request)
+
+    + getCancelledOrders(Request $request)
+
+    + getDeliveredOrders(Request $request)
+
+    + getRefundedOrders(Request $request)
+
+    + getOrderLines(Request $request, RequestModel $model)
+}
+
+class OrdersInfoService {
+    + pendings(): LimitOffsetDto
+
+    + refunded(): LimitOffsetDto
+
+    + delivered(): LimitOffsetDto
+
+    + cancelled(): LimitOffsetDto
+}
+
+class LimitOffsetDto {
+    + Collection $items,
+    + int $total,
+    + int $limit,
+    + int $offset,
+}
+
+ManagementOrdersRetrieveController --> OrdersInfoService
+OrdersInfoService --> LimitOffsetDto : returns
+
+@enduml

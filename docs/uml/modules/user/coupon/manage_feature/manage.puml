@@ -1,0 +1,46 @@
+@startuml
+
+class CouponManageController {
+    + __construct(CouponManageService $couponManageService)
+
+    + create(CreateCouponRequest $request): CouponResource
+
+    + edit(EditCouponRequest $request, Coupon $coupon): JsonResponse
+
+    +  delete(Coupon $coupon): JsonResponse
+}
+
+class CouponManageService {
+    + createCoupon(CouponDto $dto): CouponUserDto|Coupon
+
+    + updateCoupon(Coupon $coupon, CouponEditDto $dto): void
+
+    + deleteCoupon(Coupon $coupon): void
+}
+
+class CouponDto {
+    + Carbon $expiresAt
+    + CouponTypeEnum $type
+    + int $discount
+    + ?string $couponCode = null
+    + ?string $email = null
+}
+
+class CouponUserDto {
+    + Coupon $coupon
+    + User|string $user
+}
+
+class CouponEditDto {
+    + Coupon $coupon
+    + Carbon $expiresAt
+    + int $discount
+    + ?string $email = null
+}
+
+CouponManageController --> CouponManageService
+
+CouponManageService *-- CouponDto
+CouponManageService *-- CouponUserDto
+CouponManageService *-- CouponEditDto
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+
+class ProductStatusController {
+    + __construct(ProductStatusService $statusService)
+
+    + publish(Product $product): JsonResponse
+
+    + unPublish(Product $product): JsonResponse
+}
+
+class ProductStatusService {
+    + publish(Product $product): void
+
+    + unPublish(Product $product): void
+}
+
+ProductStatusController --> ProductStatusService
+@enduml

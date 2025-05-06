@@ -1,0 +1,34 @@
+@startuml
+
+class OrderCancelController {
+    + __construct(CancelOrderService $cancelOrderService)
+
+    + __invoke(Request $request, Order $order): JsonResponse
+}
+
+class CancelOrderService {
+    - ChangeOrderStatusAction $changeOrderStatusAction,
+    - WarehouseStockService $warehouseStockService,
+    - WarehouseProductInfoService $warehouseInfoService
+    + __construct($changeOrderStatusAction, $warehouseStockService, $warehouseInfoService)
+
+    + cancel(Order $order): void
+}
+
+class ChangeOrderStatusAction {
+    + handle(Order $order, OrderStatusEnum $nextStatus): Order
+}
+
+class WarehouseStockService {
+    + returnReservedProductsToStock(): void
+}
+
+class WarehouseProductInfoService {
+    + getProductAttributeById(): Product
+}
+
+OrderCancelController --> CancelOrderService
+CancelOrderService --> ChangeOrderStatusAction
+CancelOrderService --> WarehouseStockService
+CancelOrderService --> WarehouseProductInfoService
+@enduml

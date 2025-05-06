@@ -56,7 +56,6 @@ class CategoryController extends Controller
      * Usage place - Admin section.
      *
      * @return JsonApiResourceCollection|JsonResponse
-     * @throws AuthorizationException
      */
     public function rootCategories(): JsonApiResourceCollection|JsonResponse
     {

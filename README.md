@@ -161,8 +161,12 @@ make backend-tests
 Expelliarmus-Market is built with a modular architecture, allowing businesses to manage various aspects of their
 e-commerce platform efficiently. Below is an overview of the core modules and the tasks they handle:
 
-- **🛒 Order**
-
+- **🛒 Order**  
+  Handles cart functionality and order processing (excluding payments).
+    - Users shopping cart functionality.
+    - Create orders from the cart (checkout process without payment).
+    - Track order status (e.g., pending, processing, shipped).
+    - Enable managers to view, filter, and manage customer orders.
 
 - **👤 User**  
   Provides robust user management for both customers and administrators.
@@ -171,6 +175,12 @@ e-commerce platform efficiently. Below is an overview of the core modules and th
     - Store and update user profiles and preferences.
     - Ability to conveniently interact with products by adding them to the cart and wishlist.
 
+- **🧑‍💼 Manager**  
+  Handles administrative functions for store managers.
+    - Super managers can add and manage store managers.
+    - Assign roles and manage access rights for different managers.
+    - Create, edit, and delete discount coupons.
+    - Track coupon usage and performance analytics.
 
 - **📦 Product**  
   Handles product catalog management for the store.
@@ -217,10 +227,105 @@ available [here](https://documenter.getpostman.com/view/31662162/2sB2cSg3Ya#f83d
 
 ### Web Application screenshots
 
+### Shop
+
+![Home Page](docs/app_overview/home.png)
+<div style="text-align: center;">Pic.1 Home page</div>
+
+![Products Page](docs/app_overview/products.png)
+<div style="text-align: center;">Pic.2 Products page</div>
+
+![Product Page](docs/app_overview/product_page.png)
+<div style="text-align: center;">Pic.3 Product Page</div>
+
+![Categories Overview](docs/app_overview/categories.png)
+<div style="text-align: center;">Pic.4 Categories Overview</div>
+
+![Category Products](docs/app_overview/by_categories.png)
+<div style="text-align: center;">Pic.5 Products by categories</div>
+
+![Brands Overview](docs/app_overview/brands.png)
+<div style="text-align: center;">Pic.6 Brands Overview</div>
+
+![Brands Products](docs/app_overview/by_brands.png)
+<div style="text-align: center;">Pic.7 Products by brands</div>
+
+![Cart](docs/app_overview/cart.png)
+<div style="text-align: center;">Pic.8 Cart</div>
+
+![Checkout Page](docs/app_overview/checkout.png)
+<div style="text-align: center;">Pic.9 Checkout Page</div>
+
+![Phone 1](docs/app_overview/account.png)
+<div style="text-align: center;">Pic.10 Account</div>
+
+![Coupons](docs/app_overview/coupons.png)
+<div style="text-align: center;">Pic.11 Coupons</div>
+
+![Order History](docs/app_overview/order_history.png)
+<div style="text-align: center;">Pic.12 Order History</div>
+
+### Management Panel
+
+![Management Home Page](docs/app_overview/manager_home.png)
+<div style="text-align: center;">Pic.13 Home Page</div>
+
+![Users](docs/app_overview/manager_users.png)
+<div style="text-align: center;">Pic.14 Users</div>
+
+![Coupons](docs/app_overview/manager_coupons.png)
+<div style="text-align: center;">Pic.15 Coupons Management</div>
+
+![Orders](docs/app_overview/manager_orders.png)
+<div style="text-align: center;">Pic.16 Orders</div>
+
+![Products For Category](docs/app_overview/manager_all_products.png)
+<div style="text-align: center;">Pic.17 Products in each category</div>
+
+![Product Creation 1](docs/app_overview/manager_product_create1.png)
+<div style="text-align: center;">Pic.18 Product creation</div>
+
+![Product Creation 2](docs/app_overview/manager_product_create2.png)
+<div style="text-align: center;">Pic.19 Product creation</div>
+
+![Product Edit](docs/app_overview/manager_product_edit.png)
+<div style="text-align: center;">Pic.20 Product edit</div>
+
+![Categories](docs/app_overview/manager_categories.png)
+<div style="text-align: center;">Pic.21 Categories Management</div>
+
+![Brands](docs/app_overview/manager_brands.png)
+<div style="text-align: center;">Pic.22 Brands Management</div>
+
+![Trash](docs/app_overview/manager_trash.png)
+<div style="text-align: center;">Pic.23 Products Trash</div>
+
+![Warehouse 1](docs/app_overview/management_warehouse_products.png)
+<div style="text-align: center;">Pic.24 Warehouse</div>
+
+![Warehouse 2](docs/app_overview/management_warehouse_product.png)
+<div style="text-align: center;">Pic.25 Warehouse</div>
+
+![Discounted Products](docs/app_overview/management_warehouse_discounts.png)
+<div style="text-align: center;">Pic.26 Discounted Products</div>
+
+![Discount creation](docs/app_overview/management_add_discount.png)
+<div style="text-align: center;">Pic.27 Discount creation</div>
+
+![Slider](docs/app_overview/manager_slider.png)
+<div style="text-align: center;">Pic.28 Slider Content Management</div>
+
+![New Arrivals](docs/app_overview/manager_new_arrivals.png)
+<div style="text-align: center;">Pic.28 New Arrivals Content Management</div>
+
 ### Database Diagram
 
 ![Expelliarmus Shop Database Diagram](./docs/diagrams/expelluarmus_database_diagram.png)
 
-or [download .drawio file](https://raw.githubusercontent.com/BackLoveEnd/Expelliarmus-Market/refs/heads/master/docs/diagrams/expelliarmus_diagram_database.drawio) (on the open page: Right Click -> Save as) and open diagram with [draw.io](https://app.diagrams.net/).
+or [download .drawio file](https://raw.githubusercontent.com/BackLoveEnd/Expelliarmus-Market/refs/heads/master/docs/diagrams/expelliarmus_diagram_database.drawio) (
+on the open page: Right Click -> Save as) and open diagram with [draw.io](https://app.diagrams.net/).
 
 ### Modules Diagrams
+
+Diagrams for each modules
+available [here](https://github.com/BackLoveEnd/Expelliarmus-Market/tree/master/docs/uml/modules).

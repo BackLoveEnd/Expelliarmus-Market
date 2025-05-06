@@ -1,0 +1,25 @@
+@startuml
+
+class ProductSpecificationsController {
+    + getSpecsByCategory(Category $category, GetSpecsAction $action): ProductSpecsResource|JsonResponse
+}
+
+class GetSpecificationsByCategoryAction {
+    + handle(Category $category): ProductViewSpecsDto
+
+    + getSeparatedSpecifications(): Collection
+
+    + getSpecificationsInGroup(): Collection
+
+    + getGroups(): Collection
+}
+
+class ProductViewSpecsDto {
+    + Collection $separatedSpecs,
+    + Collection $groupedSpecs,
+    + Collection $groups
+}
+
+ProductSpecificationsController --> GetSpecificationsByCategoryAction : uses
+GetSpecificationsByCategoryAction --> ProductViewSpecsDto : returns
+@enduml

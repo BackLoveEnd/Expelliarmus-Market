@@ -1,0 +1,45 @@
+@startuml
+
+class CategoryController {
+    + index(Request $request): JsonResponse|AnonymousResourceCollection
+
+    + rootCategories(): JsonApiResourceCollection|JsonResponse
+
+    + getAllAttributesForCategory(Category $category, GetCategoryAttributesAction $action): JsonResponse
+
+    + create(CreateCategoryRequest $request, SaveCategoryWithAttributesAction $action): JsonResponse
+
+    + edit(EditCategoryRequest $request, EditCategoryAction $action): JsonResponse
+
+    + delete(Category $category, CategoryIconService $categoryIconService): JsonResponse
+
+    + deleteAttribute(Category $category,Attribute $attribute,DeleteAction $action): JsonResponse
+}
+
+class GetCategoryAttributesAction {
+    + handle(Category $category): Collection
+}
+
+class SaveCategoryWithAttributesAction {
+    + handle(CreateCategoryDto $categoryDto): Category
+}
+
+class EditCategoryAction {
+    + handle(EditCategoryDto $categoryDto): void
+}
+
+class CategoryIconService {
+    + __construct(FilesystemManager $storage)
+    + delete(Category $category): void
+}
+
+class DeleteAction {
+    + handle(Category $category, ProductAttribute $productAttribute): void
+}
+
+CategoryController ..> GetCategoryAttributesAction : uses
+CategoryController ..> SaveCategoryWithAttributesAction : uses
+CategoryController ..> EditCategoryAction : uses
+CategoryController ..> CategoryIconService : uses
+CategoryController ..> DeleteAction : uses
+@enduml

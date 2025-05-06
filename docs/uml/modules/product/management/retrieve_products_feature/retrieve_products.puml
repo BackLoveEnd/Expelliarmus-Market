@@ -1,0 +1,93 @@
+@startuml
+
+class RetrieveProductController {
+    + __construct(CacheService $cacheService)
+
+    + getProductsByRootCategories(RootCategoryProducts $action): JsonApiResourceCollection
+
+    + getProductsByCategory(Category $category, CategoryProducts $action): JsonResponse|Resource
+
+    + show(ProductSlug $productSlug, GetPreviewProductInformationAction $action): ProductPreviewResource
+
+    + getProductStaffInfo(ProductSlug $productBind, ProductStaffInfo $action): ProductStaffInfoResource
+}
+
+class CacheService {
+    + __construct(Repository $repository)
+
+    + key(): string
+
+    + repo(): Repository
+}
+
+class GetProductsByRootCategoryAction {
+    - ProductImagesService $imagesService
+    - CacheService $cacheService
+
+    + __construct($imagesService, $cacheService)
+
+    + handle(): Collection
+}
+
+class GetProductsByCategoryAction {
+    + __construct(ProductImagesService $imagesService)
+
+    + handle(Category $category): object
+}
+
+class GetPreviewProductInformationAction {
+    - ProductImagesService $imagesService,
+    - WarehouseProductInfoService $warehouseProductService,
+    - ProductSpecificationsService $specificationsService
+
+    + __construct($imagesService, $warehouseProductService, $specificationsService)
+
+    + handle(int $productId): Product
+}
+
+class GetProductStaffInfoAction {
+    - WarehouseProductInfoService $warehouseService
+    - ProductSpecificationsService $specificationsService
+
+    + __construct($warehouseService, $specificationsService)
+
+    + handle(int $productId): Product
+}
+
+class ProductSpecificationsService {
+    + prepareProductSpecifications(): array
+}
+
+class WarehouseProductInfoService {
+    + __construct(ProductAttributeService $productAttributeService)
+
+    + getWarehouseInfoAboutProduct(): Product
+
+    + getProductAttributes(): BaseCollection
+}
+
+class ProductImagesService {
+    + __construct(ProductImagesStorageInterface $imagesStorage)
+
+    + getResizedImage(): string
+
+    + getProductImages(): array
+}
+
+RetrieveProductController --> GetPreviewProductInformationAction
+RetrieveProductController --> GetProductsByCategoryAction
+RetrieveProductController --> GetProductStaffInfoAction
+RetrieveProductController --> GetProductsByRootCategoryAction
+
+GetProductsByRootCategoryAction --> ProductImagesService
+GetProductsByRootCategoryAction --> CacheService
+
+GetProductsByCategoryAction --> ProductImagesService
+
+GetPreviewProductInformationAction --> ProductImagesService
+GetPreviewProductInformationAction --> WarehouseProductInfoService
+GetPreviewProductInformationAction --> ProductSpecificationsService
+
+GetProductStaffInfoAction --> WarehouseProductInfoService
+GetProductStaffInfoAction --> ProductSpecificationsService
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+
+class CouponCheckController {
+    + __construct(CouponManageService $couponService)
+
+    + checkCoupon(Request $request): CouponResource|JsonResponse
+}
+
+class CouponManageService {
+    + checkCoupon(): Coupon
+
+    + isGlobalCouponUsageLimitReached(): bool
+}
+
+CouponCheckController --> CouponManageService
+@enduml
