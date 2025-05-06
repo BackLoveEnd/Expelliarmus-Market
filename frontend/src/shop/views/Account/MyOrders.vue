@@ -83,6 +83,14 @@
                   <span>{{ auth.phone_original }}</span>
                   <span>{{ auth.email }}</span>
                 </div>
+                <div class="flex justify-center" v-if="canCancelOrder(order.status)">
+                  <button
+                      type="button"
+                      @click.stop="openCancelOrderModal(order.orderId)"
+                      class="py-2 px-4 bg-red-500 text-white rounded-md z-50">
+                    Cancel Order
+                  </button>
+                </div>
               </DisclosurePanel>
             </div>
           </DisclosureButton>
@@ -128,83 +136,129 @@
       </div>
     </section>
   </section>
+  <cancel-order-modal
+      :is-open="isCancelOrderModalOpen"
+      :order-id="orderId"
+      @close-modal="isCancelOrderModalOpen = false"
+      @order-cancelled="handleOrderCancel"
+      @failed="toast.showToast('Failed to cancel order. Please, contact us.', defaultErrorSettings)"
+  />
 </template>
 
 <script setup>
 
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { ShopOrderService } from '@/services/Order/ShopOrderService.js'
-import { onMounted, reactive, ref } from 'vue'
-import SuspenseLoader from '@/components/Default/SuspenseLoader.vue'
-import { useTruncator } from '@/composables/useTruncator.js'
-import { useAuthStore } from '@/stores/useAuthStore.js'
-import { useScrolling } from '@/composables/useScrolling.js'
+import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue';
+import {ShopOrderService} from '@/services/Order/ShopOrderService.js';
+import {onMounted, reactive, ref} from 'vue';
+import SuspenseLoader from '@/components/Default/SuspenseLoader.vue';
+import {useTruncator} from '@/composables/useTruncator.js';
+import {useAuthStore} from '@/stores/useAuthStore.js';
+import {useScrolling} from '@/composables/useScrolling.js';
+import CancelOrderModal from "@/shop/components/Order/CancelOrderModal.vue";
+import {useToastStore} from "@/stores/useToastStore.js";
+import defaultSuccessSettings from "@/components/Default/Toasts/Default/defaultSuccessSettings.js";
+import defaultErrorSettings from "@/components/Default/Toasts/Default/defaultErrorSettings.js";
 
-const truncator = useTruncator()
+const truncator = useTruncator();
 
-const scroller = useScrolling()
+const scroller = useScrolling();
 
-const auth = useAuthStore()
+const auth = useAuthStore();
 
-const orders = ref([])
+const orders = ref([]);
 
 const metaData = reactive({
   currentPage: null,
   lastPage: null,
   total: null,
   perPage: null,
-})
+});
 
 const links = reactive({
   first: null,
   last: null,
   prev: null,
   next: null,
-})
+});
 
-const isLoading = ref(false)
+const orderId = ref(null);
 
-async function getOrders (page = 1) {
-  isLoading.value = true
+const toast = useToastStore();
+
+const isLoading = ref(false);
+
+const isCancelOrderModalOpen = ref(false);
+
+function openCancelOrderModal(id) {
+  orderId.value = id;
+
+  isCancelOrderModalOpen.value = true;
+}
+
+async function getOrders(page = 1) {
+  isLoading.value = true;
 
   await ShopOrderService.getMyOrders(page)
       .then((response) => {
-        orders.value = response.data
+        orders.value = response.data;
 
-        Object.assign(metaData, response.meta)
+        Object.assign(metaData, response.meta);
 
-        Object.assign(links, response.links)
+        Object.assign(links, response.links);
       })
       .catch((e) => {
 
       })
       .finally(() => {
-        isLoading.value = false
-      })
+        isLoading.value = false;
+      });
 }
 
-function getStatusColor (status) {
+const handleOrderCancel = async () => {
+  toast.showToast('Order was cancelled.', defaultSuccessSettings);
+
+  await getOrders(1);
+};
+
+function getStatusColor(status) {
   switch (status) {
     case 'pending':
-      return 'text-yellow-500'
+      return 'text-yellow-500';
     case 'delivered':
-      return 'text-green-500'
+      return 'text-green-500';
     case 'canceled':
-      return 'text-red-500'
+      return 'text-red-500';
     case 'refunded':
-      return 'text-blue-500'
+      return 'text-blue-500';
     case 'in progress':
-      return 'text-gray-500'
+      return 'text-gray-500';
     default:
-      return ''
+      return '';
   }
 }
 
-function upperCaseFirstLetter (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+function upperCaseFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-onMounted(() => getOrders())
+function canCancelOrder(status) {
+  switch (status) {
+    case 'pending':
+      return true;
+    case 'delivered':
+      return false;
+    case 'canceled':
+      return false;
+    case 'refunded':
+      return false;
+    case 'in progress':
+      return true;
+    default:
+      return false;
+  }
+}
+
+onMounted(() => getOrders());
 
 </script>
 
