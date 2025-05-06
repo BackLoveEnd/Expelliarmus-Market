@@ -87,6 +87,13 @@ RUN addgroup -S -g ${GID} laravel \
     && mkdir -p /nonexistent \
     && chown -R ${UID}:${GID} /nonexistent
 
+RUN chown -R laravel:laravel /var/www/expelliarmus/backend \
+    && chown -R laravel:laravel /var/www/expelliarmus/backend/storage \
+    && chown -R laravel:laravel /var/www/expelliarmus/backend/bootstrap
+    
+RUN chmod -R 775 /var/www/expelliarmus/backend/storage \
+    && chmod -R 775 /var/www/expelliarmus/backend/bootstrap
+
 USER laravel
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
