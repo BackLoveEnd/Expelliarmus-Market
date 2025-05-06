@@ -20,4 +20,3 @@ RUN apk update && \
 
 COPY backend.expelliarmus.conf /etc/nginx/conf.d/
 COPY frontend.expelliarmus.conf /etc/nginx/conf.d/
-COPY frontend ./

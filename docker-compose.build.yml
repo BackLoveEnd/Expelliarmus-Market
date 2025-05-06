@@ -11,7 +11,7 @@ services:
   nginx:
     build:
       context: .
-      dockerfile: docker/nginx/nginx.Dockerfile
+      dockerfile: .docker/nginx/nginx.Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
@@ -22,7 +22,8 @@ services:
       - ./frontend:/var/www/expelliarmus/frontend
     ports:
       - "80:8000"  
-      - "443:8080"   
+      - "443:443"   
+      - "8080:8080"
     depends_on:
       - php
       - npm
