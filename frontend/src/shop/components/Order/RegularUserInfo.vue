@@ -10,7 +10,7 @@ const auth = useAuthStore();
       <h5 class="text-xl font-semibold text-gray-900 dark:text-white">
         Your Info
       </h5>
-      <router-link to="/account" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
+      <router-link to="/account?tab=0" class="text-sm text-blue-600 hover:underline dark:text-blue-400">
         Change
       </router-link>
     </div>

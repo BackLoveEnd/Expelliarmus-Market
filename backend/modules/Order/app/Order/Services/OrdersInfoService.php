@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Modules\Order\Order\Enum\OrderStatusEnum;
+use Modules\Order\Order\Filters\SearchFilter;
 use Modules\Order\Order\Models\Order;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class OrdersInfoService
@@ -65,6 +67,7 @@ class OrdersInfoService
                 ],
             )
             ->allowedSorts(['total_price', 'created_at'])
+            ->allowedFilters([AllowedFilter::custom('search', new SearchFilter())])
             ->where(function (Builder $builder) use ($status) {
                 foreach ($status as $index => $item) {
                     if ($index === 0) {
