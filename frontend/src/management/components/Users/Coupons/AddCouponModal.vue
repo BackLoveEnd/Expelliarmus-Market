@@ -61,18 +61,16 @@ const clearData = () => {
 async function createCoupon() {
   await ShopCouponService.createCoupon({...newCoupon, type: props.type})
       .then((response) => {
-        if (response?.status === 201) {
-          emit("coupon-added", response?.data?.data?.attributes);
+        emit("coupon-added", response?.data?.data?.attributes);
 
-          clearData();
+        clearData();
 
-          closeModal();
+        closeModal();
 
-          toast.showToast(
-              "Coupon was created successfully.",
-              defaultSuccessSettings,
-          );
-        }
+        toast.showToast(
+            "Coupon was created successfully.",
+            defaultSuccessSettings,
+        );
       })
       .catch((e) => {
         if (e.response?.status === 422) {

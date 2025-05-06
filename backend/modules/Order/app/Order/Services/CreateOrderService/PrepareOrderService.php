@@ -50,8 +50,10 @@ class PrepareOrderService
             ]);
 
         return $cartItems->map(function (stdClass $item) use ($products) {
+            $product = clone $products->firstWhere('id', $item->product_id);
+
             return [
-                'product' => $products->firstWhere('id', $item->product_id),
+                'product' => $product,
                 'quantity' => $item->quantity,
                 'variation_id' => $item->variation['id'] ?? null,
             ];
