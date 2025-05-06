@@ -10,8 +10,8 @@ services:
       - expelliarmus
   nginx:
     build:
-      context: .docker/nginx
-      dockerfile: nginx.Dockerfile
+      context: .
+      dockerfile: docker/nginx/nginx.Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
