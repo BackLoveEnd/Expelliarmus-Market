@@ -22,6 +22,16 @@
           {{ slotProps.data.user.full_name }} ({{ slotProps.data.user.type }})
         </span>
       </template>
+      <template #header>
+        <div class="flex justify-end">
+          <IconField>
+            <InputIcon>
+              <i class="pi pi-search"/>
+            </InputIcon>
+            <InputText v-model="filters['search']" placeholder="Phone, email, order id..."/>
+          </IconField>
+        </div>
+      </template>
       <Column field="user.first_name" header="First Name" style="text-align: center"></Column>
       <Column field="user.last_name" header="Last Name" style="text-align: center"></Column>
       <Column field="user.email" header="Email" style="text-align: center"></Column>
@@ -79,6 +89,9 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Tag from "primevue/tag";
 import OrderLineOverviewModal from "@/management/components/Orders/OrderLineOverviewModal.vue";
+import {IconField, InputIcon} from "primevue";
+import InputText from "primevue/inputtext";
+import {debouncedWatch} from "@vueuse/core";
 
 const isOrderLineOverviewModalOpen = ref(false);
 
@@ -100,12 +113,18 @@ const totalRecords = ref(0);
 
 const page = ref(0);
 
+const filters = ref({
+  search: ''
+});
+
 const offset = computed(() => page.value * limit.value);
 
 async function getPendingOrders(pageIndex) {
   isFetching.value = true;
 
-  await ManagementOrdersService.getOrders(`/orders/refunded?limit=${limit.value}&offset=${pageIndex * offset.value}`)
+  const searchQuery = filters.value.search ? `&filter[search]=${encodeURIComponent(filters.value.search)}` : '';
+
+  await ManagementOrdersService.getOrders(`/orders/refunded?limit=${limit.value}&offset=${pageIndex * offset.value}${searchQuery}`)
       .then((response) => {
         if (response?.data.meta.total === 0) {
           userOrders.value = [];
@@ -159,6 +178,12 @@ const getSeverity = (status) => {
 };
 
 await getPendingOrders(0);
+
+debouncedWatch(() => filters.value.search, async () => {
+  page.value = 0;
+
+  await getPendingOrders(0);
+}, {debounce: 500});
 </script>
 
 <style>
