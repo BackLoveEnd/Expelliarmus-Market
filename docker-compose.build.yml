@@ -21,8 +21,8 @@ services:
       - ./backend:/var/www/expelliarmus/backend
       - ./frontend:/var/www/expelliarmus/frontend
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8000"  
+      - "443:8080"   
     depends_on:
       - php
       - npm
