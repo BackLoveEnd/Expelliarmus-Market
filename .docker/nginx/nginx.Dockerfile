@@ -18,8 +18,8 @@ RUN apk update && \
     rm /etc/nginx/conf.d/default.conf && \
     chown -R laravel:laravel /var/www/expelliarmus
 
-COPY backend.expelliarmus.conf /etc/nginx/conf.d/
-COPY frontend.expelliarmus.conf /etc/nginx/conf.d/
+COPY .docker/nginx/backend.expelliarmus.conf /etc/nginx/conf.d/
+COPY .docker/nginx/frontend.expelliarmus.conf /etc/nginx/conf.d/
 
 COPY frontend ./
 
