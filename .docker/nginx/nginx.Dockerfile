@@ -1,4 +1,20 @@
-FROM nginx:alpine-slim
+
+FROM node:18-alpine AS build-stage
+
+WORKDIR /var/www/expelliarmus
+
+RUN mkdir -p .npm && \
+    npm config set cache /var/www/expelliarmus/.npm --global
+
+COPY frontend/package*.json ./
+
+RUN npm install
+
+COPY frontend ./
+
+RUN npm run build
+
+FROM nginx:alpine-slim AS production-stage
 
 WORKDIR /var/www/expelliarmus
 
@@ -21,5 +37,7 @@ RUN apk update && \
 COPY .docker/nginx/backend.expelliarmus.conf /etc/nginx/conf.d/
 COPY .docker/nginx/frontend.expelliarmus.conf /etc/nginx/conf.d/
 
+COPY --from=build-stage /var/www/expelliarmus /var/www/expelliarmus
 COPY frontend ./
 
+CMD ["nginx", "-g", "daemon off;"]

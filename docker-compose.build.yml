@@ -1,13 +1,4 @@
 services:
-  npm:
-    build:
-      context: .
-      dockerfile: .docker/node/node.Dockerfile
-    image: ghcr.io/artyom84783454/expelliarmus-market-node:latest
-    container_name: npm
-    command: npm run build
-    networks:
-      - expelliarmus
   nginx:
     build:
       context: .
@@ -26,7 +17,6 @@ services:
       - "8080:8080"
     depends_on:
       - php
-      - npm
     networks:
       - expelliarmus
   php:
