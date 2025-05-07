@@ -96,7 +96,6 @@ jobs:
         run: |
           sed -i "s|image:.*-php|image: ${{ steps.tags.outputs.slug }}-php|" docker-compose.build.yml
           sed -i "s|image:.*-nginx|image: ${{ steps.tags.outputs.slug }}-nginx|" docker-compose.build.yml
-          sed -i "s|image:.*-npm|image: ${{ steps.tags.outputs.slug }}-npm|" docker-compose.build.yml
           sed -i "s|image:.*-queue|image: ${{ steps.tags.outputs.slug }}-queue|" docker-compose.build.yml
           sed -i "s|image:.*-scheduler|image: ${{ steps.tags.outputs.slug }}-scheduler|" docker-compose.build.yml
 
