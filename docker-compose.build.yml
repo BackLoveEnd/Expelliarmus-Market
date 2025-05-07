@@ -12,9 +12,7 @@ services:
       - ./backend:/var/www/expelliarmus/backend
       - ./frontend:/var/www/expelliarmus/frontend
     ports:
-      - "80:8000"  
-      - "443:443"   
-      - "8080:8080"
+      - "80:80"  
     depends_on:
       - php
     networks:
