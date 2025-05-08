@@ -75,7 +75,6 @@ COPY --from=builder /usr/local/lib/php /usr/local/lib/php
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-COPY backend/ ./
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # User and group creation
