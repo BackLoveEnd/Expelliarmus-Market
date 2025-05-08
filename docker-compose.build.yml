@@ -30,6 +30,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
+      - ./backend:/var/www/expelliarmus/backend
       - .docker/php/php.ini:/usr/local/etc/php/php.ini
     networks:
       - expelliarmus
@@ -65,6 +66,8 @@ services:
       dockerfile: .docker/php/scheduler.Dockerfile
     image: ghcr.io/artyom84783454/expelliarmus-market-scheduler:latest
     container_name: scheduler
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
     command: /bin/sh -c "/usr/sbin/crond -f -l 8"
     networks:
       - expelliarmus
@@ -76,6 +79,8 @@ services:
       dockerfile: .docker/php/queue.Dockerfile
     image: ghcr.io/artyom84783454/expelliarmus-market-queue:latest
     container_name: queue
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
     command: /bin/sh -c "php artisan queue:work --queue=high,low --sleep=3 --tries=3"
     networks:
       - expelliarmus
