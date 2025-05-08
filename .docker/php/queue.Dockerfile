@@ -12,4 +12,5 @@ RUN apk add --no-cache libpq \
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/ /usr/local/etc/php/
 
-WORKDIR /var/www/expelliarmus/backend
+WORKDIR /var/www/expelliarmus
+COPY backend .
