@@ -1,4 +1,3 @@
-
 FROM node:18-alpine AS build-stage
 
 WORKDIR /var/www/expelliarmus
@@ -38,6 +37,5 @@ COPY .docker/nginx/backend.expelliarmus.conf /etc/nginx/conf.d/
 COPY .docker/nginx/frontend.expelliarmus.conf /etc/nginx/conf.d/
 
 COPY --from=build-stage /var/www/expelliarmus /var/www/expelliarmus
-COPY frontend ./
 
 CMD ["nginx", "-g", "daemon off;"]
