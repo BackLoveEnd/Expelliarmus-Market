@@ -1,0 +1,125 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/nginx.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    image: ghcr.io/artyom84783454/expelliarmus-market-nginx:latest
+    container_name: nginx
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
+      - ./frontend:/var/www/expelliarmus/frontend
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "8000:8000"
+    depends_on:
+      - php
+    networks:
+      - expelliarmus
+  php:
+    build:
+      context: .
+      dockerfile: .docker/php/php.Dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    image: ghcr.io/artyom84783454/expelliarmus-market-php:latest
+    container_name: php
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./backend:/var/www/expelliarmus/backend
+      - .docker/php/php.ini:/usr/local/etc/php/php.ini
+      - .env:/var/www/expelliarmus/backend/.env
+      - type: bind
+        source: ./backend
+        target: /var/www/expelliarmus/backend
+      - type: volume
+        source: vendor_data
+        target: /var/www/expelliarmus/backend/vendor
+    networks:
+      - expelliarmus
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  postgres:
+    container_name: postgres
+    image: postgres:17.4-alpine
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - .docker/db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $DB_USERNAME" ]
+      interval: 5s
+      retries: 10
+    networks:
+      - expelliarmus
+  queue:
+    build:
+      context: .
+      dockerfile: .docker/php/queue.Dockerfile
+    image: ghcr.io/artyom84783454/expelliarmus-market-queue:latest
+    environment:
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: 6379
+    env_file:
+      - .env  
+    volumes:
+      - .env:/var/www/expelliarmus/backend/.env
+    depends_on:
+      - php
+      - redis
+    networks:
+      - expelliarmus
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: .docker/php/scheduler.Dockerfile
+    image: ghcr.io/artyom84783454/expelliarmus-market-scheduler:latest
+    volumes:
+      - .env:/var/www/expelliarmus/backend/.env
+    depends_on:
+      - php
+    networks:
+      - expelliarmus
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: sh -c "redis-server --requirepass ${REDIS_PASSWORD}"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 10
+    networks:
+      - expelliarmus
+
+
+networks:
+  expelliarmus:
+    driver: bridge
+
+volumes:
+  postgres:
+  vendor_data:

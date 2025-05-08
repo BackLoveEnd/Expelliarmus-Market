@@ -109,6 +109,7 @@ services:
       dockerfile: queue.Dockerfile
 
     container_name: queue
+    
     volumes:
       - .:/var/www/expelliarmus
     command: /bin/sh -c "php artisan queue:work --queue=high,low --sleep=3 --tries=3"

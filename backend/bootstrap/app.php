@@ -51,3 +51,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ->defineRenderable()
             ->defineRules();
     })->create();
+<<<<<<< Updated upstream
+=======
+
+return $app;
+>>>>>>> Stashed changes
