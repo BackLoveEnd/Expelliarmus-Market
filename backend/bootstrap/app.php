@@ -54,6 +54,4 @@ $app = Application::configure(basePath: dirname(__DIR__))
             ->defineRules();
     })->create();
 
-$app->useEnvironmentPath(dirname(__DIR__, 2));
-
 return $app;

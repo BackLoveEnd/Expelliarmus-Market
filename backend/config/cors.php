@@ -18,6 +18,7 @@ return [
     'paths' => [
         'api/*',
         'api/sanctum/csrf-cookie',
+        'storage/*',
     ],
 
     'allowed_methods' => ['*'],
@@ -27,6 +28,7 @@ return [
         'http://expelliarmus.com:8000',
         'http://expelliarmus.com:3000',
         'http://localhost:3000',
+        'http://expelliarmus.site',
     ],
 
     'allowed_origins_patterns' => [],

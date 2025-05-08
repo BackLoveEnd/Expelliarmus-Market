@@ -52,7 +52,7 @@ ENV UID=${UID}
 ENV GID=${GID}
 
 WORKDIR /var/www/expelliarmus/backend
-RUN chown -R www-data:www-data /var/www/expelliarmus/backend
+# RUN chown -R www-data:www-data /var/www/expelliarmus/backend
 
 # Install dependencies for PHP
 RUN apk update && apk add --no-cache \

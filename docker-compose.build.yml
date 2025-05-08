@@ -13,6 +13,7 @@ services:
       - ./frontend:/var/www/expelliarmus/frontend
     ports:
       - "80:80"
+      - "8000:8000"
       - "8080:8080"
     depends_on:
       - php
@@ -32,6 +33,7 @@ services:
     volumes:
       - ./backend:/var/www/expelliarmus/backend
       - .docker/php/php.ini:/usr/local/etc/php/php.ini
+      - .env:/var/www/expelliarmus/backend/.env
     networks:
       - expelliarmus
     depends_on:
