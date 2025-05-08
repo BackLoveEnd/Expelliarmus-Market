@@ -53,8 +53,16 @@ jobs:
           BACKEND_URL: ${{ secrets.BACKEND_URL }}
           SANCTUM_STATEFUL_DOMAINS: ${{ secrets.SANCTUM_STATEFUL_DOMAINS }}
           SESSION_DOMAIN: ${{ secrets.SESSION_DOMAIN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           cp .env.prod .env
+          sed -i "s|^AWS_ACCESS_KEY_ID=.*|AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}|" .env
+          sed -i "s|^AWS_BUCKET=.*|AWS_BUCKET=${AWS_BUCKET}|" .env
+          sed -i "s|^AWS_DEFAULT_REGION=.*|AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}|" .env
+          sed -i "s|^AWS_SECRET_ACCESS_KEY=.*|AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}|" .env
           sed -i "s|^REDIS_HOST=.*|REDIS_HOST=${REDIS_HOST}|" .env
           sed -i "s|^PROJECT_NAME=.*|PROJECT_NAME=${PROJECT_NAME}|" .env
           sed -i "s|^SESSION_DOMAIN=.*|SESSION_DOMAIN=${SESSION_DOMAIN}|" .env
@@ -72,21 +80,21 @@ jobs:
           echo "Updated docker .env:"
           cat .env
 
-      - name: Copy .env to backend
-        working-directory: ${{ github.workspace }}
-        run: |
-          cp .env ./backend/
+      # - name: Copy .env to backend
+      #   working-directory: ${{ github.workspace }}
+      #   run: |
+      #     cp .env ./backend/
 
-      - name: Setting frontend env
-        env:
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-          BACKEND_URL: ${{ secrets.BACKEND_URL }}
-        run: |
-            cp .env.front.example ./frontend/
-            mv ./frontend/.env.front.example ./frontend/.env
-            sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${FRONTEND_URL}|" .env
-            sed -i "s|^BACKEND_URLL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
-            echo "Updated .env:"
+      # - name: Setting frontend env
+      #   env:
+      #     FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      #     BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      #   run: |
+      #       cp .env.front.example ./frontend/
+      #       mv ./frontend/.env.front.example ./frontend/.env
+      #       sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${FRONTEND_URL}|" .env
+      #       sed -i "s|^BACKEND_URLL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
+      #       echo "Updated .env:"
   
       - name: Define image tags
         id: tags
