@@ -54,8 +54,6 @@ $app = Application::configure(basePath: dirname(__DIR__))
             ->defineRules();
     })->create();
 
-if ($app->isProduction()) {
-    $app->useEnvironmentPath(dirname(__DIR__, 1));
-}
+$app->useEnvironmentPath(dirname(__DIR__, 2));
 
 return $app;
