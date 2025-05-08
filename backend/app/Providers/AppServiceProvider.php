@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        URL::forceHttps($this->app->isProduction());
+        URL::forceHttps($this->app->isProduction() && config('app.scheme') === 'https');
 
         $this->app->singleton(CacheService::class, function (Application $app) {
             return new CacheService($app->get('cache.store'));
