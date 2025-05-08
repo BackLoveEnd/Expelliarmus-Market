@@ -13,3 +13,4 @@ COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/ /usr/local/etc/php/
 
 WORKDIR /var/www/expelliarmus/backend
+# COPY backend /var/www/expelliarmus/
