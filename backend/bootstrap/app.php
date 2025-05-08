@@ -15,7 +15,7 @@ use Modules\Product\Http\Middleware\AppendIncludeRelationships;
 use Modules\User\Users\Http\Exceptions\AlreadyAuthenticatedException;
 use Modules\User\Users\Http\Middleware\GuestOrUserMiddleware;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
@@ -53,3 +53,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ->defineRenderable()
             ->defineRules();
     })->create();
+
+if ($app->isProduction()) {
+    $app->useEnvironmentPath(dirname(__DIR__, 1));
+}
+
+return $app;
