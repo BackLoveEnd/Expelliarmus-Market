@@ -2,14 +2,12 @@
 services:
   php:
     build:
-      context: .docker/php
-      dockerfile: php.Dockerfile
+      context: .
+      dockerfile: .docker/php/php.Dockerfile
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-
     container_name: php
-    user: "0:0"
     ports:
       - "9000:9000"
     volumes:
@@ -26,9 +24,8 @@ services:
 
   npm:
     build:
-      context: .docker/node
-      dockerfile: node.Dockerfile
-
+      context: .
+      dockerfile: .docker/node/node.Dockerfile
     container_name: npm
     volumes:
       - ./frontend:/var/www/expelliarmus/frontend
@@ -45,7 +42,6 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-
     container_name: nginx
     volumes:
       - ./backend:/var/www/expelliarmus/backend
@@ -95,7 +91,6 @@ services:
     build:
       context: .docker/php
       dockerfile: scheduler.Dockerfile
-
     container_name: scheduler
     volumes:
       - .:/var/www/expelliarmus
@@ -109,7 +104,6 @@ services:
     build:
       context: .docker/php
       dockerfile: queue.Dockerfile
-
     container_name: queue
     volumes:
       - .:/var/www/expelliarmus

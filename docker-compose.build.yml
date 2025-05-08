@@ -12,8 +12,7 @@ services:
       - ./backend:/var/www/expelliarmus/backend
       - ./frontend:/var/www/expelliarmus/frontend
     ports:
-      - "80:8000"
-      - "443:443"
+      - "80:80"
       - "8080:8080"
     depends_on:
       - php
@@ -33,7 +32,6 @@ services:
     volumes:
       - ./backend:/var/www/expelliarmus/backend
       - .docker/php/php.ini:/usr/local/etc/php/php.ini
-      - ./.env:/var/www/expelliarmus/.env
     networks:
       - expelliarmus
     depends_on:
@@ -64,12 +62,12 @@ services:
       - expelliarmus
   scheduler:
     build:
-      context: .docker/php
-      dockerfile: scheduler.Dockerfile
+      context: .
+      dockerfile: .docker/php/scheduler.Dockerfile
     image: ghcr.io/artyom84783454/expelliarmus-market-scheduler:latest
     container_name: scheduler
     volumes:
-      - .:/var/www/expelliarmus
+      - ./backend:/var/www/expelliarmus/backend
     command: /bin/sh -c "/usr/sbin/crond -f -l 8"
     networks:
       - expelliarmus
@@ -77,12 +75,12 @@ services:
       - php
   queue:
     build:
-      context: .docker/php
-      dockerfile: queue.Dockerfile
+      context: .
+      dockerfile: .docker/php/queue.Dockerfile
     image: ghcr.io/artyom84783454/expelliarmus-market-queue:latest
     container_name: queue
     volumes:
-      - .:/var/www/expelliarmus
+      - ./backend:/var/www/expelliarmus/backend
     command: /bin/sh -c "php artisan queue:work --queue=high,low --sleep=3 --tries=3"
     networks:
       - expelliarmus
@@ -105,6 +103,7 @@ services:
       retries: 10
     networks:
       - expelliarmus
+
 
 networks:
   expelliarmus:

@@ -52,8 +52,9 @@ ENV UID=${UID}
 ENV GID=${GID}
 
 WORKDIR /var/www/expelliarmus/backend
+RUN chown -R www-data:www-data /var/www/expelliarmus/backend
 
-# Install dependencies for PHP (без dev-пакетов)
+# Install dependencies for PHP
 RUN apk update && apk add --no-cache \
     imagemagick \
     postgresql-libs \
@@ -74,6 +75,9 @@ COPY --from=builder /usr/local/lib/php /usr/local/lib/php
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+COPY backend/ ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 # User and group creation
 RUN addgroup -S -g ${GID} laravel \
     && adduser -S -u ${UID} -G laravel -s /bin/sh laravel \
@@ -82,6 +86,13 @@ RUN addgroup -S -g ${GID} laravel \
     && echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf \
     && mkdir -p /nonexistent \
     && chown -R ${UID}:${GID} /nonexistent
+
+RUN chown -R laravel:laravel /var/www/expelliarmus/backend \
+    && chown -R laravel:laravel /var/www/expelliarmus/backend/storage \
+    && chown -R laravel:laravel /var/www/expelliarmus/backend/bootstrap
+    
+RUN chmod -R 775 /var/www/expelliarmus/backend/storage \
+    && chmod -R 775 /var/www/expelliarmus/backend/bootstrap
 
 USER laravel
 
