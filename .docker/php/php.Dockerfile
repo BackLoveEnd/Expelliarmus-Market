@@ -76,8 +76,10 @@ RUN addgroup --system --gid ${GID} laravel \
     && sed -i "s/group = www-data/group = laravel/g" /usr/local/etc/php-fpm.d/www.conf \
     && echo "php_admin_flag[log_errors] = on" >> /usr/local/etc/php-fpm.d/www.conf \
     && mkdir -p /nonexistent \
-    && chown -R ${UID}:${GID} /nonexistent
-
+    && chown -R ${UID}:${GID} /nonexistent \
+    && chown -R ${UID}:${GID} /var/www/expelliarmus/ \
+    && chmod -R 775 /var/www/expelliarmus/storage/ \
+    && chmod -R 775 /var/www/expelliarmus/bootstrap/cache/ \
 USER laravel
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
