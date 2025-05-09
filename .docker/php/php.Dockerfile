@@ -45,7 +45,7 @@ ENV UID=${UID}
 ENV GID=${GID}
 
 WORKDIR /var/www/expelliarmus
-
+RUN chown -R www-data:www-data /var/www/expelliarmus/
 # Install dependencies for PHP (без dev-пакетов)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     imagemagick \
