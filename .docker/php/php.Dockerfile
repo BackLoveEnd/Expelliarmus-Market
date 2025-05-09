@@ -77,8 +77,8 @@ RUN addgroup --system --gid ${GID} laravel \
     && mkdir -p /nonexistent \
     && chown -R ${UID}:${GID} /nonexistent \
     && chown -R ${UID}:${GID} /var/www/expelliarmus/ \
-    && chmod -R 775 /var/www/expelliarmus/storage/ \
-    && chmod -R 775 /var/www/expelliarmus/bootstrap/cache/ \
+    && chmod -R 755 /var/www/expelliarmus/storage/ \
+    && chmod -R 755 /var/www/expelliarmus/bootstrap/cache/  
 USER laravel
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
