@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+actor "Клієнт" as Client
+
+rectangle "Система інтернет-магазину" {
+  usecase "Реєстрація" as UC1
+  usecase "Авторизація" as UC2
+  usecase "Перегляд каталогу товарів" as UC3
+  usecase "Перегляд детальної\nінформації про товар" as UC4
+  usecase "Операції з кошиком" as UC5
+  usecase "Оформлення замовлення" as UC6
+  usecase "Перегляд історії замовлень" as UC7
+  usecase "Оновлення персональних даних" as UC8
+  usecase "Додавання товару до обраних" as UC9
+  usecase "Перегляд особистих купонів" as UC10
+}
+
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
+Client --> UC8
+Client --> UC9
+Client --> UC10
+
+@enduml
