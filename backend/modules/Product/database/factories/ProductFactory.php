@@ -35,9 +35,9 @@ class ProductFactory extends Factory
             'images' => [
                 [
                     'order' => 1,
-                    'source' => null,
+                    'source' => config('product.image.default'),
                     'id' => Uuid::uuid7()->toString(),
-                    'image_url' => url('/storage/products/'.config('product.image.default')),
+                    'image_url' => url('/storage/'.config('product.image.default')),
                 ],
             ],
         ];

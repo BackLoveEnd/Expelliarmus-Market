@@ -38,7 +38,7 @@ class ProductImagesService
                 $previewImage,
                 $size,
             ) : null,
-            'preview_image_source' => $previewImageSource ?? $this->imagesStorage->defaultPreviewImage(),
+            'preview_image_source' => $previewImageSource ?? $this->imagesStorage->defaultResizedPreviewImage(),
         ]);
     }
 
@@ -142,10 +142,12 @@ class ProductImagesService
     {
         if ($updatedImages->isEmpty()) {
             $images = [
-                'id' => Str::uuid7()->toString(),
-                'image_url' => $this->imagesStorage->getOne($product, null),
-                'order' => 1,
-                'source' => $this->imagesStorage->defaultImageId(),
+                [
+                    'id' => Str::uuid7()->toString(),
+                    'image_url' => $this->imagesStorage->getOne($product, null),
+                    'order' => 1,
+                    'source' => $this->imagesStorage->defaultImageId(),
+                ]
             ];
         } else {
             $images = $updatedImages->map(fn(MainImageDto $dto)

@@ -156,7 +156,7 @@ export const ProductService = {
         images.forEach((image, index) => {
             formData.append(`images[${index}][image]`, image.file ?? "");
             formData.append(`images[${index}][id]`, image.id ?? "");
-            formData.append(`images[${index}][image_url]`, image.file ? "" : image.image_url);
+            formData.append(`images[${index}][image_url]`, image.file ? "" : image.image_url ?? "");
             formData.append(`images[${index}][order]`, image.order);
         });
 

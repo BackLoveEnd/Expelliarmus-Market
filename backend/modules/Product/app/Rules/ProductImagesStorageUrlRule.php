@@ -13,6 +13,10 @@ class ProductImagesStorageUrlRule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if ($value === null) {
+            return;
+        }
+        dd($value);
         $fileSystem = config('filesystems.provider');
 
         if ($fileSystem === 'file') {

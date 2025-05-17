@@ -74,11 +74,11 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
 
     public function getOne(Product $product, ?string $imageId): string
     {
-        if ($this->isExists($product, $imageId)) {
-            return $this->storage->url($this->getImageFullPath($product, $imageId));
+        if (! $imageId || ! $this->isExists($product, $imageId)) {
+            return $this->storage->url($this->defaultImageId());
         }
 
-        return $this->storage->url($this->defaultImageId());
+        return $this->storage->url($this->getImageFullPath($product, $imageId));
     }
 
     public function getAll(Product $product): array
@@ -96,15 +96,15 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
     {
         return collect($imagesSources)->map(function (array $images) use ($product) {
             return [
-                'order' => $images['order'],
-                'image_url' => $this->storage->url($this->getImageFullPath($product, $images['image'])),
+                ...$images,
+                'image_url' => $this->storage->url($this->getImageFullPath($product, $images['source'])),
             ];
         })->toArray();
     }
 
     public function delete(Product $product, string $imageId): bool
     {
-        return $this->storage->delete("products/".$this->getImageFullPath($product, $imageId));
+        return $this->storage->delete($this->getImageFullPath($product, $imageId));
     }
 
     public function deleteMany(Product $product, Collection $sources): void
