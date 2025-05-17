@@ -79,6 +79,7 @@ RUN addgroup --system --gid ${GID} laravel \
     && chown -R ${UID}:${GID} /var/www/expelliarmus/ \
     && chmod -R 755 /var/www/expelliarmus/storage/ \
     && chmod -R 755 /var/www/expelliarmus/bootstrap/cache/  
+COPY .docker/php/php.ini /usr/local/etc/php/php.ini
 USER laravel
 
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
