@@ -4,7 +4,7 @@ FROM php:8.3-fpm-alpine AS final
 
 USER root
 
-# Установим зависимости и supercronic
+# Install all required dependencies and supercronic
 RUN apk update && \
     apk add --no-cache \
         bash \
@@ -21,11 +21,9 @@ WORKDIR /var/www/expelliarmus
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/ /usr/local/etc/php/
 COPY --from=builder /var/www/expelliarmus/ ./
-# Копируем кронтаб
+# Copy crontab file
 COPY .docker/php/crontab /etc/supercronic/laravel-cron
 
-# Убедимся, что каталог логов есть
 RUN mkdir -p /var/log && touch /var/log/cron.log
 
-# Запуск supercronic
 CMD ["/usr/local/bin/supercronic", "-debug", "-split-logs", "/etc/supercronic/laravel-cron"]
