@@ -28,7 +28,6 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./backend:/var/www/expelliarmus
       - .docker/php/php.ini:/usr/local/etc/php/php.ini
       - .env:/var/www/expelliarmus/.env
       - type: bind
@@ -79,14 +78,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./backend:/var/www/expelliarmus
       - .env:/var/www/expelliarmus/.env
-      - type: bind
-        source: ./backend
-        target: /var/www/expelliarmus
-      - type: volume
-        source: vendor_data
-        target: /var/www/expelliarmus/vendor
     depends_on:
       - php
       - redis
@@ -100,14 +92,7 @@ services:
     container_name: scheduler
     image: ghcr.io/artyom84783454/expelliarmus-market-scheduler:latest
     volumes:
-      - ./backend:/var/www/expelliarmus
       - .env:/var/www/expelliarmus/.env
-      - type: bind
-        source: ./backend
-        target: /var/www/expelliarmus
-      - type: volume
-        source: vendor_data
-        target: /var/www/expelliarmus/vendor
     depends_on:
       - php
     networks:
