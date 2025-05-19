@@ -57,6 +57,7 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
                 $this->upload($image->image, $product);
 
                 return [
+                    'id' => $image->id,
                     'order' => $image->order,
                     'source' => $image->image->hashName(),
                 ];
@@ -83,8 +84,8 @@ class S3ProductImagesStorage extends BaseProductImagesStorage implements S3Produ
 
     public function getAll(Product $product): array
     {
-        if (count($product->images) === 1 && $product->images[0] === $this->defaultImageId()) {
-            return [$this->getOne($product, $this->defaultImageId())];
+        if ($product->images === null) {
+            return [];
         }
 
         return collect($product->images)->map(function (string $imageId) use ($product) {
