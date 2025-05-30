@@ -36,7 +36,6 @@ jobs:
         with:
             result-encoding: string
             script: return `ghcr.io/${github.repository}`.toLowerCase()
-
       - name: Setting Environment
         env:
           PROJECT_NAME: ${{ vars.PROJECT_NAME }}
