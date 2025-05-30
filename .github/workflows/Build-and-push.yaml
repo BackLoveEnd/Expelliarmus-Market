@@ -79,40 +79,19 @@ jobs:
           sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
           echo "Updated docker .env:"
           cat .env
-
-      # - name: Copy .env to backend
-      #   working-directory: ${{ github.workspace }}
-      #   run: |
-      #     cp .env ./backend/
-
-      # - name: Setting frontend env
-      #   env:
-      #     FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-      #     BACKEND_URL: ${{ secrets.BACKEND_URL }}
-      #   run: |
-      #       cp .env.front.example ./frontend/
-      #       mv ./frontend/.env.front.example ./frontend/.env
-      #       sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${FRONTEND_URL}|" .env
-      #       sed -i "s|^BACKEND_URLL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
-      #       echo "Updated .env:"
-  
       - name: Define image tags
         id: tags
         run: echo "slug=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
-
       - name: Patch image names in docker-compose.build.yml
         run: |
           sed -i "s|image:.*-php|image: ${{ steps.tags.outputs.slug }}-php|" docker-compose.build.yml
           sed -i "s|image:.*-nginx|image: ${{ steps.tags.outputs.slug }}-nginx|" docker-compose.build.yml
           sed -i "s|image:.*-queue|image: ${{ steps.tags.outputs.slug }}-queue|" docker-compose.build.yml
           sed -i "s|image:.*-scheduler|image: ${{ steps.tags.outputs.slug }}-scheduler|" docker-compose.build.yml
-
       - name: Build Docker Compose images
         run: docker compose -f docker-compose.build.yml build
-
       - name: Push Docker Compose images
         run: docker compose -f docker-compose.build.yml push
-
       - name: Show image sizes
         run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
       
