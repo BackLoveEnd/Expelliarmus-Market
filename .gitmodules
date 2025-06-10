@@ -1,5 +1,3 @@
-[submodule "Infrastructure"]
-	path = Infrastructure
-	url = https://github.com/Artyom84783454/Expelliarmus-Market-infrastructure.git
 [submodule "infrastructure"]
 	url = https://github.com/BackLoveEnd/Expelliarmus-Market-infrastructure.git
+	path = infrastructure
