@@ -50,12 +50,12 @@ class OrderServiceProvider extends ServiceProvider
     protected function registerCommandSchedules(): void
     {
         $this->app->booted(function () {
-            /**@var Schedule $schedule */
+            /** @var Schedule $schedule */
             $schedule = $this->app->make(Schedule::class);
 
-            $schedule->job(new SendCouponToUserJob(), 'low')->twiceDaily('0', '10');
+            $schedule->job(new SendCouponToUserJob, 'low')->twiceDaily('0', '10');
 
-            $schedule->job(new CancelExpiredCoupons(), 'low')->dailyAt('00:00');
+            $schedule->job(new CancelExpiredCoupons, 'low')->dailyAt('00:00');
         });
     }
 
@@ -71,8 +71,8 @@ class OrderServiceProvider extends ServiceProvider
                 if ($file->isFile() && $file->getExtension() === 'php') {
                     $relativePath = str_replace($configPath.DIRECTORY_SEPARATOR, '', $file->getPathname());
                     $configKey = $this->nameLower.'.'.str_replace([DIRECTORY_SEPARATOR, '.php'],
-                            ['.', ''],
-                            $relativePath);
+                        ['.', ''],
+                        $relativePath);
                     $key = ($relativePath === 'config.php') ? $this->nameLower : $configKey;
 
                     $this->publishes([$file->getPathname() => config_path($relativePath)], 'config');
@@ -92,7 +92,7 @@ class OrderServiceProvider extends ServiceProvider
         $this->app
             ->when(CartStorageService::class)
             ->needs(Session::class)
-            ->give(fn($app) => $app->make(Session::class));
+            ->give(fn ($app) => $app->make(Session::class));
 
         $this->app
             ->when([
@@ -100,7 +100,7 @@ class OrderServiceProvider extends ServiceProvider
                 CartDataPrepareService::class,
             ])
             ->needs(WarehouseStockService::class)
-            ->give(fn($app) => $app->make(WarehouseStockService::class));
+            ->give(fn ($app) => $app->make(WarehouseStockService::class));
 
         $this->app
             ->when([
@@ -108,6 +108,6 @@ class OrderServiceProvider extends ServiceProvider
                 CartDataPrepareService::class,
             ])
             ->needs(DiscountCartService::class)
-            ->give(fn($app) => $app->make(DiscountCartService::class));
+            ->give(fn ($app) => $app->make(DiscountCartService::class));
     }
 }

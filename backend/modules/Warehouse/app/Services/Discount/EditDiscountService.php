@@ -15,7 +15,6 @@ use Modules\Warehouse\Models\Discount;
 
 final class EditDiscountService extends AbstractDiscountService implements DiscountProcessingInterface
 {
-
     public function __construct(
         Product $product,
         private Discount $discount,
@@ -24,9 +23,6 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
     }
 
     /**
-     * @param  DiscountDto  $dto
-     *
-     * @return void
      * @throws DiscountIsNotRelatedToProductException
      * @throws VariationToApplyDiscountDoesNotExists
      * @throws CannotAddDiscountToProductWithoutPriceException
@@ -73,7 +69,7 @@ final class EditDiscountService extends AbstractDiscountService implements Disco
         })->first();
 
         if (! $variation) {
-            throw new VariationToApplyDiscountDoesNotExists();
+            throw new VariationToApplyDiscountDoesNotExists;
         }
 
         return $variation;

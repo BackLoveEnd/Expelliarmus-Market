@@ -14,8 +14,8 @@ class DiscountFinishedFilter implements Filter
         if (! is_null($value)) {
             return $query->when(
                 value: $value === true,
-                callback: fn($value) => $query->whereDate('end_date', '<', now()),
-                default: fn($value) => $query->whereDate('end_date', '>', now()),
+                callback: fn ($value) => $query->whereDate('end_date', '<', now()),
+                default: fn ($value) => $query->whereDate('end_date', '>', now()),
             );
         }
 

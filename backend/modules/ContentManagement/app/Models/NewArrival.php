@@ -32,14 +32,14 @@ class NewArrival extends Model
         'position',
         'arrival_url',
         'image_source',
-        'image_url'
+        'image_url',
     ];
 
     protected function casts(): array
     {
         return [
             'content' => 'array',
-            'position' => NewArrivalsPositionEnum::class
+            'position' => NewArrivalsPositionEnum::class,
         ];
     }
 }

@@ -53,13 +53,13 @@ class Warehouse extends Model
     public function defaultPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
     public function totalQuantity(): Attribute
     {
-        return Attribute::set(fn($value) => max($value, 0));
+        return Attribute::set(fn ($value) => max($value, 0));
     }
 
     protected static function boot(): void
@@ -72,7 +72,7 @@ class Warehouse extends Model
             }
         });
     }
-    
+
     public function newEloquentBuilder($query): WarehouseBuilder
     {
         return new WarehouseBuilder($query);

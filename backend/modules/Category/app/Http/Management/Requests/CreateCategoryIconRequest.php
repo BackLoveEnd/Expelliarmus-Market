@@ -21,5 +21,4 @@ class CreateCategoryIconRequest extends FormRequest
             'icon' => ['required', 'file', 'mimes:svg'],
         ];
     }
-
 }

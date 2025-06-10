@@ -26,15 +26,15 @@ class GetWarehouseProductsPaginatedAction
                 ->defaultSort('title')
                 ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->allowedFilters([
-                    AllowedFilter::custom('status', new StatusFilter()),
-                    AllowedFilter::custom('warehouse_status', new WarehouseStatusFilter()),
-                    AllowedFilter::custom('in_stock', new ProductInStockFilter()),
+                    AllowedFilter::custom('status', new StatusFilter),
+                    AllowedFilter::custom('warehouse_status', new WarehouseStatusFilter),
+                    AllowedFilter::custom('in_stock', new ProductInStockFilter),
                     AllowedFilter::trashed(),
                 ])
                 ->allowedSorts([
                     'title',
-                    AllowedSort::custom('total_quantity', new TotalQuantitySort()),
-                    AllowedSort::custom('arrived_at', new ArrivedAtSort()),
+                    AllowedSort::custom('total_quantity', new TotalQuantitySort),
+                    AllowedSort::custom('arrived_at', new ArrivedAtSort),
                 ])
                 ->offset($offset)
                 ->limit($limit)
@@ -55,7 +55,7 @@ class GetWarehouseProductsPaginatedAction
                 offset: $offset,
             );
         } catch (QueryException $e) {
-            throw new InvalidFilterSortParamException();
+            throw new InvalidFilterSortParamException;
         }
     }
 }

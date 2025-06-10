@@ -41,6 +41,7 @@ class CartStorageService
     {
         if (! $user) {
             $this->session->push($this->cartSessionKey, $cart->setId(Uuid::uuid7()->toString())->toBase());
+
             return;
         }
 
@@ -60,8 +61,7 @@ class CartStorageService
         }
 
         DB::transaction(function () use ($user, $cartItems) {
-            $cartData = $cartItems->map(fn($item)
-                => [
+            $cartData = $cartItems->map(fn ($item) => [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
@@ -103,8 +103,7 @@ class CartStorageService
             });
 
             if ($newCartItems->isNotEmpty()) {
-                $data = $newCartItems->map(fn(object $item)
-                    => [
+                $data = $newCartItems->map(fn (object $item) => [
                     'id' => $item->id,
                     'product_id' => $item->product_id,
                     'user_id' => $user->id,
@@ -126,7 +125,7 @@ class CartStorageService
 
         $userCart = $this->session->get($this->cartSessionKey);
         if ($userCart) {
-            $userCart = array_values(array_filter($userCart, static fn($cartInfo) => $cartInfo->id !== $id));
+            $userCart = array_values(array_filter($userCart, static fn ($cartInfo) => $cartInfo->id !== $id));
 
             $this->session->put($this->cartSessionKey, $userCart);
         }

@@ -23,7 +23,7 @@ class WarehouseProductsTableResource extends JsonApiResource
                 'name' => WarehouseProductStatusEnum::tryFrom($this->warehouse_status)?->toString(),
                 'colorType' => WarehouseProductStatusEnum::tryFrom($this->warehouse_status)?->toColorType(),
             ],
-            'totalQuantity' => round((float)$this->total_quantity, 2),
+            'totalQuantity' => round((float) $this->total_quantity, 2),
             'arrived_at' => $this->arrived_at,
         ];
     }

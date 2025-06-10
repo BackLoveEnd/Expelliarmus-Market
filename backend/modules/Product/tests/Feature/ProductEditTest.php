@@ -27,7 +27,6 @@ use Modules\Warehouse\Models\VariationAttributeValues;
 
 class ProductEditTest extends TestCase
 {
-
     use RefreshDatabase;
 
     private const int ALL_NEW_ATTRS = 0;
@@ -57,9 +56,9 @@ class ProductEditTest extends TestCase
             'product_specs' => $specs,
         ]);
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -103,9 +102,9 @@ class ProductEditTest extends TestCase
             'title' => $product->title,
         ]);
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -130,9 +129,9 @@ class ProductEditTest extends TestCase
             'product_specs' => $this->generateSpecs($product->category),
         ]);
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -171,9 +170,9 @@ class ProductEditTest extends TestCase
             'product_specs' => $this->generateSpecs($product->category),
         ]);
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -210,9 +209,9 @@ class ProductEditTest extends TestCase
 
         $oldSVariationIds = $product->combinedAttributes->pluck('id');
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -261,8 +260,7 @@ class ProductEditTest extends TestCase
     }
 
     public function test_can_edit_product_with_combined_options_with_new_attributes_and_exist_variations(
-    ): void
-    {
+    ): void {
         $product = Product::factory()->withCombinedAttributes();
 
         $options = $this->generateCombinedOptionsWithExistsVariationsAndNewAttrs($product);
@@ -275,9 +273,9 @@ class ProductEditTest extends TestCase
 
         $attributeNames = collect($options->first()['attributes'])->pluck('name');
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -316,8 +314,7 @@ class ProductEditTest extends TestCase
 
     // Balanced means some variations or attributes exists, some new
     public function test_can_edit_product_with_combined_options_with_balanced_variations_and_balanced_attributes(
-    ): void
-    {
+    ): void {
         $product = Product::factory()->withCombinedAttributes();
 
         $options = $this->generateCombinedOptionsWithBalanceAttrsAndVariations($product);
@@ -330,9 +327,9 @@ class ProductEditTest extends TestCase
 
         $attributeNames = collect($options[0]['attributes'])->pluck('name');
 
-        (new EditProductFactoryAction())->createAction($request)
+        (new EditProductFactoryAction)->createAction($request)
             ->handle(
-                new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+                new EditProduct($product, new DeleteVariationsWhenNeedAction),
                 new EditProductInWarehouse($product)
             );
 
@@ -374,7 +371,7 @@ class ProductEditTest extends TestCase
         $product = Product::factory()->withSingleAttributes();
 
         // true - means combined
-        (new DeleteVariationsWhenNeedAction())->handle($product, true);
+        (new DeleteVariationsWhenNeedAction)->handle($product, true);
 
         $this->assertDatabaseMissing('product_attribute_values', [
             'product_id' => $product->id,
@@ -388,7 +385,7 @@ class ProductEditTest extends TestCase
         $variations = $product->combinedAttributes->pluck('id');
 
         // false - means single option
-        (new DeleteVariationsWhenNeedAction())->handle($product, false);
+        (new DeleteVariationsWhenNeedAction)->handle($product, false);
 
         $this->assertDatabaseMissing('product_variations', [
             'product_id' => $product->id,
@@ -410,9 +407,9 @@ class ProductEditTest extends TestCase
         $variations = $productWithCombined->combinedAttributes->pluck('id');
 
         // null - means without options
-        (new DeleteVariationsWhenNeedAction())->handle($productWithSingle, null);
+        (new DeleteVariationsWhenNeedAction)->handle($productWithSingle, null);
 
-        (new DeleteVariationsWhenNeedAction())->handle($productWithCombined, null);
+        (new DeleteVariationsWhenNeedAction)->handle($productWithCombined, null);
 
         $this->assertDatabaseMissing('product_attribute_values', [
             'product_id' => $productWithSingle->id,
@@ -704,5 +701,4 @@ class ProductEditTest extends TestCase
 
         return $request;
     }
-
 }

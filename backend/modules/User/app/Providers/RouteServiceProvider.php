@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-
     protected string $name = 'User';
 
     public function map(): void
@@ -33,5 +32,4 @@ class RouteServiceProvider extends ServiceProvider
             ),
         );
     }
-
 }

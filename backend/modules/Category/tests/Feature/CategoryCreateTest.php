@@ -13,7 +13,6 @@ use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryCreateTest extends TestCase
 {
-
     use RefreshDatabase;
 
     public function test_can_create_new_category_with_attributes(): void
@@ -22,7 +21,7 @@ class CategoryCreateTest extends TestCase
 
         $dto = CreateCategoryDto::fromRequest($request);
 
-        $category = (new SaveCategoryWithAttributesAction())->handle($dto);
+        $category = (new SaveCategoryWithAttributesAction)->handle($dto);
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
@@ -42,7 +41,7 @@ class CategoryCreateTest extends TestCase
 
         $dto = CreateCategoryDto::fromRequest($request);
 
-        $category = (new SaveCategoryWithAttributesAction())->handle($dto);
+        $category = (new SaveCategoryWithAttributesAction)->handle($dto);
 
         $this->assertDatabaseHas('categories', [
             'id' => $category->id,
@@ -69,7 +68,7 @@ class CategoryCreateTest extends TestCase
         $dto = CreateCategoryDto::fromRequest($request);
 
         $this->assertThrows(
-            test: fn() => (new SaveCategoryWithAttributesAction())->handle($dto),
+            test: fn () => (new SaveCategoryWithAttributesAction)->handle($dto),
             expectedClass: AttributesMustBeUniqueForCategoryException::class
         );
     }
@@ -79,7 +78,7 @@ class CategoryCreateTest extends TestCase
         ?int $parent = null,
         array $attributes = []
     ) {
-        if ( ! $attributes) {
+        if (! $attributes) {
             $attributes = [
                 [
                     'name' => 'Size',
@@ -120,5 +119,4 @@ class CategoryCreateTest extends TestCase
 
         return $attribute;
     }
-
 }

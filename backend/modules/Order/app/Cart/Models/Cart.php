@@ -52,14 +52,14 @@ class Cart extends Model
     public function pricePerUnit(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
     public function finalPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 

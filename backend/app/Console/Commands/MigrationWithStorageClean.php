@@ -11,9 +11,9 @@ class MigrationWithStorageClean extends MigrateCommand
 {
     public function __construct(Migrator $migrator, Dispatcher $dispatcher)
     {
-        $this->signature .= "
+        $this->signature .= '
                 {--storage-clean : Clean storage with migration.}
-        ";
+        ';
 
         parent::__construct($migrator, $dispatcher);
     }

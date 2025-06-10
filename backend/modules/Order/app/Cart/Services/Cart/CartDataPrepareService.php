@@ -27,7 +27,7 @@ class CartDataPrepareService
     public function prepareCartInfoForProductWithVariations(ProductCartDto $dto): UserCartInfoDto
     {
         if ($dto->variationId === null) {
-            throw new RuntimeException("Variation id must be set.");
+            throw new RuntimeException('Variation id must be set.');
         }
 
         $product = $this->warehouseService->getProductAttributeById(
@@ -40,7 +40,7 @@ class CartDataPrepareService
         );
 
         if (! $this->stockService->hasEnoughSuppliesForRequestedQuantity($product, $dto->quantity)) {
-            throw new ProductCannotBeAddedToCartException();
+            throw new ProductCannotBeAddedToCartException;
         }
 
         $currentVariation = $product->getCurrentVariationRelation();
@@ -57,8 +57,7 @@ class CartDataPrepareService
             'variation' => [
                 'id' => $dto->variationId,
                 'data' => $currentVariation instanceof ProductVariation
-                    ? $currentVariation->productAttributes->map(fn($item)
-                        => [
+                    ? $currentVariation->productAttributes->map(fn ($item) => [
                         'attribute_name' => $item->name,
                         'value' => $item->pivot->value,
                         'type' => $item->type->toTypes(),
@@ -77,7 +76,7 @@ class CartDataPrepareService
     public function prepareCartInfoForNonVariationProduct(ProductCartDto $dto): UserCartInfoDto
     {
         if (! $this->stockService->hasEnoughSuppliesForRequestedQuantity($dto->product, $dto->quantity)) {
-            throw new ProductCannotBeAddedToCartException();
+            throw new ProductCannotBeAddedToCartException;
         }
 
         return UserCartInfoDto::fromArray([
@@ -108,8 +107,7 @@ class CartDataPrepareService
             ),
         )->keyBy('id');
 
-        return $cartItems->map(fn($item)
-            => [
+        return $cartItems->map(fn ($item) => [
             'id' => $item->id,
             'quantity' => $item->quantity,
             'product' => $preparedProducts->get($item->product->id, $item->product),

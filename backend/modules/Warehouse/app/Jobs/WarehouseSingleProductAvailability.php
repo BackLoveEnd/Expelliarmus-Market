@@ -45,15 +45,15 @@ class WarehouseSingleProductAvailability implements ShouldQueue
                     $productIds = $productIds->implode(',');
 
                     $productUpdatedIds = DB::select(
-                        "
+                        '
                             UPDATE warehouses w
                             SET status = CASE 
                                 WHEN pav.has_positive = 1 AND pav.has_non_positive = 1 
-                                    THEN ".WarehouseProductStatusEnum::PARTIALLY->value."
+                                    THEN '.WarehouseProductStatusEnum::PARTIALLY->value.'
                                 WHEN pav.has_positive = 1 
-                                    THEN ".WarehouseProductStatusEnum::IN_STOCK->value."
+                                    THEN '.WarehouseProductStatusEnum::IN_STOCK->value.'
                                 WHEN pav.has_non_positive = 1 
-                                    THEN ".WarehouseProductStatusEnum::NOT_AVAILABLE->value."
+                                    THEN '.WarehouseProductStatusEnum::NOT_AVAILABLE->value.'
                                 ELSE w.status
                             END
                             FROM (
@@ -61,13 +61,13 @@ class WarehouseSingleProductAvailability implements ShouldQueue
                                        MAX(CASE WHEN quantity > 0 THEN 1 ELSE 0 END) as has_positive,
                                        MAX(CASE WHEN quantity <= 0 THEN 1 ELSE 0 END) as has_non_positive
                                 FROM product_attribute_values
-                                WHERE product_id IN (".$productIds.")
+                                WHERE product_id IN ('.$productIds.')
                                 GROUP BY product_id
                             ) AS pav
                             WHERE pav.product_id = w.product_id
-                            AND w.product_id IN (".$productIds.")
+                            AND w.product_id IN ('.$productIds.')
                             RETURNING w.product_id
-                        ",
+                        ',
                     );
 
                     $configKey = config('product.cache.product-public');

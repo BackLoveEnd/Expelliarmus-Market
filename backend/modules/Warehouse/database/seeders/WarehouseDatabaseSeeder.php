@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 
 class WarehouseDatabaseSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      */
@@ -16,5 +15,4 @@ class WarehouseDatabaseSeeder extends Seeder
             DiscountedProductsSeeder::class,
         ]);
     }
-
 }

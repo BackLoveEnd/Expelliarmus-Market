@@ -30,18 +30,14 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class CategoryController extends Controller
 {
-
     /**
      * Retrieve all categories in tree view.
      *
      * Usage place - Admin section.
-     *
-     * @param  Request  $request
-     * @return JsonResponse|AnonymousResourceCollection
      */
     public function index(Request $request): JsonResponse|AnonymousResourceCollection
     {
-        $categories = Category::getAllCategoriesInTree((int)$request->query('limit'));
+        $categories = Category::getAllCategoriesInTree((int) $request->query('limit'));
 
         if ($categories->isEmpty()) {
             return response()->json(['message' => 'Categories not found'], 404);
@@ -54,8 +50,6 @@ class CategoryController extends Controller
      * Retrieve only parent categories.
      *
      * Usage place - Admin section.
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function rootCategories(): JsonApiResourceCollection|JsonResponse
     {
@@ -74,10 +68,7 @@ class CategoryController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Category  $category
-     * @param  GetCategoryAttributesAction  $action
      *
-     * @return JsonResponse
      * @throws AuthorizationException
      */
     public function getAllAttributesForCategory(
@@ -101,11 +92,6 @@ class CategoryController extends Controller
      * Create category.
      *
      * Usage place - Admin Section.
-     *
-     * @param  CreateCategoryRequest  $request
-     * @param  SaveCategoryWithAttributesAction  $action
-     *
-     * @return JsonResponse
      */
     public function create(
         CreateCategoryRequest $request,
@@ -127,11 +113,6 @@ class CategoryController extends Controller
      * Edit category.
      *
      * Usage place - Admin section.
-     *
-     * @param  EditCategoryRequest  $request
-     * @param  EditCategoryAction  $action
-     *
-     * @return JsonResponse
      */
     public function edit(EditCategoryRequest $request, EditCategoryAction $action): JsonResponse
     {
@@ -149,10 +130,7 @@ class CategoryController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Category  $category
-     * @param  CategoryIconService  $categoryIconService
      *
-     * @return JsonResponse
      * @throws FailedToDeleteCategoryException|AuthorizationException
      */
     public function delete(Category $category, CategoryIconService $categoryIconService): JsonResponse
@@ -177,11 +155,7 @@ class CategoryController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Category  $category
-     * @param  Attribute  $attribute
-     * @param  DeleteAction  $action
      *
-     * @return JsonResponse
      * @throws AttributeNotRelatedToCategoryException
      * @throws FailedToDeleteCategoryAttributeException
      */
@@ -194,5 +168,4 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Attribute deleted']);
     }
-
 }

@@ -18,7 +18,6 @@ class RequestModel
      * @template TModel of Model
      *
      * @param  class-string<TModel>  $modelName
-     * @param  array  $columns
      * @return TModel|Model
      */
     public function bind(string $modelName, array $columns = ['*']): Model

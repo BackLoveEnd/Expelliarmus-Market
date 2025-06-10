@@ -45,15 +45,15 @@ class WarehouseCombinedProductAvailability implements ShouldQueue
                     $productsIds = $productsIds->implode(',');
 
                     $productUpdatedIds = DB::select(
-                        "
+                        '
                         UPDATE warehouses AS w
                         SET status = CASE
                             WHEN pv.has_positive = 1 AND pv.has_non_positive = 1 
-                                THEN ".WarehouseProductStatusEnum::PARTIALLY->value."
+                                THEN '.WarehouseProductStatusEnum::PARTIALLY->value.'
                             WHEN pv.has_positive = 1 
-                                THEN ".WarehouseProductStatusEnum::IN_STOCK->value."
+                                THEN '.WarehouseProductStatusEnum::IN_STOCK->value.'
                             WHEN pv.has_non_positive = 1 
-                                THEN ".WarehouseProductStatusEnum::NOT_AVAILABLE->value."
+                                THEN '.WarehouseProductStatusEnum::NOT_AVAILABLE->value.'
                             ELSE w.status
                         END
                         FROM (
@@ -61,13 +61,13 @@ class WarehouseCombinedProductAvailability implements ShouldQueue
                                 MAX(CASE WHEN quantity > 0 THEN 1 ELSE 0 END) as has_positive,
                                 MAX(CASE WHEN quantity <= 0 THEN 1 ELSE 0 END) as has_non_positive
                             FROM product_variations
-                            WHERE product_id IN (".$productsIds.")
+                            WHERE product_id IN ('.$productsIds.')
                             GROUP BY product_id
                         ) as pv
                         WHERE pv.product_id = w.product_id
-                            AND w.product_id IN (".$productsIds.")
+                            AND w.product_id IN ('.$productsIds.')
                         RETURNING w.product_id
-                    ",
+                    ',
                     );
 
                     $configKey = config('product.cache.product-public');

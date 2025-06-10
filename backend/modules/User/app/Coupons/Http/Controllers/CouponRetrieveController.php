@@ -24,8 +24,6 @@ class CouponRetrieveController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection
      * @throws AuthorizationException
      */
     public function getGlobalCoupons(Request $request): JsonApiResourceCollection
@@ -33,8 +31,8 @@ class CouponRetrieveController extends Controller
         $this->authorize('view', Coupon::class);
 
         $dto = $this->storageService->getGlobals(
-            limit: (int)$request->query('limit', config('user.retrieve.coupons')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('user.retrieve.coupons')),
+            offset: (int) $request->query('offset', 0),
         );
 
         return CouponResource::collection($dto->items)->additional($dto->wrapMeta());
@@ -45,8 +43,6 @@ class CouponRetrieveController extends Controller
      *
      * Usage place - User section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection
      * @throws AuthorizationException
      */
     public function getPersonalCoupons(Request $request): JsonApiResourceCollection
@@ -54,8 +50,8 @@ class CouponRetrieveController extends Controller
         $this->authorize('view', Coupon::class);
 
         $dto = $this->storageService->getPersonal(
-            limit: (int)$request->query('limit', config('user.retrieve.coupons')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('user.retrieve.coupons')),
+            offset: (int) $request->query('offset', 0),
         );
 
         return PersonalCouponsResource::collection($dto->items)->additional($dto->wrapMeta());

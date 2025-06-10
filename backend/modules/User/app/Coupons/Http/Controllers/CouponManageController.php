@@ -25,9 +25,6 @@ class CouponManageController extends Controller
      * Create a new coupon.
      *
      * Usage place - Admin section.
-     *
-     * @param  CreateCouponRequest  $request
-     * @return CouponResource
      */
     public function create(CreateCouponRequest $request): CouponResource
     {
@@ -43,9 +40,6 @@ class CouponManageController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  EditCouponRequest  $request
-     * @param  Coupon  $coupon
-     * @return JsonResponse
      * @throws FailedToUpdateCouponException
      */
     public function edit(EditCouponRequest $request, Coupon $coupon): JsonResponse
@@ -62,9 +56,6 @@ class CouponManageController extends Controller
      * Delete a coupon.
      *
      * Usage place - Admin section.
-     *
-     * @param  Coupon  $coupon
-     * @return JsonResponse
      */
     public function delete(Coupon $coupon): JsonResponse
     {

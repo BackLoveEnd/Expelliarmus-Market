@@ -15,7 +15,6 @@ use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryEditTest extends TestCase
 {
-
     use RefreshDatabase;
 
     public function test_can_edit_category(): void
@@ -32,7 +31,7 @@ class CategoryEditTest extends TestCase
 
         $dto = EditCategoryDto::fromRequest($request);
 
-        (new EditCategoryAction())->handle($dto);
+        (new EditCategoryAction)->handle($dto);
 
         $this->assertDatabaseHas('categories', [
             'name' => 'Edited Category 1',
@@ -72,7 +71,7 @@ class CategoryEditTest extends TestCase
 
         $dto = EditCategoryDto::fromRequest($request);
 
-        (new EditCategoryAction())->handle($dto);
+        (new EditCategoryAction)->handle($dto);
 
         $this->assertEquals(collect($newAttributes)->pluck('name'),
             $category->productAttributes->pluck('name'));
@@ -83,7 +82,7 @@ class CategoryEditTest extends TestCase
         ?string $categoryName = null,
         array $attributes = []
     ) {
-        if ( ! $attributes) {
+        if (! $attributes) {
             $attributes = [
                 [
                     'name' => 'Size',
@@ -107,5 +106,4 @@ class CategoryEditTest extends TestCase
 
         return $request;
     }
-
 }

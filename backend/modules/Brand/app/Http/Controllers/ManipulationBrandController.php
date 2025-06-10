@@ -18,9 +18,6 @@ class ManipulationBrandController extends Controller
      * Create brand.
      *
      * Usage place - Admin section.
-     *
-     * @param  BrandRequest  $request
-     * @return BrandResource
      */
     public function create(BrandRequest $request): BrandResource
     {
@@ -36,10 +33,6 @@ class ManipulationBrandController extends Controller
      * Edit brand data.
      *
      * Usage place - Admin section.
-     *
-     * @param  Brand  $brand
-     * @param  BrandRequest  $request
-     * @return JsonResponse
      */
     public function edit(Brand $brand, BrandRequest $request): JsonResponse
     {
@@ -62,8 +55,6 @@ class ManipulationBrandController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Brand  $brand
-     * @return JsonResponse
      * @throws FailedToDeleteBrandException|AuthorizationException
      */
     public function delete(Brand $brand): JsonResponse

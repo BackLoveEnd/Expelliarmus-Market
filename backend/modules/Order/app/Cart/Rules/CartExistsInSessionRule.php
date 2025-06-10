@@ -25,7 +25,7 @@ class CartExistsInSessionRule implements ValidationRule
         $missingIds = $cartItemsId->diff($cartsInSessionIds);
 
         if ($missingIds->isNotEmpty()) {
-            $fail("Some of cart items are not exists.");
+            $fail('Some of cart items are not exists.');
         }
     }
 }

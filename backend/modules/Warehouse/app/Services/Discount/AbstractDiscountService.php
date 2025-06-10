@@ -14,7 +14,7 @@ use Modules\Warehouse\Models\Discount;
 
 abstract class AbstractDiscountService
 {
-    /**@var ?Collection<int, DiscountRelationInterface> $productVariations */
+    /** @var ?Collection<int, DiscountRelationInterface> */
     protected readonly ?Collection $productVariations;
 
     public function __construct(protected readonly Product $product)
@@ -25,7 +25,7 @@ abstract class AbstractDiscountService
     protected function calculateDiscountPrice(float $originalPrice, DiscountDto $dto): float
     {
         if ((int) $originalPrice === 0) {
-            throw new CannotAddDiscountToProductWithoutPriceException();
+            throw new CannotAddDiscountToProductWithoutPriceException;
         }
 
         return round(
@@ -35,8 +35,6 @@ abstract class AbstractDiscountService
     }
 
     /**
-     * @param  Discount  $discount
-     * @return void
      * @throws DiscountIsNotRelatedToProductException
      */
     protected function ensureDiscountRelatedToProduct(Discount $discount): void
@@ -53,7 +51,7 @@ abstract class AbstractDiscountService
     private function discountRelatedToProductWithoutVariations(Discount $discount): void
     {
         if (! $this->product->discount()->where('id', $discount->id)->exists()) {
-            throw new DiscountIsNotRelatedToProductException();
+            throw new DiscountIsNotRelatedToProductException;
         }
     }
 
@@ -64,7 +62,7 @@ abstract class AbstractDiscountService
             ->collapse();
 
         if ($discounts->where('id', $discount->id)->isEmpty()) {
-            throw new DiscountIsNotRelatedToProductException();
+            throw new DiscountIsNotRelatedToProductException;
         }
     }
 }

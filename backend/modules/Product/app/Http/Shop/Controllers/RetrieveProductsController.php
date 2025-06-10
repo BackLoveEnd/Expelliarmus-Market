@@ -12,7 +12,6 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RetrieveProductsController extends Controller
 {
-
     public function __construct(
         private RetrieveProductsService $productsService,
     ) {}
@@ -21,8 +20,6 @@ class RetrieveProductsController extends Controller
      * Retrieve products shop cards info with filters, sorts.
      *
      * Usage place - Shop.
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function index(): JsonApiResourceCollection|JsonResponse
     {

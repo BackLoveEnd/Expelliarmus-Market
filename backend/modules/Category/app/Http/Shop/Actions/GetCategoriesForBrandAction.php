@@ -15,8 +15,8 @@ class GetCategoriesForBrandAction
         $brand = Brand::query()
             ->when(
                 value: is_numeric($brandId),
-                callback: fn($query) => $query->where('id', $brandId),
-                default: fn($query) => $query->where('slug', $brandId),
+                callback: fn ($query) => $query->where('id', $brandId),
+                default: fn ($query) => $query->where('slug', $brandId),
             )
             ->firstOrFail();
 

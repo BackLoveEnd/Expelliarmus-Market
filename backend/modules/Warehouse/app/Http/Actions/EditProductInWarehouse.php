@@ -36,7 +36,7 @@ class EditProductInWarehouse
             return $dto->getPrice();
         }
 
-        return $dto->getVariationPrices()->filter(fn(?int $price) => $price !== null)->isEmpty()
+        return $dto->getVariationPrices()->filter(fn (?int $price) => $price !== null)->isEmpty()
             ? round($dto->getPrice(), 2)
             : null;
     }
@@ -51,7 +51,7 @@ class EditProductInWarehouse
                 : WarehouseProductStatusEnum::PENDING;
         }
 
-        if ($prices->filter(fn(?int $price) => $price === null)->isNotEmpty()) {
+        if ($prices->filter(fn (?int $price) => $price === null)->isNotEmpty()) {
             return WarehouseProductStatusEnum::PENDING;
         }
 

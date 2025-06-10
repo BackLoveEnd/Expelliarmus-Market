@@ -28,8 +28,6 @@ class TrashedProductsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws InvalidFilterSortParamException|AuthorizationException
      */
     public function getTrashed(Request $request): JsonApiResourceCollection|JsonResponse
@@ -62,9 +60,6 @@ class TrashedProductsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Product  $product
-     * @param  MoveProductToTrashAction  $action
-     * @return JsonResponse
      * @throws CannotTrashPublishedProductException
      * @throws AuthorizationException
      */
@@ -86,8 +81,6 @@ class TrashedProductsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Product  $product
-     * @return JsonResponse
      * @throws CannotRestoreNotTrashedProductException
      * @throws AuthorizationException
      */
@@ -107,8 +100,6 @@ class TrashedProductsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Product  $product
-     * @return JsonResponse
      * @throws CannotDeleteNotTrashedProduct
      * @throws AuthorizationException
      */

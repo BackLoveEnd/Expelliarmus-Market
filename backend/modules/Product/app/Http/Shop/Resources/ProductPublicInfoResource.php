@@ -43,9 +43,9 @@ class ProductPublicInfoResource extends JsonApiResource
     public function toRelationships(Request $request): array
     {
         $relationships = [
-            'category' => fn() => RootCategoryResource::make($this->category),
-            'brand' => fn() => BrandResource::make($this->brand),
-            'warehouse' => fn() => WarehouseResource::make($this->warehouse),
+            'category' => fn () => RootCategoryResource::make($this->category),
+            'brand' => fn () => BrandResource::make($this->brand),
+            'warehouse' => fn () => WarehouseResource::make($this->warehouse),
         ];
 
         if ($this->resource->hasCombinedAttributes() === null) {
@@ -54,10 +54,10 @@ class ProductPublicInfoResource extends JsonApiResource
 
         if ($this->resource->hasCombinedAttributes()) {
             $relationships['variations'] =
-                fn() => CombinedAttributeVariationResource::collection($this->productAttributes);
+                fn () => CombinedAttributeVariationResource::collection($this->productAttributes);
         } else {
             $relationships['variations'] =
-                fn() => SingleAttributeVariationResource::collection($this->productAttributes);
+                fn () => SingleAttributeVariationResource::collection($this->productAttributes);
         }
 
         return $relationships;

@@ -17,7 +17,6 @@ use Modules\ContentManagement\Storage\NewArrivals\NewArrivalsStorage;
 
 class NewArrivalsTest extends TestCase
 {
-
     use RefreshDatabase;
 
     protected FilesystemManager $storageMock;
@@ -187,5 +186,4 @@ class NewArrivalsTest extends TestCase
             ...$arrivals->toArray(),
         ]);
     }
-
 }

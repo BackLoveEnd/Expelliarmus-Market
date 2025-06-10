@@ -49,7 +49,7 @@ class GetProductStaffInfoAction
 
         $product->productAttributes = $this->warehouseService->getProductAttributes(
             product: $product,
-            dto: new FetchAttributesColumnsDto(),
+            dto: new FetchAttributesColumnsDto,
         );
 
         return $product;

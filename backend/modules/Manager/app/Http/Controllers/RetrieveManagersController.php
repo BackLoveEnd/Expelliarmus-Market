@@ -20,9 +20,6 @@ class RetrieveManagersController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @param  ManagersAction  $action
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws AuthorizationException
      */
     public function retrieveManagerTable(
@@ -32,8 +29,8 @@ class RetrieveManagersController extends Controller
         $this->authorize('manage', Manager::class);
 
         $dto = $action->handle(
-            limit: (int)$request->query('limit', config('manager.retrieve.table')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('manager.retrieve.table')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($dto->items->isEmpty()) {

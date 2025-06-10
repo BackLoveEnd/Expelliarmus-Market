@@ -100,7 +100,7 @@ class ProductDeleteTest extends TestCase
         $manager = Manager::factory()->superManager()->create();
 
         // move product to trash
-        (new MoveProductToTrashAction())->handle($product);
+        (new MoveProductToTrashAction)->handle($product);
 
         //permanently delete product from trash
         $this

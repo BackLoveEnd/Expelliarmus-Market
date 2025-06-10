@@ -22,10 +22,6 @@ class CategoryOptionAttributesController extends Controller
      * Retrieve all attributes for category with their values.
      *
      * Usage place - Shop.
-     *
-     * @param  string  $categorySlug
-     * @param  GetAttributesAction  $action
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getOptionAttributesForCategory(
         string $categorySlug,
@@ -34,9 +30,9 @@ class CategoryOptionAttributesController extends Controller
         $category = Category::query()->whereSlug($categorySlug)->firstOrFail();
 
         $attributes = $this->cacheService->repo()->remember(
-            key: $this->cacheService->key("category:%s:attributes", $category->id),
+            key: $this->cacheService->key('category:%s:attributes', $category->id),
             ttl: now()->addWeek(),
-            callback: fn() => $action->handle($category),
+            callback: fn () => $action->handle($category),
         );
 
         if ($attributes->isEmpty()) {

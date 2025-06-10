@@ -10,7 +10,6 @@ use Throwable;
 
 class FailedToRetrieveImagesException extends Exception
 {
-
     protected Throwable $originalException;
 
     public function __construct(string $message, Throwable $exception)
@@ -30,5 +29,4 @@ class FailedToRetrieveImagesException extends Exception
             'message' => 'Failed to retrieve product images. Try again or contact us.',
         ], 500);
     }
-
 }

@@ -55,6 +55,7 @@ class SendCouponToUserJob implements ShouldQueue
 
             if ($couponMeta->isEmpty()) {
                 $i++;
+
                 continue;
             }
 
@@ -120,7 +121,7 @@ class SendCouponToUserJob implements ShouldQueue
                     return null;
                 }
 
-                return (object)[
+                return (object) [
                     'userable_id' => $order->userable_id,
                     'userable_type' => $order->userable_type,
                     'order_count' => $order->order_count,

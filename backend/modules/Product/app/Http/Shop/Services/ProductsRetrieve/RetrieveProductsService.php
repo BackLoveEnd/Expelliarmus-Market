@@ -17,7 +17,6 @@ use Spatie\QueryBuilder\AllowedSort;
 
 class RetrieveProductsService
 {
-
     public function __construct(
         private ProductsRetriever $retriever,
         private WarehouseProductInfoService $warehouseService,
@@ -27,10 +26,10 @@ class RetrieveProductsService
     public function getProducts(int $retrieveNum): LengthAwarePaginator
     {
         $this->retriever->filtersConnector->defineFilters([
-            AllowedFilter::custom('category', new CategoryFilter()),
+            AllowedFilter::custom('category', new CategoryFilter),
             AllowedFilter::exact('brand', 'brand_id'),
-            AllowedFilter::custom('price', new PriceViewFilter()),
-            AllowedFilter::custom('options', new OptionsAttributesFilter()),
+            AllowedFilter::custom('price', new PriceViewFilter),
+            AllowedFilter::custom('options', new OptionsAttributesFilter),
         ]);
 
         $this->retriever->sortsConnector->defineSorts([
@@ -62,5 +61,4 @@ class RetrieveProductsService
             ),
         );
     }
-
 }

@@ -24,7 +24,7 @@ class ManagerCreatedNotification extends Notification implements ShouldQueue
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage())
+        return (new MailMessage)
             ->subject('Welcome to Expelliarmus Management!')
             ->greeting('Hello, '.$notifiable->first_name.'!')
             ->line('Your account was successfully created.')

@@ -16,7 +16,6 @@ use Throwable;
 
 final readonly class BootstrapExceptionsHelper
 {
-
     public function __construct(
         private Exceptions $exceptions,
     ) {}
@@ -101,12 +100,11 @@ final readonly class BootstrapExceptionsHelper
     private function renderUnhandleDatabaseException(): void
     {
         $this->exceptions->render(function (QueryException $e, Request $request) {
-            if ( ! app()->environment('local')) {
+            if (! app()->environment('local')) {
                 return response()->json([
                     'message' => 'Database internal error. Please contact us.',
                 ], 500);
             }
         });
     }
-
 }

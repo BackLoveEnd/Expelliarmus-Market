@@ -15,20 +15,14 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection as JsonApiResponse;
 
 class ShopCategoryAccessController extends Controller
 {
-
     /**
      * Retrieve categories browse list for home page.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @param  BrowseAction  $action
-     *
-     * @return JsonApiResponse|JsonResponse
      */
     public function getCategoriesBrowseList(Request $request, BrowseAction $action): JsonApiResponse|JsonResponse
     {
-        $categories = $action->handle((int)$request->query('limit'));
+        $categories = $action->handle((int) $request->query('limit'));
 
         if ($categories->isEmpty()) {
             return response()->json(['message' => 'Categories not found.'], 404);
@@ -41,9 +35,6 @@ class ShopCategoryAccessController extends Controller
      * Retrieve children of category.
      *
      * Usage place - Shop.
-     *
-     * @param  Category  $category
-     * @return JsonApiResponse|JsonResponse
      */
     public function getChildrenOfCategory(Category $category): JsonApiResponse|JsonResponse
     {

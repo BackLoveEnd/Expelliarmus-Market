@@ -47,7 +47,7 @@ class ProductVariation extends Model implements DiscountRelationInterface, Varia
     public function price(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
@@ -92,7 +92,7 @@ class ProductVariation extends Model implements DiscountRelationInterface, Varia
 
     public function quantity(): Attribute
     {
-        return Attribute::set(fn($value) => max($value, 0));
+        return Attribute::set(fn ($value) => max($value, 0));
     }
 
     protected static function boot(): void

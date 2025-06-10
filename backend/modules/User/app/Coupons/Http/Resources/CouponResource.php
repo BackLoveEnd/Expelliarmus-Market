@@ -36,12 +36,12 @@ class CouponResource extends JsonApiResource
     public function toId(Request $request): string
     {
         return $this->resource instanceof CouponUserDto
-            ? (string)$this->resource->coupon->id
-            : (string)$this->resource->id;
+            ? (string) $this->resource->coupon->id
+            : (string) $this->resource->id;
     }
 
     public function toType(Request $request): string
     {
-        return "coupons";
+        return 'coupons';
     }
 }

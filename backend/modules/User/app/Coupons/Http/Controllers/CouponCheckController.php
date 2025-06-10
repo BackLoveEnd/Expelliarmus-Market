@@ -6,7 +6,6 @@ namespace Modules\User\Coupons\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Modules\Order\Order\Http\Requests\CouponCheckRequest;
 use Modules\User\Coupons\Exceptions\CouponNotValidException;
 use Modules\User\Coupons\Exceptions\ReachedGlobalCouponUserLimitException;
 use Modules\User\Coupons\Http\Resources\CouponResource;
@@ -23,8 +22,6 @@ class CouponCheckController
      *
      * Usage place - Shop.
      *
-     * @param  Request  $request
-     * @return CouponResource|JsonResponse
      * @throws CouponNotValidException|ReachedGlobalCouponUserLimitException
      */
     public function checkCoupon(Request $request): CouponResource|JsonResponse

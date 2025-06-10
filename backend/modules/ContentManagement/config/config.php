@@ -4,7 +4,7 @@ return [
     'name' => 'ContentManagement',
     'default' => [
         'slider' => [
-            'image' => 'default_slide.png'
-        ]
-    ]
+            'image' => 'default_slide.png',
+        ],
+    ],
 ];

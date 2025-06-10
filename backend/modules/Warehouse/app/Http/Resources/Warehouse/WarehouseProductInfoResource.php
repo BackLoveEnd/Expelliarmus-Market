@@ -11,12 +11,11 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class WarehouseProductInfoResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         $variationsType = null;
 
-        if ( ! is_null($this->hasCombinedAttributes())) {
+        if (! is_null($this->hasCombinedAttributes())) {
             if ($this->hasCombinedAttributes()) {
                 $variationsType = 'combined';
             } else {
@@ -39,9 +38,9 @@ class WarehouseProductInfoResource extends JsonApiResource
     public function toRelationships(Request $request): array
     {
         $relationships = [
-            'category' => fn() => RootCategoryResource::make($this->category),
-            'brand' => fn() => BrandResource::make($this->brand),
-            'warehouse' => fn() => WarehouseResource::make($this->warehouse),
+            'category' => fn () => RootCategoryResource::make($this->category),
+            'brand' => fn () => BrandResource::make($this->brand),
+            'warehouse' => fn () => WarehouseResource::make($this->warehouse),
         ];
 
         if (is_null($this->hasCombinedAttributes())) {
@@ -50,13 +49,12 @@ class WarehouseProductInfoResource extends JsonApiResource
 
         if ($this->hasCombinedAttributes()) {
             $relationships['variations'] =
-                fn() => CombinedAttributeVariationResource::collection($this->productAttributes);
+                fn () => CombinedAttributeVariationResource::collection($this->productAttributes);
         } else {
             $relationships['variations'] =
-                fn() => SingleAttributeVariationResource::collection($this->productAttributes);
+                fn () => SingleAttributeVariationResource::collection($this->productAttributes);
         }
 
         return $relationships;
     }
-
 }

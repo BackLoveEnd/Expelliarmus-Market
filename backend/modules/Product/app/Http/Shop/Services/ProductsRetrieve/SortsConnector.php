@@ -8,7 +8,7 @@ use Spatie\QueryBuilder\AllowedSort;
 
 readonly class SortsConnector
 {
-    /**@var array<int, AllowedSort> $sorts */
+    /** @var array<int, AllowedSort> */
     private array $sorts;
 
     public function defineSorts(array $sorts = []): void

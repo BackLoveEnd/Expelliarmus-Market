@@ -12,12 +12,11 @@ final readonly class ArrivalContentDto
     public function __construct(
         public string $arrivalUrl,
         public int $position,
-        public ?string $arrivalId = null,
-        public ?UploadedFile $file = null,
-        public ?string $existsImageUrl = null,
+        public ?string $arrivalId,
+        public ?UploadedFile $file,
+        public ?string $existsImageUrl,
         public ArrivalMetaContentDto $content
-    ) {
-    }
+    ) {}
 
     public static function collection(array $data): Collection
     {

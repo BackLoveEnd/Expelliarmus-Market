@@ -44,8 +44,7 @@ class CartFactory extends Factory
                     'final_price' => round($variation->price * $attributes['quantity'], 2),
                     'variation' => [
                         'id' => $variation->id,
-                        'data' => $variation->productAttributes->map(fn($item)
-                            => [
+                        'data' => $variation->productAttributes->map(fn ($item) => [
                             'attribute_name' => $item->name,
                             'value' => $item->pivot->value,
                             'type' => $item->type->toTypes(),

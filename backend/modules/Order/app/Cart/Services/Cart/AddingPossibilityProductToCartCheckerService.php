@@ -18,11 +18,11 @@ class AddingPossibilityProductToCartCheckerService
     public function ensureProductCanBeAddedToCart(Product $product): void
     {
         if (! $product->status->is(ProductStatusEnum::PUBLISHED)) {
-            throw new ProductCannotBeAddedToCartException();
+            throw new ProductCannotBeAddedToCartException;
         }
 
         if (! $this->stockService->isPartiallyOrFullyInStock($product)) {
-            throw new ProductCannotBeAddedToCartException();
+            throw new ProductCannotBeAddedToCartException;
         }
     }
 

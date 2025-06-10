@@ -22,10 +22,10 @@ class CountStatisticsService implements StatisticsServiceInterface
         $this->models = collect();
 
         foreach ($models as $modalName) {
-            $model = new $modalName();
+            $model = new $modalName;
 
             if (! $model instanceof Model) {
-                throw new RuntimeException("Giving value is not instance of Eloquent Model");
+                throw new RuntimeException('Giving value is not instance of Eloquent Model');
             }
 
             $this->models->add($model);

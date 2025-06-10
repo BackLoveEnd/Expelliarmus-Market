@@ -4,7 +4,6 @@ namespace Modules\Warehouse\Enums;
 
 enum ProductAttributeTypeEnum: int
 {
-
     case STRING = 0;
 
     case NUMBER = 1;
@@ -31,5 +30,4 @@ enum ProductAttributeTypeEnum: int
             self::DECIMAL => round($value, 2)
         };
     }
-
 }

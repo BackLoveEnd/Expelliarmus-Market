@@ -28,10 +28,6 @@ class DiscountController extends Controller
      * Add discount to product.
      *
      * Usage place - Admin section.
-     *
-     * @param  AddDiscountToProductRequest  $request
-     * @param  Product  $product
-     * @return JsonResponse
      */
     public function addDiscount(AddDiscountToProductRequest $request, Product $product): JsonResponse
     {
@@ -54,11 +50,6 @@ class DiscountController extends Controller
      * Edit discount information.
      *
      * Usage place - Admin section.
-     *
-     * @param  EditDiscountRequest  $request
-     * @param  Product  $product
-     * @param  Discount  $discount
-     * @return JsonResponse
      */
     public function editDiscount(EditDiscountRequest $request, Product $product, Discount $discount): JsonResponse
     {
@@ -74,9 +65,6 @@ class DiscountController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Product  $product
-     * @param  Discount  $discount
-     * @return JsonResponse
      * @throws DiscountIsNotRelatedToProductException
      */
     public function cancelDiscount(Product $product, Discount $discount): JsonResponse

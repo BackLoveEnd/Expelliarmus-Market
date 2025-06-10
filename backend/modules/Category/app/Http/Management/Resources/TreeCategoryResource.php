@@ -9,7 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TreeCategoryResource extends JsonResource
 {
-
     public function toArray(Request $request): array
     {
         return [
@@ -31,7 +30,7 @@ class TreeCategoryResource extends JsonResource
         while ($root->parent !== null) {
             $root = $root->parent;
         }
+
         return $root->name;
     }
-
 }

@@ -13,7 +13,6 @@ use Modules\Category\Models\Category;
 
 class CategoryIconService
 {
-
     private Filesystem $filesystem;
 
     public function __construct(
@@ -24,8 +23,8 @@ class CategoryIconService
 
     public function upload(UploadedFile $icon, Category $category): void
     {
-        if ( ! $category->isRoot()) {
-            throw new CannotUploadIconForNotRootCategoryException();
+        if (! $category->isRoot()) {
+            throw new CannotUploadIconForNotRootCategoryException;
         }
 
         $this->saveIcon($icon);
@@ -40,8 +39,8 @@ class CategoryIconService
 
     public function edit(UploadedFile $icon, Category $category): void
     {
-        if ( ! $category->isRoot()) {
-            throw new CannotUploadIconForNotRootCategoryException();
+        if (! $category->isRoot()) {
+            throw new CannotUploadIconForNotRootCategoryException;
         }
 
         if ($category->icon_origin !== null && $this->filesystem->exists($this->getIconsPath($category->icon_origin))) {
@@ -69,8 +68,8 @@ class CategoryIconService
 
     protected function saveIcon(UploadedFile $icon): void
     {
-        if ( ! $this->filesystem->put('categories/', $icon)) {
-            throw new FailedToUploadIconForCategory();
+        if (! $this->filesystem->put('categories/', $icon)) {
+            throw new FailedToUploadIconForCategory;
         }
     }
 
@@ -78,5 +77,4 @@ class CategoryIconService
     {
         return 'categories/'.$iconId;
     }
-
 }

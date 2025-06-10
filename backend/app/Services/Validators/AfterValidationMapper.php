@@ -15,7 +15,6 @@ trait AfterValidationMapper
         });
     }
 
-
     protected function processAfterValidation(Validator $validator): void
     {
         $data = $validator->getData();

@@ -22,9 +22,6 @@ class UserRetrieveCouponsController extends Controller
      * Retrieve personal coupons for user.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getMyPersonalCoupons(Request $request): JsonApiResourceCollection|JsonResponse
     {
@@ -50,9 +47,6 @@ class UserRetrieveCouponsController extends Controller
      * Retrieve global coupons for user.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getMyGlobalCoupons(Request $request): JsonApiResourceCollection|JsonResponse
     {

@@ -19,8 +19,7 @@ class SliderContentService
 {
     public function __construct(
         protected SliderContentStorage $storage
-    ) {
-    }
+    ) {}
 
     public function getAll(): EloquentCollection
     {
@@ -29,7 +28,7 @@ class SliderContentService
                 'slide_id',
                 'image_url',
                 'order',
-                'content_url'
+                'content_url',
             ]);
     }
 
@@ -79,7 +78,7 @@ class SliderContentService
     protected function ensureThatOrdersIsUnique(Collection $slides): void
     {
         if ($slides->unique('order')->count() !== $slides->count()) {
-            throw new OrderOfSliderContentIsNotUniqueException();
+            throw new OrderOfSliderContentIsNotUniqueException;
         }
     }
 
@@ -105,7 +104,7 @@ class SliderContentService
             ->whereIn('slide_id', $slidesToUpdate->pluck('slideId')->toArray())
             ->get(['slide_id', 'image_source']);
 
-        $slidesWithNewImage = $slidesToUpdate->filter(fn($dto) => $dto->image !== null);
+        $slidesWithNewImage = $slidesToUpdate->filter(fn ($dto) => $dto->image !== null);
 
         if ($slidesWithNewImage->isNotEmpty()) {
             $this->uploadAndUpdateWithImage($slidesWithNewImage, $slidesFromDb);
@@ -113,7 +112,7 @@ class SliderContentService
             return;
         }
 
-        $slidesWithoutNewImage = $slidesToUpdate->filter(fn($dto) => $dto->image === null);
+        $slidesWithoutNewImage = $slidesToUpdate->filter(fn ($dto) => $dto->image === null);
 
         $this->updateWithoutImage($slidesWithoutNewImage);
     }
@@ -126,7 +125,7 @@ class SliderContentService
                 'order' => $dto->order,
                 'content_url' => $dto->contentUrl,
                 'image_url' => '"content_sliders"."image_url"',
-                'image_source' => '"content_sliders"."image_source"'
+                'image_source' => '"content_sliders"."image_source"',
             ];
         });
 
@@ -166,7 +165,7 @@ class SliderContentService
     protected function getUntouchedSlides(Collection $slides): Collection
     {
         $unTouchedSlides = $slides->whereNotNull('slideId')
-            ->filter(fn(SliderContentDto $dto) => $dto->image === null && $dto->imageUrl !== null);
+            ->filter(fn (SliderContentDto $dto) => $dto->image === null && $dto->imageUrl !== null);
 
         return $unTouchedSlides->map(function (SliderContentDto $dto) {
             return [
@@ -198,7 +197,7 @@ class SliderContentService
                 'order' => $dto->order,
                 'image_source' => $dto->image->hashName(),
                 'image_url' => $this->storage->getImageUrl($dto->image->hashName()),
-                'content_url' => $dto->contentUrl
+                'content_url' => $dto->contentUrl,
             ];
         });
     }

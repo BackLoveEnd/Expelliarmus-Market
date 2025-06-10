@@ -12,7 +12,7 @@ class WarehouseStatusFilter implements Filter
 {
     public function __invoke(Builder $query, mixed $value, string $property): void
     {
-        if (WarehouseProductStatusEnum::tryFrom((int)$value) !== null) {
+        if (WarehouseProductStatusEnum::tryFrom((int) $value) !== null) {
             $query->where('warehouses.status', $value);
         }
     }

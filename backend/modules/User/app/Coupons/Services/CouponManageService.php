@@ -29,12 +29,12 @@ class CouponManageService
             ->first();
 
         if (! $coupon) {
-            throw new CouponNotValidException();
+            throw new CouponNotValidException;
         }
 
         if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
             if ($user !== null && $this->isGlobalCouponUsageLimitReached($coupon, $user)) {
-                throw new ReachedGlobalCouponUserLimitException();
+                throw new ReachedGlobalCouponUserLimitException;
             }
 
             return $coupon;
@@ -48,13 +48,13 @@ class CouponManageService
         } elseif (is_string($user)) {
             $query->where('email', $user);
         } else {
-            throw new CouponNotValidException();
+            throw new CouponNotValidException;
         }
 
         $entry = $query->first();
 
         if (! $entry) {
-            throw new CouponNotValidException();
+            throw new CouponNotValidException;
         }
 
         return $coupon;
@@ -88,7 +88,7 @@ class CouponManageService
             }
 
             if (! $dto->email && $dto->type->is(CouponTypeEnum::PERSONAL)) {
-                throw new PersonalCouponMustHaveUserException();
+                throw new PersonalCouponMustHaveUserException;
             }
 
             return $this->savePersonalCoupon($dto);
@@ -115,11 +115,12 @@ class CouponManageService
 
             if ($coupon->type->is(CouponTypeEnum::GLOBAL)) {
                 $coupon->update($fieldsToUpdate);
+
                 return;
             }
 
             if (! $dto->email && $coupon->type->is(CouponTypeEnum::PERSONAL)) {
-                throw new PersonalCouponMustHaveUserException();
+                throw new PersonalCouponMustHaveUserException;
             }
 
             $user = User::query()->where('email', $dto->email)->first(['id', 'email']);

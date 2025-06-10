@@ -26,12 +26,12 @@ class OptionsAttributesFilter implements Filter
                         ->orWhere(function ($query) use ($attributeId, $values) {
                             $query
                                 ->where('pav.attribute_id', $attributeId)
-                                ->whereIn('pav.value', (array)$values);
+                                ->whereIn('pav.value', (array) $values);
                         })
                         ->orWhere(function ($query) use ($attributeId, $values) {
                             $query
                                 ->where('vav.attribute_id', $attributeId)
-                                ->whereIn('vav.value', (array)$values);
+                                ->whereIn('vav.value', (array) $values);
                         });
                 }
             });

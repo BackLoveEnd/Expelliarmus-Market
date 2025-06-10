@@ -10,7 +10,6 @@ use Modules\Warehouse\Models\ProductAttribute;
 
 class CreateAttributesForCategoryAction
 {
-
     public function handle(
         Category $category,
         Collection $attributes,
@@ -31,9 +30,9 @@ class CreateAttributesForCategoryAction
         $existingAttributes = $category->productAttributes()
             ->get(['id', 'name']);
 
-        $newAttributes = $attributes->reject(fn($attr) => in_array(
+        $newAttributes = $attributes->reject(fn ($attr) => in_array(
             needle: mb_strtolower($attr[$searchKey]),
-            haystack: $existingAttributes->pluck('name')->map(fn($value) => $value)
+            haystack: $existingAttributes->pluck('name')->map(fn ($value) => $value)
                 ->toArray(),
             strict: true
         ));
@@ -63,5 +62,4 @@ class CreateAttributesForCategoryAction
 
         return $category->productAttributes()->create($attributes->toArray());
     }
-
 }

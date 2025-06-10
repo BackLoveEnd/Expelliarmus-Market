@@ -57,7 +57,7 @@ class WarehouseServiceProvider extends ServiceProvider
             ->when([ClientCartService::class, WarehouseStockService::class])
             ->needs(WarehouseProductInfoService::class)
             ->give(function (Application $app) {
-                return new WarehouseProductInfoService(new ProductAttributeService());
+                return new WarehouseProductInfoService(new ProductAttributeService);
             });
     }
 
@@ -72,16 +72,16 @@ class WarehouseServiceProvider extends ServiceProvider
     protected function registerCommandSchedules(): void
     {
         $this->app->booted(function () {
-            /**@var Schedule $schedule */
+            /** @var Schedule $schedule */
             $schedule = $this->app->make(Schedule::class);
 
-            $schedule->job(new CancelExpiredDiscounts(), 'low')->everyMinute();
+            $schedule->job(new CancelExpiredDiscounts, 'low')->everyMinute();
 
-            $schedule->job(new WarehouseSingleProductAvailability(), 'low')->everyThirtySeconds();
+            $schedule->job(new WarehouseSingleProductAvailability, 'low')->everyThirtySeconds();
 
-            $schedule->job(new WarehouseCombinedProductAvailability(), 'low')->everyThirtySeconds();
+            $schedule->job(new WarehouseCombinedProductAvailability, 'low')->everyThirtySeconds();
 
-            $schedule->job(new WarehouseDefaultProductAvailability(), 'low')->everyThirtySeconds();
+            $schedule->job(new WarehouseDefaultProductAvailability, 'low')->everyThirtySeconds();
         });
     }
 
@@ -97,8 +97,8 @@ class WarehouseServiceProvider extends ServiceProvider
                 if ($file->isFile() && $file->getExtension() === 'php') {
                     $relativePath = str_replace($configPath.DIRECTORY_SEPARATOR, '', $file->getPathname());
                     $configKey = $this->nameLower.'.'.str_replace([DIRECTORY_SEPARATOR, '.php'],
-                            ['.', ''],
-                            $relativePath);
+                        ['.', ''],
+                        $relativePath);
                     $key = ($relativePath === 'config.php') ? $this->nameLower : $configKey;
 
                     $this->publishes([$file->getPathname() => config_path($relativePath)], 'config');

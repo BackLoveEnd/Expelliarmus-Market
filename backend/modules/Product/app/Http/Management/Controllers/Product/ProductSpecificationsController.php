@@ -20,9 +20,6 @@ class ProductSpecificationsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Category  $category
-     * @param  GetSpecsAction  $action
-     * @return ProductSpecsResource|JsonResponse
      * @throws AuthorizationException
      */
     public function getSpecsByCategory(Category $category, GetSpecsAction $action): ProductSpecsResource|JsonResponse

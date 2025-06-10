@@ -9,10 +9,8 @@ use Illuminate\Http\JsonResponse;
 
 class AttributesMustBeUniqueForCategoryException extends Exception
 {
-
     public function render(): JsonResponse
     {
         return response()->json(['message' => 'Attributes must be unique for category.'], 400);
     }
-
 }

@@ -27,7 +27,7 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
         if ($this->input('data.attributes.parent') !== null) {
             $rules['parent'][] = new CreateSubCategoryRule($this->input('data.attributes.name'));
         } else {
-            $rules['name'][] = new UniqueRootCategoryRule();
+            $rules['name'][] = new UniqueRootCategoryRule;
         }
 
         return $rules;
@@ -64,5 +64,4 @@ class CreateCategoryRequest extends JsonApiRelationsFormRequest
             'parent' => 'parent',
         ];
     }
-
 }

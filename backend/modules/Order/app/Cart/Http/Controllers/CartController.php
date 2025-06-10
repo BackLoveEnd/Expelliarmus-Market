@@ -25,9 +25,6 @@ class CartController extends Controller
      * Retrieve cart info for user.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getClientCart(Request $request): JsonApiResourceCollection|JsonResponse
     {
@@ -44,9 +41,6 @@ class CartController extends Controller
      * Save product to user cart.
      *
      * Usage place - Shop.
-     *
-     * @param  AddToCartRequest  $request
-     * @return JsonResponse
      */
     public function addProductToCart(AddToCartRequest $request): JsonResponse
     {
@@ -62,9 +56,6 @@ class CartController extends Controller
      * Update quantities for products in cart.
      *
      * Usage place - Shop.
-     *
-     * @param  UpdateProductsQuantityRequest  $request
-     * @return JsonResponse
      */
     public function updateProductsQuantity(UpdateProductsQuantityRequest $request): JsonResponse
     {
@@ -80,10 +71,6 @@ class CartController extends Controller
      * Remove concrete product from user cart.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @param  string  $id
-     * @return JsonResponse
      */
     public function removeFromCart(Request $request, string $id): JsonResponse
     {
@@ -97,9 +84,6 @@ class CartController extends Controller
 
     /**
      * Clear all cart data.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function clearCart(Request $request): JsonResponse
     {

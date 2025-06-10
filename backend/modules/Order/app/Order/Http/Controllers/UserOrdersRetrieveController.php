@@ -22,9 +22,6 @@ class UserOrdersRetrieveController extends Controller
      * Retrieve the order history of the authenticated user.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getOrderHistory(Request $request): JsonApiResourceCollection|JsonResponse
     {
@@ -44,9 +41,6 @@ class UserOrdersRetrieveController extends Controller
      * Retrieve the cancelled orders of the authenticated user.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getCancelledOrders(Request $request): JsonApiResourceCollection|JsonResponse
     {

@@ -28,10 +28,6 @@ class RetrieveDiscountController extends Controller
      * Search for products that are available for a discount.
      *
      * Usage place - Admin section.
-     *
-     * @param  Request  $request
-     * @param  SearchForProductToAddDiscount  $action
-     * @return Resource|JsonResponse
      */
     public function search(Request $request, SearchForProductToAddDiscount $action): Resource|JsonResponse
     {
@@ -48,9 +44,6 @@ class RetrieveDiscountController extends Controller
      * Retrieve discounted products.
      *
      * Usage place - Admin section.
-     *
-     * @param  GetAllDiscountedProductsAction  $action
-     * @return Resource
      */
     public function getAllDiscountedProducts(GetAllDiscountedProductsAction $action): Resource
     {
@@ -75,10 +68,6 @@ class RetrieveDiscountController extends Controller
      * Retrieve product discount information.
      *
      * Usage place - Admin section.
-     *
-     * @param  ProductSlug  $productSlug
-     * @param  GetProductWithDiscountInfoAction  $action
-     * @return ProductWarehouseDiscountsResource
      */
     public function getProductWithDiscountsInfo(
         ProductSlug $productSlug,

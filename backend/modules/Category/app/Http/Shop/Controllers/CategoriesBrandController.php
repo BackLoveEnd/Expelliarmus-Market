@@ -16,10 +16,6 @@ class CategoriesBrandController extends Controller
      * Get the categories for a specific brand.
      *
      * Usage place - Shop.
-     *
-     * @param  string|int  $brandId
-     * @param  BrandCategoriesAction  $action
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getCategoriesForBrand(
         string|int $brandId,

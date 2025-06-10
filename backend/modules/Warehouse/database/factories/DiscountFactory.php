@@ -10,7 +10,6 @@ use Modules\Warehouse\Models\Discount;
 
 class DiscountFactory extends Factory
 {
-
     protected $model = Discount::class;
 
     public function definition(): array
@@ -73,6 +72,4 @@ class DiscountFactory extends Factory
     {
         return round($price * (1 - ($percentage / 100)));
     }
-
 }
-

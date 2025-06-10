@@ -56,11 +56,11 @@ class WishlistService
     public function add(User $user, Product $product): void
     {
         if (! $product->status->is(ProductStatusEnum::PUBLISHED)) {
-            throw new CannotAddNotPublishedProductToWishlistException();
+            throw new CannotAddNotPublishedProductToWishlistException;
         }
 
         if ($user->wishlist()->where('product_id', $product->id)->exists()) {
-            throw new ProductIsAlreadyInWishlistException();
+            throw new ProductIsAlreadyInWishlistException;
         }
 
         DB::transaction(static function () use ($user, $product) {
@@ -71,7 +71,7 @@ class WishlistService
     public function removeProduct(User $user, Product $product): void
     {
         if (! $user->wishlist()->where('product_id', $product->id)->exists()) {
-            throw new ProductDoesNotExistsInWishlistException();
+            throw new ProductDoesNotExistsInWishlistException;
         }
 
         $user->wishlist()->where('product_id', $product->id)->delete();
@@ -79,7 +79,7 @@ class WishlistService
 
     public function clearAll(User $user): bool
     {
-        return (bool)$user->wishlist()->delete();
+        return (bool) $user->wishlist()->delete();
     }
 
     private function mapPricesForProducts(Collection $products): Collection

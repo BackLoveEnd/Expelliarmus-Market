@@ -8,7 +8,6 @@ use Modules\Category\Http\Management\Requests\CreateCategoryRequest;
 
 readonly class CreateCategoryDto
 {
-
     public function __construct(
         public string $categoryName,
         public ?int $parent = null,
@@ -28,5 +27,4 @@ readonly class CreateCategoryDto
     {
         return is_null($this->parent);
     }
-
 }

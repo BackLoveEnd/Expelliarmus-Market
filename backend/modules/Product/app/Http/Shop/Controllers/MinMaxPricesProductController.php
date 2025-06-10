@@ -18,9 +18,6 @@ class MinMaxPricesProductController extends Controller
      * Retrieve min and max prices of all products.
      *
      * Usage place - Shop.
-     *
-     * @param  GetMinMaxProductsPriceAction  $action
-     * @return JsonResponse
      */
     public function getMinMaxProductsPrice(GetMinMaxProductsPriceAction $action): JsonResponse
     {
@@ -41,10 +38,6 @@ class MinMaxPricesProductController extends Controller
      * Retrieve min and max prices of products for a specific category.
      *
      * Usage place - Shop.
-     *
-     * @param  Category  $category
-     * @param  PriceCategoryAction  $action
-     * @return JsonResponse
      */
     public function getMinMaxProductsPriceForCategory(Category $category, PriceCategoryAction $action): JsonResponse
     {
@@ -65,10 +58,6 @@ class MinMaxPricesProductController extends Controller
      * Retrieve min and max prices of products for a specific brand.
      *
      * Usage place - Shop.
-     *
-     * @param  Brand  $brand
-     * @param  PriceBrandAction  $action
-     * @return JsonResponse
      */
     public function getMinMaxProductsPriceForBrand(Brand $brand, PriceBrandAction $action): JsonResponse
     {

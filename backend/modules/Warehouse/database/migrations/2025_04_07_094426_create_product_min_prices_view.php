@@ -3,14 +3,15 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         DB::statement(
-            "CREATE VIEW product_min_prices AS
+            'CREATE VIEW product_min_prices AS
                    SELECT 
                         p.id as product_id, 
                         COALESCE(MIN(price),0) as min_price,
@@ -24,7 +25,7 @@ return new class extends Migration {
                    ) as all_prices
                    JOIN products p ON p.id = all_prices.product_id
                    WHERE p.status = 0
-                   GROUP BY p.id",
+                   GROUP BY p.id',
         );
     }
 

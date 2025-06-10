@@ -28,7 +28,7 @@ class ProductImagesService
         $previewImage = $this->uploadResizedPreviewImage($product, $previewImageSource, $size);
 
         $images = collect($images)
-            ->map(fn(array $image) => [...$image, 'id' => Str::uuid7()->toString()])
+            ->map(fn (array $image) => [...$image, 'id' => Str::uuid7()->toString()])
             ->toArray();
 
         $product->saveImages([
@@ -110,12 +110,11 @@ class ProductImagesService
         $unTouchedImages = $this->getUntouchedImages($imageDto->mainImages);
 
         $imagesToDelete = collect($product->images)
-            ->filter(fn($image)
-                => ! $imageDto->mainImages->pluck('id')->contains($image['id'])
+            ->filter(fn ($image) => ! $imageDto->mainImages->pluck('id')->contains($image['id'])
                 || $changedImages->pluck('id')->contains($image['id']),
             );
 
-        $newImages = $newImages->map(fn($image) => new MainImageDto(
+        $newImages = $newImages->map(fn ($image) => new MainImageDto(
             order: $image->order,
             id: Str::uuid7()->toString(),
             image: $image->image,
@@ -147,11 +146,10 @@ class ProductImagesService
                     'image_url' => $this->imagesStorage->getOne($product, null),
                     'order' => 1,
                     'source' => $this->imagesStorage->defaultImageId(),
-                ]
+                ],
             ];
         } else {
-            $images = $updatedImages->map(fn(MainImageDto $dto)
-                => [
+            $images = $updatedImages->map(fn (MainImageDto $dto) => [
                 'id' => $dto->id,
                 'image_url' => $dto->existImageUrl ?? $this->imagesStorage->getOne($product, $dto->image?->hashName()),
                 'order' => $dto->order,

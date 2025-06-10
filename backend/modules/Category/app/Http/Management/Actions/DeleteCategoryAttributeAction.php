@@ -11,14 +11,13 @@ use Modules\Warehouse\Models\ProductAttribute;
 
 class DeleteCategoryAttributeAction
 {
-
     /**
      * @throws AttributeNotRelatedToCategoryException|FailedToDeleteCategoryAttributeException
      */
     public function handle(Category $category, ProductAttribute $productAttribute): void
     {
-        if ( ! $category->productAttributes->contains($productAttribute)) {
-            throw new AttributeNotRelatedToCategoryException();
+        if (! $category->productAttributes->contains($productAttribute)) {
+            throw new AttributeNotRelatedToCategoryException;
         }
 
         if ($productAttribute->hasUsageInProductsWithCombinedAttributes()
@@ -28,5 +27,4 @@ class DeleteCategoryAttributeAction
 
         $productAttribute->delete();
     }
-
 }

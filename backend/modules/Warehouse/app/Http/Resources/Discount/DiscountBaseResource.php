@@ -9,7 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DiscountBaseResource extends JsonResource
 {
-
     public function toArray(Request $request): array
     {
         return [
@@ -22,5 +21,4 @@ class DiscountBaseResource extends JsonResource
             'status' => $this->status->toString(),
         ];
     }
-
 }

@@ -36,7 +36,7 @@ class ProductStaffInfoResource extends JsonApiResource
     public function toRelationships(Request $request): array
     {
         $relationships = [
-            'warehouse' => fn() => WarehouseStaffResource::make($this->warehouse),
+            'warehouse' => fn () => WarehouseStaffResource::make($this->warehouse),
         ];
 
         if ($this->resource->hasCombinedAttributes() === null) {
@@ -45,10 +45,10 @@ class ProductStaffInfoResource extends JsonApiResource
 
         if ($this->resource->hasCombinedAttributes()) {
             $relationships['variations'] =
-                fn() => CombinedAttributeVariationResource::collection($this->productAttributes);
+                fn () => CombinedAttributeVariationResource::collection($this->productAttributes);
         } else {
             $relationships['variations'] =
-                fn() => SingleAttributeVariationResource::collection($this->productAttributes);
+                fn () => SingleAttributeVariationResource::collection($this->productAttributes);
         }
 
         return $relationships;

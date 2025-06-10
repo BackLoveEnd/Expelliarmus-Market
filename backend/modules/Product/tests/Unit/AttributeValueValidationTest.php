@@ -15,10 +15,10 @@ class AttributeValueValidationTest extends TestCase
         $rule = new ValueHasCorrectDataTypeRule($type);
 
         // Imitate behaviour when laravel throws exception using $fail closure
-        $fail = fn() => throw new RuntimeException('Test exception');
+        $fail = fn () => throw new RuntimeException('Test exception');
 
         $this->assertThrows(
-            test: fn() => $rule->validate('', '#FFFFZ', $fail),
+            test: fn () => $rule->validate('', '#FFFFZ', $fail),
             expectedClass: RuntimeException::class
         );
     }
@@ -30,10 +30,10 @@ class AttributeValueValidationTest extends TestCase
         $rule = new ValueHasCorrectDataTypeRule($type);
 
         // Imitate behaviour when laravel throws exception using $fail closure
-        $fail = fn() => throw new RuntimeException('Test exception');
+        $fail = fn () => throw new RuntimeException('Test exception');
 
         $this->assertThrows(
-            test: fn() => $rule->validate('', 'a', $fail),
+            test: fn () => $rule->validate('', 'a', $fail),
             expectedClass: RuntimeException::class
         );
     }
@@ -45,10 +45,10 @@ class AttributeValueValidationTest extends TestCase
         $rule = new ValueHasCorrectDataTypeRule($type);
 
         // Imitate behaviour when laravel throws exception using $fail closure
-        $fail = fn() => throw new RuntimeException('Test exception');
+        $fail = fn () => throw new RuntimeException('Test exception');
 
         $this->assertThrows(
-            test: fn() => $rule->validate('', 1.5, $fail),
+            test: fn () => $rule->validate('', 1.5, $fail),
             expectedClass: RuntimeException::class
         );
     }
@@ -60,10 +60,10 @@ class AttributeValueValidationTest extends TestCase
         $rule = new ValueHasCorrectDataTypeRule($type);
 
         // Imitate behaviour when laravel throws exception using $fail closure
-        $fail = fn() => throw new RuntimeException('Test exception');
+        $fail = fn () => throw new RuntimeException('Test exception');
 
         $this->assertThrows(
-            test: fn() => $rule->validate('', null, $fail),
+            test: fn () => $rule->validate('', null, $fail),
             expectedClass: RuntimeException::class
         );
     }

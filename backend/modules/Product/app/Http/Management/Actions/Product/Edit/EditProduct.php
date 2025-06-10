@@ -14,8 +14,7 @@ class EditProduct
     public function __construct(
         private Product $product,
         private DeleteVariationsWhenNeedAction $deleteVariationAction
-    ) {
-    }
+    ) {}
 
     public function handle(CreateProductDto $productDto): Product
     {
@@ -25,7 +24,7 @@ class EditProduct
             'main_description_markdown' => $productDto->mainDesc,
             'category_id' => $productDto->categoryId,
             'brand_id' => $productDto->brandId,
-            'with_attribute_combinations' => $productDto->withCombinations()
+            'with_attribute_combinations' => $productDto->withCombinations(),
         ]);
 
         if ($this->product->isDirty()) {
@@ -40,9 +39,9 @@ class EditProduct
             $this->product->update($changes);
         }
 
-        $this->updateNewSpecs($productDto->productSpecs->map(fn($spec) => [
+        $this->updateNewSpecs($productDto->productSpecs->map(fn ($spec) => [
             'id' => $spec->id,
-            'value' => $spec->value
+            'value' => $spec->value,
         ]));
 
         return $this->product;
@@ -54,7 +53,7 @@ class EditProduct
             return [
                 'attribute_id' => $val['id'],
                 'product_id' => $this->product->id,
-                'value' => json_encode($val['value'])
+                'value' => json_encode($val['value']),
             ];
         });
 
@@ -70,5 +69,4 @@ class EditProduct
 
         ProductSpec::query()->upsert($specs->toArray(), ['attribute_id', 'product_id'], ['value']);
     }
-
 }

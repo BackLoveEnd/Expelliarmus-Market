@@ -25,9 +25,6 @@ class SliderContentController extends Controller
      * Allow to upload, edit, delete slider content.
      *
      * Usage - Admin section.
-     *
-     * @param  UploadSliderContentRequest  $request
-     * @return JsonResponse
      */
     public function upload(UploadSliderContentRequest $request): JsonResponse
     {
@@ -42,8 +39,6 @@ class SliderContentController extends Controller
      * Retrieve all slider content.
      *
      * Usage - Admin|Shop sections.
-     *
-     * @return JsonApiResourceCollection
      */
     public function getAllSliderContent(): JsonApiResourceCollection
     {
@@ -55,8 +50,6 @@ class SliderContentController extends Controller
      *
      * Usage - Admin section.
      *
-     * @param  ContentSlider  $slide
-     * @return JsonResponse
      * @throws FailedToDeleteSlideException|AuthorizationException
      */
     public function deleteSlide(ContentSlider $slide): JsonResponse

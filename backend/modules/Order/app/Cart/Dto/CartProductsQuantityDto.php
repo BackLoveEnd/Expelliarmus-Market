@@ -30,7 +30,7 @@ final readonly class CartProductsQuantityDto
                 ->get(['id', 'with_attribute_combinations', 'product_article', 'slug']);
 
             $products = $products->map(function (object $productCart) use ($productModels) {
-                return (object)[
+                return (object) [
                     'id' => $productCart->id,
                     'product' => $productModels->firstWhere('id', $productCart->product_id),
                     'variation' => $productCart->variation,
@@ -41,7 +41,7 @@ final readonly class CartProductsQuantityDto
         $cartItemsWithProducts = $cartItems->map(function ($item) use ($products) {
             $productCartItem = $products->firstWhere('id', $item['cart_id']);
 
-            return (object)[
+            return (object) [
                 'id' => $item['cart_id'],
                 'quantity' => $item['quantity'],
                 'product' => $productCartItem->product,

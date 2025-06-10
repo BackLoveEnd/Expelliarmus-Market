@@ -18,7 +18,7 @@ class ProductImagesExistsRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $imagesId = collect($value)
-            ->filter(fn(array $image) => $image['id'] && $image['id'] !== null)
+            ->filter(fn (array $image) => $image['id'] && $image['id'] !== null)
             ->pluck('id');
 
         foreach ($imagesId as $image) {

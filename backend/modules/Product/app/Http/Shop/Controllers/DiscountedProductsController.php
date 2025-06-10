@@ -13,23 +13,18 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class DiscountedProductsController extends Controller
 {
-
     public function __construct(private DiscountedProductsService $service) {}
 
     /**
      * Retrieve products on flash sales.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getFlashSales(Request $request): JsonApiResourceCollection|JsonResponse
     {
         $flashSales = $this->service->getFlashSalesPaginated(
-            limit: (int)$request->query('limit', config('product.retrieve.flash-sales')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('product.retrieve.flash-sales')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($flashSales->items->isEmpty()) {
@@ -39,5 +34,4 @@ class DiscountedProductsController extends Controller
         return DiscountedProductResource::collection($flashSales->items)
             ->additional($flashSales->wrapMeta());
     }
-
 }

@@ -48,6 +48,7 @@ use Modules\Warehouse\Models\Warehouse;
  * @property Warehouse $warehouse
  * @property ProductStatusEnum $status
  * @property bool|null $with_attribute_combinations
+ *
  * @method ProductBuilder wherePublished
  * @method ProductBuilder whereNotPublished
  */

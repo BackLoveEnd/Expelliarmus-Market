@@ -12,8 +12,7 @@ class UniqueSkuInCombinationsExceptSelfRule implements ValidationRule
 {
     public function __construct(
         private int $productId
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

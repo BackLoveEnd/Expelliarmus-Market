@@ -10,7 +10,6 @@ use Modules\Warehouse\Models\ProductAttributeValue;
 
 class SingleAttributeFactory extends Factory
 {
-
     protected $model = ProductAttributeValue::class;
 
     public function definition(): array
@@ -21,5 +20,4 @@ class SingleAttributeFactory extends Factory
             'value' => 'test-'.Str::random(5),
         ];
     }
-
 }

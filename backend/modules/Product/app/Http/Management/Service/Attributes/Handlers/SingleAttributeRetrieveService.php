@@ -12,7 +12,7 @@ use Modules\Product\Models\Product;
 use Modules\Warehouse\Contracts\VariationInterface;
 use Modules\Warehouse\Models\ProductAttributeValue;
 
-class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInterface
+class SingleAttributeRetrieveService implements FormatterInterface, RetrieveInterface
 {
     public function __construct(
         private array $variationCols,
@@ -22,7 +22,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
     public function getAttributes(Product $product): Collection
     {
         return $product->singleAttributes()->with([
-            'attribute' => fn($query) => $query->select([...$this->attributeCols, 'type']),
+            'attribute' => fn ($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
     }
 
@@ -33,7 +33,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
                 $product
                     ->singleAttributes()
                     ->with([
-                        'attribute' => fn($query) => $query->select([...$this->attributeCols, 'type']),
+                        'attribute' => fn ($query) => $query->select([...$this->attributeCols, 'type']),
                     ])
                     ->where('id', $variationId)
                     ->first($this->variationCols);
@@ -50,7 +50,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
         $variationIds = $productsWithVariations->pluck('variation_id')->unique();
 
         $variations = ProductAttributeValue::query()
-            ->with(['attribute' => fn($query) => $query->select([...$this->attributeCols, 'type'])])
+            ->with(['attribute' => fn ($query) => $query->select([...$this->attributeCols, 'type'])])
             ->whereIn('id', $variationIds)
             ->select($this->variationCols)
             ->get()
@@ -66,12 +66,11 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
     public function getAttributesForProductCollection(Collection $products): Collection
     {
         $relations = [
-            'singleAttributes' => fn($query) => $query->select([...$this->variationCols, 'product_id']),
+            'singleAttributes' => fn ($query) => $query->select([...$this->variationCols, 'product_id']),
         ];
 
         if (! empty($this->attributeCols)) {
-            $relations['singleAttributes.attribute'] = fn($query)
-                => $query->select(
+            $relations['singleAttributes.attribute'] = fn ($query) => $query->select(
                 [...$this->attributeCols, 'attribute_id', 'type'],
             );
         }
@@ -107,8 +106,7 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
             ->map(function ($items) {
                 $attributes = [
                     'name' => $items->first()['name'],
-                    'data' => $items->map(fn($item)
-                        => [
+                    'data' => $items->map(fn ($item) => [
                         'id' => $item['id'],
                         'value' => $item['value'],
                         'price' => $item['price'],
@@ -131,19 +129,16 @@ class SingleAttributeRetrieveService implements RetrieveInterface, FormatterInte
     public function formatWarehouseInfoAttributes(Collection $attributes): BaseCollection
     {
         return $attributes
-            ->map(fn(ProductAttributeValue $attributeValue)
-                => [
+            ->map(fn (ProductAttributeValue $attributeValue) => [
                 'id' => $attributeValue->id,
                 'name' => $attributeValue->attribute->name,
                 'value' => $attributeValue->value,
                 'price' => $attributeValue->price,
             ])
             ->groupBy('name')
-            ->map(fn($items)
-                => [
+            ->map(fn ($items) => [
                 'name' => $items->first()['name'],
-                'data' => $items->map(fn($item)
-                    => [
+                'data' => $items->map(fn ($item) => [
                     'id' => $item['id'],
                     'value' => $item['value'],
                     'price' => $item['price'],

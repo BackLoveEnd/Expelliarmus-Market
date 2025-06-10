@@ -11,18 +11,18 @@ class AttributeInCombinationUniqueRule implements ValidationRule
     {
         $collection = collect($value);
 
-        $withoutIdAttr = $collection->filter(fn($item) => $item['id'] !== null);
+        $withoutIdAttr = $collection->filter(fn ($item) => $item['id'] !== null);
 
         if ($withoutIdAttr->uniqueStrict('id')->count() !== $withoutIdAttr->count()) {
-            $fail("Attributes in each combination must be unique.");
+            $fail('Attributes in each combination must be unique.');
 
             return;
         }
 
-        $attributes = $collection->map(fn($item) => mb_strtolower($item['name']));
+        $attributes = $collection->map(fn ($item) => mb_strtolower($item['name']));
 
         if ($attributes->duplicates()->isNotEmpty()) {
-            $fail("Attributes in each combination must be unique.");
+            $fail('Attributes in each combination must be unique.');
         }
     }
 }

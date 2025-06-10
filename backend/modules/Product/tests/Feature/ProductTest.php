@@ -36,7 +36,7 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,11 +51,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 2', false);
 
-        (new CreateProductFactoryAction())
+        (new CreateProductFactoryAction)
             ->createAction($request)
             ->handle(
-                new CreateProduct(),
-                new CreateProductInWarehouse(),
+                new CreateProduct,
+                new CreateProductInWarehouse,
             );
 
         $product = Product::query()->where('slug', 'title-2')->first();
@@ -113,11 +113,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 1', true);
 
-        (new CreateProductFactoryAction())
+        (new CreateProductFactoryAction)
             ->createAction($request)
             ->handle(
-                new CreateProduct(),
-                new CreateProductInWarehouse(),
+                new CreateProduct,
+                new CreateProductInWarehouse,
             );
 
         $product = Product::query()->where('slug', 'title-1')->first();
@@ -137,11 +137,11 @@ class ProductTest extends TestCase
     {
         $request = $this->createRequest('Title 3', null);
 
-        (new CreateProductFactoryAction())
+        (new CreateProductFactoryAction)
             ->createAction($request)
             ->handle(
-                new CreateProduct(),
-                new CreateProductInWarehouse(),
+                new CreateProduct,
+                new CreateProductInWarehouse,
             );
 
         $this->assertDatabaseHas('products', ['slug' => 'title-3']);
@@ -175,10 +175,9 @@ class ProductTest extends TestCase
             ],
         ];
 
-
         foreach ($combinedVariation as $attributes) {
             $validator = Validator::make($attributes, [
-                'attributes' => new AttributeInCombinationUniqueRule(),
+                'attributes' => new AttributeInCombinationUniqueRule,
             ]);
 
             $this->assertFalse($validator->passes());
@@ -215,10 +214,9 @@ class ProductTest extends TestCase
             ],
         ];
 
-
         foreach ($combinedVariation as $attributes) {
             $validator = Validator::make($attributes, [
-                'attributes' => new AttributeInCombinationUniqueRule(),
+                'attributes' => new AttributeInCombinationUniqueRule,
             ]);
 
             $this->assertFalse($validator->passes());
@@ -264,11 +262,11 @@ class ProductTest extends TestCase
 
         $this->assertThrows(
             test: function () use ($request) {
-                (new CreateProductFactoryAction())
+                (new CreateProductFactoryAction)
                     ->createAction($request)
                     ->handle(
-                        new CreateProduct(),
-                        new CreateProductInWarehouse(),
+                        new CreateProduct,
+                        new CreateProductInWarehouse,
                     );
             },
             expectedClass: ValidationException::class,
@@ -348,11 +346,11 @@ class ProductTest extends TestCase
 
         $this->assertThrows(
             test: function () use ($request) {
-                (new CreateProductFactoryAction())
+                (new CreateProductFactoryAction)
                     ->createAction($request)
                     ->handle(
-                        new CreateProduct(),
-                        new CreateProductInWarehouse(),
+                        new CreateProduct,
+                        new CreateProductInWarehouse,
                     );
             },
             expectedClass: ValidationException::class,
@@ -461,7 +459,6 @@ class ProductTest extends TestCase
                     ->andReturn(collect());
             }
         }
-
 
         $request
             ->shouldReceive('relation')

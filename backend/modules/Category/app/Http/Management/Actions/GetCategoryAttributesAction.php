@@ -10,7 +10,6 @@ use Modules\Warehouse\Models\ProductAttribute;
 
 class GetCategoryAttributesAction
 {
-
     public function handle(Category $category): Collection
     {
         return collect($category->allAttributesFromTree())->map(function (ProductAttribute $attribute) {
@@ -26,5 +25,4 @@ class GetCategoryAttributesAction
             ];
         });
     }
-
 }

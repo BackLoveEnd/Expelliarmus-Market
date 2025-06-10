@@ -34,8 +34,8 @@ class OrderLineFactory extends Factory
                 return [
                     'variation' => null,
                     'product_id' => $product->id,
-                    'price_per_unit_at_order_time' => (float)$product->warehouse->default_price,
-                    'total_price' => round($attributes['quantity'] * (float)$product->warehouse->default_price, 2),
+                    'price_per_unit_at_order_time' => (float) $product->warehouse->default_price,
+                    'total_price' => round($attributes['quantity'] * (float) $product->warehouse->default_price, 2),
                 ];
             }
 
@@ -47,8 +47,7 @@ class OrderLineFactory extends Factory
                 return [
                     'variation' => [
                         'id' => $variation->id,
-                        'data' => $variation->productAttributes->map(fn($item)
-                            => [
+                        'data' => $variation->productAttributes->map(fn ($item) => [
                             'attribute_name' => $item->name,
                             'value' => $item->pivot->value,
                             'type' => $item->type->toTypes(),

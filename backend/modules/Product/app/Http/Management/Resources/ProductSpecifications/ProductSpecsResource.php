@@ -16,8 +16,8 @@ class ProductSpecsResource extends JsonResource
             'attributes' => [
                 'separated' => $this->separatedSpecs,
                 'grouped' => $this->groupedSpecs,
-                'groups' => $this->groups
-            ]
+                'groups' => $this->groups,
+            ],
         ];
     }
 }

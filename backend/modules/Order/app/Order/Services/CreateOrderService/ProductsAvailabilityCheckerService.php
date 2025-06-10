@@ -27,11 +27,11 @@ class ProductsAvailabilityCheckerService
 
         $products->each(function (Product $product) {
             if (! $product->status->is(ProductStatusEnum::PUBLISHED)) {
-                throw new ProductCannotBeProcessedToCheckoutException();
+                throw new ProductCannotBeProcessedToCheckoutException;
             }
 
             if (! $this->stockService->isPartiallyOrFullyInStock($product)) {
-                throw new ProductCannotBeProcessedToCheckoutException();
+                throw new ProductCannotBeProcessedToCheckoutException;
             }
         });
 

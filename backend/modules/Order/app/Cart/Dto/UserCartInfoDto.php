@@ -42,7 +42,7 @@ final class UserCartInfoDto
         $carts->loadMissing('product');
 
         return $carts->map(function (Cart $cart) {
-            return (object)[
+            return (object) [
                 'id' => $cart->id,
                 'product_image' => $cart->product->preview_image,
                 'product_title' => $cart->product->title,
@@ -75,7 +75,7 @@ final class UserCartInfoDto
 
     public function toBase(): object
     {
-        return (object)$this->toArray();
+        return (object) $this->toArray();
     }
 
     public function getProductId(): int

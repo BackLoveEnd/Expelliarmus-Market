@@ -4,8 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-
+return new class extends Migration
+{
     /**
      * Get the migration connection name.
      */
@@ -67,5 +67,4 @@ return new class extends Migration {
         $schema->dropIfExists('telescope_entries');
         $schema->dropIfExists('telescope_monitoring');
     }
-
 };

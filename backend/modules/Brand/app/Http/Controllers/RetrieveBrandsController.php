@@ -32,8 +32,6 @@ class RetrieveBrandsController extends Controller
      * Retrieve brands (paginated).
      *
      * Usage place -Admin section.
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getPaginated(): JsonApiResourceCollection|JsonResponse
     {
@@ -48,17 +46,14 @@ class RetrieveBrandsController extends Controller
      * Retrieve brand by ID or slug.
      *
      * Usage place - Admin section|Shop.
-     *
-     * @param  string|int  $brandId
-     * @return BrandResource
      */
     public function getBrandInfo(string|int $brandId): BrandResource
     {
         $brand = Brand::query()
             ->when(
                 value: is_numeric($brandId),
-                callback: fn($query) => $query->where('id', $brandId),
-                default: fn($query) => $query->where('slug', $brandId),
+                callback: fn ($query) => $query->where('id', $brandId),
+                default: fn ($query) => $query->where('slug', $brandId),
             )
             ->firstOrFail();
 
@@ -67,7 +62,7 @@ class RetrieveBrandsController extends Controller
 
     private function wantsPagePaginatedBrands(): JsonApiResourceCollection|JsonResponse
     {
-        $brands = (new GetPagePaginatedBrandsAction())->handle($this->columns, $this->defaultBrandsShowNumber);
+        $brands = (new GetPagePaginatedBrandsAction)->handle($this->columns, $this->defaultBrandsShowNumber);
 
         if (! $brands['items']) {
             return response()->json(['message' => 'Brands not found.'], 404);
@@ -78,11 +73,11 @@ class RetrieveBrandsController extends Controller
 
     private function wantsLimitOffsetPaginatedBrands(): JsonApiResourceCollection|JsonResponse
     {
-        $brands = (new GetLimitOffsetPaginatedBrandsAction())
+        $brands = (new GetLimitOffsetPaginatedBrandsAction)
             ->handle(
                 columns: $this->columns,
-                limit: (int)$this->request->query('limit', $this->defaultBrandsShowNumber),
-                offset: (int)$this->request->query('offset', 0),
+                limit: (int) $this->request->query('limit', $this->defaultBrandsShowNumber),
+                offset: (int) $this->request->query('offset', 0),
             );
 
         if ($brands->items->isEmpty()) {

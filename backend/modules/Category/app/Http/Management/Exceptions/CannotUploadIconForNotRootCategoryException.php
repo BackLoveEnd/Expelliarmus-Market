@@ -9,12 +9,10 @@ use Illuminate\Http\JsonResponse;
 
 class CannotUploadIconForNotRootCategoryException extends Exception
 {
-
     public function render(): JsonResponse
     {
         return response()->json([
             'message' => 'Adding icons to not root category is not allowed.',
         ], 403);
     }
-
 }

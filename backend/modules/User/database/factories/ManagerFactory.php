@@ -29,13 +29,10 @@ class ManagerFactory extends Factory
         });
     }
 
-
     public function superManager(): ManagerFactory
     {
-        return $this->state(fn()
-            => [
+        return $this->state(fn () => [
             'is_super_manager' => true,
         ]);
     }
 }
-

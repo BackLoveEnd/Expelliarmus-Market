@@ -71,8 +71,7 @@ class OrderLineService
                 $data['variation'] = [
                     'id' => $orderLineItem['variation_id'],
                     'data' => $variation instanceof ProductVariation
-                        ? $variation->productAttributes->map(fn($item)
-                            => [
+                        ? $variation->productAttributes->map(fn ($item) => [
                             'attribute_name' => $item->name,
                             'value' => $item->pivot->value,
                             'type' => $item->type->toTypes(),
@@ -94,7 +93,7 @@ class OrderLineService
                 $data['totalPrice'] = $this->countPrice($pricePerUnit, $orderLineItem['quantity']);
             }
 
-            return (object)$data;
+            return (object) $data;
         });
     }
 

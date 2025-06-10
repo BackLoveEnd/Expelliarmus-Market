@@ -9,7 +9,6 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class RootCategoryResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         $attrs = [
@@ -26,5 +25,4 @@ class RootCategoryResource extends JsonApiResource
 
         return $attrs;
     }
-
 }

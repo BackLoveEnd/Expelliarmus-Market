@@ -12,16 +12,10 @@ use TiMacDonald\JsonApi\JsonApiResourceCollection;
 
 class RelatedProductBrandsController extends Controller
 {
-
     /**
      * Retrieve brands for products by products categories.
      *
      * Usage place - Shop.
-     *
-     * @param  string|int  $category
-     * @param  BrandsProductsAction  $action
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getProductBrandsByCategory(
         string|int $category,
@@ -35,5 +29,4 @@ class RelatedProductBrandsController extends Controller
 
         return BrandResource::collection($brands);
     }
-
 }

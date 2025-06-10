@@ -9,8 +9,7 @@ class OnlySpecificDomainRule implements ValidationRule
 {
     public function __construct(
         private string $allowedDomain
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

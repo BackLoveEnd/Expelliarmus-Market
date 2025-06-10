@@ -15,8 +15,7 @@ final readonly class SliderContentDto
         public ?UploadedFile $image = null,
         public ?string $slideId = null,
         public ?string $imageUrl = null
-    ) {
-    }
+    ) {}
 
     public static function collection(array $data): Collection
     {

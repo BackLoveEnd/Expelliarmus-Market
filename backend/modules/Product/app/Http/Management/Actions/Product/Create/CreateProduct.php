@@ -41,7 +41,7 @@ class CreateProduct
             'product_article' => $dto->productArticle,
             'images' => ['product_preview.png'],
             'preview_image' => 'product_preview.png',
-            'with_attribute_combinations' => $dto->withCombinations()
+            'with_attribute_combinations' => $dto->withCombinations(),
         ]);
     }
 

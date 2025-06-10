@@ -9,7 +9,6 @@ use Modules\Brand\Models\Brand;
 
 class BrandFactory extends Factory
 {
-
     protected $model = Brand::class;
 
     public function definition(): array

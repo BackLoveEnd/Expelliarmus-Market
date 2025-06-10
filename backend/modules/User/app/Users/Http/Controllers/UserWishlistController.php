@@ -24,9 +24,6 @@ class UserWishlistController
      * Retrieve user wishlist.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getUserWishlist(Request $request): JsonApiResourceCollection|JsonResponse
     {
@@ -52,9 +49,6 @@ class UserWishlistController
      *
      * Usage place - Shop.
      *
-     * @param  Request  $request
-     * @param  ProductSlug  $productBind
-     * @return JsonResponse
      * @throws ProductIsAlreadyInWishlistException
      * @throws CannotAddNotPublishedProductToWishlistException
      */
@@ -73,9 +67,6 @@ class UserWishlistController
      *
      * Usage place - Shop.
      *
-     * @param  Request  $request
-     * @param  ProductSlug  $productSlug
-     * @return JsonResponse
      * @throws ProductDoesNotExistsInWishlistException
      */
     public function removeFromWishlist(Request $request, ProductSlug $productSlug): JsonResponse
@@ -92,9 +83,6 @@ class UserWishlistController
      * Clear all user wishlist.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function clearWishlist(Request $request): JsonResponse
     {

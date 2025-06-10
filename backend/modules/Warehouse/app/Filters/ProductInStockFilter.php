@@ -14,8 +14,8 @@ class ProductInStockFilter implements Filter
         if (! is_null($value)) {
             return $query->when(
                 value: $value === true,
-                callback: fn($query) => $query->where('warehouses.total_quantity', '>', 0),
-                default: fn($query) => $query->where('warehouses.total_quantity', 0),
+                callback: fn ($query) => $query->where('warehouses.total_quantity', '>', 0),
+                default: fn ($query) => $query->where('warehouses.total_quantity', 0),
             );
         }
 

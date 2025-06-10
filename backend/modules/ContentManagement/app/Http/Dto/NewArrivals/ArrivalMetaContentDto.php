@@ -9,8 +9,7 @@ final readonly class ArrivalMetaContentDto
     public function __construct(
         public string $title,
         public ?string $body = null
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

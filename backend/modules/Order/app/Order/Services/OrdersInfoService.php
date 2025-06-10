@@ -41,15 +41,12 @@ class OrdersInfoService
     {
         return $order
             ->orderLines()
-            ->with(['product' => fn($query) => $query->select('id', 'title', 'preview_image', 'slug')])
+            ->with(['product' => fn ($query) => $query->select('id', 'title', 'preview_image', 'slug')])
             ->get();
     }
 
     /**
      * @param  array<int, OrderStatusEnum>|OrderStatusEnum  $status
-     * @param  int  $limit
-     * @param  int  $offset
-     * @return LimitOffsetDto
      */
     protected function getOrdersByStatus(array|OrderStatusEnum $status, int $limit, int $offset): LimitOffsetDto
     {
@@ -60,14 +57,13 @@ class OrdersInfoService
         $orders = QueryBuilder::for(Order::class)
             ->with(
                 [
-                    'userable' => fn(MorphTo $morphTo)
-                        => $morphTo->select(
+                    'userable' => fn (MorphTo $morphTo) => $morphTo->select(
                         ['id', 'email', 'phone_number', 'first_name', 'last_name'],
                     ),
                 ],
             )
             ->allowedSorts(['total_price', 'created_at'])
-            ->allowedFilters([AllowedFilter::custom('search', new SearchFilter())])
+            ->allowedFilters([AllowedFilter::custom('search', new SearchFilter)])
             ->where(function (Builder $builder) use ($status) {
                 foreach ($status as $index => $item) {
                     if ($index === 0) {
@@ -81,7 +77,7 @@ class OrdersInfoService
             ->offset($offset)
             ->get();
 
-        $orders = $orders->groupBy(fn(Order $order) => $order->userable_type.':'.$order->userable_id);
+        $orders = $orders->groupBy(fn (Order $order) => $order->userable_type.':'.$order->userable_id);
 
         return new LimitOffsetDto(
             items: $orders,

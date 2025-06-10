@@ -59,7 +59,7 @@ class NewArrivalsContentService
 
             $this->storage->delete($arrival->image_source);
         } catch (Throwable $e) {
-            throw new FailedToDeleteArrivalException();
+            throw new FailedToDeleteArrivalException;
         }
     }
 
@@ -80,7 +80,7 @@ class NewArrivalsContentService
             ->whereIn('arrival_id', $existsArrivals->pluck('arrivalId'))
             ->get(['arrival_id', 'image_source']);
 
-        $arrivalsWithNewImage = $existsArrivals->filter(fn($dto) => $dto->file !== null);
+        $arrivalsWithNewImage = $existsArrivals->filter(fn ($dto) => $dto->file !== null);
 
         if ($arrivalsWithNewImage->isNotEmpty()) {
             $this->arrivalsWantsToUpdateImage($arrivalsWithNewImage, $existsArrivalsInDb);
@@ -88,7 +88,7 @@ class NewArrivalsContentService
             return;
         }
 
-        $arrivalsWithoutImage = $existsArrivals->filter(fn($dto) => $dto->file === null);
+        $arrivalsWithoutImage = $existsArrivals->filter(fn ($dto) => $dto->file === null);
 
         $this->wantsUpdateExceptImage($arrivalsWithoutImage);
     }
@@ -142,7 +142,7 @@ class NewArrivalsContentService
     protected function ensureThatPositionsIsUnique(Collection $slides): void
     {
         if ($slides->unique('position')->count() !== $slides->count()) {
-            throw new PositionOfArrivalsIsNotUniqueException();
+            throw new PositionOfArrivalsIsNotUniqueException;
         }
     }
 

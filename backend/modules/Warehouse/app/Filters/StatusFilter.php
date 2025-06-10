@@ -12,7 +12,7 @@ class StatusFilter implements Filter
 {
     public function __invoke(Builder $query, mixed $value, string $property): void
     {
-        if (ProductStatusEnum::tryFrom((int)$value) !== null) {
+        if (ProductStatusEnum::tryFrom((int) $value) !== null) {
             $query->where('products.status', $value);
         }
     }

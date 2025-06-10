@@ -15,7 +15,6 @@ use Modules\Category\Models\Category;
 
 class CategoryIconTest extends TestCase
 {
-
     use RefreshDatabase;
 
     private FilesystemManager $storageMock;
@@ -106,9 +105,8 @@ class CategoryIconTest extends TestCase
         $svgIcon = UploadedFile::fake()->image('icon.svg');
 
         $this->assertThrows(
-            test: fn() => $service->upload($svgIcon, $categories->children[0]),
+            test: fn () => $service->upload($svgIcon, $categories->children[0]),
             expectedClass: CannotUploadIconForNotRootCategoryException::class,
         );
     }
-
 }

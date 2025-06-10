@@ -9,14 +9,13 @@ class PriceComplianceForSingleVariationsRule implements ValidationRule
 {
     public function __construct(
         private mixed $defaultPrice
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $prices = collect($value)->pluck('price');
 
-        $filledPrices = $prices->filter(fn(?int $price) => $price !== null);
+        $filledPrices = $prices->filter(fn (?int $price) => $price !== null);
 
         if ($filledPrices->isEmpty()) {
             return;

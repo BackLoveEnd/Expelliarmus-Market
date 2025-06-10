@@ -11,7 +11,6 @@ use Modules\Category\Models\Category;
 
 class SaveCategoryWithAttributesAction
 {
-
     public function handle(CreateCategoryDto $categoryDto): Category
     {
         return $categoryDto->wantsCreateRootCategory()
@@ -57,15 +56,14 @@ class SaveCategoryWithAttributesAction
     {
         $existingNames = collect($category->allAttributesFromTree())
             ->pluck('name')
-            ->map(fn($name) => mb_strtolower($name));
+            ->map(fn ($name) => mb_strtolower($name));
 
         $newNames = collect($newAttributes)
             ->pluck('name')
-            ->map(fn($name) => mb_strtolower($name));
+            ->map(fn ($name) => mb_strtolower($name));
 
         if (! $existingNames->intersect($newNames)->isEmpty()) {
-            throw new AttributesMustBeUniqueForCategoryException();
+            throw new AttributesMustBeUniqueForCategoryException;
         }
     }
-
 }

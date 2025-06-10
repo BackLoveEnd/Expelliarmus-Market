@@ -10,7 +10,6 @@ use Modules\Category\Models\Category;
 
 class EditCategoryAction
 {
-
     public function handle(EditCategoryDto $categoryDto): void
     {
         DB::transaction(function () use ($categoryDto) {
@@ -30,7 +29,7 @@ class EditCategoryAction
 
         $existingAttributes = collect($category->allAttributesFromTree())
             ->pluck('name')
-            ->map(fn($name) => mb_strtolower($name));
+            ->map(fn ($name) => mb_strtolower($name));
 
         $diffAttributes = collect($newAttributes)->filter(function (array $attribute) use (
             $existingAttributes,
@@ -42,5 +41,4 @@ class EditCategoryAction
             $category->productAttributes()->createMany($diffAttributes->toArray());
         }
     }
-
 }

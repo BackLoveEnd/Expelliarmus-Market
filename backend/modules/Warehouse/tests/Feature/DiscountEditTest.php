@@ -88,8 +88,7 @@ class DiscountEditTest extends TestCase
         );
 
         $this->assertThrows(
-            test: fn()
-                => $this->factory
+            test: fn () => $this->factory
                 ->editDiscount($product2, $discount) // want to edit discount to wrong product
                 ->process($editDto),
             expectedClass: DiscountIsNotRelatedToProductException::class,
@@ -117,8 +116,7 @@ class DiscountEditTest extends TestCase
         );
 
         $this->assertThrows(
-            test: fn()
-                => $this->factory
+            test: fn () => $this->factory
                 ->editDiscount($product2, $discount) // want to edit discount to wrong product
                 ->process($editDto),
             expectedClass: DiscountIsNotRelatedToProductException::class,
@@ -146,8 +144,7 @@ class DiscountEditTest extends TestCase
         );
 
         $this->assertThrows(
-            test: fn()
-                => $this->factory
+            test: fn () => $this->factory
                 ->editDiscount($product2, $discount) // want to edit discount to wrong product
                 ->process($editDto),
             expectedClass: DiscountIsNotRelatedToProductException::class,

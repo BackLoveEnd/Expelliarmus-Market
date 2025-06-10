@@ -14,9 +14,8 @@ use Spatie\LaravelData\Data;
 
 class CreateProductAttributeSingleVariationDto extends Data
 {
-
     public function __construct(
-        /**@var Collection<int, AttributesForSingleValueDto> */
+        /** @var Collection<int, AttributesForSingleValueDto> */
         public readonly Collection $attributes,
         public readonly ?int $attributeId = null,
     ) {}
@@ -31,9 +30,9 @@ class CreateProductAttributeSingleVariationDto extends Data
 
         $category = Category::findOrFail($request->relation('category')['id']);
 
-        if ( ! array_key_exists('attribute_id',
-                $attributes[0]) || $attributes[0]['attribute_id'] === null) {
-            $newAttribute = (new CreateAttributesForCategoryAction())->handle($category, collect([
+        if (! array_key_exists('attribute_id',
+            $attributes[0]) || $attributes[0]['attribute_id'] === null) {
+            $newAttribute = (new CreateAttributesForCategoryAction)->handle($category, collect([
                 'name' => $attributes[0]['attribute_name'],
                 'type' => $attributes[0]['attribute_type'],
                 'view_type' => $attributes[0]['attribute_view_type'],
@@ -59,7 +58,7 @@ class CreateProductAttributeSingleVariationDto extends Data
     {
         $attributes = $category
             ->allAttributesFromTree()
-            ->filter(fn(ProductAttribute $productAttribute) => $productAttribute->required);
+            ->filter(fn (ProductAttribute $productAttribute) => $productAttribute->required);
 
         if ($attributes->count() > 1) {
             throw ValidationException::withMessages([
@@ -73,5 +72,4 @@ class CreateProductAttributeSingleVariationDto extends Data
             ]);
         }
     }
-
 }

@@ -43,9 +43,6 @@ enum ProductStatusEnum: int
     /**
      * Check if `from` status can be changed to `to` status.
      *
-     * @param  ProductStatusEnum  $from
-     * @param  ProductStatusEnum  $to
-     * @return true
      * @throws Exception
      */
     public static function checkConsistency(self $from, self $to): true
@@ -61,11 +58,9 @@ enum ProductStatusEnum: int
         $transitionKey = $from->value.'_'.$to->value;
 
         if (isset($invalidTransitions[$transitionKey])) {
-            throw new $invalidTransitions[$transitionKey]();
+            throw new $invalidTransitions[$transitionKey];
         }
 
         return true;
     }
-
-
 }

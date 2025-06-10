@@ -4,7 +4,6 @@ namespace App\Actions\Fortify;
 
 trait PasswordValidationRules
 {
-
     /**
      * Get the validation rules used to validate passwords.
      *
@@ -14,5 +13,4 @@ trait PasswordValidationRules
     {
         return ['required', 'string', 'min:6', 'confirmed'];
     }
-
 }

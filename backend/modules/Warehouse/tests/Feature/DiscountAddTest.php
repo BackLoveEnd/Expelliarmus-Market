@@ -105,8 +105,7 @@ class DiscountAddTest extends TestCase
         );
 
         $this->assertThrows(
-            test: fn()
-                => (new ProductDiscountServiceFactory($this->app))
+            test: fn () => (new ProductDiscountServiceFactory($this->app))
                 ->addDiscount($product)
                 ->process($dto),
             expectedClass: VariationToApplyDiscountDoesNotExists::class,
@@ -131,7 +130,7 @@ class DiscountAddTest extends TestCase
                     ],
                 ],
             ]);
-        
+
         $response1->assertJsonValidationErrors([
             'data.attributes.start_date' => 'The date has already passed.',
         ]);

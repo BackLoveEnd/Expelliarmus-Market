@@ -48,6 +48,6 @@ abstract class AllowedOrderStatusTransition
             throw CannotChangeOrderStatusException::fromStatuses($currentStatus, $nextStatus);
         }
 
-        return new $transition['transition']();
+        return new $transition['transition'];
     }
 }

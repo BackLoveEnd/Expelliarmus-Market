@@ -19,7 +19,7 @@ class NewArrivalsUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'arrivals' => ['required', 'array', new NewArrivalsExistsRule()],
+            'arrivals' => ['required', 'array', new NewArrivalsExistsRule],
             'arrivals.*.file' => ['nullable', 'image', 'required_without:arrivals.*.exists_image_url'],
             'arrivals.*.exists_image_url' => [
                 'nullable',

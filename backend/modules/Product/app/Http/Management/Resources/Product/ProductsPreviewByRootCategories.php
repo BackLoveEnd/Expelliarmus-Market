@@ -22,7 +22,7 @@ class ProductsPreviewByRootCategories extends JsonApiResource
     public function toRelationships(Request $request): array
     {
         return [
-            'products' => fn() => ProductCartResource::collection($this->products)
+            'products' => fn () => ProductCartResource::collection($this->products),
         ];
     }
 
@@ -40,7 +40,7 @@ class ProductsPreviewByRootCategories extends JsonApiResource
 
     public function toId(Request $request): string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     public function toType(Request $request): string
@@ -48,4 +48,3 @@ class ProductsPreviewByRootCategories extends JsonApiResource
         return 'products';
     }
 }
-

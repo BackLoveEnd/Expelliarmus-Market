@@ -23,14 +23,11 @@ class ManagerAuthController extends Controller
      * Login a manager.
      *
      * Usage place - Admin section.
-     *
-     * @param  ManagerLoginRequest  $request
-     * @return JsonResponse
      */
     public function login(ManagerLoginRequest $request): JsonResponse
     {
         $manager = $this->authService->prepareToLogin(
-            (object)[
+            (object) [
                 'email' => $request->email,
                 'password' => $request->password,
             ],
@@ -49,9 +46,6 @@ class ManagerAuthController extends Controller
      * Logout a manager.
      *
      * Usage place - Admin section.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {
@@ -68,9 +62,6 @@ class ManagerAuthController extends Controller
      * Register a manager.
      *
      * Usage place - Admin section.
-     *
-     * @param  ManagerRegisterRequest  $request
-     * @return JsonResponse
      */
     public function register(ManagerRegisterRequest $request): JsonResponse
     {

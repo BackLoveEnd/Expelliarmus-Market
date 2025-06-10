@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 final readonly class ProductDiscountDto
 {
-
     public function __construct(
         public int $percentage,
         public Carbon $endAt,
@@ -27,5 +26,4 @@ final readonly class ProductDiscountDto
             variationId: $request->variation,
         );
     }
-
 }

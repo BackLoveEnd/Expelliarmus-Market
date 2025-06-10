@@ -16,7 +16,6 @@ class CancelDiscountService extends AbstractDiscountService
     }
 
     /**
-     * @return void
      * @throws DiscountIsNotRelatedToProductException
      */
     public function process(): void

@@ -24,6 +24,7 @@ class GetGuestsAction
                 'phone_number',
                 'created_at',
             ]);
+
         return new LimitOffsetDto(
             items: $guests,
             total: Guest::query()->count(),
