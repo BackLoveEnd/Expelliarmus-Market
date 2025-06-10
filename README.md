@@ -48,6 +48,12 @@
     <a href="https://kubernetes.io/">
         <img alt="Kubernetes" src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white"/>
     </a>
+    <a href="https://github.com/features/actions">
+        <img alt="GitHub Actions" src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white"/>
+    </a>
+    <a href="https://www.terraform.io/">
+        <img alt="Terraform" src="https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white"/>
+    </a>
 </p>
 
 &nbsp;
