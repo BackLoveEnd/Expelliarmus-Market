@@ -27,7 +27,7 @@ class ProductAttributeFactory extends Factory
     public function category(Category $category): ProductAttributeFactory
     {
         return $this->state([
-            'category_id' => $category->id
+            'category_id' => $category->id,
         ]);
     }
 }

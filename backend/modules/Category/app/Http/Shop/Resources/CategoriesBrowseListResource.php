@@ -9,7 +9,6 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class CategoriesBrowseListResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         $attributes = [
@@ -23,5 +22,4 @@ class CategoriesBrowseListResource extends JsonApiResource
 
         return $attributes;
     }
-
 }

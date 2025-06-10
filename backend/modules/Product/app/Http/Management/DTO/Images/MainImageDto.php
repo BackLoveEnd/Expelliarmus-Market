@@ -20,7 +20,7 @@ final readonly class MainImageDto
     {
         return collect($files)->map(function (array $files) {
             return new self(
-                order: (int)$files['order'],
+                order: (int) $files['order'],
                 id: $files['id'] ?? null,
                 image: $files['image'] ?? null,
                 existImageUrl: $files['image_url'] ?? null,

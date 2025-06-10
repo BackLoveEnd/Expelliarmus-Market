@@ -28,7 +28,6 @@ class ProductsShopCardResource extends JsonApiResource
         if (is_null($this->resource->hasCombinedAttributes())) {
             $attributes['price'] = $this->warehouse->default_price;
 
-
             $attributes['discount'] = $this->discount->isNotEmpty()
                 ? $this->discount->first()->only($discountColumns)
                 : null;

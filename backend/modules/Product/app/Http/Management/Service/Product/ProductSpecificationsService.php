@@ -13,7 +13,7 @@ class ProductSpecificationsService
     {
         return [
             'grouped' => $this->getSpecificationsInGroupWithValue($specs),
-            'separated' => $this->getSeparatedSpecifications($specs)
+            'separated' => $this->getSeparatedSpecifications($specs),
         ];
     }
 
@@ -22,13 +22,13 @@ class ProductSpecificationsService
         return [
             'group' => null,
             'specifications' => $specs->whereNull('group_name')
-                ->map(fn(ProductSpecAttributes $item) => [
+                ->map(fn (ProductSpecAttributes $item) => [
                     'id' => $item->id,
                     'specification' => $item->spec_name,
-                    'value' => $item->pivot->value ?? null
+                    'value' => $item->pivot->value ?? null,
                 ])
                 ->values()
-                ->toArray()
+                ->toArray(),
         ];
     }
 
@@ -39,7 +39,7 @@ class ProductSpecificationsService
             ->map(function (Collection $items, string $groupName) {
                 return [
                     'group' => $groupName,
-                    'specifications' => $items->map(fn($item) => [
+                    'specifications' => $items->map(fn ($item) => [
                         'id' => $item->id,
                         'specification' => $item->spec_name,
                         'value' => $item->pivot->value ?? null,

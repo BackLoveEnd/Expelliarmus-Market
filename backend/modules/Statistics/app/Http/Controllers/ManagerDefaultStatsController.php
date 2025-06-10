@@ -15,24 +15,21 @@ use Modules\User\Users\Models\User;
 
 class ManagerDefaultStatsController extends Controller
 {
-
     public function __construct(private CountStatisticsService $service) {}
 
     /**
      * Count and retrieve statistics for general management home page.
      *
      * Usage place - Admin section.
-     *
-     * @return JsonResponse
      */
     public function __invoke(): JsonResponse
     {
         $result = $this->service
             ->for([Product::class, User::class, Guest::class])
             ->apply([
-                User::class => new TotalUsersStats(),
-                Guest::class => new TotalUsersStats(),
-                Product::class => new TotalProductsStats(),
+                User::class => new TotalUsersStats,
+                Guest::class => new TotalUsersStats,
+                Product::class => new TotalProductsStats,
             ]);
 
         return response()->json([
@@ -45,5 +42,4 @@ class ManagerDefaultStatsController extends Controller
             ],
         ]);
     }
-
 }

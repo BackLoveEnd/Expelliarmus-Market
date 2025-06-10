@@ -9,10 +9,8 @@ use Modules\User\Users\Models\User;
 
 readonly class GuestRegistered
 {
-
     public function __construct(
         public User $createdUser,
         public Guest $guest,
     ) {}
-
 }

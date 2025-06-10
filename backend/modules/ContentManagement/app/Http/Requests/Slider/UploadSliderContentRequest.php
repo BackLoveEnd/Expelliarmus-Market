@@ -19,7 +19,7 @@ class UploadSliderContentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images' => ['required', 'array', new SlidesExistsRule()],
+            'images' => ['required', 'array', new SlidesExistsRule],
             'images.*.order' => ['required', 'integer'],
             'images.*.image' => ['nullable', 'image', 'required_without:images.*.image_url'],
             'images.*.image_url' => ['nullable', 'url', new OnlySpecificStorageUrlRule(url('/storage/content/slider'))],

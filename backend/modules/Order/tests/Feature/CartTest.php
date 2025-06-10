@@ -101,7 +101,7 @@ class CartTest extends TestCase
         ]);
 
         $response->assertSessionHas('user.cart', [
-            (object)[
+            (object) [
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -112,8 +112,7 @@ class CartTest extends TestCase
                 'final_price' => round($productVariation->price * 2, 2),
                 'variation' => [
                     'id' => $productVariation->id,
-                    'data' => $productVariation->productAttributes->map(fn($item)
-                        => [
+                    'data' => $productVariation->productAttributes->map(fn ($item) => [
                         'attribute_name' => $item->name,
                         'value' => $item->pivot->value,
                         'type' => $item->type->toTypes(),
@@ -154,7 +153,7 @@ class CartTest extends TestCase
         ]);
 
         $response->assertSessionHas('user.cart', [
-            (object)[
+            (object) [
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -341,7 +340,7 @@ class CartTest extends TestCase
         ]);
 
         $response->assertSessionHas('user.cart', [
-            (object)[
+            (object) [
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -353,7 +352,7 @@ class CartTest extends TestCase
                 'variation' => null,
                 'discount' => null,
             ],
-            (object)[
+            (object) [
                 'id' => session('user.cart')[1]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -370,7 +369,7 @@ class CartTest extends TestCase
         $response = $this->deleteJson('api/shop/user/cart/'.session('user.cart')[0]->id);
 
         $response->assertSessionHas('user.cart', [
-            (object)[
+            (object) [
                 'id' => session('user.cart')[0]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -450,7 +449,7 @@ class CartTest extends TestCase
         $cart = session()->get('user.cart', []);
 
         $updateResponse->assertSessionHas('user.cart', [
-            (object)[
+            (object) [
                 'id' => $cart[0]->id,
                 'product_id' => $product->id,
                 'product_image' => $product->preview_image,
@@ -462,7 +461,7 @@ class CartTest extends TestCase
                 'variation' => null,
                 'discount' => null,
             ],
-            (object)[
+            (object) [
                 'id' => $cart[1]->id,
                 'product_id' => $product2->id,
                 'product_image' => $product2->preview_image,
@@ -536,7 +535,7 @@ class CartTest extends TestCase
         $product2 = Product::factory()->published()->withSingleAttributes();
 
         $sessionCart = [
-            (object)[
+            (object) [
                 'id' => Uuid::uuid7()->toString(),
                 'product_id' => $product->id,
                 'product_title' => $product->title,
@@ -548,7 +547,7 @@ class CartTest extends TestCase
                 'discount' => null,
                 'variation' => null,
             ],
-            (object)[
+            (object) [
                 'id' => Uuid::uuid7()->toString(),
                 'product_id' => $product2->id,
                 'product_title' => $product2->title,
@@ -558,7 +557,7 @@ class CartTest extends TestCase
                 'price_per_unit' => 150,
                 'final_price' => 150,
                 'discount' => null,
-                'variation' => json_encode(["id" => $product2->singleAttributes->first()->id]),
+                'variation' => json_encode(['id' => $product2->singleAttributes->first()->id]),
             ],
         ];
 
@@ -572,7 +571,7 @@ class CartTest extends TestCase
             'price_per_unit' => 150,
             'final_price' => 150,
             'discount' => null,
-            'variation' => json_encode(["id" => $product2->singleAttributes->first()->id]),
+            'variation' => json_encode(['id' => $product2->singleAttributes->first()->id]),
         ]);
 
         $cartStorage = new CartStorageService(session()->driver());

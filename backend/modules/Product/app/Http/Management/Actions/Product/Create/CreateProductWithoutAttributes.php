@@ -12,7 +12,6 @@ use Modules\Warehouse\Http\Actions\CreateProductInWarehouse;
 
 class CreateProductWithoutAttributes implements CreateProductActionInterface
 {
-
     public function __construct(
         private CreateProductDto $productDto,
         private CreateWarehouseDto $warehouseDto,

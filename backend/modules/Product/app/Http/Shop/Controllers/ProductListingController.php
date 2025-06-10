@@ -26,8 +26,6 @@ class ProductListingController
      *
      * Usage place - Shop.
      *
-     * @param  GetExploredProductsAction  $action
-     * @return JsonApiResource|JsonResponse
      * @throws FailedToLoadExploreProductsException
      */
     public function explore(GetExploredProductsAction $action): JsonApiResource|JsonResponse
@@ -35,7 +33,7 @@ class ProductListingController
         $products = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(config('product.cache.products-explore')),
             ttl: now()->addDay(),
-            callback: fn() => $action->handle(config('product.retrieve.explore')),
+            callback: fn () => $action->handle(config('product.retrieve.explore')),
         );
 
         if (! $products) {
@@ -50,8 +48,6 @@ class ProductListingController
      *
      * Usage place - Shop.
      *
-     * @param  GetExploredProductsAction  $action
-     * @return JsonApiResource|JsonResponse
      * @throws FailedToLoadExploreProductsException
      */
     public function suggestions(GetExploredProductsAction $action): JsonApiResource|JsonResponse
@@ -59,7 +55,7 @@ class ProductListingController
         $products = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(config('product.cache.products-suggestions')),
             ttl: now()->addDay(),
-            callback: fn() => $action->handle(config('product.retrieve.suggestions')),
+            callback: fn () => $action->handle(config('product.retrieve.suggestions')),
         );
 
         if (! $products) {
@@ -74,9 +70,6 @@ class ProductListingController
      *
      * Usage place - Shop.
      *
-     * @param  Category  $category
-     * @param  RelatedProductsAction  $action
-     * @return JsonApiResource|JsonResponse
      * @throws FailedToLoadRelatedProductsException
      */
     public function relatedToProduct(Category $category, RelatedProductsAction $action): JsonApiResource|JsonResponse
@@ -84,7 +77,7 @@ class ProductListingController
         $products = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(config('product.cache.product-related-by-category'), $category->id),
             ttl: now()->addDay(),
-            callback: fn() => $action->handle($category),
+            callback: fn () => $action->handle($category),
         );
 
         if (! $products) {
@@ -99,8 +92,6 @@ class ProductListingController
      *
      * Usage place - Shop.
      *
-     * @param  GetTopSellersProductsAction  $action
-     * @return JsonApiResource|JsonResponse
      * @throws FailedToLoadTopSellersException
      */
     public function topSellers(GetTopSellersProductsAction $action): JsonApiResource|JsonResponse
@@ -108,7 +99,7 @@ class ProductListingController
         $products = $this->cacheService->repo()->remember(
             key: $this->cacheService->key(config('product.cache.products-top-sellers')),
             ttl: now()->addDay(),
-            callback: fn() => $action->handle(config('product.retrieve.top-sellers')),
+            callback: fn () => $action->handle(config('product.retrieve.top-sellers')),
         );
 
         if (! $products) {

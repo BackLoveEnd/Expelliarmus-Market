@@ -20,24 +20,18 @@ use Modules\Warehouse\Http\Actions\EditProductInWarehouse;
 
 class ManipulationProductController extends Controller
 {
-
     /**
      * Store product data.
      *
      * Usage place - Admin section.
-     *
-     * @param  ProductCreateRequest  $request
-     * @param  CreateProductFactoryAction  $factory
-     *
-     * @return JsonResponse
      */
     public function store(
         ProductCreateRequest $request,
         CreateProductFactoryAction $factory
     ): JsonResponse {
         $product = $factory->createAction($request)->handle(
-            new CreateProduct(),
-            new CreateProductInWarehouse(),
+            new CreateProduct,
+            new CreateProductInWarehouse,
         );
 
         return response()->json([
@@ -53,12 +47,6 @@ class ManipulationProductController extends Controller
      * Update product information.
      *
      * Usage place - Admin section.
-     *
-     * @param  ProductEditRequest  $request
-     * @param  Product  $product
-     * @param  EditProductFactoryAction  $factory
-     *
-     * @return JsonResponse
      */
     public function edit(
         ProductEditRequest $request,
@@ -72,11 +60,10 @@ class ManipulationProductController extends Controller
         }
 
         $factory->createAction($request)->handle(
-            new EditProduct($product, new DeleteVariationsWhenNeedAction()),
+            new EditProduct($product, new DeleteVariationsWhenNeedAction),
             new EditProductInWarehouse($product),
         );
 
         return response()->json(['Product was updated successfully.']);
     }
-
 }

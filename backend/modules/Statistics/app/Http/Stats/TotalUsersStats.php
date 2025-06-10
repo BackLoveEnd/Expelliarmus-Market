@@ -9,7 +9,6 @@ use Modules\Statistics\Services\StatisticsHandlerInterface;
 
 class TotalUsersStats implements StatisticsHandlerInterface
 {
-
     public function handle(Builder $builder): Builder
     {
         return $builder;

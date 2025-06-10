@@ -35,7 +35,7 @@ class MigrationServiceProvider extends BaseMigrationServiceProvider
         });
 
         $this->app->extend('command.migrate.refresh', function ($app) {
-            return new MigrationWithStorageCleanRefresh();
+            return new MigrationWithStorageCleanRefresh;
         });
 
         $this->app->extend('command.migrate.rollback', function ($app) {

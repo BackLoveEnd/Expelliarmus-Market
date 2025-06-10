@@ -13,7 +13,6 @@ use Spatie\LaravelData\Data;
 
 class CreateProductAttributeCombinedVariationsDto extends Data
 {
-
     public function __construct(
         public readonly string $skuName,
         public readonly int $quantity,
@@ -31,6 +30,7 @@ class CreateProductAttributeCombinedVariationsDto extends Data
         $category = Category::findOrFail($request->relation('category')['id']);
 
         $productVariations = $request->relation('product_variations_combinations');
+
         return DB::transaction(function () use ($category, $productVariations) {
             $createdAttributes = self::prepareAttributeBeforeCollection($category, $productVariations);
 
@@ -58,17 +58,16 @@ class CreateProductAttributeCombinedVariationsDto extends Data
         $attributes = $productVariations->pluck('attributes')->collapse();
 
         $newAttributes = $attributes
-            ->filter(fn($attribute) => ! array_key_exists('id', $attribute) || $attribute['id'] === null)
-            ->unique(fn($attr) => mb_strtolower($attr['name']));
+            ->filter(fn ($attribute) => ! array_key_exists('id', $attribute) || $attribute['id'] === null)
+            ->unique(fn ($attr) => mb_strtolower($attr['name']));
 
-        return (new CreateAttributesForCategoryAction())->handle(
+        return (new CreateAttributesForCategoryAction)->handle(
             $category,
-            $newAttributes->map(fn($attr) => [
+            $newAttributes->map(fn ($attr) => [
                 'name' => $attr['name'],
                 'type' => $attr['type']['id'],
                 'view_type' => $attr['attribute_view_type'],
             ])->values(),
         );
     }
-
 }

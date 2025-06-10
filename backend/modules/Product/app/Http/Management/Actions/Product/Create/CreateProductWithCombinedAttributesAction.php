@@ -24,7 +24,7 @@ class CreateProductWithCombinedAttributesAction implements CreateProductActionIn
     public function __construct(
         private CreateProductDto $productDto,
         private CreateWarehouseDto $warehouseDto,
-        /**@var Collection<int, CombinedVariationsDto> */
+        /** @var Collection<int, CombinedVariationsDto> */
         private Collection $combinedVariationsDto,
     ) {}
 

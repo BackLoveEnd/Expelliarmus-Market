@@ -10,7 +10,6 @@ use Modules\User\Users\Models\User;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
-
     /**
      * Validate and update the given user's profile information.
      *
@@ -72,5 +71,4 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         $user->sendEmailVerificationNotification();
     }
-
 }

@@ -14,7 +14,7 @@ class SliderContentResource extends JsonApiResource
         return [
             'image' => $this->image_url,
             'order' => $this->order,
-            'content_url' => $this->content_url
+            'content_url' => $this->content_url,
         ];
     }
 }

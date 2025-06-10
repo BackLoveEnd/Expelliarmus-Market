@@ -17,6 +17,7 @@ class SlidesExistsRule implements ValidationRule
         foreach ($slidesWithId as $id) {
             if (! Str::isUuid($id)) {
                 $fail('Invalid slide ID.');
+
                 return;
             }
         }
@@ -25,7 +26,7 @@ class SlidesExistsRule implements ValidationRule
             ->get(['slide_id']);
 
         if ($existsSlides->count() !== $slidesWithId->count()) {
-            $fail("Some of \"exists\" slide is not valid.");
+            $fail('Some of "exists" slide is not valid.');
         }
     }
 }

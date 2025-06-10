@@ -13,7 +13,6 @@ use Modules\User\Users\Models\User;
 
 class OrderFactory extends Factory
 {
-
     protected $model = Order::class;
 
     public function definition(): array

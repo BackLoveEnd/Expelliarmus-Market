@@ -23,10 +23,6 @@ class ProductImagesController extends Controller
      * Store product images (preview and main).
      *
      * Usage place - Admin section.
-     *
-     * @param  ProductImageRequest  $request
-     * @param  Product  $product
-     * @return JsonResponse
      */
     public function store(ProductImageRequest $request, Product $product): JsonResponse
     {
@@ -46,10 +42,6 @@ class ProductImagesController extends Controller
      * Edit product images.
      *
      * Usage place - Admin section.
-     *
-     * @param  ProductEditImageRequest  $request
-     * @param  Product  $product
-     * @return JsonResponse
      */
     public function edit(ProductEditImageRequest $request, Product $product): JsonResponse
     {

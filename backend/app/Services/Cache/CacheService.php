@@ -11,8 +11,7 @@ class CacheService
 {
     public function __construct(
         private Repository $repository
-    ) {
-    }
+    ) {}
 
     public function key(string $configKey, string|int|null $identifier = null): string
     {

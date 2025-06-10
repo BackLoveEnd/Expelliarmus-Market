@@ -9,10 +9,8 @@ use Illuminate\Http\JsonResponse;
 
 class AttributeNotRelatedToCategoryException extends Exception
 {
-
     public function render(): JsonResponse
     {
         return response()->json(['message' => 'Attribute must be in relation with category'], 404);
     }
-
 }

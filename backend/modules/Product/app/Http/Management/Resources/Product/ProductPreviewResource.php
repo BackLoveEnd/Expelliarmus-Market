@@ -13,7 +13,6 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class ProductPreviewResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         $attributes = [
@@ -36,8 +35,8 @@ class ProductPreviewResource extends JsonApiResource
     public function toRelationships(Request $request): array
     {
         $relationships = [
-            'category' => fn() => RootCategoryResource::make($this->category),
-            'brand' => fn() => BrandResource::make($this->brand),
+            'category' => fn () => RootCategoryResource::make($this->category),
+            'brand' => fn () => BrandResource::make($this->brand),
         ];
 
         if ($this->resource->hasCombinedAttributes() === null) {
@@ -46,13 +45,12 @@ class ProductPreviewResource extends JsonApiResource
 
         if ($this->resource->hasCombinedAttributes()) {
             $relationships['variations'] =
-                fn() => CombinedAttributeVariationResource::collection($this->productAttributes);
+                fn () => CombinedAttributeVariationResource::collection($this->productAttributes);
         } else {
             $relationships['variations'] =
-                fn() => SingleAttributeVariationResource::collection($this->productAttributes);
+                fn () => SingleAttributeVariationResource::collection($this->productAttributes);
         }
 
         return $relationships;
     }
-
 }

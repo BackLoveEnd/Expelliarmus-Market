@@ -9,7 +9,6 @@ use Modules\User\Users\Models\Guest;
 
 class GuestFactory extends Factory
 {
-
     protected $model = Guest::class;
 
     public function definition(): array

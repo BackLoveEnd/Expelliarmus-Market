@@ -1,42 +1,137 @@
-name: Docker compose CI and push
+name: Pint Tests Build and Push
 
 on:
   push:
-    branches: [ "dev", "master","test" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "dev", "master","test" ]
+    branches: ["master"]
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build:
+  Pint:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        working-directory: backend
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Launch Pint inspection
+        working-directory: backend
+        run: vendor/bin/pint
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: PHP Linting (Pint)
+          skip_fetch: true
+  Tests:
+    runs-on: ubuntu-latest
+    needs: Pint
+    services:
+      postgres:
+        image: postgres:17.4
+        ports: 
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_DATABASE }}
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:8
+        ports:
+          - 6379:6379
+        env:
+          REDIS_HOST: localhost
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup PHP & Composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Setting Environment
+        env:
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+        run: |
+          cp .env.prod .env
+          sed -i "s|^REDIS_HOST=.*|REDIS_HOST=localhost|" .env
+          sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=null|" .env
+          sed -i "s/^DB_HOST=.*/DB_HOST=localhost/" .env
+          sed -i "s/^DB_DATABASE=.*/DB_DATABASE=${DB_DATABASE}/" .env
+          sed -i "s/^DB_USERNAME=.*/DB_USERNAME=postgres/" .env
+          sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=${DB_PASSWORD}/" .env
+          sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
+          echo "Updated .env:"
+          cp .env backend/.env
+          cat .env
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+      - name: Wait for Redis
+        run: |
+          until nc -z localhost 6379; do
+            echo "Waiting for Redis..."
+            sleep 2
+          done
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Initialize databases from SQL script
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          psql -h localhost -U postgres -f .docker/db/init-db.sql
+      - name: Run migrations
+        working-directory: backend
+        run: php artisan migrate:fresh --seed --storage-clean --force
+      - name: Run tests
+        working-directory: backend
+        run: php artisan test 
+  Build_and_push:
+    needs: Tests
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.run_id }}
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
-
       - name: Sanitize repo slug
         uses: actions/github-script@v6
         id: repo_slug
         with:
             result-encoding: string
             script: return `ghcr.io/${github.repository}`.toLowerCase()
-
       - name: Setting Environment
         env:
           PROJECT_NAME: ${{ vars.PROJECT_NAME }}
@@ -68,7 +163,7 @@ jobs:
           sed -i "s|^SESSION_DOMAIN=.*|SESSION_DOMAIN=${SESSION_DOMAIN}|" .env
           sed -i "s|^SANCTUM_STATEFUL_DOMAINS=.*|SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS}|" .env
           sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${FRONTEND_URL}|" .env
-          sed -i "s|^BACKEND_URLL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
+          sed -i "s|^BACKEND_URL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
           sed -i "s|^APP_URL=.*|APP_URL=${APP_URL}|" .env
           sed -i "s/^DB_HOST=.*/DB_HOST=${DB_HOST}/" .env
           sed -i "s/^DB_CONNECTION=.*/DB_CONNECTION=${DB_CONNECTION}/" .env
@@ -79,40 +174,19 @@ jobs:
           sed -i "s/^APP_KEY=.*/APP_KEY=${APP_KEY}/" .env
           echo "Updated docker .env:"
           cat .env
-
-      # - name: Copy .env to backend
-      #   working-directory: ${{ github.workspace }}
-      #   run: |
-      #     cp .env ./backend/
-
-      # - name: Setting frontend env
-      #   env:
-      #     FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
-      #     BACKEND_URL: ${{ secrets.BACKEND_URL }}
-      #   run: |
-      #       cp .env.front.example ./frontend/
-      #       mv ./frontend/.env.front.example ./frontend/.env
-      #       sed -i "s|^FRONTEND_URL=.*|FRONTEND_URL=${FRONTEND_URL}|" .env
-      #       sed -i "s|^BACKEND_URLL=.*|FRONTEND_URL=${BACKEND_URL}|" .env
-      #       echo "Updated .env:"
-  
       - name: Define image tags
         id: tags
         run: echo "slug=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
-
       - name: Patch image names in docker-compose.build.yml
         run: |
           sed -i "s|image:.*-php|image: ${{ steps.tags.outputs.slug }}-php|" docker-compose.build.yml
           sed -i "s|image:.*-nginx|image: ${{ steps.tags.outputs.slug }}-nginx|" docker-compose.build.yml
           sed -i "s|image:.*-queue|image: ${{ steps.tags.outputs.slug }}-queue|" docker-compose.build.yml
           sed -i "s|image:.*-scheduler|image: ${{ steps.tags.outputs.slug }}-scheduler|" docker-compose.build.yml
-
       - name: Build Docker Compose images
         run: docker compose -f docker-compose.build.yml build
-
       - name: Push Docker Compose images
         run: docker compose -f docker-compose.build.yml push
-
       - name: Show image sizes
         run: docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
       

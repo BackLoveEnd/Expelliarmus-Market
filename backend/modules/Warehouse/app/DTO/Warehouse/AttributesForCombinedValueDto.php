@@ -22,7 +22,7 @@ class AttributesForCombinedValueDto extends Data
 
     public static function collectWithCategory(mixed $items, Category $category, Collection $createdAttributes)
     {
-        $createdAttributesMapped = $createdAttributes->keyBy(fn($attr) => mb_strtolower($attr['name']));
+        $createdAttributesMapped = $createdAttributes->keyBy(fn ($attr) => mb_strtolower($attr['name']));
 
         $newItems = collect($items)->map(function ($item) use ($createdAttributesMapped) {
             if (! array_key_exists('id', $item) || $item['id'] === null) {
@@ -38,12 +38,13 @@ class AttributesForCombinedValueDto extends Data
                     ];
                 }
             }
+
             return $item;
         });
 
         self::ensureAllRequiredAttributesArePresented($category, $newItems);
 
-        return $newItems->map(fn($item) => new self(
+        return $newItems->map(fn ($item) => new self(
             value: (string) $item['value'],
             id: $item['id'],
         ));
@@ -53,7 +54,7 @@ class AttributesForCombinedValueDto extends Data
     {
         $attributes = $category
             ->allAttributesFromTree()
-            ->filter(fn(ProductAttribute $attribute) => $attribute->required)
+            ->filter(fn (ProductAttribute $attribute) => $attribute->required)
             ->pluck('id');
 
         $presentedRequiredAttributes = $newAttributes->whereIn('id', $attributes);

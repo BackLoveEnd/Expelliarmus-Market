@@ -22,13 +22,13 @@ class ProductSpec extends Pivot
     protected $fillable = [
         'product_id',
         'attribute_id',
-        'value'
+        'value',
     ];
 
     protected function casts(): array
     {
         return [
-            'value' => 'array'
+            'value' => 'array',
         ];
     }
 }

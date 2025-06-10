@@ -9,7 +9,6 @@ use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 readonly class ProductAttributesDto
 {
-
     public function __construct(
         public string $name,
         public int $type,
@@ -26,5 +25,4 @@ readonly class ProductAttributesDto
             );
         });
     }
-
 }

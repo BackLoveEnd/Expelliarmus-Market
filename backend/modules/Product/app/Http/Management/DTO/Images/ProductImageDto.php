@@ -11,11 +11,10 @@ use Illuminate\Support\Collection;
 final readonly class ProductImageDto
 {
     public function __construct(
-        /**@var <int, UploadedFile[]> $mainImages */
+        /** @var <int, UploadedFile[]> $mainImages */
         public Collection $mainImages,
         public ?UploadedFile $previewImage
-    ) {
-    }
+    ) {}
 
     public static function fromRequest(Request $request): ProductImageDto
     {

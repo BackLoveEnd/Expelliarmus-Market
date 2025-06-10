@@ -23,6 +23,7 @@ class CartExistsInDbRule implements ValidationRule
         foreach ($cartItems as $cartId) {
             if (! Str::isUuid($cartId)) {
                 $fail('Invalid cart ID.');
+
                 return;
             }
         }
@@ -33,7 +34,7 @@ class CartExistsInDbRule implements ValidationRule
             ->count();
 
         if ($cartsInDbCount !== $cartItems->count()) {
-            $fail("Some of cart items are not exists.");
+            $fail('Some of cart items are not exists.');
         }
     }
 }

@@ -19,10 +19,9 @@ class CreateProductDto extends Data
         public readonly int $categoryId,
         public readonly int $brandId,
         public readonly string $productArticle,
-        /**@var Collection <int, ProductSpecsDto> $productSpecs */
+        /** @var Collection <int, ProductSpecsDto> $productSpecs */
         public readonly Collection $productSpecs,
-    ) {
-    }
+    ) {}
 
     public function setAndGetVariationType(?bool $type): void
     {

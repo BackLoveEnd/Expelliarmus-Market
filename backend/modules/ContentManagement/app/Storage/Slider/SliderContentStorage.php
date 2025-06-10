@@ -67,7 +67,7 @@ class SliderContentStorage
             return $this->storage->url('slider/'.$imageId);
         }
 
-        return $this->storage->url("slider/".$this->defaultSlide());
+        return $this->storage->url('slider/'.$this->defaultSlide());
     }
 
     public function defaultSlide(): string

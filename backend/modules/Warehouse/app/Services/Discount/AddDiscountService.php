@@ -13,11 +13,7 @@ use Modules\Warehouse\Models\Discount;
 
 final class AddDiscountService extends AbstractDiscountService implements DiscountProcessingInterface
 {
-
     /**
-     * @param  DiscountDto  $dto
-     *
-     * @return void
      * @throws VariationToApplyDiscountDoesNotExists
      */
     public function process(DiscountDto $dto): void
@@ -69,10 +65,9 @@ final class AddDiscountService extends AbstractDiscountService implements Discou
             ->first();
 
         if (! $variation) {
-            throw new VariationToApplyDiscountDoesNotExists();
+            throw new VariationToApplyDiscountDoesNotExists;
         }
 
         return $variation;
     }
-
 }

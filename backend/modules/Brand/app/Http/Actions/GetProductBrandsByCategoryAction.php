@@ -11,7 +11,6 @@ use Modules\Warehouse\Enums\ProductStatusEnum;
 
 class GetProductBrandsByCategoryAction
 {
-
     public function handle(int|string $category): Collection
     {
         if (is_numeric($category)) {
@@ -28,5 +27,4 @@ class GetProductBrandsByCategoryAction
             })
             ->get(['id', 'name', 'slug']);
     }
-
 }

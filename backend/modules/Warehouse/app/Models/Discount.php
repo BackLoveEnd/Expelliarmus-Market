@@ -25,7 +25,6 @@ use Modules\Warehouse\Enums\DiscountStatusEnum;
  */
 class Discount extends Model
 {
-
     use HasFactory;
 
     public $timestamps = false;
@@ -102,20 +101,20 @@ class Discount extends Model
 
     public function percentage(): Attribute
     {
-        return Attribute::get(fn($value) => Number::percentage($value));
+        return Attribute::get(fn ($value) => Number::percentage($value));
     }
 
     public function originalPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
     public function discountPrice(): Attribute
     {
         return Attribute::get(function ($value) {
-            return round((float)$value, 2);
+            return round((float) $value, 2);
         });
     }
 
@@ -123,5 +122,4 @@ class Discount extends Model
     {
         return DiscountFactory::new();
     }
-
 }

@@ -340,7 +340,7 @@ class OrderCreateTest extends TestCase
         $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
 
         $this->assertEquals(
-            round((float)$order->total_price, 2),
+            round((float) $order->total_price, 2),
             round($totalPrice - ($totalPrice * $coupon->discount / 100), 2),
         );
     }
@@ -409,7 +409,7 @@ class OrderCreateTest extends TestCase
         $totalPrice = $product1->warehouse->default_price * 3 + $variationProduct2->price;
 
         $this->assertEquals(
-            round((float)$order->total_price, 2),
+            round((float) $order->total_price, 2),
             round($totalPrice - ($totalPrice * $coupon->discount / 100), 2),
         );
     }

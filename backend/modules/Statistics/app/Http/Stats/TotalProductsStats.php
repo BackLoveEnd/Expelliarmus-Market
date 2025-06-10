@@ -9,7 +9,6 @@ use Modules\Statistics\Services\StatisticsHandlerInterface;
 
 class TotalProductsStats implements StatisticsHandlerInterface
 {
-
     public function handle(Builder $builder): Builder
     {
         return $builder;

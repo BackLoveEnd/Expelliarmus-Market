@@ -11,7 +11,6 @@ interface StatisticsServiceInterface
      * Initiate model(s).
      *
      * @param  array|string<Model>  $model
-     * @return StatisticsServiceInterface
      */
     public function for(array|string $model): StatisticsServiceInterface;
 
@@ -19,7 +18,6 @@ interface StatisticsServiceInterface
      * Apply all handlers to model(s) and retrieve information.
      *
      * @param  array<StatisticsHandlerInterface>  $handlers
-     * @return Collection
      */
     public function apply(array $handlers): Collection;
 }

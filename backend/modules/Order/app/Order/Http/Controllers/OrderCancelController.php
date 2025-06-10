@@ -23,9 +23,6 @@ class OrderCancelController extends Controller
      *
      * Usage place - Shop.
      *
-     * @param  Request  $request
-     * @param  Order  $order
-     * @return JsonResponse
      * @throws AuthorizationException
      * @throws FailedToCancelOrderException
      */

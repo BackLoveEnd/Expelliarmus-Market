@@ -25,8 +25,7 @@ class OrdersByUsersResource extends JsonApiResource
                 'type' => strtolower((new ReflectionClass($user))->getShortName()),
                 'email' => $user->email,
             ],
-            'orders' => $this->resource->map(fn(Order $order)
-                => [
+            'orders' => $this->resource->map(fn (Order $order) => [
                 'order_id' => $order->order_id,
                 'status' => $order->status->toString(),
                 'total_price' => $order->total_price,
@@ -39,11 +38,11 @@ class OrdersByUsersResource extends JsonApiResource
     {
         $user = $this->resource->first()->userable;
 
-        return $user->id.":".strtolower((new ReflectionClass($user))->getShortName());
+        return $user->id.':'.strtolower((new ReflectionClass($user))->getShortName());
     }
 
     public function toType(Request $request): string
     {
-        return "orders";
+        return 'orders';
     }
 }

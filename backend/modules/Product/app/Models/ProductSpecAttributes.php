@@ -23,7 +23,7 @@ class ProductSpecAttributes extends Model
     protected $fillable = [
         'spec_name',
         'category_id',
-        'group_name'
+        'group_name',
     ];
 
     public function product(): BelongsToMany

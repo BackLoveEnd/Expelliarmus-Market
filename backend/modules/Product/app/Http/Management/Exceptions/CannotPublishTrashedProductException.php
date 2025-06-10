@@ -11,6 +11,6 @@ class CannotPublishTrashedProductException extends Exception
 {
     public function render(): JsonResponse
     {
-        return response()->json(['message' => "Cannot publish trashed product."], 403);
+        return response()->json(['message' => 'Cannot publish trashed product.'], 403);
     }
 }

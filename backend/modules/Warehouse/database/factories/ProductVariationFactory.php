@@ -15,8 +15,8 @@ class ProductVariationFactory extends Factory
     {
         return [
             'quantity' => fake()->numberBetween(10, 1000),
-            'price' => (float)number_format(fake()->numberBetween(30, 100)),
-            'sku' => fake()->unique()->ean8()
+            'price' => (float) number_format(fake()->numberBetween(30, 100)),
+            'sku' => fake()->unique()->ean8(),
         ];
     }
 }

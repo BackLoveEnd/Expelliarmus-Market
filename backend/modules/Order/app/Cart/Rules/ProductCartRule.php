@@ -15,7 +15,7 @@ class ProductCartRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $product = Product::query()
-            ->where('id', (int)$this->productId)
+            ->where('id', (int) $this->productId)
             ->firstOrFail(['id', 'with_attribute_combinations']);
 
         if (is_null($product->hasCombinedAttributes())) {

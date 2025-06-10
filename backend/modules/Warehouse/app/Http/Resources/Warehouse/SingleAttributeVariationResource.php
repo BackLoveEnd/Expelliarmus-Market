@@ -22,8 +22,8 @@ class SingleAttributeVariationResource extends JsonApiResource
             'value' => $this->value,
             'quantity' => $this->quantity,
             'availability' => $this->quantity > 0
-                ? (object)['label' => WarehouseProductStatusEnum::IN_STOCK->toString(), 'color' => 'success']
-                : (object)['label' => WarehouseProductStatusEnum::NOT_AVAILABLE->toString(), 'color' => 'danger'],
+                ? (object) ['label' => WarehouseProductStatusEnum::IN_STOCK->toString(), 'color' => 'success']
+                : (object) ['label' => WarehouseProductStatusEnum::NOT_AVAILABLE->toString(), 'color' => 'danger'],
             'attribute_name' => $this->attribute->name,
             'attribute_id' => $this->attribute->id,
         ];

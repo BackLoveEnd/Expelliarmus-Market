@@ -17,7 +17,7 @@ class FailedToUpdateProductException extends Exception
     public function render(): JsonResponse
     {
         return response()->json([
-            'message' => 'Failed to update product. Try again or contact us.'
+            'message' => 'Failed to update product. Try again or contact us.',
         ], 500);
     }
 }

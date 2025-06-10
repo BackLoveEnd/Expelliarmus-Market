@@ -23,7 +23,7 @@ class VariationAttributeValues extends Pivot
     protected $fillable = [
         'variation_id',
         'attribute_id',
-        'value'
+        'value',
     ];
 
     public function value(): Attribute

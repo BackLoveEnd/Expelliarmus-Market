@@ -17,7 +17,6 @@ use Modules\Warehouse\Models\ProductVariation;
 
 final class DiscountedProductsService
 {
-
     public function getFlashSalesPaginated(int $limit, int $offset): LimitOffsetDto
     {
         $discounts = Discount::query()
@@ -90,13 +89,13 @@ final class DiscountedProductsService
     public function loadLastActiveDiscountForProducts(Collection $products): BaseCollection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(
-            fn(Product $product) => is_null($product->hasCombinedAttributes()),
+            fn (Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
         $withoutVariationProducts = $withoutVariationProducts->loadMissing('lastActiveDiscount');
 
         [$combinedVariationProducts, $singleVariationProducts] = $withVariationProducts->partition(
-            fn(Product $product) => $product->hasCombinedAttributes(),
+            fn (Product $product) => $product->hasCombinedAttributes(),
         );
 
         $singleVariationProducts->loadMissing('singleAttributes.lastActiveDiscount');
@@ -126,12 +125,11 @@ final class DiscountedProductsService
     public function loadDiscountsForProducts(Collection $products, array $columns = ['*']): Collection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(
-            fn(Product $product) => is_null($product->hasCombinedAttributes()),
+            fn (Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
         $withoutVariationProducts = $withoutVariationProducts->loadMissing([
-            'discount' => fn($query)
-                => $query
+            'discount' => fn ($query) => $query
                 ->where('discounts.status', DiscountStatusEnum::ACTIVE)
                 ->select($columns),
         ]);
@@ -144,19 +142,17 @@ final class DiscountedProductsService
     private function getLoadedDiscountedVariations(Collection $unloadedVariations, array $columns): Collection
     {
         [$combinedVariationProducts, $singleVariationProducts] = $unloadedVariations->partition(
-            fn(Product $product) => $product->hasCombinedAttributes(),
+            fn (Product $product) => $product->hasCombinedAttributes(),
         );
 
         $singleVariationProducts->loadMissing([
-            'singleAttributes.discount' => fn($query)
-                => $query
+            'singleAttributes.discount' => fn ($query) => $query
                 ->whereStatus(DiscountStatusEnum::ACTIVE)
                 ->select($columns),
         ]);
 
         $combinedVariationProducts->loadMissing([
-            'combinedAttributes.discount' => fn($query)
-                => $query
+            'combinedAttributes.discount' => fn ($query) => $query
                 ->whereStatus(DiscountStatusEnum::ACTIVE)
                 ->select($columns),
         ]);

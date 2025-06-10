@@ -32,7 +32,7 @@ class CreateManyProductSpecsAction
                 return [
                     ...$spec,
                     'group_name' => $groupOfSpecs['group'],
-                    'category_id' => $groupOfSpecs['category_id']
+                    'category_id' => $groupOfSpecs['category_id'],
                 ];
             });
         });
@@ -53,17 +53,17 @@ class CreateManyProductSpecsAction
                     'id' => $existingSpec['id'] ?? null,
                     'value' => $item['value'],
                     'spec_name' => $item['spec_name'],
-                    'group_name' => $item['group_name']
+                    'group_name' => $item['group_name'],
                 ];
             })->values();
     }
 
     private function insertNewSpecs(Collection $newSpecs): EloquentCollection
     {
-        $preparedValues = $newSpecs->map(fn($spec) => [
+        $preparedValues = $newSpecs->map(fn ($spec) => [
             'spec_name' => $spec['spec_name'],
             'group_name' => $spec['group_name'] ?: null,
-            'category_id' => $spec['category_id']
+            'category_id' => $spec['category_id'],
         ]);
 
         ProductSpecAttributes::query()->insert($preparedValues->toArray());

@@ -28,7 +28,7 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
 
             $this->storage->put(
                 $this->getImageFullPath($product, $resizedImageId),
-                (string)$image->encode(),
+                (string) $image->encode(),
             );
 
             return $resizedImageId;
@@ -73,7 +73,7 @@ abstract class BaseProductImagesStorage implements ProductImagesStorageInterface
 
     private function getResizedImageId(string $imageId, int $width, int $height): string
     {
-        return $width."_".$height."_".$imageId;
+        return $width.'_'.$height.'_'.$imageId;
     }
 
     abstract protected function getInterventionPreviewImage(Product $product, string $imageId): Image;

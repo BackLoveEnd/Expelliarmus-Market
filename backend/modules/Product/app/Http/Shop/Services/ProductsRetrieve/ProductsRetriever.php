@@ -11,7 +11,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 readonly class ProductsRetriever
 {
-
     public function __construct(
         public FiltersConnector $filtersConnector,
         public SortsConnector $sortsConnector,
@@ -31,5 +30,4 @@ readonly class ProductsRetriever
                 'product_min_prices.min_price',
             ]);
     }
-
 }

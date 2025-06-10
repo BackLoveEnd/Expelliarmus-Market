@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 
 class FailedToDeleteCategoryException extends Exception
 {
-
     public static function categoryHasProducts(): FailedToDeleteCategoryException
     {
         return new self('Failed to delete category: category has products.');
@@ -19,5 +18,4 @@ class FailedToDeleteCategoryException extends Exception
     {
         return response()->json(['message' => $this->message], 409);
     }
-
 }

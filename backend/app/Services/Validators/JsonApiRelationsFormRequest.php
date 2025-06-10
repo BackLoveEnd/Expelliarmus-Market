@@ -12,7 +12,6 @@ use RuntimeException;
  */
 abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
 {
-
     public const string RELATION_KEY = 'data.relationships.';
 
     public function rules(): array
@@ -53,11 +52,11 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
 
         return collect($data)
             ->flatMap(function ($item, $relationship) {
-                if ( ! is_array($item)) {
+                if (! is_array($item)) {
                     return [self::RELATION_KEY."{$relationship}.data" => $item];
                 }
 
-                if ( ! str_ends_with($relationship, '.*')) {
+                if (! str_ends_with($relationship, '.*')) {
                     if (array_is_list($item)) {
                         return [self::RELATION_KEY."{$relationship}.data" => $item];
                     }
@@ -70,6 +69,7 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
                 return collect($item)
                     ->mapWithKeys(function ($value, $field) use ($relationship) {
                         $relationshipKey = str_replace('.*', '', $relationship);
+
                         return [self::RELATION_KEY."{$relationshipKey}.data.*.{$field}" => $value];
                     });
             })
@@ -79,9 +79,9 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
     public function __call($method, $parameters)
     {
         if ($method === 'relation') {
-            if ( ! $parameters) {
+            if (! $parameters) {
                 return collect($this->data('data.relationships'))
-                    ->mapWithKeys(fn($item, $key) => $item);
+                    ->mapWithKeys(fn ($item, $key) => $item);
             }
 
             $relationKey = self::RELATION_KEY.$parameters[0];
@@ -128,5 +128,4 @@ abstract class JsonApiRelationsFormRequest extends JsonApiFormRequest
      * ]
      */
     abstract public function jsonApiRelationshipsCustomAttributes(): ?array;
-
 }

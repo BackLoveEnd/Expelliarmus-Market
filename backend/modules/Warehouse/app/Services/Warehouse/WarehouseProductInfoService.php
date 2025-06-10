@@ -54,11 +54,11 @@ class WarehouseProductInfoService
     public function getWarehouseInfoAboutProducts(Collection $products, AttributesColsDto $dto): Collection
     {
         [$withoutVariationProducts, $withVariationProducts] = $products->partition(
-            fn(Product $product) => is_null($product->hasCombinedAttributes()),
+            fn (Product $product) => is_null($product->hasCombinedAttributes()),
         );
 
         $withoutVariationProducts = $withoutVariationProducts->loadMissing([
-            'warehouse' => fn($query) => $query->select($dto->warehouseCols),
+            'warehouse' => fn ($query) => $query->select($dto->warehouseCols),
         ]);
 
         [$combinedVariationProducts, $singleVariationProducts] = $this->getLoadedVariations(
@@ -109,8 +109,6 @@ class WarehouseProductInfoService
 
     /**
      * @param  BaseCollection<int, stdClass{product: Product, variation_id: int}>  $productsWithVariationId
-     * @param  AttributesColsDto  $dto
-     * @return BaseCollection
      */
     public function getProductsAttributeById(
         BaseCollection $productsWithVariationId,
@@ -124,7 +122,7 @@ class WarehouseProductInfoService
         $withoutVariationProductsOnly = new Collection($withoutVariationProducts->pluck('product'));
 
         $withoutVariationProductsOnly = $withoutVariationProductsOnly->loadMissing([
-            'warehouse' => fn($query) => $query->select($dto->warehouseCols),
+            'warehouse' => fn ($query) => $query->select($dto->warehouseCols),
         ]);
 
         $withoutVariationProducts = $withoutVariationProducts->map(
@@ -187,7 +185,7 @@ class WarehouseProductInfoService
     private function getLoadedVariationsByIds(BaseCollection $unloadVariations, AttributesColsDto $dto): array
     {
         [$combinedVariationProducts, $singleVariationProducts] = $unloadVariations->partition(
-            fn(array $item) => $item['product']->hasCombinedAttributes(),
+            fn (array $item) => $item['product']->hasCombinedAttributes(),
         );
 
         $combinedVariationProducts = $this->getLoadedCombinedVariationsByIds(
@@ -222,7 +220,7 @@ class WarehouseProductInfoService
     private function getLoadedVariations(Collection $unloadVariations, AttributesColsDto $dto): array
     {
         [$combinedVariationProducts, $singleVariationProducts] = $unloadVariations->partition(
-            fn(Product $product) => $product->hasCombinedAttributes(),
+            fn (Product $product) => $product->hasCombinedAttributes(),
         );
 
         $combinedVariationProducts = $this->getLoadedCombinedVariations(

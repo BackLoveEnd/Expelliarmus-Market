@@ -13,7 +13,6 @@ use Modules\Category\Models\Category;
 
 class CategoryIconController extends Controller
 {
-
     public function __construct(
         private CategoryIconService $categoryIconService
     ) {}
@@ -23,10 +22,7 @@ class CategoryIconController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  CreateCategoryIconRequest  $request
-     * @param  Category  $category
      *
-     * @return JsonResponse
      * @throws CannotUploadIconForNotRootCategoryException
      */
     public function uploadIcon(CreateCategoryIconRequest $request, Category $category): JsonResponse
@@ -41,10 +37,7 @@ class CategoryIconController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  CreateCategoryIconRequest  $request
-     * @param  Category  $category
      *
-     * @return JsonResponse
      * @throws CannotUploadIconForNotRootCategoryException
      */
     public function editIcon(CreateCategoryIconRequest $request, Category $category): JsonResponse
@@ -53,5 +46,4 @@ class CategoryIconController extends Controller
 
         return response()->json(['message' => 'Icon updated successfully.']);
     }
-
 }

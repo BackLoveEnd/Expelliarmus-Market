@@ -26,8 +26,6 @@ class ManagementOrdersRetrieveController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws AuthorizationException
      */
     public function getPendingOrders(Request $request): JsonApiResourceCollection|JsonResponse
@@ -35,8 +33,8 @@ class ManagementOrdersRetrieveController extends Controller
         $this->authorize('view', Order::class);
 
         $orders = $this->ordersInfoService->pendings(
-            limit: (int)$request->query('limit', config('order.retrieve.pending_orders')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('order.retrieve.pending_orders')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($orders->items->isEmpty()) {
@@ -52,8 +50,6 @@ class ManagementOrdersRetrieveController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws AuthorizationException
      */
     public function getCancelledOrders(Request $request): JsonApiResourceCollection|JsonResponse
@@ -61,8 +57,8 @@ class ManagementOrdersRetrieveController extends Controller
         $this->authorize('view', Order::class);
 
         $orders = $this->ordersInfoService->cancelled(
-            limit: (int)$request->query('limit', config('order.retrieve.cancelled_orders')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('order.retrieve.cancelled_orders')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($orders->items->isEmpty()) {
@@ -78,8 +74,6 @@ class ManagementOrdersRetrieveController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws AuthorizationException
      */
     public function getDeliveredOrders(Request $request): JsonApiResourceCollection|JsonResponse
@@ -87,8 +81,8 @@ class ManagementOrdersRetrieveController extends Controller
         $this->authorize('view', Order::class);
 
         $orders = $this->ordersInfoService->delivered(
-            limit: (int)$request->query('limit', config('order.retrieve.delivered_orders')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('order.retrieve.delivered_orders')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($orders->items->isEmpty()) {
@@ -104,8 +98,6 @@ class ManagementOrdersRetrieveController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      * @throws AuthorizationException
      */
     public function getRefundedOrders(Request $request): JsonApiResourceCollection|JsonResponse
@@ -113,8 +105,8 @@ class ManagementOrdersRetrieveController extends Controller
         $this->authorize('view', Order::class);
 
         $orders = $this->ordersInfoService->refunded(
-            limit: (int)$request->query('limit', config('order.retrieve.refunded_orders')),
-            offset: (int)$request->query('offset', 0),
+            limit: (int) $request->query('limit', config('order.retrieve.refunded_orders')),
+            offset: (int) $request->query('offset', 0),
         );
 
         if ($orders->items->isEmpty()) {
@@ -129,10 +121,6 @@ class ManagementOrdersRetrieveController extends Controller
      * Retrieve order lines for order.
      *
      * Usage place - Admin section.
-     *
-     * @param  Request  $request
-     * @param  RequestModel  $model
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getOrderLines(Request $request, RequestModel $model): JsonApiResourceCollection|JsonResponse
     {

@@ -17,7 +17,7 @@ class CountStatisticsTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new CountStatisticsService();
+        $this->service = new CountStatisticsService;
     }
 
     public function test_can_get_statistics_for_one_model_with_handler(): void
@@ -41,7 +41,7 @@ class CountStatisticsTest extends TestCase
             ->apply([$handler]);
 
         $this->assertEquals([
-            "product:".$id => 100,
+            'product:'.$id => 100,
         ], $result->toArray());
     }
 
@@ -58,7 +58,7 @@ class CountStatisticsTest extends TestCase
         $expected = [];
 
         foreach ($handlers as $handler) {
-            $key = "product:".$handler->identifier();
+            $key = 'product:'.$handler->identifier();
 
             $expected[$key] = 50;
         }
@@ -87,8 +87,8 @@ class CountStatisticsTest extends TestCase
             ->apply([$handler]);
 
         $this->assertEquals([
-            "product:".$id => 80,
-            "user:".$id => 80,
+            'product:'.$id => 80,
+            'user:'.$id => 80,
         ], $result->toArray());
     }
 
@@ -105,9 +105,9 @@ class CountStatisticsTest extends TestCase
         $expected = [];
 
         foreach ($handlers as $handler) {
-            $key1 = "product:".$handler->identifier();
+            $key1 = 'product:'.$handler->identifier();
 
-            $key2 = "user:".$handler->identifier();
+            $key2 = 'user:'.$handler->identifier();
 
             $expected[$key1] = 15;
 
@@ -131,7 +131,6 @@ class CountStatisticsTest extends TestCase
         $builderMock4 = $this->generateBuilder(10);
         $userHandler2 = $this->generateHandlers(1, $builderMock4)[0];
 
-
         $result = $this->service
             ->for([Product::class, User::class])
             ->apply([
@@ -146,10 +145,10 @@ class CountStatisticsTest extends TestCase
             ]);
 
         $expected = [
-            "product:".$productHandler1->identifier() => 70,
-            "product:".$productHandler2->identifier() => 100,
-            "user:".$userHandler1->identifier() => 80,
-            "user:".$userHandler2->identifier() => 10,
+            'product:'.$productHandler1->identifier() => 70,
+            'product:'.$productHandler2->identifier() => 100,
+            'user:'.$userHandler1->identifier() => 80,
+            'user:'.$userHandler2->identifier() => 10,
         ];
 
         $this->assertEquals($expected, $result->toArray());
@@ -178,10 +177,10 @@ class CountStatisticsTest extends TestCase
             ]);
 
         $expected = [
-            "product:".$productHandler1->identifier() => 70,
-            "user:".$userHandler1->identifier() => 80,
-            "product:".$handlerForAll->identifier() => 50,
-            "user:".$handlerForAll->identifier() => 50,
+            'product:'.$productHandler1->identifier() => 70,
+            'user:'.$userHandler1->identifier() => 80,
+            'product:'.$handlerForAll->identifier() => 50,
+            'user:'.$handlerForAll->identifier() => 50,
         ];
 
         $this->assertEquals($expected, $result->toArray());
@@ -202,7 +201,7 @@ class CountStatisticsTest extends TestCase
     {
         $result = [];
 
-        for ($i = 0; $i < $num; ++$i) {
+        for ($i = 0; $i < $num; $i++) {
             $handler = Mockery::mock(StatisticsHandlerInterface::class);
 
             $handler

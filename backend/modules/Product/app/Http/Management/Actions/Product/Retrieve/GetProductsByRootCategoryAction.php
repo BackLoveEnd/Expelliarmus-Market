@@ -28,12 +28,12 @@ class GetProductsByRootCategoryAction
         return $rootCategories->map(function (Category $category) {
             $products = $this->getProducts($category);
 
-            return (object)[
+            return (object) [
                 'id' => $category->id,
                 'name' => $category->name,
                 'slug' => $category->slug,
                 'products' => $products->getCollection(),
-                'pagination' => (object)[
+                'pagination' => (object) [
                     'next' => $products->nextPageUrl(),
                     'total' => $products->total(),
                 ],

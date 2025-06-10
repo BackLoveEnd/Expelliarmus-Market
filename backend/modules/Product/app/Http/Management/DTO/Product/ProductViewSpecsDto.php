@@ -12,8 +12,7 @@ final readonly class ProductViewSpecsDto
         public Collection $separatedSpecs,
         public Collection $groupedSpecs,
         public Collection $groups
-    ) {
-    }
+    ) {}
 
     public function isEmpty(): bool
     {

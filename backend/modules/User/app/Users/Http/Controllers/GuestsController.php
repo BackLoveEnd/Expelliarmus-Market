@@ -19,9 +19,6 @@ class GuestsController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @param  GetGuestsAction  $action
-     * @return JsonApiResourceCollection
      * @throws AuthorizationException
      */
     public function getGuests(Request $request, GetGuestsAction $action): JsonApiResourceCollection
@@ -29,8 +26,8 @@ class GuestsController extends Controller
         $this->authorize('viewUsers', Manager::class);
 
         $guests = $action->handle(
-            limit: (int)$request->query('limit', config('user.retrieve.users-table')),
-            offset: (int)$request->query('offset'),
+            limit: (int) $request->query('limit', config('user.retrieve.users-table')),
+            offset: (int) $request->query('offset'),
         );
 
         return GuestResource::collection($guests->items)->additional($guests->wrapMeta());

@@ -9,12 +9,11 @@ use Modules\Warehouse\Rules\DateHasNotComeYetRule;
 
 class EditDiscountRequest extends JsonApiFormRequest
 {
-
     public function jsonApiAttributeRules(): array
     {
         return [
             'percentage' => ['required', 'integer', 'min:1', 'max:100'],
-            'start_date' => ['nullable', 'date', new DateHasNotComeYetRule()],
+            'start_date' => ['nullable', 'date', new DateHasNotComeYetRule],
             'end_date' => ['required', 'date', 'after:data.attributes.start_date'],
         ];
     }
@@ -36,5 +35,4 @@ class EditDiscountRequest extends JsonApiFormRequest
             ],
         ];
     }
-
 }

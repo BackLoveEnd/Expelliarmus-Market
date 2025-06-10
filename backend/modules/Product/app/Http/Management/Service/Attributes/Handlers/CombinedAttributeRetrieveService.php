@@ -14,7 +14,7 @@ use Modules\Warehouse\Models\ProductAttribute;
 use Modules\Warehouse\Models\ProductAttributeValue;
 use Modules\Warehouse\Models\ProductVariation;
 
-class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterInterface
+class CombinedAttributeRetrieveService implements FormatterInterface, RetrieveInterface
 {
     public function __construct(
         private array $variationCols,
@@ -24,7 +24,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
     public function getAttributes(Product $product): Collection
     {
         return $product->combinedAttributes()->with([
-            'productAttributes' => fn($query) => $query->select([...$this->attributeCols, 'type']),
+            'productAttributes' => fn ($query) => $query->select([...$this->attributeCols, 'type']),
         ])->get($this->variationCols);
     }
 
@@ -34,8 +34,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             return $product
                 ->combinedAttributes()
                 ->with([
-                    'productAttributes' => fn($query)
-                        => $query->select([...$this->attributeCols, 'type']),
+                    'productAttributes' => fn ($query) => $query->select([...$this->attributeCols, 'type']),
                 ])
                 ->where('id', $variationId)
                 ->first($this->variationCols);
@@ -52,7 +51,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
         $variationIds = $productsWithVariations->pluck('variation_id')->unique();
 
         $variations = ProductVariation::query()
-            ->with(['productAttributes' => fn($query) => $query->select([...$this->attributeCols, 'type'])])
+            ->with(['productAttributes' => fn ($query) => $query->select([...$this->attributeCols, 'type'])])
             ->whereIn('id', $variationIds)
             ->select($this->variationCols)
             ->get()
@@ -68,12 +67,11 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
     public function getAttributesForProductCollection(Collection $products): Collection
     {
         $relations = [
-            'combinedAttributes' => fn($query) => $query->select([...$this->variationCols, 'product_id']),
+            'combinedAttributes' => fn ($query) => $query->select([...$this->variationCols, 'product_id']),
         ];
 
         if (! empty($this->attributeCols)) {
-            $relations['combinedAttributes.productAttributes'] = fn($query)
-                => $query->select(
+            $relations['combinedAttributes.productAttributes'] = fn ($query) => $query->select(
                 [...$this->attributeCols, 'product_attributes.id'],
             );
         }
@@ -93,7 +91,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
                     ];
 
                     if ($attribute->type) {
-                        $attributes['type'] = (object)[
+                        $attributes['type'] = (object) [
                             'id' => $attribute->type->value,
                             'name' => $attribute->type->toTypes(),
                         ];
@@ -110,8 +108,7 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
             ->map(function (BaseCollection $items) {
                 $attributes = [
                     'name' => $items[0]['name'],
-                    'data' => $items->map(fn(array $item)
-                        => [
+                    'data' => $items->map(fn (array $item) => [
                         'id' => $item['id'],
                         'value' => $item['value'],
                     ]),
@@ -133,18 +130,15 @@ class CombinedAttributeRetrieveService implements RetrieveInterface, FormatterIn
     public function formatWarehouseInfoAttributes(Collection $attributes): BaseCollection
     {
         return $attributes
-            ->map(fn(ProductAttributeValue $attributeValue)
-                => [
+            ->map(fn (ProductAttributeValue $attributeValue) => [
                 'name' => $attributeValue->attribute->name,
                 'value' => $attributeValue->value,
                 'price' => $attributeValue->price,
             ])
             ->groupBy('name')
-            ->map(fn($items)
-                => [
+            ->map(fn ($items) => [
                 'name' => $items->first()['name'],
-                'data' => $items->map(fn($item)
-                    => [
+                'data' => $items->map(fn ($item) => [
                     'value' => $item['value'],
                     'price' => $item['price'],
                 ])->toArray(),

@@ -46,13 +46,13 @@ class WarehouseDefaultProductAvailability implements ShouldQueue
                     $productsIds = $productsIds->implode(',');
 
                     $updatedProducts = DB::select(
-                        "
+                        '
                             UPDATE warehouses w
                             SET status = CASE 
                                 WHEN w.total_quantity > 0 
-                                    THEN ".WarehouseProductStatusEnum::IN_STOCK->value."
+                                    THEN '.WarehouseProductStatusEnum::IN_STOCK->value.'
                                 WHEN w.total_quantity <= 0 
-                                    THEN ".WarehouseProductStatusEnum::NOT_AVAILABLE->value."
+                                    THEN '.WarehouseProductStatusEnum::NOT_AVAILABLE->value."
                                 ELSE w.status
                             END
                             WHERE w.product_id IN ($productsIds)

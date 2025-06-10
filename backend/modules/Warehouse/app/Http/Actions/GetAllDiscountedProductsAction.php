@@ -45,8 +45,8 @@ class GetAllDiscountedProductsAction
                 },
             ])
             ->allowedFilters([
-                AllowedFilter::custom('status', new DiscountStatusFilter()),
-                AllowedFilter::custom('finished', new DiscountFinishedFilter()),
+                AllowedFilter::custom('status', new DiscountStatusFilter),
+                AllowedFilter::custom('finished', new DiscountFinishedFilter),
             ])
             ->allowedSorts(['start_date', 'end_date', 'percentage', 'discount_price'])
             ->paginate(config('product.retrieve.discounted'));

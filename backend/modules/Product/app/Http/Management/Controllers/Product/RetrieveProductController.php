@@ -32,8 +32,6 @@ class RetrieveProductController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  RootCategoryProducts  $action
-     * @return JsonApiResourceCollection
      * @throws AuthorizationException
      */
     public function getProductsByRootCategories(RootCategoryProducts $action): JsonApiResourceCollection
@@ -49,9 +47,6 @@ class RetrieveProductController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Category  $category
-     * @param  CategoryProducts  $action
-     * @return JsonResponse|Resource
      * @throws AuthorizationException
      */
     public function getProductsByCategory(Category $category, CategoryProducts $action): JsonResponse|Resource
@@ -72,9 +67,6 @@ class RetrieveProductController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  ProductSlug  $productSlug
-     * @param  GetPreviewProductInformationAction  $action
-     * @return ProductPreviewResource
      * @throws AuthorizationException
      */
     public function show(ProductSlug $productSlug, GetPreviewProductInformationAction $action): ProductPreviewResource
@@ -100,9 +92,6 @@ class RetrieveProductController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  ProductSlug  $productBind
-     * @param  ProductStaffInfo  $action
-     * @return ProductStaffInfoResource
      * @throws AuthorizationException
      */
     public function getProductStaffInfo(ProductSlug $productBind, ProductStaffInfo $action): ProductStaffInfoResource

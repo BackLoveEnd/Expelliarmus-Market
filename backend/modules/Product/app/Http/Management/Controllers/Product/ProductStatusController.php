@@ -19,8 +19,6 @@ class ProductStatusController extends Controller
      *
      * Usage - Admin section.
      *
-     * @param  Product  $product
-     * @return JsonResponse
      * @throws Exception
      */
     public function publish(Product $product): JsonResponse
@@ -37,14 +35,12 @@ class ProductStatusController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Product  $product
-     * @return JsonResponse
      * @throws Exception
      */
     public function unPublish(Product $product): JsonResponse
     {
         $this->authorize('publish', Product::class);
-        
+
         $this->statusService->unPublish($product);
 
         return response()->json(['message' => 'Product was successfully unpublished.']);

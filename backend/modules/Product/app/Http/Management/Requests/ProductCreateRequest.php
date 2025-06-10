@@ -59,8 +59,8 @@ class ProductCreateRequest extends JsonApiRelationsFormRequest
                 'exclude_if:data.attributes.is_combined_attributes,false',
                 'exclude_if:data.attributes.is_combined_attributes,null',
                 'array',
-                new AttributesExistsInCombinedVariationsRule(),
-                new UniqueSkuInCombinationsRule(),
+                new AttributesExistsInCombinedVariationsRule,
+                new UniqueSkuInCombinationsRule,
                 new PriceComplianceForCombinedVariationsRule($this->price),
             ],
             'product_variations_combinations.*' => [
@@ -83,7 +83,7 @@ class ProductCreateRequest extends JsonApiRelationsFormRequest
                 'attributes' => [
                     'required',
                     'array',
-                    new AttributeInCombinationUniqueRule(),
+                    new AttributeInCombinationUniqueRule,
                 ],
                 'attributes.*.id' => [
                     'nullable',
@@ -177,11 +177,11 @@ class ProductCreateRequest extends JsonApiRelationsFormRequest
             'product_specs' => [
                 'required',
                 'array',
-                new ProductSpecificationExistsRule(),
+                new ProductSpecificationExistsRule,
             ],
             'product_specs.*' => [
                 'group' => ['nullable', 'string', 'distinct:ignore_case'],
-                'specifications' => ['required', 'array', new AllSpecificationsInGroupAreUniqueRule()],
+                'specifications' => ['required', 'array', new AllSpecificationsInGroupAreUniqueRule],
                 'specifications.*.id' => ['nullable', 'integer'],
                 'specifications.*.spec_name' => [
                     'required_without:data.relationships.product_specs.data.*.specifications.*.id',

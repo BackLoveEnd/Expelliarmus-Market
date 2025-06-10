@@ -34,7 +34,7 @@ class CancelOrderService
 
                 $orderLines = $order
                     ->orderLines()
-                    ->with(['product' => fn($query) => $query->select(['id', 'with_attribute_combinations'])])
+                    ->with(['product' => fn ($query) => $query->select(['id', 'with_attribute_combinations'])])
                     ->get(['order_id', 'quantity', 'product_id', 'variation']);
 
                 $this->warehouseStockService->returnReservedProductsToStock(

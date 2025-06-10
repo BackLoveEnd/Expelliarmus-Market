@@ -55,5 +55,4 @@ class EditCategoryRequest extends JsonApiRelationsFormRequest
             'parent' => 'parent',
         ];
     }
-
 }

@@ -17,7 +17,6 @@ use Modules\Warehouse\Enums\ProductAttributeTypeEnum;
 
 class CategoryDeleteTest extends TestCase
 {
-
     use RefreshDatabase;
 
     protected function setUp(): void
@@ -55,7 +54,7 @@ class CategoryDeleteTest extends TestCase
             'name' => 'Attribute 1',
         ]);
 
-        (new DeleteCategoryAttributeAction())->handle($category, $attributes->first());
+        (new DeleteCategoryAttributeAction)->handle($category, $attributes->first());
 
         $this->assertDatabaseMissing('product_attributes', [
             'id' => $attributes->first()->id,
@@ -73,8 +72,7 @@ class CategoryDeleteTest extends TestCase
         $fakeAttribute = $this->createTestAttribute($fakeCategory);
 
         $this->assertThrows(
-            test: fn()
-                => (new DeleteCategoryAttributeAction())->handle(
+            test: fn () => (new DeleteCategoryAttributeAction)->handle(
                 $category,
                 $fakeAttribute->first(),
             ),
@@ -92,5 +90,4 @@ class CategoryDeleteTest extends TestCase
             ],
         ]);
     }
-
 }

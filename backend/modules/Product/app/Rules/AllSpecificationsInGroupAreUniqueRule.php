@@ -22,7 +22,7 @@ class AllSpecificationsInGroupAreUniqueRule implements ValidationRule
             return;
         }
 
-        $notUniqueSpecs = $collection->map(fn($spec) => mb_strtolower($spec['spec_name']))
+        $notUniqueSpecs = $collection->map(fn ($spec) => mb_strtolower($spec['spec_name']))
             ->duplicates();
 
         if ($notUniqueSpecs->isNotEmpty()) {

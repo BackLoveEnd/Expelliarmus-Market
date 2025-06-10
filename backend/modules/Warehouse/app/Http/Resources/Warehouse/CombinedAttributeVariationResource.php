@@ -23,8 +23,8 @@ class CombinedAttributeVariationResource extends JsonApiResource
             ),
             'quantity' => $this->quantity,
             'availability' => $this->quantity > 0
-                ? (object)['label' => WarehouseProductStatusEnum::IN_STOCK->toString(), 'color' => 'success']
-                : (object)['label' => WarehouseProductStatusEnum::NOT_AVAILABLE->toString(), 'color' => 'danger'],
+                ? (object) ['label' => WarehouseProductStatusEnum::IN_STOCK->toString(), 'color' => 'success']
+                : (object) ['label' => WarehouseProductStatusEnum::NOT_AVAILABLE->toString(), 'color' => 'danger'],
             'attributes' => $this->productAttributes->map(function (ProductAttribute $attribute) {
                 $attributes = [
                     'id' => $attribute->pivot->attribute_id,

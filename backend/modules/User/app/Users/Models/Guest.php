@@ -73,6 +73,6 @@ class Guest extends Model implements UserInterface
 
     protected static function newFactory(): GuestFactory
     {
-        return new GuestFactory();
+        return new GuestFactory;
     }
 }

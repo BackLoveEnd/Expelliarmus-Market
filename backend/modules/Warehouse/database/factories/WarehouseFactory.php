@@ -16,7 +16,7 @@ class WarehouseFactory extends Factory
     {
         return [
             'total_quantity' => fake()->numberBetween(10, 1000),
-            'default_price' => (float)fake()->numberBetween(10, 1000),
+            'default_price' => (float) fake()->numberBetween(10, 1000),
             'arrived_at' => now(),
             'status' => WarehouseProductStatusEnum::PENDING,
         ];

@@ -44,7 +44,7 @@ class UserOrdersService
     protected function loadOrderLinesForOrders(Collection $orders, array $cols = ['*']): EloquentCollection
     {
         return OrderLine::query()
-            ->with(['product' => fn($query) => $query->select('id', 'title', 'preview_image')])
+            ->with(['product' => fn ($query) => $query->select('id', 'title', 'preview_image')])
             ->whereIn('order_id', $orders->pluck('id'))
             ->get($cols);
     }

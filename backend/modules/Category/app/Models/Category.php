@@ -27,7 +27,6 @@ use Modules\Warehouse\Models\ProductAttribute;
 #[ObservedBy(CategoryObserver::class)]
 class Category extends Model
 {
-
     use HasFactory;
     use NodeTrait;
 
@@ -127,5 +126,4 @@ class Category extends Model
             $category->slug = Str::slug($category->name);
         });
     }
-
 }

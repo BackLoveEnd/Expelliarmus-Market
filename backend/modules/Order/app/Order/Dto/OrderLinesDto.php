@@ -10,7 +10,7 @@ use Modules\User\Coupons\Models\Coupon;
 final readonly class OrderLinesDto
 {
     public function __construct(
-        /**@var Collection<OrderLineDto> $orderLines */
+        /** @var Collection<OrderLineDto> $orderLines */
         public Collection $orderLines,
         public float $totalPrice,
         public ?Coupon $coupon = null,

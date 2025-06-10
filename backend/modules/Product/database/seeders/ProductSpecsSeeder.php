@@ -12,19 +12,19 @@ class ProductSpecsSeeder extends Seeder
     public function run(): void
     {
         ProductSpecAttributes::query()->insert([
-                [
-                    'spec_name' => 'size',
-                    'group_name' => null
-                ],
-                [
-                    'spec_name' => 'color',
-                    'group_name' => null,
-                ],
-                [
-                    'spec_name' => 'clothes material',
-                    'group_name' => null
-                ]
-            ]
+            [
+                'spec_name' => 'size',
+                'group_name' => null,
+            ],
+            [
+                'spec_name' => 'color',
+                'group_name' => null,
+            ],
+            [
+                'spec_name' => 'clothes material',
+                'group_name' => null,
+            ],
+        ]
         );
     }
 }

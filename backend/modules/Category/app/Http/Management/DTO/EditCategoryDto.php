@@ -10,7 +10,6 @@ use Spatie\LaravelData\Data;
 
 class EditCategoryDto extends Data
 {
-
     public function __construct(
         public Category $category,
         public string $categoryName,
@@ -25,5 +24,4 @@ class EditCategoryDto extends Data
             attributes: $request->relation('attributes')->toArray()
         );
     }
-
 }

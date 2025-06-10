@@ -10,7 +10,7 @@ interface ProductImagesStorageInterface extends ImageManipulationInterface
 {
     public function upload(UploadedFile $file, Product $product, ?string $hashName = null): string;
 
-    /**@var Collection<int, UploadedFile> $files */
+    /** @var Collection<int, UploadedFile> $files */
     public function uploadMany(Collection $files, Product $product): array;
 
     public function getOne(Product $product, ?string $imageId): string;

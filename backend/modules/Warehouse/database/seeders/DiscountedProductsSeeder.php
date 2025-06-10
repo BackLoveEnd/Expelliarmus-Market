@@ -10,7 +10,6 @@ use Modules\Warehouse\Models\Discount;
 
 class DiscountedProductsSeeder extends Seeder
 {
-
     public function run(): void
     {
         $chunks = 1000;
@@ -29,5 +28,4 @@ class DiscountedProductsSeeder extends Seeder
             });
         });
     }
-
 }

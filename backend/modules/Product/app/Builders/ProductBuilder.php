@@ -46,8 +46,6 @@ class ProductBuilder extends Builder
 
     /**
      * @param  array<ProductStatusEnum>|ProductStatusEnum  $status
-     * @param  string  $boolean
-     * @return ProductBuilder
      */
     public function whereStatus(array|ProductStatusEnum $status, string $boolean = 'or'): ProductBuilder
     {

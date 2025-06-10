@@ -9,7 +9,6 @@ use Modules\User\Users\Models\User;
 
 class UpdateUserPassword implements UpdatesUserPasswords
 {
-
     use PasswordValidationRules;
 
     /**
@@ -32,5 +31,4 @@ class UpdateUserPassword implements UpdatesUserPasswords
             'password' => Hash::make($input['password']),
         ])->save();
     }
-
 }

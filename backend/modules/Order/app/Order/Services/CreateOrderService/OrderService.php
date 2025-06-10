@@ -67,7 +67,7 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponManageService(),
+                couponService: new CouponManageService,
             ),
             orderPersistService: new OrderPersistService(
                 warehouseStockService: $this->stockService,
@@ -88,7 +88,7 @@ class OrderService
             ),
             orderPriceService: new OrderLineService(
                 discountService: $this->discountService,
-                couponService: new CouponManageService(),
+                couponService: new CouponManageService,
             ),
             orderPersistService: new OrderPersistService(
                 warehouseStockService: $this->stockService,

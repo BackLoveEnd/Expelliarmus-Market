@@ -20,9 +20,6 @@ class UserController extends Controller
      * Retrieve user data.
      *
      * Usage place - Admin/Shop.
-     *
-     * @param  Request  $request
-     * @return UserResource|ManagerResource|JsonResponse
      */
     public function user(Request $request): UserResource|ManagerResource|JsonResponse
     {
@@ -41,10 +38,6 @@ class UserController extends Controller
      * User store.
      *
      * Usage place - Shop.
-     *
-     * @param  Request  $request
-     * @param  CreateNewUser  $action
-     * @return JsonResponse
      */
     public function store(Request $request, CreateNewUser $action): JsonResponse
     {
@@ -60,9 +53,6 @@ class UserController extends Controller
      *
      * Usage place - Admin section.
      *
-     * @param  Request  $request
-     * @param  GetRegularCustomersAction  $action
-     * @return JsonApiResourceCollection
      * @throws AuthorizationException
      */
     public function getRegularCustomers(Request $request, GetRegularCustomersAction $action): JsonApiResourceCollection
@@ -70,8 +60,8 @@ class UserController extends Controller
         $this->authorize('viewUsers', Manager::class);
 
         $users = $action->handle(
-            limit: (int)$request->query('limit', config('user.retrieve.users-table')),
-            offset: (int)$request->query('offset'),
+            limit: (int) $request->query('limit', config('user.retrieve.users-table')),
+            offset: (int) $request->query('offset'),
         );
 
         return UserResource::collection($users->items)->additional($users->wrapMeta());

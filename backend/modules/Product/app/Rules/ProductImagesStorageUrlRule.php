@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 class ProductImagesStorageUrlRule implements ValidationRule
 {
-
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ($value === null) {

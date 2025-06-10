@@ -14,7 +14,7 @@ class ProductSpecFactory extends Factory
     public function definition(): array
     {
         return [
-            'spec_name' => 'specification-'.fake()->ean8()
+            'spec_name' => 'specification-'.fake()->ean8(),
         ];
     }
 }

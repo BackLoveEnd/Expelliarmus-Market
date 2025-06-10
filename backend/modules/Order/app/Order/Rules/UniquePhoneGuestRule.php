@@ -28,7 +28,7 @@ class UniquePhoneGuestRule implements ValidationRule
             ->exists();
 
         if ($duplicatePhone) {
-            $fail("This phone number is already taken.");
+            $fail('This phone number is already taken.');
         }
     }
 }

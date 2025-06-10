@@ -12,7 +12,7 @@ class InvalidFilterSortParamException extends Exception
     public function render(): JsonResponse
     {
         return response()->json([
-            'message' => 'Invalid filter or sort parameter.'
+            'message' => 'Invalid filter or sort parameter.',
         ], 400);
     }
 }

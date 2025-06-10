@@ -21,9 +21,6 @@ class RetrieveProductController extends Controller
      * Retrieve product public info.
      *
      * Usage place - Shop.
-     *
-     * @param  ProductSlug  $productBind
-     * @return ProductPublicInfoResource
      */
     public function __invoke(ProductSlug $productBind): ProductPublicInfoResource
     {
@@ -33,7 +30,7 @@ class RetrieveProductController extends Controller
                 identifier: $productBind->getProductId(),
             ),
             ttl: now()->addHours(12),
-            callback: fn() => $this->action->handle($productBind->getProductId()),
+            callback: fn () => $this->action->handle($productBind->getProductId()),
         );
 
         return ProductPublicInfoResource::make($product);

@@ -37,8 +37,8 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements UserInterface
 {
     use HasFactory;
-    use Notifiable;
     use HasRoles;
+    use Notifiable;
 
     public $timestamps = false;
 
@@ -105,6 +105,6 @@ class User extends Authenticatable implements UserInterface
 
     protected static function newFactory(): UserFactory
     {
-        return new UserFactory();
+        return new UserFactory;
     }
 }

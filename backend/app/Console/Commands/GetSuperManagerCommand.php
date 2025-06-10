@@ -17,6 +17,7 @@ class GetSuperManagerCommand extends Command
     {
         if (app()->isProduction() && ! $this->option('force')) {
             $this->error('This command should not be run in production without --force option.');
+
             return;
         }
 

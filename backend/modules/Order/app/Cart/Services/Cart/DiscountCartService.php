@@ -25,7 +25,7 @@ class DiscountCartService
             } else {
                 $lastDiscount = $currentRelation->lastActiveDiscount->first();
             }
-            
+
             return [
                 'id' => $lastDiscount->id,
                 'percentage' => $lastDiscount->percentage,

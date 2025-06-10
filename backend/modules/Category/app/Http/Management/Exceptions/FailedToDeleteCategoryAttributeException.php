@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 
 class FailedToDeleteCategoryAttributeException extends Exception
 {
-
     public static function attributesHasUsageInProducts(): FailedToDeleteCategoryAttributeException
     {
         return new self('Failed to delete attribute: attribute is used in product(s).', 409);
@@ -21,5 +20,4 @@ class FailedToDeleteCategoryAttributeException extends Exception
             'message' => $this->message,
         ], 409);
     }
-
 }

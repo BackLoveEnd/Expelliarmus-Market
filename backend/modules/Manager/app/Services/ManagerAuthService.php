@@ -31,7 +31,7 @@ class ManagerAuthService
         $manager = $this->authRepository->getByEmail($loginData->email);
 
         if (! $manager || ! Hash::check($loginData->password, $manager->password)) {
-            throw new ModelNotFoundException();
+            throw new ModelNotFoundException;
         }
 
         return $manager;

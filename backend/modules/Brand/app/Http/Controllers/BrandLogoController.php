@@ -20,10 +20,6 @@ class BrandLogoController extends Controller
      * Upload a brand logo.
      *
      * Usage place - Admin section.
-     *
-     * @param  BrandImageUploadRequest  $request
-     * @param  Brand  $brand
-     * @return JsonResponse
      */
     public function upload(BrandImageUploadRequest $request, Brand $brand): JsonResponse
     {

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
-
     protected string $name = 'Warehouse';
 
     public function map(): void
@@ -20,5 +19,4 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('api')->prefix('api')->name('api.')->group(module_path($this->name,
             '/routes/api.php'));
     }
-
 }

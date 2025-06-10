@@ -17,6 +17,7 @@ class NewArrivalsExistsRule implements ValidationRule
         foreach ($arrivalsWithId as $id) {
             if (! Str::isUuid($id)) {
                 $fail('Invalid arrival ID.');
+
                 return;
             }
         }

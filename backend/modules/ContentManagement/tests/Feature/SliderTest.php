@@ -16,7 +16,6 @@ use Modules\ContentManagement\Storage\Slider\SliderContentStorage;
 
 class SliderTest extends TestCase
 {
-
     use RefreshDatabase;
 
     protected FilesystemManager $storageMock;
@@ -175,5 +174,4 @@ class SliderTest extends TestCase
             ],
         ]);
     }
-
 }

@@ -21,7 +21,7 @@ class CancelExpiredCoupons implements ShouldQueue
     public function handle(): void
     {
         Coupon::query()
-            ->whereRaw("DATE(expires_at) <= ?", [now()->toDateString()])
+            ->whereRaw('DATE(expires_at) <= ?', [now()->toDateString()])
             ->delete();
     }
 }

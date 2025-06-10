@@ -17,8 +17,8 @@ class UserCartResource extends JsonApiResource
             'product_title' => $this->product_title,
             'product_slug' => $this->product_slug,
             'quantity' => $this->quantity,
-            'price_per_unit' => round((float)$this->price_per_unit, 2),
-            'final_price' => round((float)$this->final_price, 2),
+            'price_per_unit' => round((float) $this->price_per_unit, 2),
+            'final_price' => round((float) $this->final_price, 2),
             'variation' => $this->variation,
             'discount' => $this->discount,
         ];

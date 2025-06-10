@@ -72,7 +72,7 @@ class Brand extends Model
 
     protected static function newFactory(): BrandFactory
     {
-        return new BrandFactory();
+        return new BrandFactory;
     }
 
     protected static function boot(): void

@@ -21,7 +21,7 @@ class PrepareOrderService
     public function prepare(?User $user): Collection
     {
         if ($this->cartStorage->isCartEmpty($user)) {
-            throw new CartMustNotBeEmptyBeforeOrderException();
+            throw new CartMustNotBeEmptyBeforeOrderException;
         }
 
         $preparedFromCart = $this->prepareFromCart($user);

@@ -10,8 +10,7 @@ class ValueHasCorrectDataTypeRule implements ValidationRule
 {
     public function __construct(
         private Enum $type
-    ) {
-    }
+    ) {}
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -39,7 +38,7 @@ class ValueHasCorrectDataTypeRule implements ValidationRule
     private function floatValidate(mixed $value, Closure $fail): void
     {
         if (is_int($value)) {
-            $value = (float)$value;
+            $value = (float) $value;
         }
 
         if (! is_float($value)) {

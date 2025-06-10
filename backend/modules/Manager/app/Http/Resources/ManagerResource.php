@@ -10,7 +10,6 @@ use TiMacDonald\JsonApi\JsonApiResource;
 
 class ManagerResource extends JsonApiResource
 {
-
     public function toAttributes(Request $request): array
     {
         return [
@@ -23,5 +22,4 @@ class ManagerResource extends JsonApiResource
             'role' => $this->isSuperManager() ? RolesEnum::SUPER_MANAGER : RolesEnum::MANAGER,
         ];
     }
-
 }

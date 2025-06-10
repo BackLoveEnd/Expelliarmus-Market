@@ -31,7 +31,7 @@ class ContentSlider extends Model
         'image_source',
         'order',
         'content_url',
-        'slide_id'
+        'slide_id',
     ];
 
     protected static function boot(): void

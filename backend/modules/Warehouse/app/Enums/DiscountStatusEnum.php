@@ -22,7 +22,7 @@ enum DiscountStatusEnum: int
             strtolower(self::ACTIVE->name) => self::ACTIVE,
             strtolower(self::FINISHED->name) => self::FINISHED,
             strtolower(self::PENDING->name) => self::PENDING,
-            default => throw new InvalidDiscountStatusException()
+            default => throw new InvalidDiscountStatusException
         };
     }
 

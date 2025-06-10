@@ -12,7 +12,7 @@ class ContentManagementDatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SliderSeeder::class
+            SliderSeeder::class,
         ]);
     }
 }

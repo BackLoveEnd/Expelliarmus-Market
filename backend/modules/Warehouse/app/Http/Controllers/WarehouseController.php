@@ -29,16 +29,13 @@ class WarehouseController extends Controller
      * Search product by article, title, brand. Retrieve only info to show it in autocomplete.
      *
      * Usage - Admin section.
-     *
-     * @param  Request  $request
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function searchProductBySearchable(Request $request): JsonApiResourceCollection|JsonResponse
     {
         $searchedProducts = $this->warehouseService->searchProducts($request->query('search'));
 
         if ($searchedProducts->isEmpty()) {
-            return response()->json(['message' => "Products by this search key not found."], 404);
+            return response()->json(['message' => 'Products by this search key not found.'], 404);
         }
 
         return SearchedProductsSetResource::collection($searchedProducts);
@@ -48,9 +45,6 @@ class WarehouseController extends Controller
      * Show product information in warehouse.
      *
      * Usage - Admin section.
-     *
-     * @param  ProductSlug  $productSlug
-     * @return WarehouseProductInfoResource
      */
     public function getWarehouseProductInfo(ProductSlug $productSlug): WarehouseProductInfoResource
     {
@@ -64,17 +58,14 @@ class WarehouseController extends Controller
      *
      * Usage - Admin section.
      *
-     * @param  Request  $request
-     * @param  GetProductAction  $action
-     * @return JsonApiResourceCollection
      * @throws InvalidFilterSortParamException
      */
     public function getProductPaginated(Request $request, GetProductAction $action): JsonApiResourceCollection
     {
         if ($request->hasAny(['limit', 'offset'])) {
             $products = $action->handle(
-                limit: (int)$request->query('limit', config('warehouse.pagination.table')),
-                offset: (int)$request->query('offset', 0),
+                limit: (int) $request->query('limit', config('warehouse.pagination.table')),
+                offset: (int) $request->query('offset', 0),
             );
         } else {
             $products = $action->handle(

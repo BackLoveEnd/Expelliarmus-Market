@@ -38,11 +38,11 @@ class TrashedProductService
                 ->join('warehouses', 'warehouses.product_id', '=', 'products.id')
                 ->defaultSort('-deleted_at')
                 ->allowedSorts([
-                    AllowedSort::custom('deleted_at', new DeletedAtSort()),
-                    AllowedSort::custom('quantity', new TotalQuantitySort()),
+                    AllowedSort::custom('deleted_at', new DeletedAtSort),
+                    AllowedSort::custom('quantity', new TotalQuantitySort),
                 ])
                 ->allowedFilters([
-                    AllowedFilter::custom('in_stock', new ProductInStockFilter()),
+                    AllowedFilter::custom('in_stock', new ProductInStockFilter),
                 ])
                 ->paginate($this->config->get('product.retrieve.trashed'), [
                     'products.id',
@@ -53,7 +53,7 @@ class TrashedProductService
                     'preview_image',
                 ]);
         } catch (Throwable $e) {
-            throw new InvalidFilterSortParamException();
+            throw new InvalidFilterSortParamException;
         }
 
         return $products;
@@ -62,7 +62,7 @@ class TrashedProductService
     public function deleteForever(Product $product): void
     {
         if (! $product->trashed() || ! $product->status->is(ProductStatusEnum::TRASHED)) {
-            throw new CannotDeleteNotTrashedProduct();
+            throw new CannotDeleteNotTrashedProduct;
         }
 
         $product->forceDelete();
@@ -73,7 +73,7 @@ class TrashedProductService
     public function restore(Product $product): void
     {
         if (! $product->trashed() && ! $product->status->is(ProductStatusEnum::TRASHED)) {
-            throw new CannotRestoreNotTrashedProductException();
+            throw new CannotRestoreNotTrashedProductException;
         }
 
         $product->restore();

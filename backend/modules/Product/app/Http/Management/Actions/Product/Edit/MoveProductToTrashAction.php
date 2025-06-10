@@ -13,7 +13,7 @@ class MoveProductToTrashAction
     public function handle(Product $product): void
     {
         if ($product->status->is(ProductStatusEnum::PUBLISHED)) {
-            throw new CannotTrashPublishedProductException();
+            throw new CannotTrashPublishedProductException;
         }
 
         $product->moveToTrash();

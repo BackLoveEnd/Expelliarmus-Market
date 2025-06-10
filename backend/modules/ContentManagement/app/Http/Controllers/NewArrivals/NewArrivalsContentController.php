@@ -25,9 +25,6 @@ class NewArrivalsContentController extends Controller
      * Upload new arrivals.
      *
      * Usage - Admin section.
-     *
-     * @param  NewArrivalsUploadRequest  $request
-     * @return JsonResponse
      */
     public function uploadNewArrivals(NewArrivalsUploadRequest $request): JsonResponse
     {
@@ -42,8 +39,6 @@ class NewArrivalsContentController extends Controller
      * Get new arrivals.
      *
      * Usage - Admin section.
-     *
-     * @return JsonApiResourceCollection|JsonResponse
      */
     public function getNewArrivals(): JsonApiResourceCollection|JsonResponse
     {
@@ -61,8 +56,6 @@ class NewArrivalsContentController extends Controller
      *
      * Usage - Admin section.
      *
-     * @param  NewArrival  $arrival
-     * @return JsonResponse
      * @throws FailedToDeleteArrivalException|AuthorizationException
      */
     public function deleteArrival(NewArrival $arrival): JsonResponse

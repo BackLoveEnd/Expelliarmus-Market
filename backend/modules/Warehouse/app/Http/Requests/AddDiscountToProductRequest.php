@@ -7,7 +7,6 @@ use Modules\Warehouse\Rules\DateHasNotComeYetRule;
 
 class AddDiscountToProductRequest extends JsonApiFormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -18,7 +17,7 @@ class AddDiscountToProductRequest extends JsonApiFormRequest
         return [
             'variation' => ['nullable', 'integer'],
             'percentage' => ['required', 'integer', 'min:1', 'max:100'],
-            'start_date' => ['required', 'date', new DateHasNotComeYetRule()],
+            'start_date' => ['required', 'date', new DateHasNotComeYetRule],
             'end_date' => ['required', 'date', 'after:data.attributes.start_date'],
         ];
     }
@@ -41,5 +40,4 @@ class AddDiscountToProductRequest extends JsonApiFormRequest
             ],
         ];
     }
-
 }
